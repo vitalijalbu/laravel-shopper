@@ -1,174 +1,182 @@
 <?php
 
-namespace VitaliJalbu\LaravelShopper\Database\Seeders;
+namespace Database\Seeders;
 
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use VitaliJalbu\LaravelShopper\Core\Models\Currency;
-use VitaliJalbu\LaravelShopper\Core\Models\Channel;
-use VitaliJalbu\LaravelShopper\Core\Models\CustomerGroup;
-use VitaliJalbu\LaravelShopper\Core\Models\Country;
-use VitaliJalbu\LaravelShopper\Core\Models\Brand;
-use VitaliJalbu\LaravelShopper\Core\Models\Category;
-use VitaliJalbu\LaravelShopper\Core\Models\ProductType;
+use LaravelShopper\Models\Site;
+use LaravelShopper\Models\Currency;
+use LaravelShopper\Models\Country;
+use LaravelShopper\Models\Channel;
+use LaravelShopper\Models\CustomerGroup;
+use LaravelShopper\Models\Setting;
+use LaravelShopper\Models\User;
+use LaravelShopper\Models\Brand;
+use LaravelShopper\Models\Category;
+use LaravelShopper\Models\ProductType;
 
 class ShopperSeeder extends Seeder
 {
+    use WithoutModelEvents;
+
+    /**
+     * Run the database seeds.
+     */
     public function run(): void
     {
-        $this->seedCurrencies();
-        $this->seedChannels();
-        $this->seedCustomerGroups();
-        $this->seedCountries();
-        $this->seedBrands();
-        $this->seedCategories();
-        $this->seedProductTypes();
-    }
+        $this->command->info('🌱 Seeding Laravel Shopper with multi-site support...');
+        
+        // Load data from files
+        $currencies = include database_path('data/currencies.php');
+        $countries = include database_path('data/countries.php');
+        $channels = include database_path('data/channels.php');
+        $customerGroups = include database_path('data/customer_groups.php');
 
-    private function seedCurrencies(): void
-    {
-        $currencies = [
-            ['code' => 'USD', 'name' => 'US Dollar', 'exchange_rate' => 1.0000, 'default' => true, 'enabled' => true],
-            ['code' => 'EUR', 'name' => 'Euro', 'exchange_rate' => 0.8500, 'default' => false, 'enabled' => true],
-            ['code' => 'GBP', 'name' => 'British Pound', 'exchange_rate' => 0.7500, 'default' => false, 'enabled' => true],
-            ['code' => 'JPY', 'name' => 'Japanese Yen', 'exchange_rate' => 110.0000, 'default' => false, 'enabled' => true],
+        // Seed Sites first
+        $this->command->info('🌐 Seeding sites...');
+        $sites = [
+            [
+                'handle' => 'main',
+                'name' => 'Main Store',
+                'url' => 'http://localhost',
+                'locale' => 'en_US',
+                'lang' => 'en',
+                'attributes' => [],
+                'order' => 1,
+                'is_enabled' => true
+            ],
+            [
+                'handle' => 'it',
+                'name' => 'Store Italia',
+                'url' => 'http://localhost/it',
+                'locale' => 'it_IT',
+                'lang' => 'it',
+                'attributes' => [],
+                'order' => 2,
+                'is_enabled' => true
+            ],
         ];
 
+        foreach ($sites as $site) {
+            Site::firstOrCreate(['handle' => $site['handle']], $site);
+        }
+
+        // Seed currencies
+        $this->command->info('💰 Seeding currencies...');
         foreach ($currencies as $currency) {
             Currency::firstOrCreate(['code' => $currency['code']], $currency);
         }
-    }
 
-    private function seedChannels(): void
-    {
-        $channels = [
-            ['name' => 'Web Store', 'handle' => 'web', 'url' => 'https://example.com', 'default' => true],
-            ['name' => 'Mobile App', 'handle' => 'mobile', 'url' => null, 'default' => false],
-            ['name' => 'Marketplace', 'handle' => 'marketplace', 'url' => null, 'default' => false],
-        ];
+        // Seed countries
+        $this->command->info('🌍 Seeding countries...');
+        foreach ($countries as $country) {
+            Country::firstOrCreate(['code' => $country['code']], $country);
+        }
 
+        // Create default admin user
+        $this->command->info('👤 Creating admin user...');
+        $user = User::firstOrCreate(
+            ['email' => 'admin@example.com'],
+            [
+                'first_name' => 'Admin',
+                'last_name' => 'User',
+                'email' => 'admin@example.com',
+                'email_verified_at' => now(),
+                'password' => bcrypt('password'),
+            ]
+        );
+
+        // Get main site
+        $mainSite = Site::where('handle', 'main')->first();
+
+        // Seed channels
+        $this->command->info('📺 Seeding channels...');
         foreach ($channels as $channel) {
+            $currency = Currency::where('code', $channel['currency_code'])->first();
+            $channel['currency_id'] = $currency?->id;
+            $channel['site_id'] = $mainSite->id;
+            unset($channel['currency_code']);
             Channel::firstOrCreate(['handle' => $channel['handle']], $channel);
         }
-    }
 
-    private function seedCustomerGroups(): void
-    {
-        $groups = [
-            ['name' => 'Retail', 'handle' => 'retail', 'default' => true],
-            ['name' => 'Wholesale', 'handle' => 'wholesale', 'default' => false],
-            ['name' => 'VIP', 'handle' => 'vip', 'default' => false],
+        // Seed customer groups
+        $this->command->info('👥 Seeding customer groups...');
+        foreach ($customerGroups as $group) {
+            CustomerGroup::firstOrCreate(['name' => $group['name']], $group);
+        }
+
+        // Seed basic categories
+        $this->command->info('📁 Seeding categories...');
+        $categories = [
+            ['name' => 'Electronics', 'slug' => 'electronics', 'description' => 'Electronic devices and accessories', 'site_id' => $mainSite->id],
+            ['name' => 'Clothing', 'slug' => 'clothing', 'description' => 'Fashion and apparel', 'site_id' => $mainSite->id],
+            ['name' => 'Books', 'slug' => 'books', 'description' => 'Books and literature', 'site_id' => $mainSite->id],
+            ['name' => 'Home & Garden', 'slug' => 'home-garden', 'description' => 'Home and garden products', 'site_id' => $mainSite->id],
         ];
 
-        foreach ($groups as $group) {
-            CustomerGroup::firstOrCreate(['handle' => $group['handle']], $group);
+        foreach ($categories as $category) {
+            Category::firstOrCreate(['slug' => $category['slug'], 'site_id' => $category['site_id']], $category);
         }
-    }
 
-    private function seedCountries(): void
-    {
-        $countries = [
-            [
-                'name' => 'United States',
-                'iso2' => 'US',
-                'iso3' => 'USA',
-                'numeric_code' => '840',
-                'phone_code' => '+1',
-                'capital' => 'Washington D.C.',
-                'currency' => 'USD',
-                'currency_name' => 'US Dollar',
-                'currency_symbol' => '$',
-                'tld' => '.us',
-                'region' => 'Americas',
-                'subregion' => 'Northern America'
-            ],
-            [
-                'name' => 'United Kingdom',
-                'iso2' => 'GB',
-                'iso3' => 'GBR',
-                'numeric_code' => '826',
-                'phone_code' => '+44',
-                'capital' => 'London',
-                'currency' => 'GBP',
-                'currency_name' => 'British Pound',
-                'currency_symbol' => '£',
-                'tld' => '.uk',
-                'region' => 'Europe',
-                'subregion' => 'Northern Europe'
-            ],
-            [
-                'name' => 'Germany',
-                'iso2' => 'DE',
-                'iso3' => 'DEU',
-                'numeric_code' => '276',
-                'phone_code' => '+49',
-                'capital' => 'Berlin',
-                'currency' => 'EUR',
-                'currency_name' => 'Euro',
-                'currency_symbol' => '€',
-                'tld' => '.de',
-                'region' => 'Europe',
-                'subregion' => 'Western Europe'
-            ],
-        ];
-
-        foreach ($countries as $country) {
-            Country::firstOrCreate(['iso2' => $country['iso2']], $country);
-        }
-    }
-
-    private function seedBrands(): void
-    {
+        // Seed basic brands
+        $this->command->info('🏷️ Seeding brands...');
         $brands = [
-            ['name' => 'Apple', 'slug' => 'apple', 'description' => 'Technology products'],
-            ['name' => 'Nike', 'slug' => 'nike', 'description' => 'Athletic wear and equipment'],
-            ['name' => 'Samsung', 'slug' => 'samsung', 'description' => 'Electronics and technology'],
-            ['name' => 'Adidas', 'slug' => 'adidas', 'description' => 'Sports apparel and footwear'],
+            ['name' => 'Generic', 'slug' => 'generic', 'description' => 'Generic brand for unbranded products'],
+            ['name' => 'Premium', 'slug' => 'premium', 'description' => 'Premium quality products'],
+            ['name' => 'Budget', 'slug' => 'budget', 'description' => 'Budget-friendly products'],
         ];
 
         foreach ($brands as $brand) {
             Brand::firstOrCreate(['slug' => $brand['slug']], $brand);
         }
-    }
 
-    private function seedCategories(): void
-    {
-        $categories = [
-            ['name' => 'Electronics', 'slug' => 'electronics', 'description' => 'Electronic devices and gadgets', 'parent_id' => null, 'position' => 1],
-            ['name' => 'Clothing', 'slug' => 'clothing', 'description' => 'Apparel and fashion', 'parent_id' => null, 'position' => 2],
-            ['name' => 'Sports', 'slug' => 'sports', 'description' => 'Sports equipment and apparel', 'parent_id' => null, 'position' => 3],
+        // Seed product types
+        $this->command->info('📦 Seeding product types...');
+        $productTypes = [
+            ['name' => 'Physical', 'slug' => 'physical', 'description' => 'Physical products that require shipping'],
+            ['name' => 'Digital', 'slug' => 'digital', 'description' => 'Digital products (downloads)'],
+            ['name' => 'Service', 'slug' => 'service', 'description' => 'Service-based products'],
         ];
 
-        foreach ($categories as $category) {
-            Category::firstOrCreate(['slug' => $category['slug']], $category);
+        foreach ($productTypes as $type) {
+            ProductType::firstOrCreate(['slug' => $type['slug']], $type);
         }
 
-        // Sub-categories
-        $electronicsId = Category::where('slug', 'electronics')->first()->id;
-        $clothingId = Category::where('slug', 'clothing')->first()->id;
-        
-        $subCategories = [
-            ['name' => 'Smartphones', 'slug' => 'smartphones', 'description' => 'Mobile phones', 'parent_id' => $electronicsId, 'position' => 1],
-            ['name' => 'Laptops', 'slug' => 'laptops', 'description' => 'Portable computers', 'parent_id' => $electronicsId, 'position' => 2],
-            ['name' => 'T-Shirts', 'slug' => 't-shirts', 'description' => 'Casual t-shirts', 'parent_id' => $clothingId, 'position' => 1],
-            ['name' => 'Jeans', 'slug' => 'jeans', 'description' => 'Denim jeans', 'parent_id' => $clothingId, 'position' => 2],
+        // Basic settings
+        $this->command->info('⚙️ Seeding settings...');
+        $settings = [
+            'site_name' => 'Laravel Shopper Multi-Site',
+            'site_description' => 'Complete e-commerce platform with Statamic CMS architecture and multi-site support',
+            'admin_email' => 'admin@example.com',
+            'timezone' => 'Europe/Rome',
+            'date_format' => 'Y-m-d',
+            'time_format' => 'H:i',
+            'currency_format' => '{{amount}} {{symbol}}',
+            'pagination_limit' => 25,
+            'enable_reviews' => true,
+            'enable_wishlists' => true,
+            'enable_inventory' => true,
+            'enable_seo' => true,
+            'enable_analytics' => true,
+            'enable_multisite' => true,
+            'default_site' => 'main',
+            'maintenance_mode' => false,
+            'allow_guest_checkout' => true,
+            'require_email_verification' => false,
+            'enable_multi_currency' => true,
+            'enable_multi_language' => true,
         ];
 
-        foreach ($subCategories as $category) {
-            Category::firstOrCreate(['slug' => $category['slug']], $category);
+        foreach ($settings as $key => $value) {
+            Setting::firstOrCreate(['key' => $key], [
+                'key' => $key,
+                'value' => is_bool($value) ? ($value ? '1' : '0') : (string) $value,
+                'type' => is_bool($value) ? 'boolean' : 'string'
+            ]);
         }
-    }
 
-    private function seedProductTypes(): void
-    {
-        $types = [
-            ['name' => 'Physical Product'],
-            ['name' => 'Digital Product'],
-            ['name' => 'Service'],
-            ['name' => 'Subscription'],
-        ];
-
-        foreach ($types as $type) {
-            ProductType::firstOrCreate(['name' => $type['name']], $type);
-        }
+        $this->command->info('✅ Laravel Shopper multi-site seeding completed!');
+        $this->command->info('📍 Sites created: Main Store (main), Store Italia (it)');
+        $this->command->info('🔑 Admin login: admin@example.com / password');
     }
 }

@@ -10,15 +10,20 @@ return new class extends Migration
     {
         Schema::create('channels', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('site_id')->nullable()->index();
             $table->string('name');
             $table->string('slug')->unique();
             $table->text('description')->nullable();
-            $table->string('url')->nullable();
-            $table->boolean('is_default')->default(false);
-            $table->boolean('is_enabled')->default(true);
-            $table->json('locales')->nullable();
-            $table->json('currencies')->nullable();
+            $table->string('url')->nullable()->index();
+            $table->boolean('is_default')->default(false)->index();
+            $table->boolean('is_enabled')->default(true)->index();
+            $table->jsonb('locales')->nullable();
+            $table->jsonb('currencies')->nullable();
             $table->timestamps();
+
+            $table->index(['site_id', 'is_enabled']);
+            $table->index(['slug', 'site_id']);
+            $table->foreign('site_id')->references('id')->on('sites')->onDelete('cascade');
         });
     }
 

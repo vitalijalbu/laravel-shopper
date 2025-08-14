@@ -10,11 +10,13 @@ return new class extends Migration
     {
         Schema::create('countries', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('code', 2)->unique();
-            $table->string('phone_code', 10)->nullable();
-            $table->boolean('is_enabled')->default(true);
+            $table->string('name')->index();
+            $table->char('code', 2)->unique();
+            $table->string('phone_code', 10)->nullable()->index();
+            $table->boolean('is_enabled')->default(true)->index();
             $table->timestamps();
+
+            $table->index(['code', 'is_enabled']);
         });
     }
 

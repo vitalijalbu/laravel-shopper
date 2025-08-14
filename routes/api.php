@@ -2,20 +2,24 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use VitaliJalbu\LaravelShopper\Http\Controllers\Api\ProductController;
-use VitaliJalbu\LaravelShopper\Http\Controllers\Api\CategoryController;
-use VitaliJalbu\LaravelShopper\Http\Controllers\Api\BrandController;
-use VitaliJalbu\LaravelShopper\Http\Controllers\Api\CartController;
-use VitaliJalbu\LaravelShopper\Http\Controllers\Api\AuthController;
+use LaravelShopper\Http\Controllers\Api\ProductController;
+use LaravelShopper\Http\Controllers\Api\CategoryController;
+use LaravelShopper\Http\Controllers\Api\BrandController;
+use LaravelShopper\Http\Controllers\Api\CartController;
+use LaravelShopper\Http\Controllers\Api\AuthController;
+use LaravelShopper\Http\Controllers\Api\OrderController;
+use LaravelShopper\Http\Controllers\Api\CustomerController;
+use LaravelShopper\Http\Controllers\Api\CollectionController;
+use LaravelShopper\Http\Middleware\HandleSiteContext;
 
 /*
 |--------------------------------------------------------------------------
-| API Routes
+| API Routes with Handle Support  
 |--------------------------------------------------------------------------
 |
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
+| Routes support both ID and handle/slug for all resources:
+| /api/products/123 or /api/products/awesome-t-shirt
+| /api/sites/main/products/123 or /api/sites/main/products/awesome-t-shirt
 |
 */
 
@@ -54,6 +58,40 @@ Route::group([
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('/user', function (Request $request) {
             return $request->user();
+        });
+    });
+});
+
+/*
+|--------------------------------------------------------------------------
+| Enhanced API Routes with Handle Support
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware([HandleSiteContext::class])->group(function () {
+    
+    // Enhanced routes supporting handles (slug or ID)
+    Route::prefix('api/v2')->group(function () {
+        
+        // Products API with handle support
+        Route::get('products', [ProductController::class, 'index']);
+        Route::post('products', [ProductController::class, 'store']);
+        Route::get('products/{product:handle}', [ProductController::class, 'show']);
+        Route::put('products/{product:handle}', [ProductController::class, 'update']);
+        Route::delete('products/{product:handle}', [ProductController::class, 'destroy']);
+        Route::post('products/{product:handle}/duplicate', [ProductController::class, 'duplicate']);
+        
+        // Categories API with handle support
+        Route::get('categories/{category:handle}', [CategoryController::class, 'show']);
+        Route::put('categories/{category:handle}', [CategoryController::class, 'update']);
+        Route::delete('categories/{category:handle}', [CategoryController::class, 'destroy']);
+        Route::get('categories/{category:handle}/products', [CategoryController::class, 'products']);
+        
+        // Site-specific routes
+        Route::prefix('sites/{site:handle}')->group(function () {
+            Route::get('products', [ProductController::class, 'index']);
+            Route::get('products/{product:handle}', [ProductController::class, 'show']);
+            Route::get('categories/{category:handle}/products', [CategoryController::class, 'products']);
         });
     });
 });
