@@ -1,12 +1,12 @@
 <?php
 
-namespace VitaliJalbu\LaravelShopper\Listeners;
+namespace LaravelShopper\Listeners;
 
-use VitaliJalbu\LaravelShopper\Events\InventoryUpdated;
-use VitaliJalbu\LaravelShopper\Events\OrderCreated;
-use VitaliJalbu\LaravelShopper\Events\OrderStatusChanged;
-use VitaliJalbu\LaravelShopper\Events\ProductCreated;
-use VitaliJalbu\LaravelShopper\Events\ProductUpdated;
+use LaravelShopper\Events\InventoryUpdated;
+use LaravelShopper\Events\OrderCreated;
+use LaravelShopper\Events\OrderStatusChanged;
+use LaravelShopper\Events\ProductCreated;
+use LaravelShopper\Events\ProductUpdated;
 
 class InventoryListener extends Listener
 {

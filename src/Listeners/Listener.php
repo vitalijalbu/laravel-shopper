@@ -1,6 +1,6 @@
 <?php
 
-namespace VitaliJalbu\LaravelShopper\Listeners;
+namespace LaravelShopper\Listeners;
 
 abstract class Listener
 {

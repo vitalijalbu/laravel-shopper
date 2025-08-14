@@ -1,13 +1,191 @@
 # Laravel Shopper
 
-A modern, extensible e-commerce package for Laravel, inspired by Shopify's architecture.
+🛒 **Laravel E-commerce Package with Statamic CMS Architecture**
 
-## 🚀 Features
+A complete e-commerce package for Laravel inspired by Shopify, built with Vue.js 3, Inertia.js, and Tailwind CSS v4. Features collections, entries, fields, import/export, and multisite support just like Statamic CMS.
 
-- **Modular Architecture**: Separate Core and Admin packages for maximum flexibility
-- **Modern Admin Panel**: Built with Inertia.js, Vue 3, and Reka UI
-- **Advanced Permissions**: Spatie Permissions integration
-- **Media Management**: Advanced media handling with Spatie Media Library
+## ✨ Features
+
+- **🏪 E-commerce Core**: Products, categories, brands, orders, customers
+- **📝 Content Management**: Collections and entries system like Statamic
+- **🎨 Modern Admin Interface**: Vue.js 3 + Inertia.js + Tailwind CSS v4
+- **📊 DataTable**: Advanced filtering, sorting, pagination, bulk operations
+- **📈 Import/Export**: CSV import/export with League CSV
+- **🌐 Multisite Support**: Multiple sites management
+- **🔒 Authentication**: Laravel Sanctum integration
+- **🧪 Testing**: PestPHP test suite included
+
+## 📋 Requirements
+
+- **PHP**: ^8.3
+- **Laravel**: ^11.0
+- **Node.js**: >=18.0.0
+- **npm**: >=8.0.0
+
+## 🚀 Installation
+
+### 1. Install via Composer
+
+```bash
+composer require vitalijalbu/laravel-shopper
+```
+
+### 2. Publish Configuration & Assets
+
+```bash
+php artisan vendor:publish --tag="shopper-config"
+php artisan vendor:publish --tag="shopper-views"
+php artisan vendor:publish --tag="shopper-assets"
+```
+
+### 3. Install Frontend Dependencies
+
+```bash
+npm install
+npm run build
+```
+
+### 4. Run Migrations
+
+```bash
+php artisan migrate
+```
+
+## 🧪 Testing the Package
+
+### Option 1: Create a New Laravel App
+
+```bash
+# Create new Laravel app
+laravel new shopper-test
+cd shopper-test
+
+# Install the package
+composer config repositories.local path ../laravel-shopper
+composer require vitalijalbu/laravel-shopper:@dev
+
+# Publish and configure
+php artisan vendor:publish --tag="shopper-config"
+php artisan vendor:publish --tag="shopper-assets"
+
+# Install frontend dependencies
+npm install
+npm run build
+
+# Start server
+php artisan serve
+```
+
+Then visit: **http://localhost:8000/cp**
+
+### Option 2: Direct Testing
+
+```bash
+# Clone the package
+git clone https://github.com/vitalijalbu/laravel-shopper.git
+cd laravel-shopper
+
+# Install dependencies
+composer install
+npm install
+
+# Build assets
+npm run build
+
+# Run tests
+composer test
+```
+
+## 🎯 Usage
+
+### Admin Interface
+
+Access the control panel at `/cp`:
+
+```php
+// Collections management
+Route::get('/cp/collections')
+
+// Entries management  
+Route::get('/cp/collections/{collection}/entries')
+
+// Import/Export utilities
+Route::get('/cp/utilities/import')
+Route::get('/cp/utilities/export')
+```
+
+### API Endpoints
+
+```php
+// Collections API
+GET    /cp/api/collections
+POST   /cp/api/collections
+PUT    /cp/api/collections/{collection}
+DELETE /cp/api/collections/{collection}
+
+// Entries API
+GET    /cp/api/collections/{collection}/entries
+POST   /cp/api/collections/{collection}/entries
+PUT    /cp/api/collections/{collection}/entries/{entry}
+DELETE /cp/api/collections/{collection}/entries/{entry}
+POST   /cp/api/collections/{collection}/entries/bulk
+```
+
+## 🏗️ Architecture
+
+### Collections & Entries System
+
+Inspired by Statamic CMS:
+
+- **Collections**: Product catalogs, content types
+- **Entries**: Individual items within collections  
+- **Fields**: JSON schema-based field definitions
+- **Sites**: Multisite architecture support
+
+### Frontend Stack
+
+- **Vue.js 3.5**: Composition API components
+- **Inertia.js 2.0**: SPA without the complexity
+- **Tailwind CSS v4**: Latest utility-first framework
+- **Pinia**: State management (no Vue Router needed!)
+
+## 📁 Key Files Structure
+
+```
+laravel-shopper/
+├── src/
+│   ├── Http/Controllers/Cp/        # Control Panel controllers
+│   │   ├── CollectionsController.php
+│   │   ├── EntriesController.php
+│   │   └── ImportExportController.php
+│   └── ShopperServiceProvider.php  # Main service provider
+├── resources/
+│   ├── js/                        # Vue.js components  
+│   │   ├── components/            # Reusable components
+│   │   ├── pages/                 # Inertia pages
+│   │   └── app.js                 # Main app file
+│   └── views/app.blade.php        # Main layout
+├── routes/cp.php                  # All CP routes
+├── config/shopper.php             # Configuration
+└── tests/Feature/                 # PestPHP tests
+```
+
+## 🧪 Testing
+
+```bash
+# Run all tests
+composer test
+
+# Run with coverage  
+composer test-coverage
+
+# Code formatting
+composer format
+```
+
+---
+
+**🎉 Ready to use!** The package includes everything needed for a complete Statamic-style e-commerce admin interface.
 - **Autenticazione**: Laravel Sanctum per API sicure
 - **Design System**: Reka UI per un'interfaccia utente moderna
 - **Database Ottimizzato**: Struttura database ispirata a LunarPHP

@@ -2,40 +2,53 @@
 
 declare(strict_types=1);
 
-namespace VitaliJalbu\LaravelShopper\Models;
+namespace LaravelShopper\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Cart extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'session_id',
-        'user_id',
-        'channel_id',
-        'currency_code',
-        'meta',
+        'customer_id',
+        'currency_id',
+        'subtotal',
+        'tax_total',
+        'shipping_total',
+        'discount_total',
+        'total',
+        'applied_discounts',
+        'shipping_address',
+        'billing_address',
+        'status',
+        'expires_at',
     ];
 
     protected $casts = [
-        'meta' => 'array',
+        'subtotal' => 'decimal:2',
+        'tax_total' => 'decimal:2',
+        'shipping_total' => 'decimal:2',
+        'discount_total' => 'decimal:2',
+        'total' => 'decimal:2',
+        'applied_discounts' => 'array',
+        'shipping_address' => 'array',
+        'billing_address' => 'array',
+        'expires_at' => 'datetime',
     ];
 
-    public function __construct(array $attributes = [])
+    public function customer(): BelongsTo
     {
-        $this->table = shopper_table('carts');
-        parent::__construct($attributes);
+        return $this->belongsTo(Customer::class);
     }
 
-    public function user()
+    public function currency(): BelongsTo
     {
-        return $this->belongsTo(config('shopper.auth.model', 'App\\Models\\User'));
-    }
-
-    public function channel(): BelongsTo
-    {
-        return $this->belongsTo(Channel::class);
+        return $this->belongsTo(Currency::class);
     }
 
     public function lines(): HasMany
@@ -43,81 +56,73 @@ class Cart extends Model
         return $this->hasMany(CartLine::class);
     }
 
-    public function addresses(): HasMany
-    {
-        return $this->hasMany(CartAddress::class);
-    }
-
     public function getTotalQuantityAttribute(): int
     {
         return $this->lines->sum('quantity');
     }
 
-    public function getSubTotalAttribute(): float
+    public function calculateTotals(): void
     {
-        return $this->lines->sum(function ($line) {
-            return $line->quantity * $line->unit_price;
-        }) / 100;
+        $this->subtotal = $this->lines->sum('line_total');
+        $this->total = $this->subtotal + $this->tax_total + $this->shipping_total - $this->discount_total;
+        $this->save();
     }
 
-    public function getTaxTotalAttribute(): float
-    {
-        return $this->lines->sum(function ($line) {
-            return $line->quantity * $line->unit_price * ($line->tax_rate / 100);
-        }) / 100;
-    }
-
-    public function getTotalAttribute(): float
-    {
-        return $this->sub_total + $this->tax_total;
-    }
-
-    public function getFormattedSubTotalAttribute(): string
-    {
-        return number_format($this->sub_total, 2);
-    }
-
-    public function getFormattedTotalAttribute(): string
-    {
-        return number_format($this->total, 2);
-    }
-
-    public function addLine(Product $product, int $quantity = 1, array $meta = []): CartLine
+    public function addItem(Product $product, int $quantity = 1, ?ProductVariant $variant = null, array $options = []): CartLine
     {
         $existingLine = $this->lines()
-            ->where('purchasable_type', get_class($product))
-            ->where('purchasable_id', $product->id)
+            ->where('product_id', $product->id)
+            ->where('product_variant_id', $variant?->id)
             ->first();
+
+        $unitPrice = $variant ? $variant->price : $product->price;
+        $lineTotal = $unitPrice * $quantity;
 
         if ($existingLine) {
             $existingLine->update([
                 'quantity' => $existingLine->quantity + $quantity,
-                'meta' => array_merge($existingLine->meta ?? [], $meta),
+                'line_total' => $existingLine->line_total + $lineTotal,
             ]);
             
+            $this->calculateTotals();
             return $existingLine;
         }
 
-        return $this->lines()->create([
-            'purchasable_type' => get_class($product),
-            'purchasable_id' => $product->id,
+        $line = $this->lines()->create([
+            'product_id' => $product->id,
+            'product_variant_id' => $variant?->id,
             'quantity' => $quantity,
-            'unit_price' => $product->price,
-            'tax_rate' => $product->tax_rate ?? 0,
-            'meta' => $meta,
+            'unit_price' => $unitPrice,
+            'line_total' => $lineTotal,
+            'product_options' => $options,
         ]);
+
+        $this->calculateTotals();
+        return $line;
     }
 
-    public function removeLine(CartLine $line): bool
+    public function removeItem(CartLine $line): bool
     {
-        return $line->delete();
+        $result = $line->delete();
+        $this->calculateTotals();
+        return $result;
     }
 
     public function clear(): bool
     {
-        $this->lines()->delete();
-        $this->addresses()->delete();
-        
-        return true;
+        $result = $this->lines()->delete();
+        $this->update([
+            'subtotal' => 0,
+            'tax_total' => 0,
+            'shipping_total' => 0,
+            'discount_total' => 0,
+            'total' => 0,
+        ]);
+        return $result;
+    }
+
+    public function isEmpty(): bool
+    {
+        return $this->lines->isEmpty();
     }
 }

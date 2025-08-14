@@ -1,9 +1,9 @@
 <?php
 
-namespace VitaliJalbu\LaravelShopper\GraphQL\Resolvers;
+namespace LaravelShopper\GraphQL\Resolvers;
 
-use VitaliJalbu\LaravelShopper\Models\Metaobject;
-use VitaliJalbu\LaravelShopper\Models\MetaobjectDefinition;
+use LaravelShopper\Models\Metaobject;
+use LaravelShopper\Models\MetaobjectDefinition;
 use GraphQL\Type\Definition\ResolveInfo;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 

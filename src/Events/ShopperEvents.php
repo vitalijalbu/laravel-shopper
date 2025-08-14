@@ -1,6 +1,6 @@
 <?php
 
-namespace VitaliJalbu\LaravelShopper\Events;
+namespace LaravelShopper\Events;
 
 class EntryCreated extends Event
 {

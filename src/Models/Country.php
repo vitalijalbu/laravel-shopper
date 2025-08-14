@@ -2,20 +2,24 @@
 
 declare(strict_types=1);
 
-namespace VitaliJalbu\LaravelShopper\Models;
+namespace LaravelShopper\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Country extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'name',
         'iso3',
         'iso2',
         'phonecode',
         'capital',
-        'currency_id',
+        'currency_code',
         'currency_symbol',
         'tld',
         'native',
@@ -36,30 +40,9 @@ class Country extends Model
         'longitude' => 'decimal:8',
     ];
 
-    public function __construct(array $attributes = [])
-    {
-        $this->table = shopper_table('countries');
-        parent::__construct($attributes);
-    }
-
     public function getRouteKeyName(): string
     {
         return 'iso2';
-    }
-
-    public function currency()
-    {
-        return $this->belongsTo(Currency::class);
-    }
-
-    public function states(): HasMany
-    {
-        return $this->hasMany(State::class);
-    }
-
-    public function customers(): HasMany
-    {
-        return $this->hasMany(Customer::class);
     }
 
     public function addresses(): HasMany
@@ -67,8 +50,8 @@ class Country extends Model
         return $this->hasMany(Address::class);
     }
 
-    public function orders(): HasMany
+    public function scopeEnabled($query)
     {
-        return $this->hasMany(Order::class, 'shipping_country_id');
+        return $query->where('is_enabled', true);
     }
 }

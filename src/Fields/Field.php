@@ -1,8 +1,8 @@
 <?php
 
-namespace VitaliJalbu\LaravelShopper\Fields;
+namespace LaravelShopper\Fields;
 
-use VitaliJalbu\LaravelShopper\Support\Str;
+use Illuminate\Support\Str;
 
 class Field
 {
@@ -84,14 +84,14 @@ class Field
     {
         $type = $this->type();
 
-        $class = "VitaliJalbu\\LaravelShopper\\Fieldtypes\\" . Str::studly($type);
+        $class = "LaravelShopper\\Fieldtypes\\" . Str::studly($type);
 
         if (class_exists($class)) {
             return app($class)->setField($this);
         }
 
         // Fallback to text fieldtype
-        return app("VitaliJalbu\\LaravelShopper\\Fieldtypes\\Text")->setField($this);
+        return app("LaravelShopper\\Fieldtypes\\Text")->setField($this);
     }
 
     public function setValue($value)

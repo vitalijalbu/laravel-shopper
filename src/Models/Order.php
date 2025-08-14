@@ -2,66 +2,65 @@
 
 declare(strict_types=1);
 
-namespace VitaliJalbu\LaravelShopper\Models;
+namespace LaravelShopper\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Order extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
-        'number',
-        'user_id',
+        'order_number',
         'customer_id',
-        'channel_id',
-        'currency_code',
-        'status',
-        'reference',
-        'customer_reference',
-        'sub_total',
+        'customer_email',
+        'customer_details',
+        'currency_id',
+        'subtotal',
         'tax_total',
-        'discount_total',
         'shipping_total',
+        'discount_total',
         'total',
-        'notes',
-        'currency_code',
-        'compare_currency_code',
-        'exchange_rate',
-        'shipping_option',
+        'status',
+        'payment_status',
+        'fulfillment_status',
         'shipping_address',
         'billing_address',
-        'placed_at',
-        'meta',
+        'applied_discounts',
+        'shipping_method',
+        'payment_method',
+        'payment_details',
+        'notes',
+        'shipped_at',
+        'delivered_at',
     ];
 
     protected $casts = [
-        'sub_total' => 'integer',
-        'tax_total' => 'integer',
-        'discount_total' => 'integer',
-        'shipping_total' => 'integer',
-        'total' => 'integer',
-        'exchange_rate' => 'decimal:6',
+        'customer_details' => 'array',
+        'subtotal' => 'decimal:2',
+        'tax_total' => 'decimal:2',
+        'shipping_total' => 'decimal:2',
+        'discount_total' => 'decimal:2',
+        'total' => 'decimal:2',
         'shipping_address' => 'array',
         'billing_address' => 'array',
-        'placed_at' => 'datetime',
-        'meta' => 'array',
+        'applied_discounts' => 'array',
+        'payment_details' => 'array',
+        'shipped_at' => 'datetime',
+        'delivered_at' => 'datetime',
     ];
-
-    public function __construct(array $attributes = [])
-    {
-        $this->table = shopper_table('orders');
-        parent::__construct($attributes);
-    }
 
     public function customer(): BelongsTo
     {
         return $this->belongsTo(Customer::class);
     }
 
-    public function channel(): BelongsTo
+    public function currency(): BelongsTo
     {
-        return $this->belongsTo(Channel::class);
+        return $this->belongsTo(Currency::class);
     }
 
     public function lines(): HasMany
@@ -69,74 +68,68 @@ class Order extends Model
         return $this->hasMany(OrderLine::class);
     }
 
-    public function addresses(): HasMany
+    public function getTotalItemsAttribute(): int
     {
-        return $this->hasMany(OrderAddress::class);
+        return $this->lines->sum('quantity');
     }
 
-    public function getSubTotalAttribute($value)
+    public function isPaid(): bool
     {
-        return $value ? $value / 100 : 0;
+        return $this->payment_status === 'paid';
     }
 
-    public function setSubTotalAttribute($value)
+    public function isFulfilled(): bool
     {
-        $this->attributes['sub_total'] = $value ? $value * 100 : 0;
+        return $this->fulfillment_status === 'fulfilled';
     }
 
-    public function getTaxTotalAttribute($value)
+    public function isShipped(): bool
     {
-        return $value ? $value / 100 : 0;
+        return $this->fulfillment_status === 'shipped';
     }
 
-    public function setTaxTotalAttribute($value)
+    public function isDelivered(): bool
     {
-        $this->attributes['tax_total'] = $value ? $value * 100 : 0;
+        return $this->fulfillment_status === 'delivered';
     }
 
-    public function getDiscountTotalAttribute($value)
+    public function isCancelled(): bool
     {
-        return $value ? $value / 100 : 0;
+        return $this->status === 'cancelled';
     }
 
-    public function setDiscountTotalAttribute($value)
+    public function canBeCancelled(): bool
     {
-        $this->attributes['discount_total'] = $value ? $value * 100 : 0;
+        return in_array($this->status, ['pending', 'confirmed']) && 
+               $this->payment_status !== 'paid';
     }
 
-    public function getShippingTotalAttribute($value)
+    public function canBeShipped(): bool
     {
-        return $value ? $value / 100 : 0;
+        return $this->status === 'confirmed' && 
+               $this->payment_status === 'paid' &&
+               $this->fulfillment_status === 'unfulfilled';
     }
 
-    public function setShippingTotalAttribute($value)
+    protected static function boot()
     {
-        $this->attributes['shipping_total'] = $value ? $value * 100 : 0;
-    }
+        parent::boot();
 
-    public function getTotalAttribute($value)
-    {
-        return $value ? $value / 100 : 0;
-    }
-
-    public function setTotalAttribute($value)
-    {
-        $this->attributes['total'] = $value ? $value * 100 : 0;
-    }
-
-    public function getFormattedSubTotalAttribute()
-    {
-        return number_format($this->sub_total, 2);
-    }
-
-    public function getFormattedTotalAttribute()
-    {
-        return number_format($this->total, 2);
+        static::creating(function ($order) {
+            if (empty($order->order_number)) {
+                $order->order_number = 'ORD-' . strtoupper(uniqid());
+            }
+        });
     }
 
     public function scopeByStatus($query, string $status)
     {
         return $query->where('status', $status);
+    }
+
+    public function scopeByPaymentStatus($query, string $status)
+    {
+        return $query->where('payment_status', $status);
     }
 
     public function scopeRecent($query)

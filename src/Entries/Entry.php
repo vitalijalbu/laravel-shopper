@@ -1,25 +1,25 @@
 <?php
 
-namespace VitaliJalbu\LaravelShopper\Entries;
+namespace LaravelShopper\Entries;
 
 use ArrayAccess;
 use Illuminate\Contracts\Support\Arrayable;
-use VitaliJalbu\LaravelShopper\Contracts\Entries\Entry as Contract;
-use VitaliJalbu\LaravelShopper\Data\ContainsCascadingData;
-use VitaliJalbu\LaravelShopper\Data\ExistsAsFile;
-use VitaliJalbu\LaravelShopper\Data\HasAugmentedData;
-use VitaliJalbu\LaravelShopper\Events\Entries\EntryCreated;
-use VitaliJalbu\LaravelShopper\Events\Entries\EntryCreating;
-use VitaliJalbu\LaravelShopper\Events\Entries\EntryDeleted;
-use VitaliJalbu\LaravelShopper\Events\Entries\EntryDeleting;
-use VitaliJalbu\LaravelShopper\Events\Entries\EntrySaved;
-use VitaliJalbu\LaravelShopper\Events\Entries\EntrySaving;
-use VitaliJalbu\LaravelShopper\Facades\Collection;
-use VitaliJalbu\LaravelShopper\Facades\Site;
-use VitaliJalbu\LaravelShopper\Support\Traits\FluentlyGetsAndSets;
+use LaravelShopper\Contracts\Entries\Entry as Contract;
+use LaravelShopper\Data\ContainsCascadingData;
+use LaravelShopper\Data\ExistsAsFile;
+use LaravelShopper\Data\HasAugmentedData;
+use LaravelShopper\Events\Entries\EntryCreated;
+use LaravelShopper\Events\Entries\EntryCreating;
+use LaravelShopper\Events\Entries\EntryDeleted;
+use LaravelShopper\Events\Entries\EntryDeleting;
+use LaravelShopper\Events\Entries\EntrySaved;
+use LaravelShopper\Events\Entries\EntrySaving;
+use LaravelShopper\Facades\Collection;
+use LaravelShopper\Facades\Site;
+use LaravelShopper\Support\Traits\FluentlyGetsAndSets;
 use Carbon\Carbon;
 
-use function VitaliJalbu\LaravelShopper\trans as __;
+use function LaravelShopper\trans as __;
 
 class Entry implements Arrayable, ArrayAccess, Contract
 {
@@ -72,7 +72,7 @@ class Entry implements Arrayable, ArrayAccess, Contract
             return null;
         }
 
-        return app(\VitaliJalbu\LaravelShopper\Contracts\Routing\UrlBuilder::class)
+        return app(\LaravelShopper\Contracts\Routing\UrlBuilder::class)
             ->content($this)
             ->merge($this->routeData())
             ->build($this->route());
@@ -81,7 +81,7 @@ class Entry implements Arrayable, ArrayAccess, Contract
     public function collection($collection = null)
     {
         if (func_num_args() === 0) {
-            return $this->collection instanceof \VitaliJalbu\LaravelShopper\Collections\Collection
+            return $this->collection instanceof \LaravelShopper\Collections\Collection
                 ? $this->collection
                 : Collection::findByHandle($this->collection);
         }
@@ -93,7 +93,7 @@ class Entry implements Arrayable, ArrayAccess, Contract
 
     public function collectionHandle()
     {
-        return $this->collection instanceof \VitaliJalbu\LaravelShopper\Collections\Collection
+        return $this->collection instanceof \LaravelShopper\Collections\Collection
             ? $this->collection->handle()
             : $this->collection;
     }
@@ -377,7 +377,7 @@ class Entry implements Arrayable, ArrayAccess, Contract
         $this->ensureId();
 
         // Save the entry through the repository
-        app(\VitaliJalbu\LaravelShopper\Contracts\Entries\EntryRepository::class)->save($this);
+        app(\LaravelShopper\Contracts\Entries\EntryRepository::class)->save($this);
 
         if ($withEvents) {
             if ($isNew) {
@@ -398,7 +398,7 @@ class Entry implements Arrayable, ArrayAccess, Contract
     {
         EntryDeleting::dispatch($this);
 
-        app(\VitaliJalbu\LaravelShopper\Contracts\Entries\EntryRepository::class)->delete($this);
+        app(\LaravelShopper\Contracts\Entries\EntryRepository::class)->delete($this);
 
         EntryDeleted::dispatch($this);
     }

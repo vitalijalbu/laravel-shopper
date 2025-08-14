@@ -1,6 +1,6 @@
 <?php
 
-namespace VitaliJalbu\LaravelShopper\Http\Controllers\Api;
+namespace LaravelShopper\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;

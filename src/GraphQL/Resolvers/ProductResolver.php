@@ -1,8 +1,8 @@
 <?php
 
-namespace VitaliJalbu\LaravelShopper\GraphQL\Resolvers;
+namespace LaravelShopper\GraphQL\Resolvers;
 
-use VitaliJalbu\LaravelShopper\Models\Product;
+use LaravelShopper\Models\Product;
 use GraphQL\Type\Definition\ResolveInfo;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 

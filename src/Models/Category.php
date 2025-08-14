@@ -2,17 +2,20 @@
 
 declare(strict_types=1);
 
-namespace VitaliJalbu\LaravelShopper\Models;
+namespace LaravelShopper\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class Category extends Model implements HasMedia
 {
+    use HasFactory;
     use InteractsWithMedia;
 
     protected $fillable = [
@@ -22,27 +25,23 @@ class Category extends Model implements HasMedia
         'parent_id',
         'sort_order',
         'is_enabled',
-        'seo_title',
-        'seo_description',
+        'seo',
+        'meta',
     ];
 
     protected $casts = [
         'is_enabled' => 'boolean',
         'sort_order' => 'integer',
+        'seo' => 'array',
+        'meta' => 'array',
     ];
-
-    public function __construct(array $attributes = [])
-    {
-        $this->table = shopper_table('categories');
-        parent::__construct($attributes);
-    }
 
     public function getRouteKeyName(): string
     {
         return 'slug';
     }
 
-    public function parent()
+    public function parent(): BelongsTo
     {
         return $this->belongsTo(self::class, 'parent_id');
     }
@@ -54,7 +53,7 @@ class Category extends Model implements HasMedia
 
     public function products(): BelongsToMany
     {
-        return $this->belongsToMany(Product::class, shopper_table('product_categories'));
+        return $this->belongsToMany(Product::class)->withPivot('sort_order')->withTimestamps();
     }
 
     public function registerMediaCollections(): void
@@ -64,11 +63,16 @@ class Category extends Model implements HasMedia
             ->singleFile();
     }
 
-    public function registerMediaConversions(Media $media = null): void
+    public function registerMediaConversions(?Media $media = null): void
     {
         $this->addMediaConversion('thumb')
             ->width(300)
             ->height(300)
+            ->sharpen(10);
+
+        $this->addMediaConversion('large')
+            ->width(800)
+            ->height(600)
             ->sharpen(10);
     }
 

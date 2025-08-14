@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace VitaliJalbu\LaravelShopper\Traits;
+namespace LaravelShopper\Traits;
 
-use VitaliJalbu\LaravelShopper\Models\Metafield;
+use LaravelShopper\Models\Metafield;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 trait HasMetafields

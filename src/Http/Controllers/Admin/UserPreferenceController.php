@@ -1,12 +1,12 @@
 <?php
 
-namespace VitaliJalbu\LaravelShopper\Http\Controllers\Admin;
+namespace LaravelShopper\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
-use VitaliJalbu\LaravelShopper\Models\UserPreference;
-use VitaliJalbu\LaravelShopper\Http\Requests\UserPreferenceRequest;
+use LaravelShopper\Models\UserPreference;
+use LaravelShopper\Http\Requests\UserPreferenceRequest;
 
 class UserPreferenceController extends Controller
 {

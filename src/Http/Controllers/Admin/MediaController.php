@@ -1,12 +1,12 @@
 <?php
 
-namespace VitaliJalbu\LaravelShopper\Http\Controllers\Admin;
+namespace LaravelShopper\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
-use VitaliJalbu\LaravelShopper\Models\Product;
+use LaravelShopper\Models\Product;
 
 class MediaController extends Controller
 {

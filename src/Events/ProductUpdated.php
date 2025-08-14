@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace VitaliJalbu\LaravelShopper\Events;
+namespace LaravelShopper\Events;
 
 class ProductUpdated extends Event
 {

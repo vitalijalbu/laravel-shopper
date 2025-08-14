@@ -1,11 +1,11 @@
 <?php
 
-namespace VitaliJalbu\LaravelShopper\Http\Controllers\Api;
+namespace LaravelShopper\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
-use VitaliJalbu\LaravelShopper\Models\Product;
+use LaravelShopper\Models\Product;
 
 class ProductController extends Controller
 {

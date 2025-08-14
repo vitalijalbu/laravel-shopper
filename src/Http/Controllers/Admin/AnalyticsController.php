@@ -1,12 +1,12 @@
 <?php
 
-namespace VitaliJalbu\LaravelShopper\Http\Controllers\Admin;
+namespace LaravelShopper\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
-use VitaliJalbu\LaravelShopper\Models\UserPreference;
-use VitaliJalbu\LaravelShopper\Models\AnalyticsEvent;
+use LaravelShopper\Models\UserPreference;
+use LaravelShopper\Models\AnalyticsEvent;
 use Carbon\Carbon;
 
 class AnalyticsController extends Controller

@@ -1,28 +1,22 @@
 <?php
 
-namespace VitaliJalbu\LaravelShopper;
+namespace LaravelShopper;
 
 use Illuminate\Support\ServiceProvider;
-use VitaliJalbu\LaravelShopper\Core\ShopperCoreServiceProvider;
-use VitaliJalbu\LaravelShopper\Admin\ShopperAdminServiceProvider;
+use Illuminate\Support\Facades\Route;
 
 class ShopperServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        $this->app->register(ShopperCoreServiceProvider::class);
-        $this->app->register(ShopperAdminServiceProvider::class);
-
         $this->mergeConfigFrom(__DIR__ . '/../config/shopper.php', 'shopper');
     }
 
     public function boot(): void
     {
+        $this->bootRoutes();
+        
         if ($this->app->runningInConsole()) {
-            $this->commands([
-                \VitaliJalbu\LaravelShopper\Console\InstallCommand::class,
-            ]);
-
             $this->publishes([
                 __DIR__ . '/../config/shopper.php' => config_path('shopper.php'),
             ], 'shopper-config');
@@ -39,5 +33,16 @@ class ShopperServiceProvider extends ServiceProvider
                 __DIR__ . '/../database/migrations' => database_path('migrations'),
             ], 'shopper-migrations');
         }
+        
+        $this->loadViewsFrom(__DIR__.'/../resources/views', 'shopper');
+    }
+    
+    protected function bootRoutes(): void
+    {
+        Route::group([
+            'middleware' => ['web'],
+        ], function () {
+            $this->loadRoutesFrom(__DIR__.'/../routes/cp.php');
+        });
     }
 }

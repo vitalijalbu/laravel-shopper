@@ -1,8 +1,8 @@
 <?php
 
-namespace VitaliJalbu\LaravelShopper\Fieldtypes;
+namespace LaravelShopper\Fieldtypes;
 
-use VitaliJalbu\LaravelShopper\Fields\Field;
+use LaravelShopper\Fields\Field;
 
 abstract class Fieldtype
 {

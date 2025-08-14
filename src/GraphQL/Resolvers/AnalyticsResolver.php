@@ -1,8 +1,8 @@
 <?php
 
-namespace VitaliJalbu\LaravelShopper\GraphQL\Resolvers;
+namespace LaravelShopper\GraphQL\Resolvers;
 
-use VitaliJalbu\LaravelShopper\Models\AnalyticsEvent;
+use LaravelShopper\Models\AnalyticsEvent;
 use GraphQL\Type\Definition\ResolveInfo;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 use Carbon\Carbon;

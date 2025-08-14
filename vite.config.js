@@ -29,7 +29,7 @@ export default defineConfig({
             },
             output: {
                 manualChunks: {
-                    vendor: ['vue', 'vue-router', 'pinia'],
+                    vendor: ['vue', 'pinia', '@inertiajs/vue3'],
                     ui: ['@headlessui/vue', '@heroicons/vue', 'reka-ui']
                 }
             }
@@ -46,12 +46,12 @@ export default defineConfig({
     optimizeDeps: {
         include: [
             'vue',
-            'vue-router',
             'pinia',
             '@headlessui/vue',
             '@heroicons/vue',
             'axios',
-            'lodash-es'
+            'lodash-es',
+            '@inertiajs/vue3'
         ]
     }
 });

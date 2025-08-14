@@ -1,12 +1,12 @@
 <?php
 
-namespace VitaliJalbu\LaravelShopper\Http\Controllers\Admin;
+namespace LaravelShopper\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
-use VitaliJalbu\LaravelShopper\Models\MetaobjectDefinition;
-use VitaliJalbu\LaravelShopper\Models\Metaobject;
+use LaravelShopper\Models\MetaobjectDefinition;
+use LaravelShopper\Models\Metaobject;
 
 class MetaobjectController extends Controller
 {

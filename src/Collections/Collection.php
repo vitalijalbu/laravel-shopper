@@ -1,32 +1,32 @@
 <?php
 
-namespace VitaliJalbu\LaravelShopper\Collections;
+namespace LaravelShopper\Collections;
 
 use ArrayAccess;
 use Illuminate\Contracts\Support\Arrayable;
 use InvalidArgumentException;
 use Statamic\Contracts\Data\Augmentable as AugmentableContract;
-use VitaliJalbu\LaravelShopper\Contracts\Collections\Collection as Contract;
-use VitaliJalbu\LaravelShopper\Data\ContainsCascadingData;
-use VitaliJalbu\LaravelShopper\Data\ExistsAsFile;
-use VitaliJalbu\LaravelShopper\Data\HasAugmentedData;
-use VitaliJalbu\LaravelShopper\Events\Collections\CollectionCreated;
-use VitaliJalbu\LaravelShopper\Events\Collections\CollectionCreating;
-use VitaliJalbu\LaravelShopper\Events\Collections\CollectionDeleted;
-use VitaliJalbu\LaravelShopper\Events\Collections\CollectionDeleting;
-use VitaliJalbu\LaravelShopper\Events\Collections\CollectionSaved;
-use VitaliJalbu\LaravelShopper\Events\Collections\CollectionSaving;
-use VitaliJalbu\LaravelShopper\Facades\Blink;
-use VitaliJalbu\LaravelShopper\Facades\Blueprint;
-use VitaliJalbu\LaravelShopper\Facades\Entry;
-use VitaliJalbu\LaravelShopper\Facades\File;
-use VitaliJalbu\LaravelShopper\Facades\Site;
-use VitaliJalbu\LaravelShopper\Facades\Stache;
-use VitaliJalbu\LaravelShopper\Support\Arr;
-use VitaliJalbu\LaravelShopper\Support\Str;
-use VitaliJalbu\LaravelShopper\Support\Traits\FluentlyGetsAndSets;
+use LaravelShopper\Contracts\Collections\Collection as Contract;
+use LaravelShopper\Data\ContainsCascadingData;
+use LaravelShopper\Data\ExistsAsFile;
+use LaravelShopper\Data\HasAugmentedData;
+use LaravelShopper\Events\Collections\CollectionCreated;
+use LaravelShopper\Events\Collections\CollectionCreating;
+use LaravelShopper\Events\Collections\CollectionDeleted;
+use LaravelShopper\Events\Collections\CollectionDeleting;
+use LaravelShopper\Events\Collections\CollectionSaved;
+use LaravelShopper\Events\Collections\CollectionSaving;
+use LaravelShopper\Facades\Blink;
+use LaravelShopper\Facades\Blueprint;
+use LaravelShopper\Facades\Entry;
+use LaravelShopper\Facades\File;
+use LaravelShopper\Facades\Site;
+use LaravelShopper\Facades\Stache;
+use LaravelShopper\Support\Arr;
+use LaravelShopper\Support\Str;
+use LaravelShopper\Support\Traits\FluentlyGetsAndSets;
 
-use function VitaliJalbu\LaravelShopper\trans as __;
+use function LaravelShopper\trans as __;
 
 class Collection implements Arrayable, ArrayAccess, AugmentableContract, Contract
 {

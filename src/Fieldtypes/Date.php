@@ -1,6 +1,6 @@
 <?php
 
-namespace VitaliJalbu\LaravelShopper\Fieldtypes;
+namespace LaravelShopper\Fieldtypes;
 
 class Date extends Fieldtype
 {

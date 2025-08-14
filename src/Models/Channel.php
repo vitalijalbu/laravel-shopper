@@ -2,56 +2,44 @@
 
 declare(strict_types=1);
 
-namespace VitaliJalbu\LaravelShopper\Models;
+namespace LaravelShopper\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Channel extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'name',
         'slug',
+        'description',
         'url',
-        'default',
-        'enabled',
-        'created_at',
-        'updated_at',
+        'is_default',
+        'is_enabled',
+        'settings',
     ];
 
     protected $casts = [
-        'default' => 'boolean',
-        'enabled' => 'boolean',
+        'is_default' => 'boolean',
+        'is_enabled' => 'boolean',
+        'settings' => 'array',
     ];
-
-    public function __construct(array $attributes = [])
-    {
-        $this->table = shopper_table('channels');
-        parent::__construct($attributes);
-    }
 
     public function getRouteKeyName(): string
     {
         return 'slug';
     }
 
-    public function products(): HasMany
-    {
-        return $this->hasMany(Product::class);
-    }
-
-    public function orders(): HasMany
-    {
-        return $this->hasMany(Order::class);
-    }
-
     public function scopeEnabled($query)
     {
-        return $query->where('enabled', true);
+        return $query->where('is_enabled', true);
     }
 
     public function scopeDefault($query)
     {
-        return $query->where('default', true);
+        return $query->where('is_default', true);
     }
 }

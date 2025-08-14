@@ -1,6 +1,6 @@
 <?php
 
-namespace VitaliJalbu\LaravelShopper\CP;
+namespace LaravelShopper\CP;
 
 class Navigation
 {
