@@ -1,6 +1,7 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import router from './router'
+import { TranslationPlugin } from './Utils/translator'
 import './components/icons'
 
 // Import main layout component
@@ -17,6 +18,12 @@ app.use(createPinia())
 
 // Install Vue Router
 app.use(router)
+
+// Install Translation Plugin
+app.use(TranslationPlugin, {
+  translations: window.ShopperConfig?.translations || {},
+  locale: window.ShopperConfig?.locale || 'en'
+})
 
 // Global Properties
 app.config.globalProperties.$shopperConfig = window.ShopperConfig || {}
