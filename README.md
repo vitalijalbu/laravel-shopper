@@ -6,13 +6,15 @@ A complete e-commerce package for Laravel inspired by Shopify, built with Vue.js
 
 ## ✨ Features
 
-- **🏪 E-commerce Core**: Products, categories, brands, orders, customers
+- **🛪 E-commerce Core**: Products, categories, brands, orders, customers
+- **💝 Wishlists & Favorites**: Advanced wishlist system with public sharing + favorites for products/brands/categories
 - **📝 Content Management**: Collections and entries system like Statamic
-- **🎨 Modern Admin Interface**: Vue.js 3 + Inertia.js + Tailwind CSS v4
+- **🎨 Modern Admin Interface**: Vue.js 3.5 + Inertia.js 2.0 + Tailwind CSS v4
 - **📊 DataTable**: Advanced filtering, sorting, pagination, bulk operations
 - **📈 Import/Export**: CSV import/export with League CSV
 - **🌐 Multisite Support**: Multiple sites management
 - **🔒 Authentication**: Laravel Sanctum integration
+- **💰 Discount System**: Advanced coupon system (percentage, fixed, free shipping)
 - **🧪 Testing**: PestPHP test suite included
 
 ## 📋 Requirements
