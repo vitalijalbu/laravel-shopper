@@ -1,0 +1,78 @@
+{
+    "name": "vitalijalbu/laravel-shopper",
+    "description": "A complete e-commerce package for Laravel inspired by Shopify",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Vitali Jalbu",
+            "email": "vitalijalbu@example.com"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "illuminate/contracts": "^10.0|^11.0",
+        "spatie/laravel-permission": "^6.0",
+        "spatie/laravel-medialibrary": "^11.0",
+        "laravel/sanctum": "^4.0",
+        "inertiajs/inertia-laravel": "^1.0"
+    },
+    "require-dev": {
+        "laravel/pint": "^1.13",
+        "nunomaduro/collision": "^7.8|^8.0",
+        "orchestra/testbench": "^8.8|^9.0",
+        "pestphp/pest": "^2.20",
+        "pestphp/pest-plugin-arch": "^2.5",
+        "pestphp/pest-plugin-laravel": "^2.2",
+        "phpstan/extension-installer": "^1.3",
+        "phpstan/phpstan-deprecation-rules": "^1.1",
+        "phpstan/phpstan-phpunit": "^1.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "VitaliJalbu\\LaravelShopper\\": "src/",
+            "VitaliJalbu\\LaravelShopper\\Core\\": "packages/core/src/",
+            "VitaliJalbu\\LaravelShopper\\Admin\\": "packages/admin/src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "VitaliJalbu\\LaravelShopper\\Tests\\": "tests/",
+            "Workbench\\App\\": "workbench/app/"
+        }
+    },
+    "scripts": {
+        "post-autoload-dump": "@composer run prepare",
+        "clear": "@php vendor/bin/testbench package:purge-skeleton --ansi",
+        "prepare": "@php vendor/bin/testbench package:discover --ansi",
+        "build": [
+            "@composer run prepare",
+            "@php vendor/bin/testbench workbench:build --ansi"
+        ],
+        "start": [
+            "Composer\\Config::disableProcessTimeout",
+            "@composer run build",
+            "@php vendor/bin/testbench serve"
+        ],
+        "analyse": "vendor/bin/phpstan analyse",
+        "test": "vendor/bin/pest",
+        "test-coverage": "vendor/bin/pest --coverage",
+        "format": "vendor/bin/pint"
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true,
+            "phpstan/extension-installer": true
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "VitaliJalbu\\LaravelShopper\\ShopperServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
