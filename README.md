@@ -8,6 +8,113 @@
 
 A complete e-commerce platform for Laravel, inspired by **Shopify** and **Statamic CMS**, combining the best of both worlds with modern Laravel architecture.
 
+## Features
+
+- **Multilingual System**: Full support for Italian and English with easy extension to other languages
+- **App Marketplace**: Shopify-style app ecosystem with installable extensions  
+- **OAuth Authentication**: Complete social login system with 8+ providers (Google, Facebook, GitHub, etc.)
+- **Modern Stack**: Laravel 11, Inertia.js, Vue.js, Tailwind CSS
+- **Permissions**: Role-based access control with Spatie Laravel Permission
+- **Media Management**: File uploads and media library with Spatie Laravel Medialibrary
+- **API Ready**: RESTful APIs with Laravel Sanctum authentication
+
+## OAuth Providers Supported
+
+- Google
+- Facebook  
+- Twitter
+- GitHub
+- LinkedIn
+- Apple
+- Discord
+- Microsoft
+
+## Quick Installation
+
+```bash
+composer require vitalijalbu/laravel-shopper
+php artisan shopper:install --oauth
+```
+
+## Manual Installation
+
+1. Install the package:
+```bash
+composer require vitalijalbu/laravel-shopper
+```
+
+2. Publish and run migrations:
+```bash
+php artisan vendor:publish --provider="LaravelShopper\ShopperServiceProvider" --tag="shopper-migrations"
+php artisan migrate
+```
+
+3. Publish OAuth components (optional):
+```bash
+php artisan vendor:publish --provider="LaravelShopper\ShopperServiceProvider" --tag="shopper-oauth-config"
+php artisan vendor:publish --provider="LaravelShopper\ShopperServiceProvider" --tag="shopper-components"
+```
+
+## OAuth Configuration
+
+Add OAuth provider credentials to your `.env` file:
+
+```env
+# Google OAuth
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+
+# Facebook OAuth  
+FACEBOOK_CLIENT_ID=your_facebook_client_id
+FACEBOOK_CLIENT_SECRET=your_facebook_client_secret
+
+# GitHub OAuth
+GITHUB_CLIENT_ID=your_github_client_id
+GITHUB_CLIENT_SECRET=your_github_client_secret
+
+# ... other providers
+```
+
+## Usage Example
+
+```vue
+<template>
+  <div>
+    <SocialAuthComponent 
+      :auth-mode="'login'"
+      :show-divider="true"
+      @success="handleSuccess"
+      @error="handleError"
+    />
+  </div>
+</template>
+
+<script setup>
+import SocialAuthComponent from '@/Components/Shopper/Auth/SocialAuthComponent.vue'
+
+const handleSuccess = (data) => {
+  console.log('Authentication successful:', data)
+}
+
+const handleError = (error) => {
+  console.error('Authentication failed:', error)
+}
+</script>
+```
+
+## Documentation
+
+- [OAuth Setup Guide](OAUTH_SETUP.md) - Complete OAuth authentication setup
+- [Multilingual System](MULTILINGUAL_SYSTEM.md) - Language system documentation  
+- [Implementation Summary](IMPLEMENTATION_SUMMARY.md) - Technical implementation details
+
+## Requirements
+
+- PHP 8.3 or higher
+- Laravel 11.0 or higher
+- MySQL 8.0 or MariaDB 10.3
+- Node.js 18.0 or higher
+
 ## 🚀 Features
 
 ### 🏪 E-commerce Core

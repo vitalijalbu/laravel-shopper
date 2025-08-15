@@ -28,6 +28,46 @@ return [
     |--------------------------------------------------------------------------
     */
     'admin' => [
+        'route_prefix' => 'admin',
+        'middleware' => ['web', 'auth', 'verified'],
+        'auth_required' => true,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Control Panel Settings
+    |--------------------------------------------------------------------------
+    */
+    'cp' => [
+        'name' => env('SHOPPER_CP_NAME', 'Control Panel'),
+        'route_prefix' => env('SHOPPER_CP_PREFIX', 'cp'),
+        'url' => env('SHOPPER_CP_URL', '/cp'),
+
+        'branding' => [
+            'logo' => env('SHOPPER_CP_LOGO'),
+            'logo_dark' => env('SHOPPER_CP_LOGO_DARK'),
+            'favicon' => env('SHOPPER_CP_FAVICON'),
+        ],
+
+        'pagination' => [
+            'per_page' => 25,
+        ],
+
+        'date_format' => 'Y-m-d H:i:s',
+        'timezone' => env('APP_TIMEZONE', 'UTC'),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Locales
+    |--------------------------------------------------------------------------
+    */
+    'locales' => [
+        'it' => 'Italiano',
+        'en' => 'English',
+    ],
+
+    'default_locale' => 'it',
         'enabled' => env('SHOPPER_ADMIN_ENABLED', true),
         'route_prefix' => env('SHOPPER_ADMIN_ROUTE_PREFIX', 'admin'),
         'middleware' => ['web', 'auth:sanctum'],

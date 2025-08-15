@@ -1,26 +1,58 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Shopper\Http\Controllers\Cp\CollectionsController;
-use Shopper\Http\Controllers\Cp\EntriesController;
-use Shopper\Http\Controllers\Cp\DashboardController;
+use LaravelShopper\Http\Controllers\Cp\Auth\AuthenticatedSessionController;
+use LaravelShopper\Http\Controllers\Cp\Auth\NewPasswordController;
+use LaravelShopper\Http\Controllers\Cp\Auth\PasswordResetLinkController;
+use LaravelShopper\Http\Controllers\Cp\DashboardController;
+use LaravelShopper\Http\Controllers\Cp\CollectionsController;
+use LaravelShopper\Http\Controllers\Cp\EntriesController;
 
 /*
 |--------------------------------------------------------------------------
-| Shopper Control Panel Routes
+| Control Panel Routes
 |--------------------------------------------------------------------------
 |
-| Here are the routes for the Shopper control panel. These routes mirror
-| the Statamic CMS structure with both admin interface and API endpoints.
+| These routes handle the Shopper Control Panel interface, similar to 
+| Statamic CMS. All routes are prefixed with the CP route prefix.
 |
 */
 
-// Control Panel Admin Interface Routes (Inertia.js)
-Route::prefix('cp')->name('shopper.cp.')->middleware(['web', 'auth'])->group(function () {
+// CP prefix from config (default: 'cp')
+$cpPrefix = config('shopper.cp.route_prefix', 'cp');
+
+Route::prefix($cpPrefix)->name('shopper.cp.')->middleware(['web', 'shopper.inertia'])->group(function () {
     
-    // Dashboard
-    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
+    // Authentication Routes (Guest only)
+    Route::middleware('guest')->group(function () {
+        Route::get('login', [AuthenticatedSessionController::class, 'create'])
+            ->name('login');
+        
+        Route::post('login', [AuthenticatedSessionController::class, 'store']);
+        
+        Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])
+            ->name('password.request');
+        
+        Route::post('forgot-password', [PasswordResetLinkController::class, 'store'])
+            ->name('password.email');
+        
+        Route::get('reset-password/{token}', [NewPasswordController::class, 'create'])
+            ->name('password.reset');
+        
+        Route::post('reset-password', [NewPasswordController::class, 'store'])
+            ->name('password.store');
+    });
+
+    // Authenticated Routes (CP access required)
+    Route::middleware(['auth', 'cp'])->group(function () {
+        Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
+            ->name('logout');
+        
+        Route::get('/', [DashboardController::class, 'index'])
+            ->name('dashboard');
+        
+        Route::get('dashboard', [DashboardController::class, 'index'])
+            ->name('dashboard.index');
     
     // Collections Management
     Route::get('/collections', [CollectionsController::class, 'index'])->name('collections.index');
@@ -48,6 +80,23 @@ Route::prefix('cp')->name('shopper.cp.')->middleware(['web', 'auth'])->group(fun
     Route::get('/utilities/export', function () {
         return inertia('Utilities/Export');  
     })->name('utilities.export');
+    
+    // Apps Management
+    Route::prefix('apps')->name('apps.')->group(function () {
+        Route::get('/', [AppsController::class, 'store'])->name('store');
+        Route::get('/installed', [AppsController::class, 'installed'])->name('installed');
+        Route::get('/submit', [AppsController::class, 'submit'])->name('submit');
+        Route::get('/{app}/configure', [AppsController::class, 'configure'])->name('configure');
+        Route::post('/install', [AppsController::class, 'install'])->name('install');
+        Route::delete('/{app}/uninstall', [AppsController::class, 'uninstall'])->name('uninstall');
+        Route::post('/{installation}/activate', [AppsController::class, 'activate'])->name('activate');
+        Route::post('/{installation}/deactivate', [AppsController::class, 'deactivate'])->name('deactivate');
+        Route::post('/bulk-activate', [AppsController::class, 'bulkActivate'])->name('bulk-activate');
+        Route::post('/bulk-deactivate', [AppsController::class, 'bulkDeactivate'])->name('bulk-deactivate');
+        Route::delete('/bulk-uninstall', [AppsController::class, 'bulkUninstall'])->name('bulk-uninstall');
+        Route::get('/{installation}/analytics', [AppsController::class, 'analytics'])->name('analytics');
+        Route::post('/{app}/reviews', [AppsController::class, 'storeReview'])->name('reviews.store');
+    });
 });
 
 // Control Panel API Routes
