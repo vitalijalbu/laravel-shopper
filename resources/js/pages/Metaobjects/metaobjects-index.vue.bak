@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { Head, router, useForm } from '@inertiajs/vue3'
-import { Card, CardHeader, CardTitle, CardContent } from '@reka-ui/core'
+import Card from '../../Components/ui/Card.vue'
+import CardHeader from '../../Components/ui/CardHeader.vue'
+import CardTitle from '../../Components/ui/CardTitle.vue'
+import CardContent from '../../Components/ui/CardContent.vue'
 import AdminLayout from '@/layouts/admin-layout.vue'
 import MetaobjectDefinitionForm from '@/components/metaobjects/metaobject-definition-form.vue'
 import MetaobjectInstanceForm from '@/components/metaobjects/metaobject-instance-form.vue'

@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { Head, router } from '@inertiajs/vue3'
-import { Card, CardHeader, CardTitle, CardContent } from '@reka-ui/core'
-import AdminLayout from '@/layouts/admin-layout.vue'
-import SearchInput from '@/components/ui/search-input.vue'
-import FilterDropdown from '@/components/ui/filter-dropdown.vue'
-import DataTable from '@/components/ui/data-table.vue'
-import { formatDate } from '@/utils/formatters'
+import Card from '../../Components/ui/Card.vue'
+import CardHeader from '../../Components/ui/CardHeader.vue'
+import CardTitle from '../../Components/ui/CardTitle.vue'
+import CardContent from '../../Components/ui/CardContent.vue'
+import { formatDate } from '../../utils/formatters'
 
 interface AnalyticsEvent {
   id: number

@@ -119,8 +119,6 @@
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { GridIcon, ListIcon, PhotoIcon } from '@heroicons/vue/24/outline'
-import MediaItemCard from './media-item-card.vue'
-import MediaItemRow from './media-item-row.vue'
 
 interface MediaItem {
   id: number

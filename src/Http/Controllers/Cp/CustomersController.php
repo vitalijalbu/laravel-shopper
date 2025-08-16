@@ -4,9 +4,9 @@ namespace LaravelShopper\Http\Controllers\Cp;
 
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use LaravelShopper\Data\CustomerDto;
 use LaravelShopper\CP\Navigation;
 use LaravelShopper\CP\Page;
+use LaravelShopper\Data\CustomerDto;
 use LaravelShopper\Http\Controllers\Controller;
 use LaravelShopper\Models\Customer;
 
@@ -79,10 +79,10 @@ class CustomersController extends Controller
 
         // Create DTO from validated data
         $customerDto = CustomerDto::from($validated);
-        
+
         // Additional DTO validation
         $dtoErrors = $customerDto->validate();
-        if (!empty($dtoErrors)) {
+        if (! empty($dtoErrors)) {
             return response()->json(['errors' => $dtoErrors], 422);
         }
 
@@ -91,22 +91,21 @@ class CustomersController extends Controller
 
         // Handle different save actions
         $action = $request->input('_action', 'save');
-        
+
         return match ($action) {
             'save_continue' => response()->json([
                 'message' => 'Customer created successfully',
-                'redirect' => "/cp/customers/{$customer->id}/edit"
+                'redirect' => "/cp/customers/{$customer->id}/edit",
             ]),
             'save_add_another' => response()->json([
                 'message' => 'Customer created successfully',
-                'redirect' => '/cp/customers/create'
+                'redirect' => '/cp/customers/create',
             ]),
             default => response()->json([
                 'message' => 'Customer created successfully',
-                'redirect' => '/cp/customers'
+                'redirect' => '/cp/customers',
             ])
         };
-    }
     }
 
     /**
@@ -115,11 +114,11 @@ class CustomersController extends Controller
     public function show(Customer $customer)
     {
         $customer->load([
-            'groups', 
-            'addresses', 
+            'groups',
+            'addresses',
             'orders' => function ($query) {
                 $query->latest()->limit(5);
-            }
+            },
         ]);
 
         $page = Page::make($customer->getDisplayName())
@@ -130,7 +129,7 @@ class CustomersController extends Controller
             ->secondaryActions([
                 ['label' => 'Send email', 'action' => 'send_email'],
                 ['label' => 'Create order', 'url' => "/cp/orders/create?customer_id={$customer->id}"],
-                ['label' => 'Disable', 'action' => 'disable', 'disabled' => !$customer->is_enabled],
+                ['label' => 'Disable', 'action' => 'disable', 'disabled' => ! $customer->is_enabled],
                 ['label' => 'Enable', 'action' => 'enable', 'disabled' => $customer->is_enabled],
                 ['label' => 'Delete', 'action' => 'delete', 'destructive' => true],
             ]);
@@ -194,12 +193,12 @@ class CustomersController extends Controller
         if (empty($validated['password'])) {
             unset($validated['password']);
         }
-        
+
         $customerDto = CustomerDto::from($validated);
-        
+
         // Additional DTO validation
         $dtoErrors = $customerDto->validate();
-        if (!empty($dtoErrors)) {
+        if (! empty($dtoErrors)) {
             return response()->json(['errors' => $dtoErrors], 422);
         }
 
@@ -220,12 +219,12 @@ class CustomersController extends Controller
         // Check if customer has orders
         if ($customer->orders()->exists()) {
             return response()->json([
-                'error' => 'Cannot delete customer with orders'
+                'error' => 'Cannot delete customer with orders',
             ], 422);
         }
 
         $customer->delete();
-        
+
         return response()->json([
             'message' => 'Customer deleted successfully',
         ]);
@@ -238,13 +237,13 @@ class CustomersController extends Controller
     {
         $action = $request->input('action');
         $ids = $request->input('ids', []);
-        
+
         if (empty($ids)) {
             return response()->json(['error' => 'No customers selected'], 422);
         }
 
         $customers = Customer::whereIn('id', $ids);
-        
+
         return match ($action) {
             'enable' => $this->bulkEnable($customers),
             'disable' => $this->bulkDisable($customers),
@@ -261,6 +260,7 @@ class CustomersController extends Controller
     protected function bulkEnable($customers)
     {
         $count = $customers->update(['is_enabled' => true]);
+
         return response()->json(['message' => "Enabled {$count} customers"]);
     }
 
@@ -270,6 +270,7 @@ class CustomersController extends Controller
     protected function bulkDisable($customers)
     {
         $count = $customers->update(['is_enabled' => false]);
+
         return response()->json(['message' => "Disabled {$count} customers"]);
     }
 
@@ -284,6 +285,7 @@ class CustomersController extends Controller
         $customers->get()->each(function ($customer) use (&$count, &$errors) {
             if ($customer->orders()->exists()) {
                 $errors[] = "Cannot delete '{$customer->getDisplayName()}' - has orders";
+
                 return;
             }
 
@@ -291,10 +293,10 @@ class CustomersController extends Controller
             $count++;
         });
 
-        if (!empty($errors)) {
+        if (! empty($errors)) {
             return response()->json([
                 'message' => "Deleted {$count} customers",
-                'errors' => $errors
+                'errors' => $errors,
             ], 207); // 207 Multi-Status
         }
 
@@ -307,9 +309,10 @@ class CustomersController extends Controller
     protected function bulkExport($customers)
     {
         $count = $customers->count();
+
         return response()->json([
             'message' => "Exporting {$count} customers",
-            'download_url' => '/cp/customers/export/download/' . uniqid(),
+            'download_url' => '/cp/customers/export/download/'.uniqid(),
         ]);
     }
 
@@ -319,9 +322,9 @@ class CustomersController extends Controller
     protected function bulkSendEmail($customers)
     {
         $count = $customers->count();
-        
+
         // This would queue email jobs in real implementation
-        
+
         return response()->json([
             'message' => "Email will be sent to {$count} customers",
         ]);

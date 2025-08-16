@@ -70,14 +70,7 @@ import { router } from '@inertiajs/vue3'
 import { useI18n } from 'vue-i18n'
 import { useConfirm } from '@/composables/use-confirm'
 import { useNotification } from '@/composables/use-notification'
-import AdminLayout from '@/layouts/admin-layout.vue'
 import MediaGrid from './components/media-grid.vue'
-import MediaFilters from './components/media-filters.vue'
-import UploadMediaButton from './components/upload-media-button.vue'
-import BulkActionsMenu from './components/bulk-actions-menu.vue'
-import EditMediaModal from './components/edit-media-modal.vue'
-import MediaViewerModal from './components/media-viewer-modal.vue'
-import Pagination from '@/components/pagination.vue'
 
 interface MediaItem {
   id: number

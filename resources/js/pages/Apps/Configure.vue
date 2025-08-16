@@ -398,7 +398,7 @@ import {
     DocumentArrowUpIcon,
     ArrowPathIcon
 } from '@heroicons/vue/24/outline'
-import WebhookModal from '../Components/Apps/WebhookModal.vue'
+import WebhookModal from '../../Components/Apps/WebhookModal.vue'
 
 const { t: $t } = useI18n()
 

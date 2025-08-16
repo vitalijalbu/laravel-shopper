@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import { Head, router } from '@inertiajs/vue3'
-import { Card, CardHeader, CardTitle, CardContent } from '@reka-ui/core'
+import Card from '../../Components/ui/Card.vue'
+import CardHeader from '../../Components/ui/CardHeader.vue'
+import CardTitle from '../../Components/ui/CardTitle.vue'
+import CardContent from '../../Components/ui/CardContent.vue'
 import { Line, Bar, Doughnut } from 'vue-chartjs'
-import AdminLayout from '@/layouts/admin-layout.vue'
-import DateRangePicker from '@/components/ui/date-range-picker.vue'
-import { formatCurrency, formatNumber, formatPercentage } from '@/utils/formatters'
+import { formatCurrency, formatNumber, formatPercentage } from '../../utils/formatters'
 
 interface ReportData {
   summary?: {

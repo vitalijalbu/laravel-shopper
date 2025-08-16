@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { Head, usePage } from '@inertiajs/vue3'
-import { Card, CardHeader, CardTitle, CardContent } from '@reka-ui/core'
+import Card from '../../Components/ui/Card.vue'
+import CardHeader from '../../Components/ui/CardHeader.vue'
+import CardTitle from '../../Components/ui/CardTitle.vue'
+import CardContent from '../../Components/ui/CardContent.vue'
 import { Line, Bar, Doughnut } from 'vue-chartjs'
 import {
   Chart as ChartJS,
@@ -15,9 +18,7 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js'
-import AdminLayout from '@/layouts/admin-layout.vue'
-import DateRangePicker from '@/components/ui/date-range-picker.vue'
-import { formatCurrency, formatNumber } from '@/utils/formatters'
+import { formatCurrency, formatNumber } from '../../utils/formatters'
 
 // Register Chart.js components
 ChartJS.register(

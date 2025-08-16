@@ -46,7 +46,7 @@
                         :placeholder="$t('apps.store.search_placeholder')"
                         class="input"
                     />
-                    <SearchIcon class="search-icon" />
+                    <MagnifyingGlassIcon class="search-icon" />
                 </div>
             </div>
         </div>
@@ -133,7 +133,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { Link, router } from '@inertiajs/vue3'
 import { useI18n } from 'vue-i18n'
-import { SearchIcon, CubeIcon } from '@heroicons/vue/24/outline'
+import { MagnifyingGlassIcon, CubeIcon } from '@heroicons/vue/24/outline'
 import InstalledAppCard from './InstalledAppCard.vue'
 import AppAnalyticsModal from './AppAnalyticsModal.vue'
 

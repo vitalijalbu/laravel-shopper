@@ -44,6 +44,7 @@ class ShopperServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->bootRoutes();
+        $this->configureAuthentication();
 
         // Load migrations
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
@@ -98,14 +99,34 @@ class ShopperServiceProvider extends ServiceProvider
                 \LaravelShopper\Console\Commands\InstallShopperCommand::class,
                 OptimizeCommand::class,
             ]);
-
-            // Register middleware aliases
-            $router = $this->app['router'];
-            $router->aliasMiddleware('cp', \LaravelShopper\Http\Middleware\ControlPanelMiddleware::class);
-            $router->aliasMiddleware('shopper.inertia', \LaravelShopper\Http\Middleware\HandleInertiaRequests::class);
         }
 
+        // Register middleware aliases (always, not just in console)
+        $router = $this->app['router'];
+        $router->aliasMiddleware('cp', \LaravelShopper\Http\Middleware\ControlPanelMiddleware::class);
+        $router->aliasMiddleware('shopper.inertia', \LaravelShopper\Http\Middleware\HandleInertiaRequests::class);
+        $router->aliasMiddleware('shopper.auth', \LaravelShopper\Http\Middleware\Authenticate::class);
+
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'shopper');
+    }
+
+    protected function configureAuthentication(): void
+    {
+        // Configure the default login route for redirects
+        config(['auth.defaults.login_route' => 'cp.login']);
+
+        // Configure Inertia root view
+        if (class_exists(\Inertia\Inertia::class)) {
+            \Inertia\Inertia::setRootView('shopper::app');
+        }
+
+        // Set the login path for unauthenticated redirects
+        if (method_exists($this->app['auth'], 'setDefaultDriver')) {
+            $this->app['auth']->viaRequest('api', function ($request) {
+                // Custom auth logic if needed
+                return null;
+            });
+        }
     }
 
     protected function bootRoutes(): void

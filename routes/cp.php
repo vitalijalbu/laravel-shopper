@@ -46,7 +46,7 @@ Route::prefix($cpPrefix)->name('cp.')->middleware(['web', 'shopper.inertia'])->g
     });
 
     // Authenticated Routes (CP access required)
-    Route::middleware(['auth', 'cp'])->group(function () {
+    Route::middleware(['shopper.auth', 'cp'])->group(function () {
         Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
             ->name('logout');
 
@@ -103,7 +103,7 @@ Route::prefix($cpPrefix)->name('cp.')->middleware(['web', 'shopper.inertia'])->g
 });
 
 // Control Panel API Routes
-Route::prefix('cp/api')->name('cp.api.')->middleware(['web', 'auth:sanctum'])->group(function () {
+Route::prefix('cp/api')->name('cp.api.')->middleware(['web', 'shopper.auth'])->group(function () {
 
     // Dashboard API
     Route::get('/dashboard/stats', [DashboardController::class, 'stats'])->name('dashboard.stats');

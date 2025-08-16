@@ -113,9 +113,7 @@ import { route } from 'ziggy-js'
 import { useShopperStore } from '../stores/shopper'
 import Page from '../components/page.vue'
 import CollectionCard from '../components/collection-card.vue'
-import CollectionForm from '../components/collection-form.vue'
 import Modal from '../components/modal.vue'
-import ConfirmModal from '../components/confirm-modal.vue'
 
 const shopperStore = useShopperStore()
 
