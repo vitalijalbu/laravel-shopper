@@ -5,6 +5,8 @@ namespace LaravelShopper;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use LaravelShopper\Console\Commands\OptimizeCommand;
+use LaravelShopper\Console\Commands\ShowAdminUsersCommand;
+use LaravelShopper\Console\Commands\TestLoginCommand;
 use LaravelShopper\Console\CreateAdminUserCommand;
 use LaravelShopper\Contracts\ProductRepositoryInterface;
 use LaravelShopper\Providers\InertiaServiceProvider;
@@ -109,7 +111,8 @@ class ShopperServiceProvider extends ServiceProvider
             // Register commands
             $this->commands([
                 \LaravelShopper\Console\Commands\InstallShopperCommand::class,
-                \LaravelShopper\Console\Commands\ShowAdminUsersCommand::class,
+                ShowAdminUsersCommand::class,
+                TestLoginCommand::class,
                 OptimizeCommand::class,
             ]);
         }

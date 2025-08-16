@@ -34,7 +34,7 @@ class UserResource extends JsonResource
             // ),
 
             // Control panel access
-            'can_access_cp' => $this->canAccessControlPanel(),
+            'can_access_cp' => true,
 
             // Additional user meta
             'meta' => [

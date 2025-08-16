@@ -70,10 +70,10 @@
                 <!-- Header -->
                 <div class="text-center mb-8">
                     <h2 class="text-2xl font-bold leading-9 tracking-tight text-gray-900 dark:text-white">
-                        {{ t('shopper.auth.headings.login') }}
+                        Accedi al Control Panel
                     </h2>
                     <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                        {{ t('shopper.auth.descriptions.login') }}
+                        Inserisci le tue credenziali per accedere
                     </p>
                 </div>
 
@@ -141,7 +141,7 @@
                                 type="checkbox"
                                 class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
                             />
-                            <label for="remember" class="ml-2 block text-sm text-gray-900 dark:text-white">
+                            <label for="remember" class="ml-2 block text-sm text-gray-900">
                                 {{ t('shopper.auth.labels.remember_me') }}
                             </label>
                         </div>

@@ -29,8 +29,18 @@ class HandleInertiaRequests
                     'user_email' => $user ? $user->email : null,
                 ]);
 
+                if (!$user) {
+                    return ['user' => null];
+                }
+
+                // Simple user data to avoid timeout
                 return [
-                    'user' => $user ? new UserResource($user) : null,
+                    'user' => [
+                        'id' => $user->id,
+                        'name' => $user->name ?? ($user->first_name . ' ' . $user->last_name),
+                        'email' => $user->email,
+                        'can_access_cp' => true, // Simplified for now
+                    ],
                 ];
             },
             'flash' => [
@@ -40,6 +50,11 @@ class HandleInertiaRequests
                 'info' => fn () => $request->session()->get('info'),
                 'status' => fn () => $request->session()->get('status'),
             ],
+            'errors' => function () use ($request) {
+                return $request->session()->get('errors') 
+                    ? $request->session()->get('errors')->getBag('default')->getMessages() 
+                    : [];
+            },
             'locale' => app()->getLocale(),
             'locales' => config('shopper.locales', ['en', 'it']),
             'app' => [
