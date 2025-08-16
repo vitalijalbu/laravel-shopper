@@ -15,7 +15,10 @@ class InstallShopperCommand extends Command
     protected $signature = 'shopper:install 
                           {--oauth : Install OAuth authentication system}
                           {--force : Overwrite existing files}
-                          {--seed : Run database seeders}';
+                          {--seed : Run database seeders and create sample data}
+                          {--admin : Create admin user after installation}
+                          {--skip-migrations : Skip running migrations}
+                          {--skip-assets : Skip publishing assets}';
 
     /**
      * The console command description.
@@ -30,29 +33,42 @@ class InstallShopperCommand extends Command
     public function handle(): int
     {
         $this->info('🛍️  Installing Laravel Shopper...');
+        $this->newLine();
 
         // Check Laravel version
         if (! $this->checkLaravelVersion()) {
             return 1;
         }
 
-        // Publish configuration
+        // Publish configuration files
         $this->publishConfiguration();
+
+        // Publish permissions configuration
+        $this->publishPermissionsConfiguration();
 
         // Publish OAuth system if requested
         if ($this->option('oauth')) {
             $this->publishOAuthSystem();
         }
 
-        // Run migrations
-        $this->runMigrations();
+        // Run migrations unless skipped
+        if (! $this->option('skip-migrations')) {
+            $this->runMigrations();
+        }
 
-        // Publish assets
-        $this->publishAssets();
+        // Publish assets unless skipped
+        if (! $this->option('skip-assets')) {
+            $this->publishAssets();
+        }
 
         // Run seeders if requested
         if ($this->option('seed')) {
             $this->runSeeders();
+        }
+
+        // Create admin user if requested
+        if ($this->option('admin')) {
+            $this->createAdminUser();
         }
 
         // Display completion message
@@ -96,6 +112,24 @@ class InstallShopperCommand extends Command
         Artisan::call('vendor:publish', array_merge($params, ['--tag' => 'shopper-config']));
 
         $this->info('✅ Configuration published successfully.');
+    }
+
+    /**
+     * Publish permissions configuration.
+     */
+    protected function publishPermissionsConfiguration(): void
+    {
+        $this->info('🔑 Publishing permissions configuration...');
+
+        $params = ['--provider' => 'LaravelShopper\ShopperServiceProvider'];
+
+        if ($this->option('force')) {
+            $params['--force'] = true;
+        }
+
+        Artisan::call('vendor:publish', array_merge($params, ['--tag' => 'shopper-permission-config']));
+
+        $this->info('✅ Permissions configuration published successfully.');
     }
 
     /**
@@ -167,11 +201,49 @@ class InstallShopperCommand extends Command
     {
         $this->info('🌱 Running database seeders...');
 
-        if (class_exists('LaravelShopper\Database\Seeders\ShopperSeeder')) {
-            Artisan::call('db:seed', ['--class' => 'LaravelShopper\Database\Seeders\ShopperSeeder']);
-            $this->info('✅ Seeders completed successfully.');
-        } else {
-            $this->warn('⚠️  No seeders found.');
+        try {
+            // First, ensure migrations are run
+            if (! $this->option('skip-migrations')) {
+                $this->info('   Ensuring migrations are up to date...');
+                Artisan::call('migrate', ['--force' => true]);
+            }
+
+            // Run the Shopper seeder
+            $this->info('   Seeding roles, permissions, and sample data...');
+
+            $exitCode = Artisan::call('db:seed', [
+                '--class' => 'LaravelShopper\\Database\\Seeders\\ShopperSeeder',
+                '--force' => true,
+            ]);
+
+            if ($exitCode === 0) {
+                $this->info('✅ Seeders completed successfully.');
+                $this->line('   ✓ Roles and permissions created');
+                $this->line('   ✓ Sample admin user created (admin@admin.com / password)');
+                $this->line('   ✓ Basic store data seeded');
+            } else {
+                throw new \Exception('Seeder returned non-zero exit code: '.$exitCode);
+            }
+
+        } catch (\Exception $e) {
+            $this->warn('⚠️  Seeder failed: '.$e->getMessage());
+            $this->line('   You can run seeders manually: php artisan db:seed --class=LaravelShopper\\Database\\Seeders\\ShopperSeeder');
+        }
+    }
+
+    /**
+     * Create admin user.
+     */
+    protected function createAdminUser(): void
+    {
+        $this->info('👤 Creating admin user...');
+
+        try {
+            Artisan::call('shopper:admin');
+            $this->info('✅ Admin user creation process completed.');
+        } catch (\Exception $e) {
+            $this->warn('⚠️  Admin user creation failed: '.$e->getMessage());
+            $this->line('   You can create an admin user manually: php artisan shopper:admin');
         }
     }
 
@@ -210,24 +282,52 @@ class InstallShopperCommand extends Command
         $this->info('🎉 Laravel Shopper installation completed successfully!');
         $this->line('');
 
+        // Show what was installed
+        $this->line('✅ Configuration published');
+        $this->line('✅ Permissions system configured');
+
         if ($this->option('oauth')) {
             $this->line('✅ OAuth authentication system installed');
         }
 
-        $this->line('✅ Configuration published');
-        $this->line('✅ Assets published');
-        $this->line('✅ Database migrations ready');
-        $this->line('');
-        $this->info('🚀 Next steps:');
-        $this->line('1. Configure your environment variables');
-
-        if ($this->option('oauth')) {
-            $this->line('2. Set up OAuth provider credentials');
-            $this->line('3. Configure OAuth callback URLs');
+        if (! $this->option('skip-assets')) {
+            $this->line('✅ Assets published');
         }
 
-        $this->line('4. Start building your e-commerce application!');
+        if (! $this->option('skip-migrations')) {
+            $this->line('✅ Database migrations completed');
+        }
+
+        if ($this->option('seed')) {
+            $this->line('✅ Sample data seeded');
+            $this->line('✅ Roles and permissions created');
+        }
+
+        if ($this->option('admin')) {
+            $this->line('✅ Admin user created');
+        }
+
         $this->line('');
-        $this->line('📖 Documentation: https://github.com/vitalijalbu/laravel-shopper');
+        $this->info('🚀 Next steps:');
+
+        if (! $this->option('skip-migrations') && ! $this->option('seed')) {
+            $this->line('1. Run migrations: php artisan migrate');
+            $this->line('2. Seed data: php artisan db:seed --class=LaravelShopper\\Database\\Seeders\\ShopperSeeder');
+        }
+
+        if (! $this->option('admin') && $this->option('seed')) {
+            $this->line('• Login with default admin: admin@admin.com / password');
+        } elseif (! $this->option('admin')) {
+            $this->line('• Create admin user: php artisan shopper:admin');
+        }
+
+        if ($this->option('oauth')) {
+            $this->line('• Configure OAuth provider credentials in .env');
+        }
+
+        $this->line('• Access Control Panel at: /cp');
+        $this->line('');
+        $this->info('📖 Documentation: https://github.com/vitalijalbu/laravel-shopper');
+        $this->newLine();
     }
 }

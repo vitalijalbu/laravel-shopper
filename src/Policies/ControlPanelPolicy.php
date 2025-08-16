@@ -3,7 +3,8 @@
 namespace LaravelShopper\Policies;
 
 use Illuminate\Auth\Access\HandlesAuthorization;
-use LaravelShopper\Models\User;
+use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Support\Facades\Gate;
 
 class ControlPanelPolicy
 {
@@ -12,64 +13,80 @@ class ControlPanelPolicy
     /**
      * Determine whether the user can access the control panel.
      */
-    public function access(User $user): bool
+    public function access(Authenticatable $user): bool
     {
-        return $user->can('access-cp');
+        return $this->userCan($user, 'access-cp');
     }
 
     /**
      * Determine whether the user can view the dashboard.
      */
-    public function viewDashboard(User $user): bool
+    public function viewDashboard(Authenticatable $user): bool
     {
-        return $user->can('view-dashboard');
+        return $this->userCan($user, 'view-dashboard');
     }
 
     /**
      * Determine whether the user can view analytics.
      */
-    public function viewAnalytics(User $user): bool
+    public function viewAnalytics(Authenticatable $user): bool
     {
-        return $user->can('view-analytics');
+        return $this->userCan($user, 'view-analytics');
     }
 
     /**
      * Determine whether the user can view reports.
      */
-    public function viewReports(User $user): bool
+    public function viewReports(Authenticatable $user): bool
     {
-        return $user->can('view-reports');
+        return $this->userCan($user, 'view-reports');
     }
 
     /**
      * Determine whether the user can manage settings.
      */
-    public function manageSettings(User $user): bool
+    public function manageSettings(Authenticatable $user): bool
     {
-        return $user->can('view-settings') || $user->can('edit-settings');
+        return $this->userCan($user, 'view-settings') || $this->userCan($user, 'edit-settings');
     }
 
     /**
      * Determine whether the user can edit settings.
      */
-    public function editSettings(User $user): bool
+    public function editSettings(Authenticatable $user): bool
     {
-        return $user->can('edit-settings');
+        return $this->userCan($user, 'edit-settings');
     }
 
     /**
      * Determine whether the user can manage users.
      */
-    public function manageUsers(User $user): bool
+    public function manageUsers(Authenticatable $user): bool
     {
-        return $user->can('view-users') || $user->can('create-users') || $user->can('edit-users');
+        return $this->userCan($user, 'view-users') ||
+               $this->userCan($user, 'create-users') ||
+               $this->userCan($user, 'edit-users');
     }
 
     /**
      * Determine whether the user can manage roles and permissions.
      */
-    public function manageRoles(User $user): bool
+    public function manageRoles(Authenticatable $user): bool
     {
-        return $user->can('manage-roles') || $user->can('manage-permissions');
+        return $this->userCan($user, 'manage-roles') || $this->userCan($user, 'manage-permissions');
+    }
+
+    /**
+     * Helper method to check if user has permission.
+     */
+    private function userCan(Authenticatable $user, string $permission): bool
+    {
+        // Check if user has the method can() (like models with HasPermissions trait)
+        if (method_exists($user, 'can')) {
+            return $user->can($permission);
+        }
+
+        // Fallback to Gate facade
+        return Gate::forUser($user)->allows($permission);
     }
 }

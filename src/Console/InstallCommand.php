@@ -71,7 +71,7 @@ class InstallCommand extends Command
         }
 
         $name = $this->ask('Admin name', 'Admin');
-        $email = $this->ask('Admin email', 'admin@example.com');
+        $email = $this->ask('Admin email', 'admin@admin.com');
         $password = $this->secret('Admin password');
 
         if (! $password) {

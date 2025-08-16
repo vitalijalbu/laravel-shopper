@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Hash;
 use LaravelShopper\Models\Brand;
 use LaravelShopper\Models\Category;
 use LaravelShopper\Models\Channel;
@@ -83,14 +83,12 @@ class ShopperSeeder extends Seeder
         // Create default admin user
         $this->command->info('👤 Creating admin user...');
         $user = User::firstOrCreate(
-            ['email' => 'admin@example.com'],
+            ['email' => 'admin@admin.com'],
             [
                 'name' => 'Admin User',
-                'first_name' => 'Admin',
-                'last_name' => 'User',
-                'email' => 'admin@example.com',
+                'email' => 'admin@admin.com',
                 'email_verified_at' => now(),
-                'password' => Password::make('password'),
+                'password' => Hash::make('password'),
             ]
         );
 
@@ -161,7 +159,7 @@ class ShopperSeeder extends Seeder
         $settings = [
             'site_name' => 'Laravel Shopper Multi-Site',
             'site_description' => 'Complete e-commerce platform with Statamic CMS architecture and multi-site support',
-            'admin_email' => 'admin@example.com',
+            'admin_email' => 'admin@admin.com',
             'timezone' => 'Europe/Rome',
             'date_format' => 'Y-m-d',
             'time_format' => 'H:i',
@@ -191,7 +189,7 @@ class ShopperSeeder extends Seeder
 
         $this->command->info('✅ Laravel Shopper multi-site seeding completed!');
         $this->command->info('📍 Sites created: Main Store (main), Store Italia (it)');
-        $this->command->info('🔑 Admin login: admin@example.com / password');
+        $this->command->info('🔑 Admin login: admin@admin.com / password');
     }
 
     /**
@@ -199,6 +197,11 @@ class ShopperSeeder extends Seeder
      */
     protected function createPermissionsAndRoles(): void
     {
+        // Clear Spatie Permission cache
+        app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+
+        $this->command->info('  Creating permissions...');
+
         // Define Control Panel permissions (similar to Statamic)
         $permissions = [
             // Dashboard
@@ -267,12 +270,17 @@ class ShopperSeeder extends Seeder
         ];
 
         // Create permissions
+        $createdPermissions = 0;
         foreach ($permissions as $name => $description) {
-            Permission::firstOrCreate(
+            $permission = Permission::firstOrCreate(
                 ['name' => $name, 'guard_name' => 'web'],
                 ['name' => $name, 'guard_name' => 'web']
             );
+            $createdPermissions++;
         }
+
+        $this->command->info("  ✓ Created {$createdPermissions} permissions");
+        $this->command->info('  Creating roles...');
 
         // Define roles
         $roles = [
@@ -323,6 +331,7 @@ class ShopperSeeder extends Seeder
         ];
 
         // Create roles and assign permissions
+        $createdRoles = 0;
         foreach ($roles as $roleName => $roleData) {
             $role = Role::firstOrCreate(
                 ['name' => $roleName, 'guard_name' => 'web'],
@@ -330,10 +339,13 @@ class ShopperSeeder extends Seeder
             );
 
             // Sync permissions
-            $permissions = Permission::whereIn('name', $roleData['permissions'])->get();
-            $role->syncPermissions($permissions);
+            $availablePermissions = Permission::whereIn('name', $roleData['permissions'])->get();
+            $role->syncPermissions($availablePermissions);
 
-            $this->command->info("✅ Created role: {$roleName} with ".count($roleData['permissions']).' permissions');
+            $createdRoles++;
+            $this->command->info("  ✓ Created role: {$roleName} with {$availablePermissions->count()} permissions");
         }
+
+        $this->command->info("✅ Roles and permissions setup completed ({$createdRoles} roles, {$createdPermissions} permissions)");
     }
 }

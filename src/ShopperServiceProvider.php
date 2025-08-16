@@ -109,6 +109,7 @@ class ShopperServiceProvider extends ServiceProvider
             // Register commands
             $this->commands([
                 \LaravelShopper\Console\Commands\InstallShopperCommand::class,
+                \LaravelShopper\Console\Commands\ShowAdminUsersCommand::class,
                 OptimizeCommand::class,
             ]);
         }
