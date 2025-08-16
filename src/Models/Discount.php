@@ -47,7 +47,7 @@ class Discount extends Model
 
     public function isActive(): bool
     {
-        if (!$this->is_enabled) {
+        if (! $this->is_enabled) {
             return false;
         }
 
@@ -70,7 +70,7 @@ class Discount extends Model
 
     public function calculateDiscount(float $amount): float
     {
-        if (!$this->isActive()) {
+        if (! $this->isActive()) {
             return 0;
         }
 

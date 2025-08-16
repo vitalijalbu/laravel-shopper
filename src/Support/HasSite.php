@@ -4,7 +4,6 @@ namespace LaravelShopper\Support;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
 use LaravelShopper\Models\Site;
 
 trait HasSite
@@ -26,7 +25,7 @@ trait HasSite
             if ($currentSite = static::getCurrentSite()) {
                 $builder->where(function ($query) use ($currentSite) {
                     $query->where('site_id', $currentSite->id)
-                          ->orWhereNull('site_id'); // Allow global records
+                        ->orWhereNull('site_id'); // Allow global records
                 });
             }
         });
@@ -48,8 +47,8 @@ trait HasSite
 
         // Return default site
         return Site::where('is_enabled', true)
-                   ->orderBy('order')
-                   ->first();
+            ->orderBy('order')
+            ->first();
     }
 
     /**
@@ -66,7 +65,7 @@ trait HasSite
     public function scopeForSite(Builder $query, $site)
     {
         if (is_string($site)) {
-            return $query->whereHas('site', fn($q) => $q->where('handle', $site));
+            return $query->whereHas('site', fn ($q) => $q->where('handle', $site));
         }
 
         if (is_numeric($site)) {

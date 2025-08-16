@@ -2,16 +2,15 @@
 
 namespace LaravelShopper\Http\Controllers\Cp\Auth;
 
-use Illuminate\Http\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules;
-use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
+use LaravelShopper\Http\Controllers\Controller;
 
 class NewPasswordController extends Controller
 {
@@ -77,6 +76,6 @@ class NewPasswordController extends Controller
         return $status === Password::PASSWORD_RESET
             ? redirect()->route('shopper.cp.login')->with('status', __('shopper::auth.password_reset_success'))
             : back()->withInput($request->only('email'))
-                     ->withErrors(['email' => __('shopper::auth.password_reset_invalid')]);
+                ->withErrors(['email' => __('shopper::auth.password_reset_invalid')]);
     }
 }

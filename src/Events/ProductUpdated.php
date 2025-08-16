@@ -46,7 +46,7 @@ class ProductUpdated extends Event
 
     protected function hasChanged($field)
     {
-        if (!$original = $this->original()) {
+        if (! $original = $this->original()) {
             return true;
         }
 

@@ -48,10 +48,10 @@ return new class extends Migration
             $table->dropIndex(['provider', 'provider_id']);
             $table->dropColumn([
                 'provider',
-                'provider_id', 
+                'provider_id',
                 'provider_token',
                 'provider_refresh_token',
-                'avatar'
+                'avatar',
             ]);
             $table->timestamp('email_verified_at')->nullable(false)->change();
             $table->string('password')->nullable(false)->change();

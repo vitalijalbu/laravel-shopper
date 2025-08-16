@@ -73,7 +73,7 @@ class AddressDto extends BaseDto
             'is_default' => $this->is_default,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-        ], fn($value) => $value !== null);
+        ], fn ($value) => $value !== null);
     }
 
     /**
@@ -107,7 +107,7 @@ class AddressDto extends BaseDto
             $errors['address_line_1'] = 'Address line 1 cannot exceed 255 characters';
         }
 
-        if (!empty($this->address_line_2) && strlen($this->address_line_2) > 255) {
+        if (! empty($this->address_line_2) && strlen($this->address_line_2) > 255) {
             $errors['address_line_2'] = 'Address line 2 cannot exceed 255 characters';
         }
 
@@ -119,7 +119,7 @@ class AddressDto extends BaseDto
             $errors['city'] = 'City cannot exceed 255 characters';
         }
 
-        if (!empty($this->state) && strlen($this->state) > 255) {
+        if (! empty($this->state) && strlen($this->state) > 255) {
             $errors['state'] = 'State cannot exceed 255 characters';
         }
 
@@ -135,15 +135,15 @@ class AddressDto extends BaseDto
             $errors['country_id'] = 'Country is required';
         }
 
-        if (!in_array($this->type, ['shipping', 'billing', 'both'])) {
+        if (! in_array($this->type, ['shipping', 'billing', 'both'])) {
             $errors['type'] = 'Address type must be shipping, billing, or both';
         }
 
-        if (!empty($this->phone) && !preg_match('/^[\+]?[0-9\s\-\(\)]{8,20}$/', $this->phone)) {
+        if (! empty($this->phone) && ! preg_match('/^[\+]?[0-9\s\-\(\)]{8,20}$/', $this->phone)) {
             $errors['phone'] = 'Phone number format is invalid';
         }
 
-        if (!empty($this->company) && strlen($this->company) > 255) {
+        if (! empty($this->company) && strlen($this->company) > 255) {
             $errors['company'] = 'Company name cannot exceed 255 characters';
         }
 
@@ -164,26 +164,26 @@ class AddressDto extends BaseDto
     public function getFormattedAddress(bool $includeCountry = true): string
     {
         $parts = [];
-        
+
         $parts[] = $this->address_line_1;
-        
+
         if ($this->address_line_2) {
             $parts[] = $this->address_line_2;
         }
-        
+
         $cityStateZip = $this->city;
         if ($this->state) {
-            $cityStateZip .= ', ' . $this->state;
+            $cityStateZip .= ', '.$this->state;
         }
-        $cityStateZip .= ' ' . $this->postal_code;
-        
+        $cityStateZip .= ' '.$this->postal_code;
+
         $parts[] = $cityStateZip;
-        
+
         if ($includeCountry && $this->country_id) {
             // This would need to be resolved with actual country name
             $parts[] = "Country ID: {$this->country_id}";
         }
-        
+
         return implode("\n", $parts);
     }
 
@@ -193,19 +193,19 @@ class AddressDto extends BaseDto
     public function getSingleLineAddress(): string
     {
         $parts = [$this->address_line_1];
-        
+
         if ($this->address_line_2) {
             $parts[] = $this->address_line_2;
         }
-        
+
         $parts[] = $this->city;
-        
+
         if ($this->state) {
             $parts[] = $this->state;
         }
-        
+
         $parts[] = $this->postal_code;
-        
+
         return implode(', ', array_filter($parts));
     }
 
@@ -238,7 +238,7 @@ class AddressDto extends BaseDto
      */
     public function hasCompany(): bool
     {
-        return !empty($this->company);
+        return ! empty($this->company);
     }
 
     /**
@@ -247,11 +247,11 @@ class AddressDto extends BaseDto
     public function getDisplayName(): string
     {
         $name = $this->getFullName();
-        
+
         if ($this->hasCompany()) {
             return "{$name} ({$this->company})";
         }
-        
+
         return $name;
     }
 
@@ -260,7 +260,7 @@ class AddressDto extends BaseDto
      */
     public function getFormattedPhone(): ?string
     {
-        if (!$this->phone) {
+        if (! $this->phone) {
             return null;
         }
 

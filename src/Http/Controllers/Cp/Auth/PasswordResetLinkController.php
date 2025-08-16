@@ -2,7 +2,6 @@
 
 namespace LaravelShopper\Http\Controllers\Cp\Auth;
 
-use Illuminate\Http\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
@@ -11,6 +10,7 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
+use LaravelShopper\Http\Controllers\Controller;
 
 class PasswordResetLinkController extends Controller
 {
@@ -66,7 +66,7 @@ class PasswordResetLinkController extends Controller
         return $status === Password::RESET_LINK_SENT
             ? back()->with('status', __('shopper::auth.password_reset_sent'))
             : back()->withInput($request->only('email'))
-                     ->withErrors(['email' => __('shopper::auth.password_reset_failed')]);
+                ->withErrors(['email' => __('shopper::auth.password_reset_failed')]);
     }
 
     /**
@@ -74,7 +74,7 @@ class PasswordResetLinkController extends Controller
      */
     protected function ensureIsNotRateLimited(Request $request): void
     {
-        if (!RateLimiter::tooManyAttempts($this->throttleKey($request), 3)) {
+        if (! RateLimiter::tooManyAttempts($this->throttleKey($request), 3)) {
             return;
         }
 
@@ -93,6 +93,6 @@ class PasswordResetLinkController extends Controller
      */
     protected function throttleKey(Request $request): string
     {
-        return 'password-reset:' . Str::lower($request->input('email')) . '|' . $request->ip();
+        return 'password-reset:'.Str::lower($request->input('email')).'|'.$request->ip();
     }
 }

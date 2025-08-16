@@ -4,9 +4,9 @@ namespace LaravelShopper\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use LaravelShopper\Models\Site;
-use LaravelShopper\Models\Product;
 use LaravelShopper\Models\Category;
+use LaravelShopper\Models\Product;
+use LaravelShopper\Models\Site;
 use LaravelShopper\Services\TemplateEngine;
 
 class StorefrontTemplateMiddleware
@@ -27,7 +27,7 @@ class StorefrontTemplateMiddleware
 
         // Set current site in container
         $site = $this->resolveSite($request);
-        app()->singleton('laravel-shopper.site', fn() => $site);
+        app()->singleton('laravel-shopper.site', fn () => $site);
 
         // Auto-assign templates based on route
         $this->assignTemplateForRoute($request);
@@ -44,12 +44,16 @@ class StorefrontTemplateMiddleware
         // Try subdomain first
         if ($subdomain) {
             $site = Site::where('handle', $subdomain)->active()->first();
-            if ($site) return $site;
+            if ($site) {
+                return $site;
+            }
         }
 
         // Try domain
         $site = Site::where('domain', $host)->active()->first();
-        if ($site) return $site;
+        if ($site) {
+            return $site;
+        }
 
         // Fallback to default site
         return Site::where('is_default', true)->active()->firstOrFail();
@@ -58,14 +62,17 @@ class StorefrontTemplateMiddleware
     protected function extractSubdomain(string $host): ?string
     {
         $parts = explode('.', $host);
+
         return count($parts) > 2 ? $parts[0] : null;
     }
 
     protected function assignTemplateForRoute(Request $request): void
     {
         $route = $request->route();
-        
-        if (!$route) return;
+
+        if (! $route) {
+            return;
+        }
 
         $routeName = $route->getName();
         $parameters = $route->parameters();

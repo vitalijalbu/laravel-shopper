@@ -48,7 +48,7 @@ class ProductVariantResource extends BaseResource
      */
     protected function getVariantTitle(): string
     {
-        if (!empty($this->option_values)) {
+        if (! empty($this->option_values)) {
             return implode(' / ', array_values($this->option_values));
         }
 
@@ -72,6 +72,6 @@ class ProductVariantResource extends BaseResource
             return null;
         }
 
-        return $this->weight . ' ' . ($this->weight_unit ?? 'kg');
+        return $this->weight.' '.($this->weight_unit ?? 'kg');
     }
 }

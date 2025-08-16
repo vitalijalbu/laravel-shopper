@@ -57,7 +57,7 @@ class Page extends Model
         return $query->where('status', 'published')
             ->where(function ($q) {
                 $q->whereNull('published_at')
-                  ->orWhere('published_at', '<=', now());
+                    ->orWhere('published_at', '<=', now());
             });
     }
 
@@ -74,7 +74,7 @@ class Page extends Model
     // Accessors
     public function getIsPublishedAttribute(): bool
     {
-        return $this->status === 'published' && 
+        return $this->status === 'published' &&
                ($this->published_at === null || $this->published_at <= now());
     }
 
@@ -90,8 +90,8 @@ class Page extends Model
 
     public function getIsScheduledAttribute(): bool
     {
-        return $this->status === 'published' && 
-               $this->published_at && 
+        return $this->status === 'published' &&
+               $this->published_at &&
                $this->published_at > now();
     }
 
@@ -109,12 +109,12 @@ class Page extends Model
         // Generate description from content (strip HTML and limit to 160 chars)
         $content = strip_tags($this->content);
         $content = preg_replace('/\s+/', ' ', $content);
-        
+
         if (strlen($content) <= 160) {
             return $content;
         }
 
-        return substr($content, 0, 157) . '...';
+        return substr($content, 0, 157).'...';
     }
 
     public function getUrlAttribute(): string
@@ -124,12 +124,13 @@ class Page extends Model
 
     public function getPreviewUrlAttribute(): string
     {
-        return $this->url . '?preview=true';
+        return $this->url.'?preview=true';
     }
 
     public function getWordCountAttribute(): int
     {
         $text = strip_tags($this->content);
+
         return str_word_count($text);
     }
 
@@ -142,11 +143,11 @@ class Page extends Model
     {
         $text = strip_tags($this->content);
         $text = preg_replace('/\s+/', ' ', trim($text));
-        
+
         if (strlen($text) <= 200) {
             return $text;
         }
 
-        return substr($text, 0, 197) . '...';
+        return substr($text, 0, 197).'...';
     }
 }

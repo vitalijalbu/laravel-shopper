@@ -27,11 +27,13 @@ class OptimizeCommand extends Command
 
         if ($this->option('clear')) {
             $this->clearOptimizations();
+
             return Command::SUCCESS;
         }
 
         if ($this->option('all')) {
             $this->optimizeAll();
+
             return Command::SUCCESS;
         }
 
@@ -47,7 +49,7 @@ class OptimizeCommand extends Command
             $this->optimizeImages();
         }
 
-        if (!$this->hasOptions()) {
+        if (! $this->hasOptions()) {
             $this->showHelp();
         }
 
@@ -72,80 +74,85 @@ class OptimizeCommand extends Command
 
     protected function optimizeCache(): void
     {
-        $this->task('Optimizing cache configuration', function() {
+        $this->task('Optimizing cache configuration', function () {
             // Clear existing cache
             Cache::flush();
-            
+
             // Warm up cache
             $cacheService = app(CacheService::class);
             $cacheService->warmUp();
-            
+
             return true;
         });
 
-        $this->task('Configuring Redis optimization', function() {
+        $this->task('Configuring Redis optimization', function () {
             if (Config::get('cache.default') === 'redis') {
                 // Configure Redis for optimal performance
                 $this->info('  - Setting Redis configuration for performance');
+
                 return true;
             }
-            
+
             $this->warn('  - Redis not configured as default cache driver');
+
             return true;
         });
     }
 
     protected function optimizeDatabase(): void
     {
-        $this->task('Analyzing database performance', function() {
+        $this->task('Analyzing database performance', function () {
             // Check for missing indexes
             $this->checkDatabaseIndexes();
-            
+
             // Analyze slow queries
             $this->analyzeSlowQueries();
-            
+
             return true;
         });
 
-        $this->task('Optimizing database queries', function() {
+        $this->task('Optimizing database queries', function () {
             // Enable query result caching
             Config::set('database.redis.cache', true);
-            
+
             return true;
         });
     }
 
     protected function optimizeImages(): void
     {
-        $this->task('Setting up image optimization', function() {
+        $this->task('Setting up image optimization', function () {
             // Configure image optimization settings
-            $this->info('  - WebP format enabled: ' . (Config::get('shopper-performance.images.formats.webp') ? 'Yes' : 'No'));
-            $this->info('  - Image quality: ' . Config::get('shopper-performance.images.optimization.quality', 85) . '%');
-            
+            $this->info('  - WebP format enabled: '.(Config::get('shopper-performance.images.formats.webp') ? 'Yes' : 'No'));
+            $this->info('  - Image quality: '.Config::get('shopper-performance.images.optimization.quality', 85).'%');
+
             return true;
         });
     }
 
     protected function optimizeConfig(): void
     {
-        $this->task('Optimizing configuration cache', function() {
+        $this->task('Optimizing configuration cache', function () {
             Artisan::call('config:cache');
+
             return true;
         });
     }
 
     protected function optimizeViews(): void
     {
-        $this->task('Optimizing view cache', function() {
+        $this->task('Optimizing view cache', function () {
             Artisan::call('view:cache');
+
             return true;
         });
     }
 
     protected function optimizeRoutes(): void
     {
-        $this->task('Optimizing route cache', function() {
+        $this->task('Optimizing route cache', function () {
             Artisan::call('route:cache');
+
             return true;
         });
     }
@@ -155,24 +162,28 @@ class OptimizeCommand extends Command
         $this->info('Clearing all optimizations...');
         $this->newLine();
 
-        $this->task('Clearing cache', function() {
+        $this->task('Clearing cache', function () {
             Cache::flush();
             Artisan::call('cache:clear');
+
             return true;
         });
 
-        $this->task('Clearing configuration cache', function() {
+        $this->task('Clearing configuration cache', function () {
             Artisan::call('config:clear');
+
             return true;
         });
 
-        $this->task('Clearing view cache', function() {
+        $this->task('Clearing view cache', function () {
             Artisan::call('view:clear');
+
             return true;
         });
 
-        $this->task('Clearing route cache', function() {
+        $this->task('Clearing route cache', function () {
             Artisan::call('route:clear');
+
             return true;
         });
 
@@ -211,7 +222,7 @@ class OptimizeCommand extends Command
         $existingIndexes = collect($indexes)->pluck('Column_name')->toArray();
 
         foreach ($columns as $column) {
-            if (!in_array($column, $existingIndexes)) {
+            if (! in_array($column, $existingIndexes)) {
                 $this->warn("  - Missing index on {$table}.{$column}");
                 $this->info("    Suggested: CREATE INDEX idx_{$table}_{$column} ON {$table}({$column});");
             }
@@ -232,7 +243,7 @@ class OptimizeCommand extends Command
     {
         $this->info('Available optimization options:');
         $this->newLine();
-        
+
         $this->table(
             ['Option', 'Description'],
             [
@@ -243,7 +254,7 @@ class OptimizeCommand extends Command
                 ['--clear', 'Clear all optimizations'],
             ]
         );
-        
+
         $this->newLine();
         $this->info('Examples:');
         $this->line('  php artisan shopper:optimize --all');
@@ -253,8 +264,8 @@ class OptimizeCommand extends Command
 
     protected function hasOptions(): bool
     {
-        return $this->option('cache') || 
-               $this->option('database') || 
+        return $this->option('cache') ||
+               $this->option('database') ||
                $this->option('images') ||
                $this->option('all') ||
                $this->option('clear');

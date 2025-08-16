@@ -45,6 +45,7 @@ class Favorite extends Model
 
         if ($favorite) {
             $favorite->delete();
+
             return false; // Removed from favorites
         }
 

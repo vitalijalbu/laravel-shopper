@@ -59,10 +59,10 @@ class AppApiToken extends Model
     public function scopeActive($query)
     {
         return $query->where('is_active', true)
-                    ->where(function ($q) {
-                        $q->whereNull('expires_at')
-                          ->orWhere('expires_at', '>', now());
-                    });
+            ->where(function ($q) {
+                $q->whereNull('expires_at')
+                    ->orWhere('expires_at', '>', now());
+            });
     }
 
     public function scopeExpired($query)
@@ -83,7 +83,7 @@ class AppApiToken extends Model
 
     public function getIsValidAttribute(): bool
     {
-        return $this->is_active && !$this->is_expired;
+        return $this->is_active && ! $this->is_expired;
     }
 
     public function getMaskedTokenAttribute(): string
@@ -92,7 +92,7 @@ class AppApiToken extends Model
             return $this->token;
         }
 
-        return substr($this->token, 0, 4) . str_repeat('*', strlen($this->token) - 8) . substr($this->token, -4);
+        return substr($this->token, 0, 4).str_repeat('*', strlen($this->token) - 8).substr($this->token, -4);
     }
 
     // Methods
@@ -103,10 +103,10 @@ class AppApiToken extends Model
 
     public function hasAnyScope(array $scopes): bool
     {
-        return !empty(array_intersect($scopes, $this->scopes ?? []));
+        return ! empty(array_intersect($scopes, $this->scopes ?? []));
     }
 
-    public function recordUsage(string $endpoint = null): void
+    public function recordUsage(?string $endpoint = null): void
     {
         $this->increment('usage_count');
         $this->update(['last_used_at' => now()]);
@@ -141,7 +141,7 @@ class AppApiToken extends Model
     public function renew(?int $days = null): bool
     {
         $expiresAt = $days ? now()->addDays($days) : null;
-        
+
         return $this->update([
             'expires_at' => $expiresAt,
             'is_active' => true,
@@ -152,7 +152,7 @@ class AppApiToken extends Model
     {
         $newToken = Str::random(80);
         $this->update(['token' => $newToken]);
-        
+
         return $newToken;
     }
 

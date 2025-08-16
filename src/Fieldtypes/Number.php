@@ -41,7 +41,7 @@ class Number extends Fieldtype
     public function rules()
     {
         $rules = parent::rules();
-        
+
         $rules[] = 'numeric';
 
         if ($min = $this->config('min')) {

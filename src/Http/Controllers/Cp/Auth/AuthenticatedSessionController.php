@@ -2,7 +2,6 @@
 
 namespace LaravelShopper\Http\Controllers\Cp\Auth;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -12,6 +11,7 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
+use LaravelShopper\Http\Controllers\Controller;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -62,7 +62,7 @@ class AuthenticatedSessionController extends Controller
         $credentials = $request->only('email', 'password');
         $remember = $request->boolean('remember');
 
-        if (!Auth::attempt($credentials, $remember)) {
+        if (! Auth::attempt($credentials, $remember)) {
             RateLimiter::hit($this->throttleKey($request));
 
             throw ValidationException::withMessages([
@@ -72,9 +72,9 @@ class AuthenticatedSessionController extends Controller
 
         // Check if user can access control panel
         $user = Auth::user();
-        if (!$this->canAccessControlPanel($user)) {
+        if (! $this->canAccessControlPanel($user)) {
             Auth::logout();
-            
+
             throw ValidationException::withMessages([
                 'email' => __('shopper::auth.cp_access_denied'),
             ]);
@@ -130,7 +130,7 @@ class AuthenticatedSessionController extends Controller
      */
     protected function canAccessControlPanel($user): bool
     {
-        if (!$user) {
+        if (! $user) {
             return false;
         }
 
@@ -153,7 +153,7 @@ class AuthenticatedSessionController extends Controller
      */
     protected function ensureIsNotRateLimited(Request $request): void
     {
-        if (!RateLimiter::tooManyAttempts($this->throttleKey($request), 5)) {
+        if (! RateLimiter::tooManyAttempts($this->throttleKey($request), 5)) {
             return;
         }
 
@@ -172,6 +172,6 @@ class AuthenticatedSessionController extends Controller
      */
     protected function throttleKey(Request $request): string
     {
-        return Str::lower($request->input('email')) . '|' . $request->ip();
+        return Str::lower($request->input('email')).'|'.$request->ip();
     }
 }

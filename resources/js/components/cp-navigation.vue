@@ -128,7 +128,8 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { router, usePage } from '@inertiajs/vue3'
+import { route } from 'ziggy-js'
 import { useShopperStore } from '../stores/shopper'
 
 const props = defineProps({
@@ -146,8 +147,7 @@ const props = defineProps({
   }
 })
 
-const route = useRoute()
-const router = useRouter()
+const page = usePage()
 const shopperStore = useShopperStore()
 
 // State
@@ -160,7 +160,7 @@ const isMultisite = computed(() => props.sites.length > 1)
 
 // Methods
 const isActive = (url) => {
-  return route.path.startsWith(url)
+  return page.url.startsWith(url)
 }
 
 const toggleSection = (key) => {
@@ -192,7 +192,7 @@ const logout = async () => {
 
 // Auto-expand current section
 const autoExpandCurrentSection = () => {
-  const path = route.path
+  const path = page.url
   
   Object.keys(props.navigation).forEach(key => {
     const section = props.navigation[key]

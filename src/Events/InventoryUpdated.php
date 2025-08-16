@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace LaravelShopper\Events;
 
-
 class InventoryUpdated extends Event
 {
     public function __construct($product, $previousInventory, $newInventory, $reason = null)

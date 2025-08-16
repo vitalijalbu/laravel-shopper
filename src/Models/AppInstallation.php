@@ -94,12 +94,12 @@ class AppInstallation extends Model
 
     public function getIsActiveAttribute(): bool
     {
-        return $this->status === 'active' && !$this->is_expired;
+        return $this->status === 'active' && ! $this->is_expired;
     }
 
     public function getDaysUntilExpiryAttribute(): ?int
     {
-        if (!$this->subscription_ends_at) {
+        if (! $this->subscription_ends_at) {
             return null;
         }
 
@@ -136,12 +136,12 @@ class AppInstallation extends Model
 
     public function renew(int $months = 1): bool
     {
-        if (!$this->subscription_ends_at) {
+        if (! $this->subscription_ends_at) {
             return false;
         }
 
         $newEndDate = $this->subscription_ends_at->addMonths($months);
-        
+
         return $this->update([
             'subscription_ends_at' => $newEndDate,
             'status' => 'active',
@@ -156,7 +156,7 @@ class AppInstallation extends Model
         ]);
     }
 
-    public function suspend(string $reason = null): bool
+    public function suspend(?string $reason = null): bool
     {
         return $this->update([
             'status' => 'suspended',

@@ -3,7 +3,6 @@
 namespace LaravelShopper\Console\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Artisan;
 
 class InstallShopperCommand extends Command
@@ -33,7 +32,7 @@ class InstallShopperCommand extends Command
         $this->info('🛍️  Installing Laravel Shopper...');
 
         // Check Laravel version
-        if (!$this->checkLaravelVersion()) {
+        if (! $this->checkLaravelVersion()) {
             return 1;
         }
 
@@ -68,14 +67,16 @@ class InstallShopperCommand extends Command
     protected function checkLaravelVersion(): bool
     {
         $laravelVersion = app()->version();
-        
+
         if (version_compare($laravelVersion, '11.0', '<')) {
             $this->error('❌ Laravel Shopper requires Laravel 11.0 or higher.');
             $this->error("   Current version: {$laravelVersion}");
+
             return false;
         }
 
         $this->info("✅ Laravel version {$laravelVersion} is compatible.");
+
         return true;
     }
 
@@ -87,13 +88,13 @@ class InstallShopperCommand extends Command
         $this->info('📝 Publishing configuration files...');
 
         $params = ['--provider' => 'LaravelShopper\ShopperServiceProvider'];
-        
+
         if ($this->option('force')) {
             $params['--force'] = true;
         }
 
         Artisan::call('vendor:publish', array_merge($params, ['--tag' => 'shopper-config']));
-        
+
         $this->info('✅ Configuration published successfully.');
     }
 
@@ -105,22 +106,22 @@ class InstallShopperCommand extends Command
         $this->info('🔐 Publishing OAuth authentication system...');
 
         $params = ['--provider' => 'LaravelShopper\ShopperServiceProvider'];
-        
+
         if ($this->option('force')) {
             $params['--force'] = true;
         }
 
         // Publish OAuth configuration
         Artisan::call('vendor:publish', array_merge($params, ['--tag' => 'shopper-oauth-config']));
-        
+
         // Publish Vue components
         Artisan::call('vendor:publish', array_merge($params, ['--tag' => 'shopper-components']));
-        
+
         // Publish translations
         Artisan::call('vendor:publish', array_merge($params, ['--tag' => 'shopper-lang']));
 
         $this->info('✅ OAuth system published successfully.');
-        
+
         // Display OAuth setup instructions
         $this->displayOAuthInstructions();
     }
@@ -148,7 +149,7 @@ class InstallShopperCommand extends Command
         $this->info('🎨 Publishing assets...');
 
         $params = ['--provider' => 'LaravelShopper\ShopperServiceProvider'];
-        
+
         if ($this->option('force')) {
             $params['--force'] = true;
         }
@@ -208,23 +209,23 @@ class InstallShopperCommand extends Command
         $this->newLine();
         $this->info('🎉 Laravel Shopper installation completed successfully!');
         $this->line('');
-        
+
         if ($this->option('oauth')) {
             $this->line('✅ OAuth authentication system installed');
         }
-        
+
         $this->line('✅ Configuration published');
         $this->line('✅ Assets published');
         $this->line('✅ Database migrations ready');
         $this->line('');
         $this->info('🚀 Next steps:');
         $this->line('1. Configure your environment variables');
-        
+
         if ($this->option('oauth')) {
             $this->line('2. Set up OAuth provider credentials');
             $this->line('3. Configure OAuth callback URLs');
         }
-        
+
         $this->line('4. Start building your e-commerce application!');
         $this->line('');
         $this->line('📖 Documentation: https://github.com/vitalijalbu/laravel-shopper');

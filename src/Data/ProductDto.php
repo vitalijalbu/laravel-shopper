@@ -5,23 +5,41 @@ namespace LaravelShopper\Data;
 class ProductDto extends BaseDto
 {
     public ?int $id = null;
+
     public ?int $site_id = null;
+
     public ?string $name = null;
+
     public ?string $handle = null;
+
     public ?string $description = null;
+
     public ?int $price = null;
+
     public ?int $compare_price = null;
+
     public ?string $status = null;
+
     public ?string $visibility = null;
+
     public ?int $category_id = null;
+
     public ?int $brand_id = null;
+
     public ?string $sku = null;
+
     public ?int $inventory_quantity = null;
+
     public ?bool $track_inventory = null;
+
     public ?bool $continue_selling_when_out_of_stock = null;
+
     public ?array $images = null;
+
     public ?array $variants = null;
+
     public ?array $seo = null;
+
     public ?array $custom_fields = null;
 
     /**
@@ -115,6 +133,6 @@ class ProductDto extends BaseDto
             return null;
         }
 
-        return number_format($this->price / 100, 2) . ' ' . $currency;
+        return number_format($this->price / 100, 2).' '.$currency;
     }
 }

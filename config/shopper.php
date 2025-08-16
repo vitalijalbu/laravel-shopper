@@ -102,7 +102,7 @@ return [
                 'color' => '#f59e0b',
             ],
             'processing' => [
-                'label' => 'Processing', 
+                'label' => 'Processing',
                 'color' => '#3b82f6',
             ],
             'shipped' => [

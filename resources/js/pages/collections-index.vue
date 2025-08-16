@@ -108,7 +108,8 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { router } from '@inertiajs/vue3'
+import { route } from 'ziggy-js'
 import { useShopperStore } from '../stores/shopper'
 import Page from '../components/page.vue'
 import CollectionCard from '../components/collection-card.vue'
@@ -116,7 +117,6 @@ import CollectionForm from '../components/collection-form.vue'
 import Modal from '../components/modal.vue'
 import ConfirmModal from '../components/confirm-modal.vue'
 
-const router = useRouter()
 const shopperStore = useShopperStore()
 
 // State
@@ -176,7 +176,7 @@ const deleteCollection = (collection) => {
 }
 
 const viewEntries = (collection) => {
-  router.push(`/cp/collections/${collection.handle}`)
+  router.visit(route('cp.collections.entries.index', { collection: collection.handle }))
 }
 
 const saveCollection = async (collectionData) => {

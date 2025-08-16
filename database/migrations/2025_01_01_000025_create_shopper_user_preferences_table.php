@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create(shopper_table('user_preferences'), function (Blueprint $table) {
+        Schema::create('user_preferences', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->string('preference_type'); // table_columns, dashboard_widgets, etc.
@@ -16,13 +16,13 @@ return new class extends Migration
             $table->json('preference_value');
             $table->timestamps();
 
-            $table->unique(['user_id', 'preference_type', 'preference_key']);
+            $table->unique(['user_id', 'preference_type', 'preference_key'], 'user_prefs_unique');
             $table->index(['user_id', 'preference_type']);
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists(shopper_table('user_preferences'));
+        Schema::dropIfExists('user_preferences');
     }
 };

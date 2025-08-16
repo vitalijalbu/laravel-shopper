@@ -4,12 +4,11 @@ namespace LaravelShopper\Http\Controllers\Cp;
 
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use LaravelShopper\Http\Controllers\Controller;
-use LaravelShopper\Models\App;
-use LaravelShopper\Models\AppInstallation;
-use LaravelShopper\Models\AppReview;
 use LaravelShopper\CP\Navigation;
 use LaravelShopper\CP\Page;
+use LaravelShopper\Http\Controllers\Controller;
+use LaravelShopper\Models\App;
+use LaravelShopper\Models\AppReview;
 
 class AppsController extends Controller
 {
@@ -19,11 +18,11 @@ class AppsController extends Controller
     public function index(Request $request)
     {
         $view = $request->get('view', 'store'); // 'store' or 'installed'
-        
+
         if ($view === 'installed') {
             return $this->installedApps($request);
         }
-        
+
         return $this->appStore($request);
     }
 
@@ -50,8 +49,8 @@ class AppsController extends Controller
         if ($request->filled('search')) {
             $query->where(function ($q) use ($request) {
                 $q->where('name', 'like', "%{$request->search}%")
-                  ->orWhere('description', 'like', "%{$request->search}%")
-                  ->orWhereJsonContains('tags', $request->search);
+                    ->orWhere('description', 'like', "%{$request->search}%")
+                    ->orWhereJsonContains('tags', $request->search);
             });
         }
 
@@ -76,7 +75,7 @@ class AppsController extends Controller
         }
 
         $apps = $query->paginate(20);
-        
+
         // Get categories and stats
         $categories = App::approved()
             ->select('categories')
@@ -179,8 +178,8 @@ class AppsController extends Controller
         if ($app->is_installed) {
             $page->primaryAction(__('apps.actions.configure'), "/cp/apps/{$app->id}/configure")
                 ->secondaryActions([
-                    ['label' => $app->is_active ? __('apps.actions.deactivate') : __('apps.actions.activate'), 
-                     'action' => $app->is_active ? 'deactivate' : 'activate'],
+                    ['label' => $app->is_active ? __('apps.actions.deactivate') : __('apps.actions.activate'),
+                        'action' => $app->is_active ? 'deactivate' : 'activate'],
                     ['label' => __('apps.actions.uninstall'), 'action' => 'uninstall', 'destructive' => true],
                 ]);
         } else {
@@ -192,7 +191,7 @@ class AppsController extends Controller
             'navigation' => Navigation::tree(),
             'app' => $app,
             'relatedApps' => $relatedApps,
-            'canInstall' => $app->is_compatible && !$app->is_installed,
+            'canInstall' => $app->is_compatible && ! $app->is_installed,
         ]);
     }
 
@@ -206,7 +205,7 @@ class AppsController extends Controller
                 return response()->json(['error' => __('apps.messages.already_installed')], 422);
             }
 
-            if (!$app->is_compatible) {
+            if (! $app->is_compatible) {
                 return response()->json(['error' => __('apps.messages.not_compatible')], 422);
             }
 
@@ -281,7 +280,7 @@ class AppsController extends Controller
      */
     public function configure(App $app)
     {
-        if (!$app->is_installed) {
+        if (! $app->is_installed) {
             return redirect()->route('cp.apps.show', $app);
         }
 
@@ -308,7 +307,7 @@ class AppsController extends Controller
      */
     public function updateSettings(Request $request, App $app)
     {
-        if (!$app->is_installed) {
+        if (! $app->is_installed) {
             return response()->json(['error' => __('apps.messages.not_installed')], 422);
         }
 
@@ -394,18 +393,18 @@ class AppsController extends Controller
      */
     public function analytics(App $app)
     {
-        if (!$app->is_installed) {
+        if (! $app->is_installed) {
             return response()->json(['error' => __('apps.messages.not_installed')], 422);
         }
 
         $installation = $app->installation;
-        
+
         $analytics = [
             'usage_count' => $installation->usage_count,
             'last_used' => $installation->last_used_at,
             'error_count' => $installation->error_count,
             'last_error' => $installation->last_error_at,
-            'uptime' => $installation->error_count === 0 ? 100 : 
+            'uptime' => $installation->error_count === 0 ? 100 :
                        max(0, 100 - ($installation->error_count / max(1, $installation->usage_count) * 100)),
         ];
 

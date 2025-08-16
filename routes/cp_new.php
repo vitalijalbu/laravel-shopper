@@ -1,14 +1,14 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use LaravelShopper\Http\Controllers\Cp\DashboardController;
-use LaravelShopper\Http\Controllers\Cp\ProductsController;
-use LaravelShopper\Http\Controllers\Cp\PagesController;
 use LaravelShopper\Http\Controllers\Cp\CollectionsController;
+use LaravelShopper\Http\Controllers\Cp\DashboardController;
+use LaravelShopper\Http\Controllers\Cp\PagesController;
+use LaravelShopper\Http\Controllers\Cp\ProductsController;
 
 // CP Routes - Protected by auth middleware
 Route::middleware(['web', 'auth'])->prefix('cp')->name('cp.')->group(function () {
-    
+
     // Dashboard
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
@@ -132,16 +132,16 @@ Route::middleware(['web', 'auth'])->prefix('cp')->name('cp.')->group(function ()
     Route::prefix('settings')->name('settings.')->group(function () {
         Route::get('/', [\LaravelShopper\Http\Controllers\Cp\SettingsController::class, 'general'])->name('general');
         Route::put('/', [\LaravelShopper\Http\Controllers\Cp\SettingsController::class, 'updateGeneral'])->name('general.update');
-        
+
         Route::get('/payments', [\LaravelShopper\Http\Controllers\Cp\SettingsController::class, 'payments'])->name('payments');
         Route::put('/payments', [\LaravelShopper\Http\Controllers\Cp\SettingsController::class, 'updatePayments'])->name('payments.update');
-        
+
         Route::get('/shipping', [\LaravelShopper\Http\Controllers\Cp\SettingsController::class, 'shipping'])->name('shipping');
         Route::put('/shipping', [\LaravelShopper\Http\Controllers\Cp\SettingsController::class, 'updateShipping'])->name('shipping.update');
-        
+
         Route::get('/taxes', [\LaravelShopper\Http\Controllers\Cp\SettingsController::class, 'taxes'])->name('taxes');
         Route::put('/taxes', [\LaravelShopper\Http\Controllers\Cp\SettingsController::class, 'updateTaxes'])->name('taxes.update');
-        
+
         Route::get('/notifications', [\LaravelShopper\Http\Controllers\Cp\SettingsController::class, 'notifications'])->name('notifications');
         Route::put('/notifications', [\LaravelShopper\Http\Controllers\Cp\SettingsController::class, 'updateNotifications'])->name('notifications.update');
 
@@ -163,11 +163,11 @@ Route::middleware(['web', 'auth'])->prefix('cp')->name('cp.')->group(function ()
         Route::get('/navigation', function () {
             return \LaravelShopper\CP\Navigation::tree();
         })->name('navigation');
-        
+
         Route::get('/dashboard', function () {
             return \LaravelShopper\CP\Dashboard::data();
         })->name('dashboard');
-        
+
         Route::post('/media/upload', [\LaravelShopper\Http\Controllers\Cp\MediaController::class, 'upload'])->name('media.upload');
         Route::delete('/media/{media}', [\LaravelShopper\Http\Controllers\Cp\MediaController::class, 'destroy'])->name('media.destroy');
     });

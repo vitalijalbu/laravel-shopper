@@ -79,7 +79,7 @@
                 <!-- Back to Login -->
                 <div class="text-center">
                     <Link
-                        :href="route('shopper.cp.login')"
+                        :href="route('cp.login')"
                         class="text-sm font-semibold text-indigo-600 hover:text-indigo-500"
                     >
                         {{ $t('shopper::auth.labels.back_to_login') }}
@@ -132,7 +132,7 @@ const form = useForm({
 
 // Methods
 const submit = () => {
-    form.post(route('shopper.cp.password.email'))
+    form.post(route('cp.password.email'))
 }
 
 const changeLocale = (locale) => {

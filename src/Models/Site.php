@@ -17,13 +17,13 @@ class Site extends Model
         'lang',
         'attributes',
         'order',
-        'is_enabled'
+        'is_enabled',
     ];
 
     protected $casts = [
         'attributes' => 'array',
         'is_enabled' => 'boolean',
-        'order' => 'integer'
+        'order' => 'integer',
     ];
 
     /**
@@ -67,8 +67,8 @@ class Site extends Model
      */
     public function isCurrent(): bool
     {
-        return $this->handle === request()->segment(1) || 
-               ($this->order === 1 && !request()->segment(1));
+        return $this->handle === request()->segment(1) ||
+               ($this->order === 1 && ! request()->segment(1));
     }
 
     /**
@@ -76,7 +76,7 @@ class Site extends Model
      */
     public function urlTo(string $path = ''): string
     {
-        return rtrim($this->url, '/') . '/' . ltrim($path, '/');
+        return rtrim($this->url, '/').'/'.ltrim($path, '/');
     }
 
     /**

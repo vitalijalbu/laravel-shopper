@@ -63,9 +63,10 @@ class InstallCommand extends Command
     private function createAdminUser(): void
     {
         $userModel = config('shopper.auth.model', 'App\\Models\\User');
-        
-        if (!class_exists($userModel)) {
+
+        if (! class_exists($userModel)) {
             $this->error("User model {$userModel} not found. Please create it first.");
+
             return;
         }
 
@@ -73,7 +74,7 @@ class InstallCommand extends Command
         $email = $this->ask('Admin email', 'admin@example.com');
         $password = $this->secret('Admin password');
 
-        if (!$password) {
+        if (! $password) {
             $password = 'password';
             $this->info('Using default password: password');
         }
@@ -99,7 +100,7 @@ class InstallCommand extends Command
                 ];
 
                 foreach ($permissions as $permission) {
-                    if (!\Spatie\Permission\Models\Permission::where('name', $permission)->exists()) {
+                    if (! \Spatie\Permission\Models\Permission::where('name', $permission)->exists()) {
                         \Spatie\Permission\Models\Permission::create(['name' => $permission]);
                     }
                 }
@@ -107,7 +108,7 @@ class InstallCommand extends Command
                 $user->givePermissionTo($permissions);
                 $this->info('Admin permissions assigned.');
             } catch (\Exception $e) {
-                $this->warn('Could not assign permissions: ' . $e->getMessage());
+                $this->warn('Could not assign permissions: '.$e->getMessage());
             }
         }
 

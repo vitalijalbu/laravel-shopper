@@ -47,7 +47,7 @@ abstract class BaseResource extends JsonResource
     protected function whenIncluded(string $include, $callback)
     {
         $includes = explode(',', request()->query('include', ''));
-        
+
         if (in_array($include, $includes)) {
             return $callback();
         }
@@ -77,7 +77,7 @@ abstract class BaseResource extends JsonResource
      */
     protected function formatTimestamp($timestamp): ?array
     {
-        if (!$timestamp) {
+        if (! $timestamp) {
             return null;
         }
 

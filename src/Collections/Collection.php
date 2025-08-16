@@ -4,8 +4,6 @@ namespace LaravelShopper\Collections;
 
 use ArrayAccess;
 use Illuminate\Contracts\Support\Arrayable;
-use InvalidArgumentException;
-use Statamic\Contracts\Data\Augmentable as AugmentableContract;
 use LaravelShopper\Contracts\Collections\Collection as Contract;
 use LaravelShopper\Data\ContainsCascadingData;
 use LaravelShopper\Data\ExistsAsFile;
@@ -19,12 +17,11 @@ use LaravelShopper\Events\Collections\CollectionSaving;
 use LaravelShopper\Facades\Blink;
 use LaravelShopper\Facades\Blueprint;
 use LaravelShopper\Facades\Entry;
-use LaravelShopper\Facades\File;
 use LaravelShopper\Facades\Site;
 use LaravelShopper\Facades\Stache;
 use LaravelShopper\Support\Arr;
-use LaravelShopper\Support\Str;
 use LaravelShopper\Support\Traits\FluentlyGetsAndSets;
+use Statamic\Contracts\Data\Augmentable as AugmentableContract;
 
 use function LaravelShopper\trans as __;
 
@@ -33,43 +30,78 @@ class Collection implements Arrayable, ArrayAccess, AugmentableContract, Contrac
     use ContainsCascadingData, ExistsAsFile, FluentlyGetsAndSets, HasAugmentedData;
 
     protected $handle;
+
     protected $routes = [];
+
     private $cachedRoutes = null;
+
     protected $mount;
+
     protected $title;
+
     protected $template;
+
     protected $layout;
+
     protected $sites;
+
     protected $propagate = false;
+
     protected $blueprints = [];
+
     protected $searchIndex;
+
     protected $dated = false;
+
     protected $sortField;
+
     protected $sortDirection;
+
     protected $revisions = false;
+
     protected $positions;
+
     protected $defaultPublishState = true;
+
     protected $originBehavior = 'select';
+
     protected $futureDateBehavior = 'public';
+
     protected $pastDateBehavior = 'public';
+
     protected $structure;
+
     protected $structureContents;
+
     protected $taxonomies = [];
+
     protected $requiresSlugs = true;
+
     protected $titleFormats = [];
+
     protected $previewTargets = [];
+
     protected $autosave;
+
     protected $entryBlueprints;
+
     protected $withEvents = true;
 
     // E-commerce specific properties
     protected $productCollection = false;
+
     protected $customerCollection = false;
+
     protected $orderCollection = false;
+
     protected $categoryCollection = false;
+
     protected $ecommerceType = null;
+
     protected $priceField = 'price';
+
     protected $skuField = 'sku';
+
     protected $inventoryField = 'inventory';
 
     public function __construct()

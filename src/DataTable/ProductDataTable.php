@@ -2,8 +2,8 @@
 
 namespace LaravelShopper\DataTable;
 
-use LaravelShopper\Models\Product;
 use Illuminate\Database\Eloquent\Builder;
+use LaravelShopper\Models\Product;
 
 class ProductDataTable extends BaseDataTable
 {
@@ -15,9 +15,9 @@ class ProductDataTable extends BaseDataTable
         return Product::query()
             ->with(['category', 'brand', 'media'])
             ->select([
-                'id', 'name', 'handle', 'status', 'visibility', 
-                'price', 'inventory_quantity', 'sku', 
-                'category_id', 'brand_id', 'created_at', 'updated_at'
+                'id', 'name', 'handle', 'status', 'visibility',
+                'price', 'inventory_quantity', 'sku',
+                'category_id', 'brand_id', 'created_at', 'updated_at',
             ]);
     }
 
@@ -215,7 +215,10 @@ class ProductDataTable extends BaseDataTable
      * Override default settings.
      */
     protected string $defaultSort = 'created_at';
+
     protected string $defaultDirection = 'desc';
+
     protected int $perPage = 25;
+
     protected array $searchableColumns = ['name', 'handle', 'sku', 'description'];
 }

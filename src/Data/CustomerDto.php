@@ -72,7 +72,7 @@ class CustomerDto extends BaseDto
             'meta' => $this->meta,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-        ], fn($value) => $value !== null);
+        ], fn ($value) => $value !== null);
     }
 
     /**
@@ -102,19 +102,19 @@ class CustomerDto extends BaseDto
             $errors['email'] = 'Email is required';
         }
 
-        if (!filter_var($this->email, FILTER_VALIDATE_EMAIL)) {
+        if (! filter_var($this->email, FILTER_VALIDATE_EMAIL)) {
             $errors['email'] = 'Email must be a valid email address';
         }
 
-        if (!empty($this->phone) && !preg_match('/^[\+]?[0-9\s\-\(\)]{8,20}$/', $this->phone)) {
+        if (! empty($this->phone) && ! preg_match('/^[\+]?[0-9\s\-\(\)]{8,20}$/', $this->phone)) {
             $errors['phone'] = 'Phone number format is invalid';
         }
 
-        if (!empty($this->gender) && !in_array($this->gender, ['male', 'female', 'other', 'prefer_not_to_say'])) {
+        if (! empty($this->gender) && ! in_array($this->gender, ['male', 'female', 'other', 'prefer_not_to_say'])) {
             $errors['gender'] = 'Gender must be one of: male, female, other, prefer_not_to_say';
         }
 
-        if ($this->date_of_birth && $this->date_of_birth > new DateTime()) {
+        if ($this->date_of_birth && $this->date_of_birth > new DateTime) {
             $errors['date_of_birth'] = 'Date of birth cannot be in the future';
         }
 
@@ -139,7 +139,8 @@ class CustomerDto extends BaseDto
     public function getDisplayName(): string
     {
         $fullName = $this->getFullName();
-        return !empty($fullName) ? $fullName : $this->email;
+
+        return ! empty($fullName) ? $fullName : $this->email;
     }
 
     /**
@@ -163,11 +164,11 @@ class CustomerDto extends BaseDto
      */
     public function getAge(): ?int
     {
-        if (!$this->date_of_birth) {
+        if (! $this->date_of_birth) {
             return null;
         }
 
-        return $this->date_of_birth->diff(new DateTime())->y;
+        return $this->date_of_birth->diff(new DateTime)->y;
     }
 
     /**
@@ -175,7 +176,7 @@ class CustomerDto extends BaseDto
      */
     public function hasAvatar(): bool
     {
-        return !empty($this->avatar);
+        return ! empty($this->avatar);
     }
 
     /**
@@ -191,7 +192,7 @@ class CustomerDto extends BaseDto
      */
     public function getFormattedPhone(): ?string
     {
-        if (!$this->phone) {
+        if (! $this->phone) {
             return null;
         }
 

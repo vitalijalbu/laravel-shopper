@@ -8,12 +8,12 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('shopper_template_sections', function (Blueprint $table) {
+        Schema::create('template_sections', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('template_id')->constrained('shopper_templates')->cascadeOnDelete();
-            $table->foreignId('section_id')->constrained('shopper_sections')->cascadeOnDelete();
-            $table->jsonb('settings')->default('{}'); // Instance-specific settings
-            $table->jsonb('blocks_data')->default('[]'); // Block instances with data
+            $table->foreignId('template_id')->constrained('templates')->cascadeOnDelete();
+            $table->foreignId('section_id')->constrained('sections')->cascadeOnDelete();
+            $table->jsonb('settings')->nullable(); // Instance-specific settings
+            $table->jsonb('blocks_data')->nullable(); // Block instances with data
             $table->integer('sort_order')->default(0);
             $table->boolean('is_visible')->default(true);
             $table->string('section_key')->nullable(); // Unique key for this section instance
@@ -28,6 +28,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('shopper_template_sections');
+        Schema::dropIfExists('template_sections');
     }
 };

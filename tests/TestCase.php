@@ -2,39 +2,39 @@
 
 namespace LaravelShopper\Tests;
 
-use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use LaravelShopper\ShopperServiceProvider;
 use Orchestra\Testbench\Concerns\WithWorkbench;
 
 abstract class TestCase extends BaseTestCase
 {
     use RefreshDatabase, WithWorkbench;
-    
+
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         $this->artisan('migrate:fresh', ['--force' => true])->run();
         $this->seed();
     }
-    
+
     protected function getPackageProviders($app): array
     {
         return [
             ShopperServiceProvider::class,
         ];
     }
-    
+
     protected function getEnvironmentSetUp($app): void
     {
         $app['config']->set('database.default', 'testbench');
         $app['config']->set('database.connections.testbench', [
-            'driver'   => 'sqlite',
+            'driver' => 'sqlite',
             'database' => ':memory:',
-            'prefix'   => '',
+            'prefix' => '',
         ]);
-        
+
         $app['config']->set('shopper.currencies', [
             'EUR' => [
                 'name' => 'Euro',
@@ -42,9 +42,9 @@ abstract class TestCase extends BaseTestCase
                 'symbol' => '€',
                 'format' => '1.234,56 €',
                 'exchange_rate' => 1,
-            ]
+            ],
         ]);
-        
+
         $app['config']->set('shopper.system_locales', ['en', 'it']);
     }
 }

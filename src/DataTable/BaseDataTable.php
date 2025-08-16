@@ -2,19 +2,27 @@
 
 namespace LaravelShopper\DataTable;
 
-use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
 
 abstract class BaseDataTable
 {
     protected Builder $query;
+
     protected Request $request;
+
     protected array $filters = [];
+
     protected array $columns = [];
+
     protected array $searchableColumns = [];
+
     protected array $sortableColumns = [];
+
     protected string $defaultSort = 'id';
+
     protected string $defaultDirection = 'desc';
+
     protected int $perPage = 25;
 
     public function __construct(Request $request)
@@ -59,7 +67,7 @@ abstract class BaseDataTable
     {
         $search = $this->request->query('search');
 
-        if ($search && !empty($this->searchableColumns)) {
+        if ($search && ! empty($this->searchableColumns)) {
             $this->query->where(function (Builder $query) use ($search) {
                 foreach ($this->searchableColumns as $column) {
                     $query->orWhere($column, 'ILIKE', "%{$search}%");
@@ -93,7 +101,7 @@ abstract class BaseDataTable
     public function paginate()
     {
         $perPage = min($this->request->query('per_page', $this->perPage), 100);
-        
+
         return $this->query->paginate($perPage);
     }
 
@@ -103,6 +111,7 @@ abstract class BaseDataTable
     protected function addFilter(DataTableFilter $filter): static
     {
         $this->filters[] = $filter;
+
         return $this;
     }
 
@@ -138,11 +147,11 @@ abstract class BaseDataTable
             'columns' => $this->columns,
             'filters' => collect($this->filters)->map->toArray(),
             'search' => [
-                'enabled' => !empty($this->searchableColumns),
+                'enabled' => ! empty($this->searchableColumns),
                 'placeholder' => 'Search...',
             ],
             'sorting' => [
-                'enabled' => !empty($this->sortableColumns),
+                'enabled' => ! empty($this->sortableColumns),
                 'default_field' => $this->defaultSort,
                 'default_direction' => $this->defaultDirection,
             ],
@@ -159,8 +168,8 @@ abstract class BaseDataTable
     public function process()
     {
         return $this->applyFilters()
-                   ->applySearch()
-                   ->applySorting()
-                   ->paginate();
+            ->applySearch()
+            ->applySorting()
+            ->paginate();
     }
 }

@@ -1,5 +1,5 @@
 <template>
-    <div class="apps-store">
+    <div class="apps-store max-w-7xl mx-auto p-6">
         <!-- Header -->
         <div class="apps-header mb-8">
             <div class="flex items-center justify-between">
@@ -307,30 +307,56 @@ onMounted(() => {
 
 <style scoped>
 .apps-store {
-    @apply max-w-7xl mx-auto p-6;
+    /* Styling gestito tramite classi Tailwind */
 }
 
 .btn {
-    @apply px-4 py-2 rounded-lg font-medium transition-colors;
+    padding: 1rem 1rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    transition: all 0.2s;
 }
 
 .btn-primary {
-    @apply bg-blue-600 text-white hover:bg-blue-700;
+    background-color: #2563eb;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #1d4ed8;
 }
 
 .btn-outline {
-    @apply border border-gray-300 text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800;
+    border: 1px solid #d1d5db;
+    color: #374151;
 }
 
-.input {
-    @apply w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:border-gray-600 dark:bg-gray-800 dark:text-white;
+.btn-outline:hover {
+    background-color: #f9fafb;
 }
 
-.select {
-    @apply px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:border-gray-600 dark:bg-gray-800 dark:text-white;
+.form-input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
 }
 
-.select-sm {
-    @apply text-sm px-2 py-1;
+.form-input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.form-select {
+    padding: 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+}
+
+.badge {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    border-radius: 0.25rem;
 }
 </style>

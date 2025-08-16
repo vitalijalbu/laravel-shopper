@@ -19,9 +19,9 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 class Product extends Model implements HasMedia
 {
     use HasFactory;
-    use InteractsWithMedia;
     use HasHandle;
     use HasSite;
+    use InteractsWithMedia;
 
     protected $fillable = [
         'site_id',

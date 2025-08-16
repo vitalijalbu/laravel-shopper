@@ -7,9 +7,11 @@ use Illuminate\Support\Collection;
 class Dashboard
 {
     protected static array $cards = [];
+
     protected static array $quickActions = [];
+
     protected static array $metrics = [];
-    
+
     /**
      * Register a dashboard card
      */
@@ -25,7 +27,7 @@ class Dashboard
     /**
      * Register a quick action
      */
-    public static function quickAction(string $label, string $url, string $icon = null, array $permissions = []): void
+    public static function quickAction(string $label, string $url, ?string $icon = null, array $permissions = []): void
     {
         static::$quickActions[] = [
             'label' => $label,
@@ -38,7 +40,7 @@ class Dashboard
     /**
      * Register a metric
      */
-    public static function metric(string $label, callable $value, string $icon = null, string $color = 'blue'): void
+    public static function metric(string $label, callable $value, ?string $icon = null, string $color = 'blue'): void
     {
         static::$metrics[] = [
             'label' => $label,
@@ -72,9 +74,10 @@ class Dashboard
     public static function metrics(): Collection
     {
         return collect(static::$metrics)->map(function ($metric) {
-            $metric['value'] = is_callable($metric['value']) 
-                ? call_user_func($metric['value']) 
+            $metric['value'] = is_callable($metric['value'])
+                ? call_user_func($metric['value'])
                 : $metric['value'];
+
             return $metric;
         });
     }

@@ -8,16 +8,16 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('shopper_theme_settings', function (Blueprint $table) {
+        Schema::create('theme_settings', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('site_id')->constrained('shopper_sites')->cascadeOnDelete();
+            $table->foreignId('site_id')->constrained('sites')->cascadeOnDelete();
             $table->string('theme_handle')->default('default');
-            $table->jsonb('global_settings')->default('{}'); // Typography, colors, layout
-            $table->jsonb('navigation_menus')->default('{}'); // Header, footer, sidebar menus
-            $table->jsonb('social_links')->default('{}'); // Social media settings
-            $table->jsonb('seo_settings')->default('{}'); // Global SEO settings
-            $table->jsonb('custom_css')->default('{}'); // Per-section custom CSS
-            $table->jsonb('custom_js')->default('{}'); // Custom JavaScript snippets
+            $table->jsonb('global_settings')->nullable(); // Typography, colors, layout
+            $table->jsonb('navigation_menus')->nullable(); // Header, footer, sidebar menus
+            $table->jsonb('social_links')->nullable(); // Social media settings
+            $table->jsonb('seo_settings')->nullable(); // Global SEO settings
+            $table->jsonb('custom_css')->nullable(); // Per-section custom CSS
+            $table->jsonb('custom_js')->nullable(); // Custom JavaScript snippets
             $table->boolean('is_active')->default(true);
             $table->timestamps();
 
@@ -28,6 +28,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('shopper_theme_settings');
+        Schema::dropIfExists('theme_settings');
     }
 };

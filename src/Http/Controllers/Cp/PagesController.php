@@ -28,13 +28,13 @@ class PagesController extends Controller
             ]);
 
         $pages = ShopperPage::select([
-            'id', 'title', 'handle', 'status', 'show_title', 
+            'id', 'title', 'handle', 'status', 'show_title',
             'seo_title', 'seo_description', 'published_at',
-            'author_id', 'template_id', 'created_at', 'updated_at'
+            'author_id', 'template_id', 'created_at', 'updated_at',
         ])
-        ->with(['author:id,name', 'template:id,name'])
-        ->orderBy('created_at', 'desc')
-        ->paginate(20);
+            ->with(['author:id,name', 'template:id,name'])
+            ->orderBy('created_at', 'desc')
+            ->paginate(20);
 
         return Inertia::render('CP/Pages/Index', [
             'page' => $page->compile(),
@@ -91,7 +91,7 @@ class PagesController extends Controller
 
         // Additional DTO validation
         $dtoErrors = $pageDto->validate();
-        if (!empty($dtoErrors)) {
+        if (! empty($dtoErrors)) {
             return response()->json(['errors' => $dtoErrors], 422);
         }
 
@@ -100,19 +100,19 @@ class PagesController extends Controller
 
         // Handle different save actions
         $action = $request->input('_action', 'save');
-        
+
         return match ($action) {
             'save_continue' => response()->json([
                 'message' => 'Page created successfully',
-                'redirect' => "/cp/pages/{$page->id}/edit"
+                'redirect' => "/cp/pages/{$page->id}/edit",
             ]),
             'save_add_another' => response()->json([
                 'message' => 'Page created successfully',
-                'redirect' => '/cp/pages/create'
+                'redirect' => '/cp/pages/create',
             ]),
             default => response()->json([
                 'message' => 'Page created successfully',
-                'redirect' => '/cp/pages'
+                'redirect' => '/cp/pages',
             ])
         };
     }
@@ -133,7 +133,7 @@ class PagesController extends Controller
                 ['label' => 'View page', 'url' => "/pages/{$page->handle}", 'external' => true],
                 ['label' => 'Page builder', 'url' => "/cp/pages/{$page->id}/builder"],
                 ['label' => 'Duplicate', 'url' => "/cp/pages/{$page->id}/duplicate"],
-                ['label' => 'Delete', 'url' => "#", 'destructive' => true],
+                ['label' => 'Delete', 'url' => '#', 'destructive' => true],
             ])
             ->tabs([
                 'content' => ['label' => 'Content', 'component' => 'PageContentForm'],
@@ -167,10 +167,10 @@ class PagesController extends Controller
 
         // Create DTO from validated data
         $pageDto = PageDto::from($validated);
-        
+
         // Additional DTO validation
         $dtoErrors = $pageDto->validate();
-        if (!empty($dtoErrors)) {
+        if (! empty($dtoErrors)) {
             return response()->json(['errors' => $dtoErrors], 422);
         }
 
@@ -198,7 +198,7 @@ class PagesController extends Controller
     /**
      * Page builder interface
      */
-    public function builder(Request $request, ShopperPage $page = null)
+    public function builder(Request $request, ?ShopperPage $page = null)
     {
         $pageBuilder = Page::make($page ? "Edit {$page->title}" : 'Page Builder')
             ->breadcrumb('Home', '/cp')
@@ -227,13 +227,13 @@ class PagesController extends Controller
     {
         $action = $request->input('action');
         $ids = $request->input('ids', []);
-        
+
         if (empty($ids)) {
             return response()->json(['error' => 'No pages selected'], 422);
         }
 
         $pages = ShopperPage::whereIn('id', $ids);
-        
+
         return match ($action) {
             'publish' => $this->bulkPublish($pages),
             'draft' => $this->bulkDraft($pages),
@@ -291,6 +291,7 @@ class PagesController extends Controller
     protected function bulkPublish($pages)
     {
         $count = $pages->update(['status' => 'published']);
+
         return response()->json(['message' => "Published {$count} pages"]);
     }
 
@@ -300,6 +301,7 @@ class PagesController extends Controller
     protected function bulkDraft($pages)
     {
         $count = $pages->update(['status' => 'draft']);
+
         return response()->json(['message' => "Set {$count} pages as draft"]);
     }
 
@@ -309,6 +311,7 @@ class PagesController extends Controller
     protected function bulkPrivate($pages)
     {
         $count = $pages->update(['status' => 'private']);
+
         return response()->json(['message' => "Set {$count} pages as private"]);
     }
 
@@ -319,6 +322,7 @@ class PagesController extends Controller
     {
         $count = $pages->count();
         $pages->delete();
+
         return response()->json(['message' => "Deleted {$count} pages"]);
     }
 
@@ -330,14 +334,14 @@ class PagesController extends Controller
         $count = 0;
         $pages->get()->each(function ($page) use (&$count) {
             $pageDto = PageDto::from($page->toArray());
-            $pageDto->title = $pageDto->title . ' (Copy)';
+            $pageDto->title = $pageDto->title.' (Copy)';
             $pageDto->handle = '';
             $pageDto->status = 'draft';
-            
+
             ShopperPage::create($pageDto->toArray());
             $count++;
         });
-        
+
         return response()->json(['message' => "Duplicated {$count} pages"]);
     }
 }

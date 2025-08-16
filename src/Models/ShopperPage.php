@@ -56,7 +56,7 @@ class ShopperPage extends Model
         return $query->where('status', 'published')
             ->where(function ($q) {
                 $q->whereNull('published_at')
-                  ->orWhere('published_at', '<=', now());
+                    ->orWhere('published_at', '<=', now());
             });
     }
 
@@ -73,7 +73,7 @@ class ShopperPage extends Model
     // Methods
     public function isPublished(): bool
     {
-        return $this->status === 'published' && 
+        return $this->status === 'published' &&
                ($this->published_at === null || $this->published_at <= now());
     }
 

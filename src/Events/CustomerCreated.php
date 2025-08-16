@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace LaravelShopper\Events;
 
-
 class CustomerCreated extends Event
 {
     public function __construct($customer)

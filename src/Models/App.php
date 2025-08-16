@@ -150,15 +150,15 @@ class App extends Model
     public function getIsCompatibleAttribute(): bool
     {
         $shopperVersion = config('shopper.version', '1.0.0');
-        
+
         if ($this->min_shopper_version && version_compare($shopperVersion, $this->min_shopper_version, '<')) {
             return false;
         }
-        
+
         if ($this->max_shopper_version && version_compare($shopperVersion, $this->max_shopper_version, '>')) {
             return false;
         }
-        
+
         return true;
     }
 
@@ -170,7 +170,7 @@ class App extends Model
 
         return match ($this->pricing_model) {
             'one_time' => formatCurrency($this->price),
-            'recurring' => formatCurrency($this->price) . '/' . __('apps.month'),
+            'recurring' => formatCurrency($this->price).'/'.__('apps.month'),
             default => formatCurrency($this->price)
         };
     }
@@ -208,7 +208,7 @@ class App extends Model
 
     public function uninstall(): bool
     {
-        if (!$this->is_installed) {
+        if (! $this->is_installed) {
             throw new \Exception(__('apps.not_installed'));
         }
 
@@ -222,7 +222,7 @@ class App extends Model
         ]);
 
         $this->installation()->delete();
-        
+
         $this->update([
             'is_installed' => false,
             'is_active' => false,
@@ -233,7 +233,7 @@ class App extends Model
 
     public function activate(): bool
     {
-        if (!$this->is_installed) {
+        if (! $this->is_installed) {
             throw new \Exception(__('apps.not_installed'));
         }
 
@@ -272,7 +272,7 @@ class App extends Model
     public function updateRating(): void
     {
         $reviews = $this->reviews()->where('status', 'approved');
-        
+
         $this->update([
             'rating' => $reviews->avg('rating') ?? 0,
             'review_count' => $reviews->count(),

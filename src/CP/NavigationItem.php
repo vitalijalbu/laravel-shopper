@@ -2,20 +2,28 @@
 
 namespace LaravelShopper\CP;
 
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Gate;
 
 class NavigationItem
 {
     protected string $name;
+
     protected ?string $label = null;
+
     protected ?string $url = null;
+
     protected ?string $icon = null;
+
     protected ?string $section = null;
+
     protected array $permissions = [];
+
     protected $badge = null;
+
     protected int $order = 100;
+
     protected array $children = [];
+
     protected bool $active = true;
 
     public function __construct(string $name)
@@ -29,6 +37,7 @@ class NavigationItem
     public function label(string $label): self
     {
         $this->label = $label;
+
         return $this;
     }
 
@@ -38,6 +47,7 @@ class NavigationItem
     public function url(string $url): self
     {
         $this->url = $url;
+
         return $this;
     }
 
@@ -47,6 +57,7 @@ class NavigationItem
     public function icon(string $icon): self
     {
         $this->icon = $icon;
+
         return $this;
     }
 
@@ -56,6 +67,7 @@ class NavigationItem
     public function section(string $section): self
     {
         $this->section = $section;
+
         return $this;
     }
 
@@ -65,6 +77,7 @@ class NavigationItem
     public function permissions(array $permissions): self
     {
         $this->permissions = $permissions;
+
         return $this;
     }
 
@@ -74,6 +87,7 @@ class NavigationItem
     public function badge(callable $callback): self
     {
         $this->badge = $callback;
+
         return $this;
     }
 
@@ -83,6 +97,7 @@ class NavigationItem
     public function order(int $order): self
     {
         $this->order = $order;
+
         return $this;
     }
 
@@ -93,6 +108,7 @@ class NavigationItem
     {
         $child = new NavigationItem($name);
         $this->children[] = $child;
+
         return $child;
     }
 
@@ -102,6 +118,7 @@ class NavigationItem
     public function active(bool $active = true): self
     {
         $this->active = $active;
+
         return $this;
     }
 
@@ -110,7 +127,7 @@ class NavigationItem
      */
     public function canView(): bool
     {
-        if (!$this->active) {
+        if (! $this->active) {
             return false;
         }
 
@@ -132,7 +149,7 @@ class NavigationItem
      */
     public function getBadgeValue()
     {
-        if (!$this->badge) {
+        if (! $this->badge) {
             return null;
         }
 
@@ -157,8 +174,8 @@ class NavigationItem
             'badge' => $this->getBadgeValue(),
             'order' => $this->order,
             'children' => collect($this->children)
-                ->filter(fn($child) => $child->canView())
-                ->map(fn($child) => $child->toArray())
+                ->filter(fn ($child) => $child->canView())
+                ->map(fn ($child) => $child->toArray())
                 ->values()
                 ->toArray(),
         ];

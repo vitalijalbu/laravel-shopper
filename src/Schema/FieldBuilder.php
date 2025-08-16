@@ -45,7 +45,7 @@ class FieldBuilder
         $type = $config['type'] ?? 'text';
         $fieldClass = $this->getFieldType($type);
 
-        if (!$fieldClass || !class_exists($fieldClass)) {
+        if (! $fieldClass || ! class_exists($fieldClass)) {
             return null;
         }
 
@@ -74,7 +74,7 @@ class FieldBuilder
         $this->register('select', SelectFieldType::class);
         $this->register('toggle', ToggleFieldType::class);
         $this->register('date', DateFieldType::class);
-        
+
         // TODO: Implement remaining field types
         // $this->register('markdown', MarkdownFieldType::class);
         // $this->register('url', UrlFieldType::class);

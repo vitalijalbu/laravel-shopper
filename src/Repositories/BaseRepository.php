@@ -12,58 +12,62 @@ use LaravelShopper\Contracts\RepositoryInterface;
 abstract class BaseRepository implements RepositoryInterface
 {
     protected Model $model;
+
     protected Builder $query;
+
     protected array $with = [];
+
     protected string $cachePrefix = '';
+
     protected int $cacheTtl = 3600;
-    
+
     public function __construct()
     {
         $this->model = $this->makeModel();
         $this->query = $this->model->newQuery();
     }
-    
+
     abstract protected function makeModel(): Model;
-    
+
     public function all(array $columns = ['*']): Collection
     {
         $cacheKey = $this->getCacheKey('all', md5(serialize($columns)));
-        
+
         return Cache::remember($cacheKey, $this->cacheTtl, function () use ($columns) {
             return $this->applyRelations()->get($columns);
         });
     }
-    
+
     public function paginate(int $perPage = 20, array $columns = ['*']): LengthAwarePaginator
     {
         return $this->applyRelations()->paginate($perPage, $columns);
     }
-    
+
     public function find(int $id, array $columns = ['*']): ?Model
     {
         $cacheKey = $this->getCacheKey('find', $id);
-        
+
         return Cache::remember($cacheKey, $this->cacheTtl, function () use ($id, $columns) {
             return $this->applyRelations()->find($id, $columns);
         });
     }
-    
+
     public function findOrFail(int $id, array $columns = ['*']): Model
     {
         $cacheKey = $this->getCacheKey('find', $id);
-        
+
         return Cache::remember($cacheKey, $this->cacheTtl, function () use ($id, $columns) {
             return $this->applyRelations()->findOrFail($id, $columns);
         });
     }
-    
+
     public function findWhere(array $where, array $columns = ['*']): Collection
     {
         $cacheKey = $this->getCacheKey('findWhere', md5(serialize($where)));
-        
+
         return Cache::remember($cacheKey, $this->cacheTtl, function () use ($where, $columns) {
             $query = $this->applyRelations();
-            
+
             foreach ($where as $field => $value) {
                 if (is_array($value)) {
                     $query->whereIn($field, $value);
@@ -71,15 +75,15 @@ abstract class BaseRepository implements RepositoryInterface
                     $query->where($field, $value);
                 }
             }
-            
+
             return $query->get($columns);
         });
     }
-    
+
     public function findWhereFirst(array $where, array $columns = ['*']): ?Model
     {
         $query = $this->applyRelations();
-        
+
         foreach ($where as $field => $value) {
             if (is_array($value)) {
                 $query->whereIn($field, $value);
@@ -87,72 +91,75 @@ abstract class BaseRepository implements RepositoryInterface
                 $query->where($field, $value);
             }
         }
-        
+
         return $query->first($columns);
     }
-    
+
     public function create(array $attributes): Model
     {
         $model = $this->model->create($attributes);
-        
+
         $this->clearCache();
-        
+
         return $model;
     }
-    
+
     public function update(int $id, array $attributes): Model
     {
         $model = $this->findOrFail($id);
         $model->update($attributes);
-        
+
         $this->clearCache();
-        
+
         return $model;
     }
-    
+
     public function delete(int $id): bool
     {
         $model = $this->findOrFail($id);
         $result = $model->delete();
-        
+
         $this->clearCache();
-        
+
         return $result;
     }
-    
+
     public function with(array $relations): static
     {
         $this->with = array_merge($this->with, $relations);
+
         return $this;
     }
-    
-    public function whereHas(string $relation, callable $callback = null): static
+
+    public function whereHas(string $relation, ?callable $callback = null): static
     {
         $this->query->whereHas($relation, $callback);
+
         return $this;
     }
-    
+
     public function orderBy(string $column, string $direction = 'asc'): static
     {
         $this->query->orderBy($column, $direction);
+
         return $this;
     }
-    
+
     public function search(string $term): static
     {
         // Override this method in specific repositories
         return $this;
     }
-    
+
     protected function applyRelations(): Builder
     {
-        if (!empty($this->with)) {
+        if (! empty($this->with)) {
             $this->query->with($this->with);
         }
-        
+
         return $this->query;
     }
-    
+
     protected function getCacheKey(string $method, mixed $identifier): string
     {
         return sprintf(
@@ -162,19 +169,19 @@ abstract class BaseRepository implements RepositoryInterface
             $identifier
         );
     }
-    
+
     protected function clearCache(): void
     {
         if (method_exists(Cache::getStore(), 'tags')) {
             Cache::tags([$this->cachePrefix])->flush();
         }
     }
-    
+
     public function resetQuery(): static
     {
         $this->query = $this->model->newQuery();
         $this->with = [];
-        
+
         return $this;
     }
 }

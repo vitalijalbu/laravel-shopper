@@ -52,23 +52,23 @@ class InertiaServiceProvider extends ServiceProvider
             // Translations - Statamic CMS style
             'translations' => function () {
                 $locale = App::getLocale();
-                
+
                 return [
                     // Core admin translations
                     'admin' => Lang::get('admin', [], $locale),
-                    
+
                     // Module-specific translations
                     'products' => Lang::get('products', [], $locale),
                     'categories' => Lang::get('categories', [], $locale),
                     'brands' => Lang::get('brands', [], $locale),
                     'pages' => Lang::get('pages', [], $locale),
-                    
+
                     // Laravel validation messages
                     'validation' => Lang::get('validation', [], $locale),
-                    
+
                     // Auth messages
                     'auth' => Lang::get('auth', [], $locale),
-                    
+
                     // Pagination
                     'pagination' => Lang::get('pagination', [], $locale),
                 ];

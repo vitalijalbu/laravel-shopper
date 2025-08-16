@@ -75,10 +75,10 @@ class UserPreference extends Model
         return $preference ? $preference->preference_value : $default;
     }
 
-    public static function getAllForUser($userId, string $type = null): array
+    public static function getAllForUser($userId, ?string $type = null): array
     {
         $query = self::where('user_id', $userId);
-        
+
         if ($type) {
             $query->where('preference_type', $type);
         }

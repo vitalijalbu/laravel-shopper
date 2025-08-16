@@ -61,8 +61,8 @@ class ProductResource extends BaseResource
     protected function getMeta(Request $request): array
     {
         return array_merge(parent::getMeta($request), [
-            'variants_count' => $this->whenLoaded('variants', fn() => $this->variants->count()),
-            'images_count' => $this->whenLoaded('media', fn() => $this->media->count()),
+            'variants_count' => $this->whenLoaded('variants', fn () => $this->variants->count()),
+            'images_count' => $this->whenLoaded('media', fn () => $this->media->count()),
             'is_active' => $this->status === 'active',
             'is_published' => in_array($this->visibility, ['public', 'hidden']),
         ]);

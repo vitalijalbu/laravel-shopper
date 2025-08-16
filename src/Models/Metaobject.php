@@ -6,7 +6,6 @@ namespace LaravelShopper\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Carbon\Carbon;
 
 class Metaobject extends Model
 {
@@ -41,7 +40,7 @@ class Metaobject extends Model
     public function scopePublished($query)
     {
         return $query->whereNotNull('published_at')
-                    ->where('published_at', '<=', now());
+            ->where('published_at', '<=', now());
     }
 
     public function scopeDraft($query)
@@ -81,14 +80,14 @@ class Metaobject extends Model
         $fields = $this->fields ?? [];
         data_set($fields, $key, $value);
         $this->fields = $fields;
-        
+
         return $this;
     }
 
     public function getDisplayName(): string
     {
         $displayFields = $this->definition->getDisplayableFields();
-        
+
         if (empty($displayFields)) {
             return $this->handle;
         }

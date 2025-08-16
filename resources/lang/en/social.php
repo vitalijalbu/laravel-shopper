@@ -15,7 +15,7 @@ return [
 
     'providers' => [
         'google' => 'Google',
-        'facebook' => 'Facebook', 
+        'facebook' => 'Facebook',
         'twitter' => 'Twitter',
         'github' => 'GitHub',
         'linkedin' => 'LinkedIn',
@@ -42,7 +42,7 @@ return [
             'unlinked' => 'Successfully unlinked your :provider account!',
             'updated' => 'Your :provider account has been updated!',
         ],
-        
+
         'errors' => [
             'provider_not_supported' => 'The :provider provider is not supported.',
             'provider_not_configured' => 'The :provider provider is not properly configured.',
@@ -70,7 +70,7 @@ return [
 
     'buttons' => [
         'login' => 'Login',
-        'register' => 'Register', 
+        'register' => 'Register',
         'link' => 'Link',
         'unlink' => 'Unlink',
         'cancel' => 'Cancel',

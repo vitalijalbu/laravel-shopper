@@ -4,9 +4,9 @@ namespace LaravelShopper\Http\Controllers\Cp;
 
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use LaravelShopper\Data\CategoryDto;
 use LaravelShopper\CP\Navigation;
 use LaravelShopper\CP\Page;
+use LaravelShopper\Data\CategoryDto;
 use LaravelShopper\Http\Controllers\Controller;
 use LaravelShopper\Models\Category;
 
@@ -81,10 +81,10 @@ class CategoriesController extends Controller
 
         // Create DTO from validated data
         $categoryDto = CategoryDto::from($validated);
-        
+
         // Additional DTO validation
         $dtoErrors = $categoryDto->validate();
-        if (!empty($dtoErrors)) {
+        if (! empty($dtoErrors)) {
             return response()->json(['errors' => $dtoErrors], 422);
         }
 
@@ -93,19 +93,19 @@ class CategoriesController extends Controller
 
         // Handle different save actions
         $action = $request->input('_action', 'save');
-        
+
         return match ($action) {
             'save_continue' => response()->json([
                 'message' => 'Category created successfully',
-                'redirect' => "/cp/categories/{$category->id}/edit"
+                'redirect' => "/cp/categories/{$category->id}/edit",
             ]),
             'save_add_another' => response()->json([
                 'message' => 'Category created successfully',
-                'redirect' => '/cp/categories/create'
+                'redirect' => '/cp/categories/create',
             ]),
             default => response()->json([
                 'message' => 'Category created successfully',
-                'redirect' => '/cp/categories'
+                'redirect' => '/cp/categories',
             ])
         };
     }
@@ -191,10 +191,10 @@ class CategoriesController extends Controller
 
         // Create DTO from validated data
         $categoryDto = CategoryDto::from($validated);
-        
+
         // Additional DTO validation
         $dtoErrors = $categoryDto->validate();
-        if (!empty($dtoErrors)) {
+        if (! empty($dtoErrors)) {
             return response()->json(['errors' => $dtoErrors], 422);
         }
 
@@ -215,18 +215,18 @@ class CategoriesController extends Controller
         // Check if category has children or products
         if ($category->children()->exists()) {
             return response()->json([
-                'error' => 'Cannot delete category with subcategories'
+                'error' => 'Cannot delete category with subcategories',
             ], 422);
         }
 
         if ($category->products()->exists()) {
             return response()->json([
-                'error' => 'Cannot delete category with products'
+                'error' => 'Cannot delete category with products',
             ], 422);
         }
 
         $category->delete();
-        
+
         return response()->json([
             'message' => 'Category deleted successfully',
         ]);
@@ -239,13 +239,13 @@ class CategoriesController extends Controller
     {
         $action = $request->input('action');
         $ids = $request->input('ids', []);
-        
+
         if (empty($ids)) {
             return response()->json(['error' => 'No categories selected'], 422);
         }
 
         $categories = Category::whereIn('id', $ids);
-        
+
         return match ($action) {
             'enable' => $this->bulkEnable($categories),
             'disable' => $this->bulkDisable($categories),
@@ -261,6 +261,7 @@ class CategoriesController extends Controller
     protected function bulkEnable($categories)
     {
         $count = $categories->update(['is_enabled' => true]);
+
         return response()->json(['message' => "Enabled {$count} categories"]);
     }
 
@@ -270,6 +271,7 @@ class CategoriesController extends Controller
     protected function bulkDisable($categories)
     {
         $count = $categories->update(['is_enabled' => false]);
+
         return response()->json(['message' => "Disabled {$count} categories"]);
     }
 
@@ -284,6 +286,7 @@ class CategoriesController extends Controller
         $categories->get()->each(function ($category) use (&$count, &$errors) {
             if ($category->children()->exists() || $category->products()->exists()) {
                 $errors[] = "Cannot delete '{$category->name}' - has children or products";
+
                 return;
             }
 
@@ -291,10 +294,10 @@ class CategoriesController extends Controller
             $count++;
         });
 
-        if (!empty($errors)) {
+        if (! empty($errors)) {
             return response()->json([
                 'message' => "Deleted {$count} categories",
-                'errors' => $errors
+                'errors' => $errors,
             ], 207); // 207 Multi-Status
         }
 
@@ -307,9 +310,10 @@ class CategoriesController extends Controller
     protected function bulkExport($categories)
     {
         $count = $categories->count();
+
         return response()->json([
             'message' => "Exporting {$count} categories",
-            'download_url' => '/cp/categories/export/download/' . uniqid(),
+            'download_url' => '/cp/categories/export/download/'.uniqid(),
         ]);
     }
 }

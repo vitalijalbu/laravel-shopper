@@ -2,14 +2,17 @@
 
 namespace LaravelShopper\DataTable;
 
-use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
 
 abstract class DataTableFilter
 {
     protected string $key;
+
     protected string $label;
+
     protected string $type;
+
     protected array $options = [];
 
     public function __construct(string $key, string $label, string $type = 'select')
@@ -30,6 +33,7 @@ abstract class DataTableFilter
     public function options(array $options): static
     {
         $this->options = $options;
+
         return $this;
     }
 
@@ -39,6 +43,7 @@ abstract class DataTableFilter
     public function optionsUrl(string $url): static
     {
         $this->options = ['url' => $url];
+
         return $this;
     }
 
@@ -69,7 +74,8 @@ abstract class DataTableFilter
     protected function hasValue(Request $request): bool
     {
         $value = $this->getValue($request);
-        return !is_null($value) && $value !== '';
+
+        return ! is_null($value) && $value !== '';
     }
 }
 
@@ -104,8 +110,8 @@ class MultiSelectFilter extends DataTableFilter
     public function apply(Builder $query, Request $request): void
     {
         $values = $this->getValue($request);
-        
-        if (is_array($values) && !empty($values)) {
+
+        if (is_array($values) && ! empty($values)) {
             $query->whereIn($this->key, $values);
         }
     }
@@ -124,14 +130,14 @@ class DateRangeFilter extends DataTableFilter
     public function apply(Builder $query, Request $request): void
     {
         $range = $this->getValue($request);
-        
+
         if (is_array($range) && count($range) === 2) {
             [$start, $end] = $range;
-            
+
             if ($start) {
                 $query->whereDate($this->key, '>=', $start);
             }
-            
+
             if ($end) {
                 $query->whereDate($this->key, '<=', $end);
             }
@@ -152,15 +158,15 @@ class NumberRangeFilter extends DataTableFilter
     public function apply(Builder $query, Request $request): void
     {
         $range = $this->getValue($request);
-        
+
         if (is_array($range)) {
             $min = $range['min'] ?? null;
             $max = $range['max'] ?? null;
-            
+
             if ($min !== null) {
                 $query->where($this->key, '>=', $min);
             }
-            
+
             if ($max !== null) {
                 $query->where($this->key, '<=', $max);
             }
@@ -170,12 +176,14 @@ class NumberRangeFilter extends DataTableFilter
     public function min(int $value): static
     {
         $this->options['min'] = $value;
+
         return $this;
     }
 
     public function max(int $value): static
     {
         $this->options['max'] = $value;
+
         return $this;
     }
 }
@@ -193,7 +201,7 @@ class BooleanFilter extends DataTableFilter
     public function apply(Builder $query, Request $request): void
     {
         $value = $this->getValue($request);
-        
+
         if ($value !== null) {
             $query->where($this->key, filter_var($value, FILTER_VALIDATE_BOOLEAN));
         }

@@ -8,14 +8,14 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('shopper_templates', function (Blueprint $table) {
+        Schema::create('templates', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('site_id')->constrained('shopper_sites')->cascadeOnDelete();
+            $table->foreignId('site_id')->constrained('sites')->cascadeOnDelete();
             $table->string('handle')->index(); // index, product, collection, page, etc.
             $table->string('name');
             $table->string('type')->default('page'); // page, product, collection, blog, article
-            $table->jsonb('sections')->default('[]'); // Array of section configurations
-            $table->jsonb('settings')->default('{}'); // Template-level settings
+            $table->jsonb('sections')->nullable(); // Array of section configurations
+            $table->jsonb('settings')->nullable(); // Template-level settings
             $table->string('layout')->default('theme'); // Layout file to use
             $table->boolean('is_default')->default(false);
             $table->boolean('is_active')->default(true);
@@ -31,6 +31,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('shopper_templates');
+        Schema::dropIfExists('templates');
     }
 };

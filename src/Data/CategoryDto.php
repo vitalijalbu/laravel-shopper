@@ -55,7 +55,7 @@ class CategoryDto extends BaseDto
             'meta' => $this->meta,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-        ], fn($value) => $value !== null);
+        ], fn ($value) => $value !== null);
     }
 
     /**
@@ -73,7 +73,7 @@ class CategoryDto extends BaseDto
             $errors['name'] = 'Category name cannot exceed 255 characters';
         }
 
-        if (!empty($this->description) && strlen($this->description) > 1000) {
+        if (! empty($this->description) && strlen($this->description) > 1000) {
             $errors['description'] = 'Description cannot exceed 1000 characters';
         }
 
@@ -104,7 +104,7 @@ class CategoryDto extends BaseDto
         if ($parentName) {
             return "{$parentName} > {$this->name}";
         }
-        
+
         return $this->name;
     }
 

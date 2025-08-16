@@ -2,151 +2,165 @@
 
 namespace LaravelShopper\Services;
 
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Collection;
 use Closure;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 
 class CacheService
 {
     // Cache TTL constants (in seconds)
     const PRODUCT_TTL = 3600;        // 1 hour
+
     const CATEGORY_TTL = 7200;       // 2 hours
+
     const BRAND_TTL = 7200;          // 2 hours
+
     const COLLECTION_TTL = 3600;     // 1 hour
+
     const USER_TTL = 1800;           // 30 minutes
+
     const SETTINGS_TTL = 86400;      // 24 hours
+
     const NAVIGATION_TTL = 3600;     // 1 hour
+
     const STATS_TTL = 600;           // 10 minutes
-    
+
     // Cache tags for better invalidation
     const PRODUCT_TAG = 'products';
+
     const CATEGORY_TAG = 'categories';
+
     const BRAND_TAG = 'brands';
+
     const COLLECTION_TAG = 'collections';
+
     const USER_TAG = 'users';
+
     const SETTINGS_TAG = 'settings';
+
     const NAVIGATION_TAG = 'navigation';
+
     const STATS_TAG = 'stats';
-    
+
     protected bool $tagsSupported;
-    
+
     public function __construct()
     {
         $this->tagsSupported = method_exists(Cache::getStore(), 'tags');
     }
-    
+
     /**
      * Cache product data with appropriate tags and TTL
      */
     public function rememberProduct(mixed $key, Closure $callback, int $ttl = self::PRODUCT_TTL): mixed
     {
         $cacheKey = $this->formatKey(self::PRODUCT_TAG, $key);
-        
+
         if ($this->tagsSupported) {
             return Cache::tags([self::PRODUCT_TAG])->remember($cacheKey, $ttl, $callback);
         }
-        
+
         return Cache::remember($cacheKey, $ttl, $callback);
     }
-    
+
     /**
      * Cache category data
      */
     public function rememberCategory(mixed $key, Closure $callback, int $ttl = self::CATEGORY_TTL): mixed
     {
         $cacheKey = $this->formatKey(self::CATEGORY_TAG, $key);
-        
+
         if ($this->tagsSupported) {
             return Cache::tags([self::CATEGORY_TAG])->remember($cacheKey, $ttl, $callback);
         }
-        
+
         return Cache::remember($cacheKey, $ttl, $callback);
     }
-    
+
     /**
      * Cache brand data
      */
     public function rememberBrand(mixed $key, Closure $callback, int $ttl = self::BRAND_TTL): mixed
     {
         $cacheKey = $this->formatKey(self::BRAND_TAG, $key);
-        
+
         if ($this->tagsSupported) {
             return Cache::tags([self::BRAND_TAG])->remember($cacheKey, $ttl, $callback);
         }
-        
+
         return Cache::remember($cacheKey, $ttl, $callback);
     }
-    
+
     /**
      * Cache collection data
      */
     public function rememberCollection(mixed $key, Closure $callback, int $ttl = self::COLLECTION_TTL): mixed
     {
         $cacheKey = $this->formatKey(self::COLLECTION_TAG, $key);
-        
+
         if ($this->tagsSupported) {
             return Cache::tags([self::COLLECTION_TAG])->remember($cacheKey, $ttl, $callback);
         }
-        
+
         return Cache::remember($cacheKey, $ttl, $callback);
     }
-    
+
     /**
      * Cache user data
      */
     public function rememberUser(mixed $key, Closure $callback, int $ttl = self::USER_TTL): mixed
     {
         $cacheKey = $this->formatKey(self::USER_TAG, $key);
-        
+
         if ($this->tagsSupported) {
             return Cache::tags([self::USER_TAG])->remember($cacheKey, $ttl, $callback);
         }
-        
+
         return Cache::remember($cacheKey, $ttl, $callback);
     }
-    
+
     /**
      * Cache settings data
      */
     public function rememberSettings(mixed $key, Closure $callback, int $ttl = self::SETTINGS_TTL): mixed
     {
         $cacheKey = $this->formatKey(self::SETTINGS_TAG, $key);
-        
+
         if ($this->tagsSupported) {
             return Cache::tags([self::SETTINGS_TAG])->remember($cacheKey, $ttl, $callback);
         }
-        
+
         return Cache::remember($cacheKey, $ttl, $callback);
     }
-    
+
     /**
      * Cache navigation data
      */
     public function rememberNavigation(mixed $key, Closure $callback, int $ttl = self::NAVIGATION_TTL): mixed
     {
         $cacheKey = $this->formatKey(self::NAVIGATION_TAG, $key);
-        
+
         if ($this->tagsSupported) {
             return Cache::tags([self::NAVIGATION_TAG])->remember($cacheKey, $ttl, $callback);
         }
-        
+
         return Cache::remember($cacheKey, $ttl, $callback);
     }
-    
+
     /**
      * Cache statistics data
      */
     public function rememberStats(mixed $key, Closure $callback, int $ttl = self::STATS_TTL): mixed
     {
         $cacheKey = $this->formatKey(self::STATS_TAG, $key);
-        
+
         if ($this->tagsSupported) {
             return Cache::tags([self::STATS_TAG])->remember($cacheKey, $ttl, $callback);
         }
-        
+
         return Cache::remember($cacheKey, $ttl, $callback);
     }
-    
+
     /**
      * Invalidate product cache
      */
@@ -154,17 +168,17 @@ class CacheService
     {
         if ($this->tagsSupported) {
             $tags = [self::PRODUCT_TAG];
-            
+
             if ($productId) {
                 $tags[] = "product_{$productId}";
             }
-            
+
             Cache::tags($tags)->flush();
         } else {
             $this->clearPattern('product_*');
         }
     }
-    
+
     /**
      * Invalidate category cache
      */
@@ -172,20 +186,20 @@ class CacheService
     {
         if ($this->tagsSupported) {
             $tags = [self::CATEGORY_TAG];
-            
+
             if ($categoryId) {
                 $tags[] = "category_{$categoryId}";
             }
-            
+
             Cache::tags($tags)->flush();
         } else {
             $this->clearPattern('category_*');
         }
-        
+
         // Also invalidate products as they depend on categories
         $this->invalidateProduct();
     }
-    
+
     /**
      * Invalidate brand cache
      */
@@ -193,20 +207,20 @@ class CacheService
     {
         if ($this->tagsSupported) {
             $tags = [self::BRAND_TAG];
-            
+
             if ($brandId) {
                 $tags[] = "brand_{$brandId}";
             }
-            
+
             Cache::tags($tags)->flush();
         } else {
             $this->clearPattern('brand_*');
         }
-        
+
         // Also invalidate products as they depend on brands
         $this->invalidateProduct();
     }
-    
+
     /**
      * Invalidate collection cache
      */
@@ -214,17 +228,17 @@ class CacheService
     {
         if ($this->tagsSupported) {
             $tags = [self::COLLECTION_TAG];
-            
+
             if ($collectionId) {
                 $tags[] = "collection_{$collectionId}";
             }
-            
+
             Cache::tags($tags)->flush();
         } else {
             $this->clearPattern('collection_*');
         }
     }
-    
+
     /**
      * Invalidate user cache
      */
@@ -232,17 +246,17 @@ class CacheService
     {
         if ($this->tagsSupported) {
             $tags = [self::USER_TAG];
-            
+
             if ($userId) {
                 $tags[] = "user_{$userId}";
             }
-            
+
             Cache::tags($tags)->flush();
         } else {
             $this->clearPattern('user_*');
         }
     }
-    
+
     /**
      * Invalidate settings cache
      */
@@ -254,7 +268,7 @@ class CacheService
             $this->clearPattern('settings_*');
         }
     }
-    
+
     /**
      * Invalidate navigation cache
      */
@@ -266,7 +280,7 @@ class CacheService
             $this->clearPattern('navigation_*');
         }
     }
-    
+
     /**
      * Invalidate statistics cache
      */
@@ -278,7 +292,7 @@ class CacheService
             $this->clearPattern('stats_*');
         }
     }
-    
+
     /**
      * Clear all Shopper-related cache
      */
@@ -299,7 +313,7 @@ class CacheService
             $this->clearPattern('shopper_*');
         }
     }
-    
+
     /**
      * Get cache statistics
      */
@@ -314,38 +328,38 @@ class CacheService
             'memory_usage' => $this->getMemoryUsage(),
         ];
     }
-    
+
     /**
      * Warm up frequently used cache
      */
     public function warmUp(): void
     {
         // Warm up categories
-        $this->rememberCategory('all', function() {
+        $this->rememberCategory('all', function () {
             return \LaravelShopper\Models\Category::with('children')->get();
         });
-        
+
         // Warm up brands
-        $this->rememberBrand('all', function() {
+        $this->rememberBrand('all', function () {
             return \LaravelShopper\Models\Brand::all();
         });
-        
+
         // Warm up featured products
-        $this->rememberProduct('featured', function() {
+        $this->rememberProduct('featured', function () {
             return \LaravelShopper\Models\Product::where('is_featured', true)
                 ->with(['category', 'brand'])
                 ->get();
         });
-        
+
         // Warm up navigation
-        $this->rememberNavigation('main', function() {
+        $this->rememberNavigation('main', function () {
             return \LaravelShopper\Models\Category::whereNull('parent_id')
                 ->with('children')
                 ->orderBy('sort_order')
                 ->get();
         });
     }
-    
+
     /**
      * Format cache key
      */
@@ -353,7 +367,7 @@ class CacheService
     {
         return "shopper_{$prefix}_{$key}";
     }
-    
+
     /**
      * Clear cache by pattern (fallback for non-tag supporting drivers)
      */
@@ -365,7 +379,7 @@ class CacheService
         // This is a simplified version
         Cache::flush();
     }
-    
+
     /**
      * Get total number of cache keys
      */
@@ -374,7 +388,7 @@ class CacheService
         // Implementation depends on cache driver
         return 0;
     }
-    
+
     /**
      * Get memory usage
      */

@@ -4,9 +4,9 @@ namespace LaravelShopper\Http\Controllers\Cp;
 
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use LaravelShopper\Data\BrandDto;
 use LaravelShopper\CP\Navigation;
 use LaravelShopper\CP\Page;
+use LaravelShopper\Data\BrandDto;
 use LaravelShopper\Http\Controllers\Controller;
 use LaravelShopper\Models\Brand;
 
@@ -77,10 +77,10 @@ class BrandsController extends Controller
 
         // Create DTO from validated data
         $brandDto = BrandDto::from($validated);
-        
+
         // Additional DTO validation
         $dtoErrors = $brandDto->validate();
-        if (!empty($dtoErrors)) {
+        if (! empty($dtoErrors)) {
             return response()->json(['errors' => $dtoErrors], 422);
         }
 
@@ -89,19 +89,19 @@ class BrandsController extends Controller
 
         // Handle different save actions
         $action = $request->input('_action', 'save');
-        
+
         return match ($action) {
             'save_continue' => response()->json([
                 'message' => 'Brand created successfully',
-                'redirect' => "/cp/brands/{$brand->id}/edit"
+                'redirect' => "/cp/brands/{$brand->id}/edit",
             ]),
             'save_add_another' => response()->json([
                 'message' => 'Brand created successfully',
-                'redirect' => '/cp/brands/create'
+                'redirect' => '/cp/brands/create',
             ]),
             default => response()->json([
                 'message' => 'Brand created successfully',
-                'redirect' => '/cp/brands'
+                'redirect' => '/cp/brands',
             ])
         };
     }
@@ -123,7 +123,7 @@ class BrandsController extends Controller
             ->primaryAction('Edit brand', "/cp/brands/{$brand->id}/edit")
             ->secondaryActions([
                 ['label' => 'View in store', 'url' => "/brands/{$brand->slug}", 'target' => '_blank'],
-                ['label' => 'Visit website', 'url' => $brand->website, 'target' => '_blank', 'disabled' => !$brand->hasWebsite()],
+                ['label' => 'Visit website', 'url' => $brand->website, 'target' => '_blank', 'disabled' => ! $brand->hasWebsite()],
                 ['label' => 'Duplicate', 'action' => 'duplicate'],
                 ['label' => 'Delete', 'action' => 'delete', 'destructive' => true],
             ]);
@@ -150,7 +150,7 @@ class BrandsController extends Controller
             ->secondaryActions([
                 ['label' => 'View brand', 'url' => "/cp/brands/{$brand->id}"],
                 ['label' => 'View in store', 'url' => "/brands/{$brand->slug}", 'target' => '_blank'],
-                ['label' => 'Visit website', 'url' => $brand->website, 'target' => '_blank', 'disabled' => !$brand->hasWebsite()],
+                ['label' => 'Visit website', 'url' => $brand->website, 'target' => '_blank', 'disabled' => ! $brand->hasWebsite()],
                 ['label' => 'Duplicate', 'action' => 'duplicate'],
                 ['label' => 'Delete', 'action' => 'delete', 'destructive' => true],
             ])
@@ -184,10 +184,10 @@ class BrandsController extends Controller
 
         // Create DTO from validated data
         $brandDto = BrandDto::from($validated);
-        
+
         // Additional DTO validation
         $dtoErrors = $brandDto->validate();
-        if (!empty($dtoErrors)) {
+        if (! empty($dtoErrors)) {
             return response()->json(['errors' => $dtoErrors], 422);
         }
 
@@ -208,12 +208,12 @@ class BrandsController extends Controller
         // Check if brand has products
         if ($brand->products()->exists()) {
             return response()->json([
-                'error' => 'Cannot delete brand with products'
+                'error' => 'Cannot delete brand with products',
             ], 422);
         }
 
         $brand->delete();
-        
+
         return response()->json([
             'message' => 'Brand deleted successfully',
         ]);
@@ -226,13 +226,13 @@ class BrandsController extends Controller
     {
         $action = $request->input('action');
         $ids = $request->input('ids', []);
-        
+
         if (empty($ids)) {
             return response()->json(['error' => 'No brands selected'], 422);
         }
 
         $brands = Brand::whereIn('id', $ids);
-        
+
         return match ($action) {
             'enable' => $this->bulkEnable($brands),
             'disable' => $this->bulkDisable($brands),
@@ -248,6 +248,7 @@ class BrandsController extends Controller
     protected function bulkEnable($brands)
     {
         $count = $brands->update(['is_enabled' => true]);
+
         return response()->json(['message' => "Enabled {$count} brands"]);
     }
 
@@ -257,6 +258,7 @@ class BrandsController extends Controller
     protected function bulkDisable($brands)
     {
         $count = $brands->update(['is_enabled' => false]);
+
         return response()->json(['message' => "Disabled {$count} brands"]);
     }
 
@@ -271,6 +273,7 @@ class BrandsController extends Controller
         $brands->get()->each(function ($brand) use (&$count, &$errors) {
             if ($brand->products()->exists()) {
                 $errors[] = "Cannot delete '{$brand->name}' - has products";
+
                 return;
             }
 
@@ -278,10 +281,10 @@ class BrandsController extends Controller
             $count++;
         });
 
-        if (!empty($errors)) {
+        if (! empty($errors)) {
             return response()->json([
                 'message' => "Deleted {$count} brands",
-                'errors' => $errors
+                'errors' => $errors,
             ], 207); // 207 Multi-Status
         }
 
@@ -294,9 +297,10 @@ class BrandsController extends Controller
     protected function bulkExport($brands)
     {
         $count = $brands->count();
+
         return response()->json([
             'message' => "Exporting {$count} brands",
-            'download_url' => '/cp/brands/export/download/' . uniqid(),
+            'download_url' => '/cp/brands/export/download/'.uniqid(),
         ]);
     }
 }

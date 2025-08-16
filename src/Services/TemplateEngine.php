@@ -19,11 +19,11 @@ class TemplateEngine
     /**
      * Render a resource with appropriate template
      */
-    public function render(string $resourceType, mixed $resource = null, string $customTemplate = null): string
+    public function render(string $resourceType, mixed $resource = null, ?string $customTemplate = null): string
     {
         $template = $this->resolveTemplate($resourceType, $resource, $customTemplate);
-        
-        if (!$template) {
+
+        if (! $template) {
             throw new \Exception("No template found for {$resourceType}");
         }
 
@@ -41,7 +41,7 @@ class TemplateEngine
     /**
      * Resolve the appropriate template for a resource
      */
-    protected function resolveTemplate(string $resourceType, mixed $resource = null, string $customTemplate = null): ?StorefrontTemplate
+    protected function resolveTemplate(string $resourceType, mixed $resource = null, ?string $customTemplate = null): ?StorefrontTemplate
     {
         // 1. Custom template specified
         if ($customTemplate) {
@@ -49,7 +49,7 @@ class TemplateEngine
                 ->where('handle', $customTemplate)
                 ->active()
                 ->first();
-            
+
             if ($template && $template->canAssignTo($resourceType)) {
                 return $template;
             }
@@ -58,13 +58,13 @@ class TemplateEngine
         // 2. Resource-specific template (e.g., product has template_handle)
         if ($resource && method_exists($resource, 'getTemplateHandle')) {
             $templateHandle = $resource->getTemplateHandle();
-            
+
             if ($templateHandle) {
                 $template = StorefrontTemplate::where('site_id', $this->currentSite->id)
                     ->where('handle', $templateHandle)
                     ->active()
                     ->first();
-                    
+
                 if ($template) {
                     return $template;
                 }
@@ -74,13 +74,13 @@ class TemplateEngine
         // 3. Collection/Category specific template
         if ($resource && method_exists($resource, 'getCategory')) {
             $category = $resource->getCategory();
-            
+
             if ($category && $category->template_handle) {
                 $template = StorefrontTemplate::where('site_id', $this->currentSite->id)
                     ->where('handle', $category->template_handle)
                     ->active()
                     ->first();
-                    
+
                 if ($template) {
                     return $template;
                 }

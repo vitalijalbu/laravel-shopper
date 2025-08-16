@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace LaravelShopper\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class MetafieldDefinition extends Model
 {
@@ -64,19 +63,19 @@ class MetafieldDefinition extends Model
 
     public function getFullKey(): string
     {
-        return $this->namespace . '.' . $this->key;
+        return $this->namespace.'.'.$this->key;
     }
 
     public function validateValue(mixed $value): bool
     {
         // Basic type validation
-        if (!$this->isValidType($value)) {
+        if (! $this->isValidType($value)) {
             return false;
         }
 
         // Custom validations
         foreach ($this->validations ?? [] as $validation) {
-            if (!$this->applyValidation($value, $validation)) {
+            if (! $this->applyValidation($value, $validation)) {
                 return false;
             }
         }

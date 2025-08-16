@@ -5,8 +5,8 @@ namespace LaravelShopper\Http\Controllers\Admin;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
-use LaravelShopper\Models\MetaobjectDefinition;
 use LaravelShopper\Models\Metaobject;
+use LaravelShopper\Models\MetaobjectDefinition;
 
 class MetaobjectController extends Controller
 {
@@ -186,7 +186,7 @@ class MetaobjectController extends Controller
     public function update(Request $request, Metaobject $metaobject)
     {
         $validated = $request->validate([
-            'handle' => 'required|string|max:255|unique:shopper_metaobjects,handle,' . $metaobject->id,
+            'handle' => 'required|string|max:255|unique:shopper_metaobjects,handle,'.$metaobject->id,
             'fields' => 'required|array',
             'published_at' => 'nullable|date',
         ]);

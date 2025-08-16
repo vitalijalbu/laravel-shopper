@@ -5,6 +5,7 @@ namespace LaravelShopper\Schema;
 abstract class FieldType
 {
     protected string $handle;
+
     protected array $config;
 
     public function __construct(string $handle, array $config = [])
@@ -98,7 +99,7 @@ abstract class FieldType
         $errors = [];
 
         if ($this->isRequired() && empty($value)) {
-            $errors[] = $this->getDisplayName() . ' is required';
+            $errors[] = $this->getDisplayName().' is required';
         }
 
         return $errors;

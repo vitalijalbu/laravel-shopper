@@ -1,19 +1,16 @@
 <?php
 
-namespace App\Http\Controllers\Api\Auth;
+namespace LaravelShopper\Http\Controllers\Api\Auth;
 
-use App\Http\Controllers\Controller;
 use App\Models\SocialAccount;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\ValidationException;
-use Laravel\Sanctum\PersonalAccessToken;
 use Laravel\Socialite\Facades\Socialite;
+use LaravelShopper\Http\Controllers\Controller;
 
 class SocialAuthApiController extends Controller
 {
@@ -41,7 +38,7 @@ class SocialAuthApiController extends Controller
             'data' => [
                 'providers' => $providers,
                 'enabled_count' => count($providers),
-            ]
+            ],
         ]);
     }
 
@@ -50,14 +47,14 @@ class SocialAuthApiController extends Controller
      */
     public function getRedirectUrl(Request $request, string $provider): JsonResponse
     {
-        if (!$this->isProviderSupported($provider)) {
+        if (! $this->isProviderSupported($provider)) {
             return response()->json([
                 'success' => false,
                 'message' => 'Unsupported OAuth provider',
             ], 400);
         }
 
-        if (!$this->isProviderConfigured($provider)) {
+        if (! $this->isProviderConfigured($provider)) {
             return response()->json([
                 'success' => false,
                 'message' => 'OAuth provider not configured',
@@ -76,7 +73,7 @@ class SocialAuthApiController extends Controller
 
             // Build OAuth URL
             $driver = Socialite::driver($provider);
-            
+
             // Configure scopes based on provider
             switch ($provider) {
                 case 'google':
@@ -101,11 +98,11 @@ class SocialAuthApiController extends Controller
                     'auth_url' => $authUrl,
                     'state' => $state,
                     'provider' => $provider,
-                ]
+                ],
             ]);
 
         } catch (Exception $e) {
-            Log::error("Failed to generate OAuth URL for {$provider}: " . $e->getMessage());
+            Log::error("Failed to generate OAuth URL for {$provider}: ".$e->getMessage());
 
             return response()->json([
                 'success' => false,
@@ -119,7 +116,7 @@ class SocialAuthApiController extends Controller
      */
     public function callback(Request $request, string $provider): JsonResponse
     {
-        if (!$this->isProviderSupported($provider)) {
+        if (! $this->isProviderSupported($provider)) {
             return response()->json([
                 'success' => false,
                 'message' => 'Unsupported OAuth provider',
@@ -144,7 +141,7 @@ class SocialAuthApiController extends Controller
             // Get user from provider using the authorization code
             $providerUser = Socialite::driver($provider)->stateless()->user();
 
-            if (!$providerUser->getEmail()) {
+            if (! $providerUser->getEmail()) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Email address is required for registration',
@@ -155,7 +152,7 @@ class SocialAuthApiController extends Controller
             $user = User::createOrUpdateFromProvider($provider, $providerUser);
 
             // Generate API token
-            $tokenName = "oauth-{$provider}-" . now()->timestamp;
+            $tokenName = "oauth-{$provider}-".now()->timestamp;
             $token = $user->createToken($tokenName, ['*'], now()->addDays(30));
 
             // Log successful authentication
@@ -171,19 +168,19 @@ class SocialAuthApiController extends Controller
                         'email' => $user->email,
                         'avatar_url' => $user->avatar_url,
                         'provider' => $provider,
-                        'email_verified' => !is_null($user->email_verified_at),
+                        'email_verified' => ! is_null($user->email_verified_at),
                         'connected_providers' => $user->connected_providers,
                     ],
                     'token' => [
                         'access_token' => $token->plainTextToken,
                         'token_type' => 'Bearer',
                         'expires_at' => $token->accessToken->expires_at?->toISOString(),
-                    ]
-                ]
+                    ],
+                ],
             ]);
 
         } catch (Exception $e) {
-            Log::error("API OAuth callback failed for {$provider}: " . $e->getMessage(), [
+            Log::error("API OAuth callback failed for {$provider}: ".$e->getMessage(), [
                 'exception' => $e,
                 'request_data' => $request->except(['code', 'state']),
             ]);
@@ -203,14 +200,14 @@ class SocialAuthApiController extends Controller
     {
         $user = $request->user();
 
-        if (!$user) {
+        if (! $user) {
             return response()->json([
                 'success' => false,
                 'message' => 'Authentication required',
             ], 401);
         }
 
-        if (!$this->isProviderSupported($provider)) {
+        if (! $this->isProviderSupported($provider)) {
             return response()->json([
                 'success' => false,
                 'message' => 'Unsupported OAuth provider',
@@ -278,11 +275,11 @@ class SocialAuthApiController extends Controller
                 'message' => "Successfully linked your {$provider} account",
                 'data' => [
                     'connected_providers' => $user->fresh()->connected_providers,
-                ]
+                ],
             ]);
 
         } catch (Exception $e) {
-            Log::error("API OAuth linking failed for {$provider}: " . $e->getMessage());
+            Log::error("API OAuth linking failed for {$provider}: ".$e->getMessage());
 
             return response()->json([
                 'success' => false,
@@ -298,7 +295,7 @@ class SocialAuthApiController extends Controller
     {
         $user = $request->user();
 
-        if (!$user) {
+        if (! $user) {
             return response()->json([
                 'success' => false,
                 'message' => 'Authentication required',
@@ -307,7 +304,7 @@ class SocialAuthApiController extends Controller
 
         $socialAccount = $user->getSocialAccount($provider);
 
-        if (!$socialAccount) {
+        if (! $socialAccount) {
             return response()->json([
                 'success' => false,
                 'message' => "Your account is not linked to {$provider}",
@@ -315,7 +312,7 @@ class SocialAuthApiController extends Controller
         }
 
         // Prevent unlinking if it's the only authentication method
-        if (!$user->hasPassword() && $user->socialAccounts()->count() <= 1) {
+        if (! $user->hasPassword() && $user->socialAccounts()->count() <= 1) {
             return response()->json([
                 'success' => false,
                 'message' => 'Cannot unlink the only authentication method. Please set a password first.',
@@ -342,11 +339,11 @@ class SocialAuthApiController extends Controller
                 'message' => "Successfully unlinked your {$provider} account",
                 'data' => [
                     'connected_providers' => $user->fresh()->connected_providers,
-                ]
+                ],
             ]);
 
         } catch (Exception $e) {
-            Log::error("API OAuth unlinking failed for {$provider}: " . $e->getMessage());
+            Log::error("API OAuth unlinking failed for {$provider}: ".$e->getMessage());
 
             return response()->json([
                 'success' => false,
@@ -362,7 +359,7 @@ class SocialAuthApiController extends Controller
     {
         $user = $request->user();
 
-        if (!$user) {
+        if (! $user) {
             return response()->json([
                 'success' => false,
                 'message' => 'Authentication required',
@@ -374,7 +371,7 @@ class SocialAuthApiController extends Controller
 
         foreach ($socialAccounts as $account) {
             $providerConfig = SocialAccount::getSupportedProviders()[$account->provider] ?? null;
-            
+
             if ($providerConfig) {
                 $providers[] = [
                     'provider' => $account->provider,
@@ -394,7 +391,7 @@ class SocialAuthApiController extends Controller
                 'connected_providers' => $providers,
                 'has_password' => $user->hasPassword(),
                 'total_count' => count($providers),
-            ]
+            ],
         ]);
     }
 
@@ -405,7 +402,7 @@ class SocialAuthApiController extends Controller
     {
         $user = $request->user();
 
-        if (!$user) {
+        if (! $user) {
             return response()->json([
                 'success' => false,
                 'message' => 'Authentication required',
@@ -414,7 +411,7 @@ class SocialAuthApiController extends Controller
 
         $socialAccount = $user->getSocialAccount($provider);
 
-        if (!$socialAccount) {
+        if (! $socialAccount) {
             return response()->json([
                 'success' => false,
                 'message' => "No {$provider} account linked",
@@ -430,11 +427,11 @@ class SocialAuthApiController extends Controller
                     'provider' => $provider,
                     'token_expired' => $socialAccount->isTokenExpired(),
                     'last_updated' => $socialAccount->updated_at,
-                ]
+                ],
             ]);
 
         } catch (Exception $e) {
-            Log::error("OAuth token refresh failed for {$provider}: " . $e->getMessage());
+            Log::error("OAuth token refresh failed for {$provider}: ".$e->getMessage());
 
             return response()->json([
                 'success' => false,
@@ -457,9 +454,9 @@ class SocialAuthApiController extends Controller
     private function isProviderConfigured(string $provider): bool
     {
         $config = config("services.{$provider}");
-        
-        return $config 
-            && !empty($config['client_id']) 
-            && !empty($config['client_secret']);
+
+        return $config
+            && ! empty($config['client_id'])
+            && ! empty($config['client_secret']);
     }
 }

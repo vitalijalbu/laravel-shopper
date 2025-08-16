@@ -55,7 +55,7 @@ class AppWebhook extends Model
     public function getSuccessRateAttribute(): float
     {
         $total = $this->success_count + $this->failure_count;
-        
+
         if ($total === 0) {
             return 100;
         }
@@ -110,7 +110,7 @@ class AppWebhook extends Model
 
     public function fire(string $event, array $payload = []): bool
     {
-        if (!$this->is_active) {
+        if (! $this->is_active) {
             return false;
         }
 
@@ -126,21 +126,24 @@ class AppWebhook extends Model
 
             if ($response->successful()) {
                 $this->recordSuccess();
+
                 return true;
             } else {
                 $this->recordFailure("HTTP {$response->status()}: {$response->body()}");
+
                 return false;
             }
 
         } catch (\Exception $e) {
             $this->recordFailure($e->getMessage());
+
             return false;
         }
     }
 
     private function generateSignature(array $payload): ?string
     {
-        if (!$this->secret) {
+        if (! $this->secret) {
             return null;
         }
 

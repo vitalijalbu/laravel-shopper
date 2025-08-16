@@ -2,9 +2,9 @@
 
 namespace LaravelShopper\Data;
 
+use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
-use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Collection;
 
 abstract class BaseDto implements Arrayable
@@ -22,14 +22,14 @@ abstract class BaseDto implements Arrayable
      */
     public static function from(array $data): static
     {
-        $instance = new static();
-        
+        $instance = new static;
+
         foreach ($data as $key => $value) {
             if (property_exists($instance, $key)) {
                 $instance->{$key} = $instance->transformValue($key, $value);
             }
         }
-        
+
         return $instance;
     }
 
@@ -38,7 +38,7 @@ abstract class BaseDto implements Arrayable
      */
     public static function collect(array $items): Collection
     {
-        return collect($items)->map(fn($item) => static::from($item));
+        return collect($items)->map(fn ($item) => static::from($item));
     }
 
     /**
@@ -47,8 +47,9 @@ abstract class BaseDto implements Arrayable
     protected function transformValue(string $key, $value)
     {
         // Handle nested arrays
-        if (is_array($value) && method_exists($this, 'get' . ucfirst($key) . 'Class')) {
-            $class = $this->{'get' . ucfirst($key) . 'Class'}();
+        if (is_array($value) && method_exists($this, 'get'.ucfirst($key).'Class')) {
+            $class = $this->{'get'.ucfirst($key).'Class'}();
+
             return $class::collect($value);
         }
 
@@ -103,7 +104,7 @@ abstract class BaseDto implements Arrayable
     public function toArray(): array
     {
         $array = [];
-        
+
         foreach (get_object_vars($this) as $key => $value) {
             if ($value instanceof Collection) {
                 $array[$key] = $value->toArray();
@@ -113,7 +114,7 @@ abstract class BaseDto implements Arrayable
                 $array[$key] = $value;
             }
         }
-        
+
         return $array;
     }
 

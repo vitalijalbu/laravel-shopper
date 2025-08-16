@@ -82,13 +82,13 @@ class AppReview extends Model
 
     public function getStarRatingAttribute(): string
     {
-        return str_repeat('★', $this->rating) . str_repeat('☆', 5 - $this->rating);
+        return str_repeat('★', $this->rating).str_repeat('☆', 5 - $this->rating);
     }
 
     public function getHelpfulnessScoreAttribute(): float
     {
         $total = $this->helpful_count + $this->not_helpful_count;
-        
+
         if ($total === 0) {
             return 0;
         }
@@ -97,7 +97,7 @@ class AppReview extends Model
     }
 
     // Methods
-    public function approve(int $approvedBy = null): bool
+    public function approve(?int $approvedBy = null): bool
     {
         $updated = $this->update([
             'status' => 'approved',

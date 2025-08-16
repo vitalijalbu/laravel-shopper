@@ -4,16 +4,16 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use LaravelShopper\Models\Site;
-use LaravelShopper\Models\Currency;
-use LaravelShopper\Models\Country;
-use LaravelShopper\Models\Channel;
-use LaravelShopper\Models\CustomerGroup;
-use LaravelShopper\Models\Setting;
-use LaravelShopper\Models\User;
 use LaravelShopper\Models\Brand;
 use LaravelShopper\Models\Category;
+use LaravelShopper\Models\Channel;
+use LaravelShopper\Models\Country;
+use LaravelShopper\Models\Currency;
+use LaravelShopper\Models\CustomerGroup;
 use LaravelShopper\Models\ProductType;
+use LaravelShopper\Models\Setting;
+use LaravelShopper\Models\Site;
+use LaravelShopper\Models\User;
 
 class ShopperSeeder extends Seeder
 {
@@ -25,7 +25,7 @@ class ShopperSeeder extends Seeder
     public function run(): void
     {
         $this->command->info('🌱 Seeding Laravel Shopper with multi-site support...');
-        
+
         // Load data from files
         $currencies = include database_path('data/currencies.php');
         $countries = include database_path('data/countries.php');
@@ -43,7 +43,7 @@ class ShopperSeeder extends Seeder
                 'lang' => 'en',
                 'attributes' => [],
                 'order' => 1,
-                'is_enabled' => true
+                'is_enabled' => true,
             ],
             [
                 'handle' => 'it',
@@ -53,7 +53,7 @@ class ShopperSeeder extends Seeder
                 'lang' => 'it',
                 'attributes' => [],
                 'order' => 2,
-                'is_enabled' => true
+                'is_enabled' => true,
             ],
         ];
 
@@ -171,7 +171,7 @@ class ShopperSeeder extends Seeder
             Setting::firstOrCreate(['key' => $key], [
                 'key' => $key,
                 'value' => is_bool($value) ? ($value ? '1' : '0') : (string) $value,
-                'type' => is_bool($value) ? 'boolean' : 'string'
+                'type' => is_bool($value) ? 'boolean' : 'string',
             ]);
         }
 

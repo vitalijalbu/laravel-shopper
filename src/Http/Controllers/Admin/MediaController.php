@@ -5,8 +5,8 @@ namespace LaravelShopper\Http\Controllers\Admin;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use LaravelShopper\Models\Product;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class MediaController extends Controller
 {
@@ -20,7 +20,7 @@ class MediaController extends Controller
         if ($search = $request->get('search')) {
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'LIKE', "%{$search}%")
-                  ->orWhere('file_name', 'LIKE', "%{$search}%");
+                    ->orWhere('file_name', 'LIKE', "%{$search}%");
             });
         }
 
@@ -78,8 +78,8 @@ class MediaController extends Controller
 
         // For now, attach to a temporary model or create a generic media entry
         // In a real implementation, you might want a dedicated MediaLibrary model
-        $product = new Product();
-        
+        $product = new Product;
+
         $media = $product->addMediaFromRequest('file')
             ->toMediaCollection($request->get('collection', 'default'));
 

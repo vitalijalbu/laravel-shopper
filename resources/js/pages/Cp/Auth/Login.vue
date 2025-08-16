@@ -148,7 +148,7 @@
 
                         <div class="text-sm" v-if="canResetPassword">
                             <Link
-                                :href="route('shopper.cp.password.request')"
+                                :href="route('cp.password.request')"
                                 class="font-semibold text-indigo-600 hover:text-indigo-500"
                             >
                                 {{ $t('shopper::auth.labels.forgot_password') }}
@@ -227,7 +227,7 @@ const form = useForm({
 
 // Methods
 const submit = () => {
-    form.post(route('shopper.cp.login'), {
+    form.post(route('cp.login'), {
         onFinish: () => {
             form.reset('password')
         },

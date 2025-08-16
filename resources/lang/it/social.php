@@ -7,7 +7,7 @@ return [
     | Linee linguistiche per l'autenticazione sociale
     |--------------------------------------------------------------------------
     |
-    | Le seguenti linee linguistiche sono utilizzate durante l'autenticazione 
+    | Le seguenti linee linguistiche sono utilizzate durante l'autenticazione
     | sociale per vari messaggi che dobbiamo mostrare all'utente. Sei libero
     | di modificare queste linee secondo i requisiti della tua applicazione.
     |
@@ -15,7 +15,7 @@ return [
 
     'providers' => [
         'google' => 'Google',
-        'facebook' => 'Facebook', 
+        'facebook' => 'Facebook',
         'twitter' => 'Twitter',
         'github' => 'GitHub',
         'linkedin' => 'LinkedIn',
@@ -42,7 +42,7 @@ return [
             'unlinked' => 'Account :provider scollegato con successo!',
             'updated' => 'Il tuo account :provider è stato aggiornato!',
         ],
-        
+
         'errors' => [
             'provider_not_supported' => 'Il provider :provider non è supportato.',
             'provider_not_configured' => 'Il provider :provider non è configurato correttamente.',
@@ -70,7 +70,7 @@ return [
 
     'buttons' => [
         'login' => 'Accedi',
-        'register' => 'Registrati', 
+        'register' => 'Registrati',
         'link' => 'Collega',
         'unlink' => 'Scollega',
         'cancel' => 'Annulla',

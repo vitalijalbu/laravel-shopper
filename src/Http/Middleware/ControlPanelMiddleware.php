@@ -15,24 +15,25 @@ class ControlPanelMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         // Check if user is authenticated
-        if (!Auth::check()) {
+        if (! Auth::check()) {
             if ($request->expectsJson()) {
                 return response()->json(['message' => 'Unauthenticated.'], 401);
             }
-            
-            return redirect()->guest(route('shopper.cp.login'));
+
+            return redirect()->guest(route('cp.login'));
         }
 
         $user = Auth::user();
 
         // Check if user can access control panel
-        if (!$this->canAccessControlPanel($user)) {
+        if (! $this->canAccessControlPanel($user)) {
             if ($request->expectsJson()) {
                 return response()->json(['message' => 'Access denied.'], 403);
             }
 
             Auth::logout();
-            return redirect()->route('shopper.cp.login')
+
+            return redirect()->route('cp.login')
                 ->withErrors(['email' => __('shopper::auth.cp_access_denied')]);
         }
 
@@ -44,7 +45,7 @@ class ControlPanelMiddleware
      */
     protected function canAccessControlPanel($user): bool
     {
-        if (!$user) {
+        if (! $user) {
             return false;
         }
 

@@ -2,14 +2,14 @@
 
 namespace LaravelShopper\Services;
 
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 use LaravelShopper\Models\Order;
 use LaravelShopper\Models\User;
+use LaravelShopper\Notifications\NewOrderNotification;
 use LaravelShopper\Notifications\OrderConfirmationNotification;
 use LaravelShopper\Notifications\OrderFailureNotification;
-use LaravelShopper\Notifications\NewOrderNotification;
 
 class NotificationService
 {
@@ -20,16 +20,16 @@ class NotificationService
     {
         try {
             $customer = $order->customer;
-            
+
             if ($customer && $customer->email) {
                 $customer->notify(new OrderConfirmationNotification($order));
-                
+
                 Log::info('Order confirmation sent', [
                     'order_id' => $order->id,
                     'customer_email' => $customer->email,
                 ]);
             }
-            
+
         } catch (\Exception $e) {
             Log::error('Failed to send order confirmation', [
                 'order_id' => $order->id,
@@ -37,7 +37,7 @@ class NotificationService
             ]);
         }
     }
-    
+
     /**
      * Notify admins about new order
      */
@@ -45,16 +45,16 @@ class NotificationService
     {
         try {
             $admins = User::where('can_access_control_panel', true)
-                         ->where('receive_order_notifications', true)
-                         ->get();
-            
+                ->where('receive_order_notifications', true)
+                ->get();
+
             Notification::send($admins, new NewOrderNotification($order));
-            
+
             Log::info('Admin notifications sent', [
                 'order_id' => $order->id,
                 'admin_count' => $admins->count(),
             ]);
-            
+
         } catch (\Exception $e) {
             Log::error('Failed to notify admins', [
                 'order_id' => $order->id,
@@ -62,7 +62,7 @@ class NotificationService
             ]);
         }
     }
-    
+
     /**
      * Notify about order failure
      */
@@ -70,16 +70,16 @@ class NotificationService
     {
         try {
             $admins = User::where('can_access_control_panel', true)
-                         ->where('receive_error_notifications', true)
-                         ->get();
-            
+                ->where('receive_error_notifications', true)
+                ->get();
+
             Notification::send($admins, new OrderFailureNotification($order, $exception));
-            
+
             Log::info('Order failure notifications sent', [
                 'order_id' => $order->id,
                 'admin_count' => $admins->count(),
             ]);
-            
+
         } catch (\Exception $e) {
             Log::error('Failed to send failure notifications', [
                 'order_id' => $order->id,
@@ -87,7 +87,7 @@ class NotificationService
             ]);
         }
     }
-    
+
     /**
      * Send low stock alerts
      */
@@ -95,18 +95,18 @@ class NotificationService
     {
         try {
             $admins = User::where('can_access_control_panel', true)
-                         ->where('receive_stock_notifications', true)
-                         ->get();
-            
+                ->where('receive_stock_notifications', true)
+                ->get();
+
             foreach ($admins as $admin) {
                 Mail::to($admin->email)->send(new \LaravelShopper\Mail\LowStockAlert($product));
             }
-            
+
             Log::info('Low stock alerts sent', [
                 'product_id' => $product->id,
                 'admin_count' => $admins->count(),
             ]);
-            
+
         } catch (\Exception $e) {
             Log::error('Failed to send low stock alerts', [
                 'product_id' => $product->id,
@@ -114,7 +114,7 @@ class NotificationService
             ]);
         }
     }
-    
+
     /**
      * Send abandoned cart reminder
      */
@@ -123,13 +123,13 @@ class NotificationService
         try {
             if ($cart->customer && $cart->customer->email) {
                 Mail::to($cart->customer->email)->send(new \LaravelShopper\Mail\AbandonedCartReminder($cart));
-                
+
                 Log::info('Abandoned cart reminder sent', [
                     'cart_id' => $cart->id,
                     'customer_email' => $cart->customer->email,
                 ]);
             }
-            
+
         } catch (\Exception $e) {
             Log::error('Failed to send abandoned cart reminder', [
                 'cart_id' => $cart->id,
@@ -137,35 +137,35 @@ class NotificationService
             ]);
         }
     }
-    
+
     /**
      * Send newsletter
      */
     public function sendNewsletter(string $subject, string $content, array $recipients = []): void
     {
         try {
-            $subscribers = empty($recipients) 
+            $subscribers = empty($recipients)
                 ? User::where('newsletter_subscription', true)->get()
                 : User::whereIn('email', $recipients)->get();
-            
+
             foreach ($subscribers as $subscriber) {
                 Mail::to($subscriber->email)->send(
                     new \LaravelShopper\Mail\Newsletter($subject, $content, $subscriber)
                 );
             }
-            
+
             Log::info('Newsletter sent', [
                 'subscriber_count' => $subscribers->count(),
                 'subject' => $subject,
             ]);
-            
+
         } catch (\Exception $e) {
             Log::error('Failed to send newsletter', [
                 'error' => $e->getMessage(),
             ]);
         }
     }
-    
+
     /**
      * Send product back in stock notification
      */
@@ -177,12 +177,12 @@ class NotificationService
                     new \LaravelShopper\Mail\BackInStockNotification($product, $subscriber)
                 );
             }
-            
+
             Log::info('Back in stock notifications sent', [
                 'product_id' => $product->id,
                 'subscriber_count' => count($subscribers),
             ]);
-            
+
         } catch (\Exception $e) {
             Log::error('Failed to send back in stock notifications', [
                 'product_id' => $product->id,

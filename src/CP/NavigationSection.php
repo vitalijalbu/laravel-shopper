@@ -7,10 +7,15 @@ use Illuminate\Support\Collection;
 class NavigationSection
 {
     protected string $name;
+
     protected string $label;
+
     protected array $items = [];
+
     protected int $order = 100;
+
     protected bool $collapsible = true;
+
     protected bool $collapsed = false;
 
     public function __construct(string $name, string $label)
@@ -25,6 +30,7 @@ class NavigationSection
     public function order(int $order): self
     {
         $this->order = $order;
+
         return $this;
     }
 
@@ -34,6 +40,7 @@ class NavigationSection
     public function collapsible(bool $collapsible = true): self
     {
         $this->collapsible = $collapsible;
+
         return $this;
     }
 
@@ -43,6 +50,7 @@ class NavigationSection
     public function collapsed(bool $collapsed = true): self
     {
         $this->collapsed = $collapsed;
+
         return $this;
     }
 
@@ -52,7 +60,7 @@ class NavigationSection
     public function items(): Collection
     {
         return collect(\LaravelShopper\CP\Navigation::$items ?? [])
-            ->filter(fn($item) => $item->section === $this->name);
+            ->filter(fn ($item) => $item->section === $this->name);
     }
 
     /**
@@ -67,9 +75,9 @@ class NavigationSection
             'collapsible' => $this->collapsible,
             'collapsed' => $this->collapsed,
             'items' => $this->items()
-                ->filter(fn($item) => $item->canView())
+                ->filter(fn ($item) => $item->canView())
                 ->sortBy('order')
-                ->map(fn($item) => $item->toArray())
+                ->map(fn ($item) => $item->toArray())
                 ->values()
                 ->toArray(),
         ];

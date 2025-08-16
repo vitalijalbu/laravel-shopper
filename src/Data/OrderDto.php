@@ -99,7 +99,7 @@ class OrderDto extends BaseDto
             'delivered_at' => $this->delivered_at?->format('Y-m-d H:i:s'),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-        ], fn($value) => $value !== null);
+        ], fn ($value) => $value !== null);
     }
 
     /**
@@ -113,19 +113,19 @@ class OrderDto extends BaseDto
             $errors['customer_email'] = 'Customer email is required';
         }
 
-        if (!filter_var($this->customer_email, FILTER_VALIDATE_EMAIL)) {
+        if (! filter_var($this->customer_email, FILTER_VALIDATE_EMAIL)) {
             $errors['customer_email'] = 'Customer email must be valid';
         }
 
-        if (!in_array($this->status, ['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled', 'refunded'])) {
+        if (! in_array($this->status, ['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled', 'refunded'])) {
             $errors['status'] = 'Invalid order status';
         }
 
-        if (!in_array($this->payment_status, ['pending', 'paid', 'failed', 'refunded', 'partially_refunded'])) {
+        if (! in_array($this->payment_status, ['pending', 'paid', 'failed', 'refunded', 'partially_refunded'])) {
             $errors['payment_status'] = 'Invalid payment status';
         }
 
-        if (!in_array($this->fulfillment_status, ['unfulfilled', 'partial', 'fulfilled', 'shipped', 'delivered'])) {
+        if (! in_array($this->fulfillment_status, ['unfulfilled', 'partial', 'fulfilled', 'shipped', 'delivered'])) {
             $errors['fulfillment_status'] = 'Invalid fulfillment status';
         }
 
@@ -150,12 +150,12 @@ class OrderDto extends BaseDto
         }
 
         // Validate addresses
-        if (!empty($this->shipping_address)) {
+        if (! empty($this->shipping_address)) {
             $addressErrors = $this->validateAddress($this->shipping_address, 'shipping_address');
             $errors = array_merge($errors, $addressErrors);
         }
 
-        if (!empty($this->billing_address)) {
+        if (! empty($this->billing_address)) {
             $addressErrors = $this->validateAddress($this->billing_address, 'billing_address');
             $errors = array_merge($errors, $addressErrors);
         }
@@ -171,10 +171,10 @@ class OrderDto extends BaseDto
         $errors = [];
 
         $required = ['first_name', 'last_name', 'address_line_1', 'city', 'country_id'];
-        
+
         foreach ($required as $field) {
             if (empty($address[$field] ?? '')) {
-                $errors["{$prefix}.{$field}"] = ucfirst(str_replace('_', ' ', $field)) . ' is required';
+                $errors["{$prefix}.{$field}"] = ucfirst(str_replace('_', ' ', $field)).' is required';
             }
         }
 
@@ -226,7 +226,7 @@ class OrderDto extends BaseDto
      */
     public function getFormattedTotal(string $currency = 'EUR'): string
     {
-        return number_format($this->total, 2, '.', ',') . ' ' . $currency;
+        return number_format($this->total, 2, '.', ',').' '.$currency;
     }
 
     /**
@@ -234,7 +234,7 @@ class OrderDto extends BaseDto
      */
     public function getFormattedSubtotal(string $currency = 'EUR'): string
     {
-        return number_format($this->subtotal, 2, '.', ',') . ' ' . $currency;
+        return number_format($this->subtotal, 2, '.', ',').' '.$currency;
     }
 
     /**
@@ -242,12 +242,12 @@ class OrderDto extends BaseDto
      */
     public function getCustomerDisplayName(): string
     {
-        if (!empty($this->customer_details['name'])) {
+        if (! empty($this->customer_details['name'])) {
             return $this->customer_details['name'];
         }
 
-        if (!empty($this->customer_details['first_name']) && !empty($this->customer_details['last_name'])) {
-            return $this->customer_details['first_name'] . ' ' . $this->customer_details['last_name'];
+        if (! empty($this->customer_details['first_name']) && ! empty($this->customer_details['last_name'])) {
+            return $this->customer_details['first_name'].' '.$this->customer_details['last_name'];
         }
 
         return $this->customer_email;
@@ -258,7 +258,7 @@ class OrderDto extends BaseDto
      */
     public function canBeCancelled(): bool
     {
-        return in_array($this->status, ['pending', 'confirmed']) && 
+        return in_array($this->status, ['pending', 'confirmed']) &&
                $this->payment_status !== 'paid';
     }
 
@@ -267,7 +267,7 @@ class OrderDto extends BaseDto
      */
     public function canBeShipped(): bool
     {
-        return $this->status === 'confirmed' && 
+        return $this->status === 'confirmed' &&
                $this->payment_status === 'paid' &&
                $this->fulfillment_status === 'unfulfilled';
     }

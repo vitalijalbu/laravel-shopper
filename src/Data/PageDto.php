@@ -66,7 +66,7 @@ class PageDto extends BaseDto
             'published_at' => $this->published_at?->format('Y-m-d H:i:s'),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-        ], fn($value) => $value !== null);
+        ], fn ($value) => $value !== null);
     }
 
     /**
@@ -88,23 +88,23 @@ class PageDto extends BaseDto
             $errors['content'] = 'Page content is required';
         }
 
-        if (!in_array($this->status, ['published', 'draft', 'private'])) {
+        if (! in_array($this->status, ['published', 'draft', 'private'])) {
             $errors['status'] = 'Status must be published, draft, or private';
         }
 
-        if (!empty($this->seo_title) && strlen($this->seo_title) > 60) {
+        if (! empty($this->seo_title) && strlen($this->seo_title) > 60) {
             $errors['seo_title'] = 'SEO title cannot exceed 60 characters';
         }
 
-        if (!empty($this->seo_description) && strlen($this->seo_description) > 160) {
+        if (! empty($this->seo_description) && strlen($this->seo_description) > 160) {
             $errors['seo_description'] = 'SEO description cannot exceed 160 characters';
         }
 
-        if (!empty($this->handle) && !preg_match('/^[a-z0-9\-]+$/', $this->handle)) {
+        if (! empty($this->handle) && ! preg_match('/^[a-z0-9\-]+$/', $this->handle)) {
             $errors['handle'] = 'Handle can only contain lowercase letters, numbers, and hyphens';
         }
 
-        if ($this->published_at && $this->status === 'published' && $this->published_at > new DateTime()) {
+        if ($this->published_at && $this->status === 'published' && $this->published_at > new DateTime) {
             $errors['published_at'] = 'Published date cannot be in the future for published pages';
         }
 
@@ -116,8 +116,8 @@ class PageDto extends BaseDto
      */
     public function isPublished(): bool
     {
-        return $this->status === 'published' && 
-               ($this->published_at === null || $this->published_at <= new DateTime());
+        return $this->status === 'published' &&
+               ($this->published_at === null || $this->published_at <= new DateTime);
     }
 
     /**
@@ -141,9 +141,9 @@ class PageDto extends BaseDto
      */
     public function isScheduled(): bool
     {
-        return $this->status === 'published' && 
-               $this->published_at && 
-               $this->published_at > new DateTime();
+        return $this->status === 'published' &&
+               $this->published_at &&
+               $this->published_at > new DateTime;
     }
 
     /**
@@ -166,12 +166,12 @@ class PageDto extends BaseDto
         // Generate description from content (strip HTML and limit to 160 chars)
         $content = strip_tags($this->content);
         $content = preg_replace('/\s+/', ' ', $content);
-        
+
         if (strlen($content) <= 160) {
             return $content;
         }
 
-        return substr($content, 0, 157) . '...';
+        return substr($content, 0, 157).'...';
     }
 
     /**
@@ -187,7 +187,7 @@ class PageDto extends BaseDto
      */
     public function getUrl(string $baseUrl = ''): string
     {
-        return rtrim($baseUrl, '/') . '/pages/' . $this->getHandle();
+        return rtrim($baseUrl, '/').'/pages/'.$this->getHandle();
     }
 
     /**
@@ -195,7 +195,7 @@ class PageDto extends BaseDto
      */
     public function getPreviewUrl(string $baseUrl = ''): string
     {
-        return $this->getUrl($baseUrl) . '?preview=true';
+        return $this->getUrl($baseUrl).'?preview=true';
     }
 
     /**
@@ -204,6 +204,7 @@ class PageDto extends BaseDto
     public function getWordCount(): int
     {
         $text = strip_tags($this->content);
+
         return str_word_count($text);
     }
 
@@ -238,12 +239,12 @@ class PageDto extends BaseDto
     {
         $text = strip_tags($this->content);
         $text = preg_replace('/\s+/', ' ', trim($text));
-        
+
         if (strlen($text) <= $length) {
             return $text;
         }
 
-        return substr($text, 0, $length - 3) . '...';
+        return substr($text, 0, $length - 3).'...';
     }
 
     /**

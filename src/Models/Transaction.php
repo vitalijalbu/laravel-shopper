@@ -42,7 +42,7 @@ class Transaction extends Model
 
         static::creating(function ($transaction) {
             if (empty($transaction->reference)) {
-                $transaction->reference = 'TXN-' . strtoupper(Str::random(10));
+                $transaction->reference = 'TXN-'.strtoupper(Str::random(10));
             }
         });
     }

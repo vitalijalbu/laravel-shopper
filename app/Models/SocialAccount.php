@@ -48,9 +48,9 @@ class SocialAccount extends Model
      */
     public function getAvatarUrlAttribute(): ?string
     {
-        return $this->provider_data['avatar'] ?? 
-               $this->provider_data['avatar_url'] ?? 
-               $this->provider_data['picture'] ?? 
+        return $this->provider_data['avatar'] ??
+               $this->provider_data['avatar_url'] ??
+               $this->provider_data['picture'] ??
                null;
     }
 
@@ -59,9 +59,9 @@ class SocialAccount extends Model
      */
     public function getDisplayNameAttribute(): ?string
     {
-        return $this->provider_data['name'] ?? 
-               $this->provider_data['display_name'] ?? 
-               $this->provider_data['login'] ?? 
+        return $this->provider_data['name'] ??
+               $this->provider_data['display_name'] ??
+               $this->provider_data['login'] ??
                null;
     }
 
@@ -70,7 +70,7 @@ class SocialAccount extends Model
      */
     public function isTokenExpired(): bool
     {
-        if (!isset($this->provider_data['expires_at'])) {
+        if (! isset($this->provider_data['expires_at'])) {
             return false;
         }
 
@@ -90,7 +90,7 @@ class SocialAccount extends Model
                 'scopes' => ['openid', 'profile', 'email'],
             ],
             'facebook' => [
-                'name' => 'Facebook', 
+                'name' => 'Facebook',
                 'icon' => 'fab fa-facebook-f',
                 'color' => '#3b5998',
                 'scopes' => ['email', 'public_profile'],

@@ -3,8 +3,8 @@
 namespace LaravelShopper\Services;
 
 use Illuminate\Support\Facades\Log;
-use LaravelShopper\Models\Webhook;
 use LaravelShopper\Jobs\DispatchWebhookJob;
+use LaravelShopper\Models\Webhook;
 
 class WebhookService
 {
@@ -14,34 +14,34 @@ class WebhookService
     public function dispatch(string $event, array $payload): void
     {
         $webhooks = Webhook::active()
-                          ->forEvent($event)
-                          ->get();
-        
+            ->forEvent($event)
+            ->get();
+
         Log::info('Dispatching webhooks', [
             'event' => $event,
             'webhook_count' => $webhooks->count(),
         ]);
-        
+
         foreach ($webhooks as $webhook) {
             $this->dispatchWebhook($webhook, $event, $payload);
         }
     }
-    
+
     /**
      * Dispatch a single webhook
      */
     protected function dispatchWebhook(Webhook $webhook, string $event, array $payload): void
     {
         $webhookPayload = $this->formatPayload($event, $payload);
-        
+
         DispatchWebhookJob::dispatch($webhook, $webhookPayload);
-        
+
         Log::info('Webhook job dispatched', [
             'webhook_id' => $webhook->id,
             'event' => $event,
         ]);
     }
-    
+
     /**
      * Format payload with metadata
      */
@@ -54,7 +54,7 @@ class WebhookService
             'version' => '1.0',
         ];
     }
-    
+
     /**
      * Register webhook events
      */
@@ -68,36 +68,36 @@ class WebhookService
             'order.fulfilled',
             'order.paid',
             'order.refunded',
-            
+
             // Product events
             'product.created',
             'product.updated',
             'product.deleted',
             'product.stock_low',
             'product.out_of_stock',
-            
+
             // Customer events
             'customer.created',
             'customer.updated',
             'customer.deleted',
-            
+
             // App events
             'app.installed',
             'app.uninstalled',
             'app.updated',
         ];
     }
-    
+
     /**
      * Validate webhook signature
      */
     public function validateSignature(string $payload, string $signature, string $secret): bool
     {
         $expectedSignature = hash_hmac('sha256', $payload, $secret);
-        
+
         return hash_equals($expectedSignature, $signature);
     }
-    
+
     /**
      * Test webhook endpoint
      */
@@ -112,15 +112,17 @@ class WebhookService
             ],
             'version' => '1.0',
         ];
-        
+
         try {
             DispatchWebhookJob::dispatchSync($webhook, $testPayload);
+
             return true;
         } catch (\Exception $e) {
             Log::error('Webhook test failed', [
                 'webhook_id' => $webhook->id,
                 'error' => $e->getMessage(),
             ]);
+
             return false;
         }
     }

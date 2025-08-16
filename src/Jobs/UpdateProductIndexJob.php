@@ -15,17 +15,18 @@ use LaravelShopper\Services\SearchService;
 class UpdateProductIndexJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-    
+
     public int $tries = 2;
+
     public int $timeout = 60;
-    
+
     public function __construct(
         private Product $product,
         private string $action = 'update' // update, delete
     ) {
         $this->onQueue('indexing');
     }
-    
+
     public function handle(
         SearchService $search,
         CacheService $cache
@@ -34,7 +35,7 @@ class UpdateProductIndexJob implements ShouldQueue
             'product_id' => $this->product->id,
             'action' => $this->action,
         ]);
-        
+
         try {
             switch ($this->action) {
                 case 'update':
@@ -44,22 +45,22 @@ class UpdateProductIndexJob implements ShouldQueue
                     $search->removeProduct($this->product);
                     break;
             }
-            
+
             // Clear product cache
             $cache->invalidateProduct($this->product->id);
-            
+
             Log::info('Product search index updated successfully', [
                 'product_id' => $this->product->id,
                 'action' => $this->action,
             ]);
-            
+
         } catch (\Exception $e) {
             Log::error('Failed to update product search index', [
                 'product_id' => $this->product->id,
                 'action' => $this->action,
                 'error' => $e->getMessage(),
             ]);
-            
+
             throw $e;
         }
     }

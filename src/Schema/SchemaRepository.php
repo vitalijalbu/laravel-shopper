@@ -2,15 +2,16 @@
 
 namespace LaravelShopper\Schema;
 
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\File;
 
 class SchemaRepository
 {
     protected string $basePath;
+
     protected array $cache = [];
 
-    public function __construct(string $basePath = null)
+    public function __construct(?string $basePath = null)
     {
         $this->basePath = $basePath ?? resource_path('schemas');
     }
@@ -52,15 +53,15 @@ class SchemaRepository
      */
     public function getAllCollections(): Collection
     {
-        $collectionsPath = $this->basePath . '/collections';
-        
-        if (!File::exists($collectionsPath)) {
+        $collectionsPath = $this->basePath.'/collections';
+
+        if (! File::exists($collectionsPath)) {
             return collect();
         }
 
         return collect(File::files($collectionsPath))
-            ->filter(fn($file) => $file->getExtension() === 'json')
-            ->map(fn($file) => $this->loadSchemaFromFile($file->getPathname()))
+            ->filter(fn ($file) => $file->getExtension() === 'json')
+            ->map(fn ($file) => $this->loadSchemaFromFile($file->getPathname()))
             ->filter()
             ->values();
     }
@@ -70,15 +71,15 @@ class SchemaRepository
      */
     public function getAllFieldsets(): Collection
     {
-        $fieldsetsPath = $this->basePath . '/fieldsets';
-        
-        if (!File::exists($fieldsetsPath)) {
+        $fieldsetsPath = $this->basePath.'/fieldsets';
+
+        if (! File::exists($fieldsetsPath)) {
             return collect();
         }
 
         return collect(File::files($fieldsetsPath))
-            ->filter(fn($file) => $file->getExtension() === 'json')
-            ->map(fn($file) => $this->loadSchemaFromFile($file->getPathname()))
+            ->filter(fn ($file) => $file->getExtension() === 'json')
+            ->map(fn ($file) => $this->loadSchemaFromFile($file->getPathname()))
             ->filter()
             ->values();
     }
@@ -113,9 +114,10 @@ class SchemaRepository
     public function delete(string $type, string $handle): bool
     {
         $filePath = $this->getSchemaPath($type, $handle);
-        
+
         if (File::exists($filePath)) {
             unset($this->cache[$filePath]);
+
             return File::delete($filePath);
         }
 
@@ -128,12 +130,12 @@ class SchemaRepository
     protected function loadSchema(string $type, string $handle): ?Collection
     {
         $filePath = $this->getSchemaPath($type, $handle);
-        
+
         if (isset($this->cache[$filePath])) {
             return $this->cache[$filePath];
         }
 
-        if (!File::exists($filePath)) {
+        if (! File::exists($filePath)) {
             return null;
         }
 
@@ -153,12 +155,13 @@ class SchemaRepository
             $data = json_decode($content, true);
 
             if (json_last_error() !== JSON_ERROR_NONE) {
-                throw new \JsonException('Invalid JSON: ' . json_last_error_msg());
+                throw new \JsonException('Invalid JSON: '.json_last_error_msg());
             }
 
             return collect($data);
         } catch (\Exception $e) {
-            logger()->error("Failed to load schema from {$filePath}: " . $e->getMessage());
+            logger()->error("Failed to load schema from {$filePath}: ".$e->getMessage());
+
             return null;
         }
     }
@@ -171,20 +174,21 @@ class SchemaRepository
         $filePath = $this->getSchemaPath($type, $handle);
         $directory = dirname($filePath);
 
-        if (!File::exists($directory)) {
+        if (! File::exists($directory)) {
             File::makeDirectory($directory, 0755, true);
         }
 
         try {
             $content = json_encode($schema, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
             $result = File::put($filePath, $content);
-            
+
             // Update cache
             $this->cache[$filePath] = collect($schema);
-            
+
             return $result !== false;
         } catch (\Exception $e) {
-            logger()->error("Failed to save schema to {$filePath}: " . $e->getMessage());
+            logger()->error("Failed to save schema to {$filePath}: ".$e->getMessage());
+
             return false;
         }
     }
@@ -194,7 +198,7 @@ class SchemaRepository
      */
     protected function getSchemaPath(string $type, string $handle): string
     {
-        return $this->basePath . '/' . $type . '/' . $handle . '.json';
+        return $this->basePath.'/'.$type.'/'.$handle.'.json';
     }
 
     /**
@@ -222,12 +226,12 @@ class SchemaRepository
         }
 
         // Validate handle format
-        if (!empty($schema['handle']) && !preg_match('/^[a-z0-9_-]+$/', $schema['handle'])) {
+        if (! empty($schema['handle']) && ! preg_match('/^[a-z0-9_-]+$/', $schema['handle'])) {
             $errors['handle'] = 'Handle must contain only lowercase letters, numbers, hyphens, and underscores';
         }
 
         // Validate fields structure
-        if (!empty($schema['fields']) && !is_array($schema['fields'])) {
+        if (! empty($schema['fields']) && ! is_array($schema['fields'])) {
             $errors['fields'] = 'Fields must be an array';
         }
 

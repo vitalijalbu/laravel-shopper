@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create(shopper_table('analytics_events'), function (Blueprint $table) {
+        Schema::create('analytics_events', function (Blueprint $table) {
             $table->id();
             $table->string('event_type'); // page_view, product_view, order_placed, etc.
             $table->string('session_id')->nullable();
@@ -30,6 +30,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists(shopper_table('analytics_events'));
+        Schema::dropIfExists('analytics_events');
     }
 };

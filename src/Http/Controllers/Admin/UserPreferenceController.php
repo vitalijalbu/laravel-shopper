@@ -5,15 +5,15 @@ namespace LaravelShopper\Http\Controllers\Admin;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
-use LaravelShopper\Models\UserPreference;
 use LaravelShopper\Http\Requests\UserPreferenceRequest;
+use LaravelShopper\Models\UserPreference;
 
 class UserPreferenceController extends Controller
 {
     public function index(Request $request): Response
     {
         $userId = auth()->id();
-        
+
         // Get all user preferences grouped by type
         $preferences = UserPreference::where('user_id', $userId)
             ->get()
@@ -118,7 +118,7 @@ class UserPreferenceController extends Controller
     public function export(Request $request)
     {
         $userId = auth()->id();
-        
+
         $preferences = UserPreference::where('user_id', $userId)
             ->get()
             ->mapWithKeys(function ($preference) {
@@ -148,7 +148,7 @@ class UserPreferenceController extends Controller
         foreach ($request->preferences as $key => $value) {
             [$type, $preferenceKey] = explode('.', $key, 2);
 
-            if ($overwrite || !UserPreference::existsForUser($userId, $type, $preferenceKey)) {
+            if ($overwrite || ! UserPreference::existsForUser($userId, $type, $preferenceKey)) {
                 UserPreference::setForUser($userId, $type, $preferenceKey, $value);
                 $imported++;
             } else {

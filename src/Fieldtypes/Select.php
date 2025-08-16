@@ -31,7 +31,7 @@ class Select extends Fieldtype
         $options = $this->getOptions();
 
         if ($this->config('multiple')) {
-            if (!is_array($value)) {
+            if (! is_array($value)) {
                 return [];
             }
 
@@ -64,7 +64,7 @@ class Select extends Fieldtype
     protected function isCollectionName($name)
     {
         // Check if it's a collection reference
-        return is_string($name) && !str_contains($name, ':');
+        return is_string($name) && ! str_contains($name, ':');
     }
 
     protected function fetchFromCollection($collectionHandle)
@@ -106,14 +106,14 @@ class Select extends Fieldtype
     public function rules()
     {
         $rules = parent::rules();
-        
+
         $options = array_keys($this->getOptions());
-        
+
         if ($this->config('multiple')) {
             $rules[] = 'array';
-            $rules[] = 'in:' . implode(',', $options);
+            $rules[] = 'in:'.implode(',', $options);
         } else {
-            $rules[] = 'in:' . implode(',', $options);
+            $rules[] = 'in:'.implode(',', $options);
         }
 
         return $rules;
@@ -121,7 +121,7 @@ class Select extends Fieldtype
 
     public function isSortable()
     {
-        return !$this->config('multiple');
+        return ! $this->config('multiple');
     }
 
     public function isFilterable()

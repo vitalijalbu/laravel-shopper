@@ -4,9 +4,8 @@ namespace LaravelShopper\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use LaravelShopper\Models\Product;
 use LaravelShopper\Models\Category;
-use LaravelShopper\Models\Site;
+use LaravelShopper\Models\Product;
 use LaravelShopper\Services\TemplateEngine;
 
 class StorefrontController extends Controller
@@ -24,7 +23,7 @@ class StorefrontController extends Controller
     public function home(Request $request): Response
     {
         $site = app('laravel-shopper.site');
-        
+
         $content = $this->templateEngine->render(
             'index',
             null,
@@ -49,7 +48,7 @@ class StorefrontController extends Controller
                 'title' => 'All Products',
                 'handle' => 'all-products',
                 'products' => $products,
-                'type' => 'products'
+                'type' => 'products',
             ],
             $request->attributes->get('custom_template')
         );
@@ -92,7 +91,7 @@ class StorefrontController extends Controller
                 'title' => 'All Collections',
                 'handle' => 'all-collections',
                 'collections' => $categories,
-                'type' => 'collections'
+                'type' => 'collections',
             ],
             $request->attributes->get('custom_template')
         );
@@ -276,7 +275,7 @@ class StorefrontController extends Controller
     public function accountDashboard(Request $request): Response
     {
         $customer = $request->user('customers');
-        
+
         $content = $this->templateEngine->render(
             'customers/account',
             $customer
@@ -292,7 +291,7 @@ class StorefrontController extends Controller
     {
         $customer = $request->user('customers');
         $orders = $customer->orders()->with('lines.product')->paginate(10);
-        
+
         $content = $this->templateEngine->render(
             'customers/orders',
             (object) [
@@ -311,7 +310,7 @@ class StorefrontController extends Controller
     {
         $customer = $request->user('customers');
         $order = $customer->orders()->with('lines.product')->findOrFail($order);
-        
+
         $content = $this->templateEngine->render(
             'customers/order',
             $order

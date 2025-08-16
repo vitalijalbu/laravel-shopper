@@ -4,17 +4,17 @@ namespace LaravelShopper\Http\Controllers\Cp;
 
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use LaravelShopper\Data\ProductDto;
-use LaravelShopper\Http\Resources\ProductResource;
-use LaravelShopper\Http\Resources\ProductCollection;
-use LaravelShopper\DataTable\ProductDataTable;
-use LaravelShopper\Schema\SchemaRepository;
 use LaravelShopper\CP\Navigation;
 use LaravelShopper\CP\Page;
+use LaravelShopper\Data\ProductDto;
+use LaravelShopper\DataTable\ProductDataTable;
 use LaravelShopper\Http\Controllers\Controller;
-use LaravelShopper\Models\Product;
-use LaravelShopper\Models\Category;
+use LaravelShopper\Http\Resources\ProductCollection;
+use LaravelShopper\Http\Resources\ProductResource;
 use LaravelShopper\Models\Brand;
+use LaravelShopper\Models\Category;
+use LaravelShopper\Models\Product;
+use LaravelShopper\Schema\SchemaRepository;
 
 class ProductsController extends Controller
 {
@@ -31,10 +31,11 @@ class ProductsController extends Controller
     public function index(Request $request)
     {
         $dataTable = new ProductDataTable($request);
-        
+
         // If AJAX request, return data for DataTable
         if ($request->expectsJson()) {
             $products = $dataTable->process();
+
             return new ProductCollection($products);
         }
 
@@ -62,8 +63,8 @@ class ProductsController extends Controller
     {
         // Load schema from JSON file
         $schema = $this->schemas->getCollection('products');
-        
-        if (!$schema) {
+
+        if (! $schema) {
             abort(404, 'Product schema not found');
         }
 
@@ -71,10 +72,10 @@ class ProductsController extends Controller
             ->breadcrumb(__('admin.navigation.home'), '/cp')
             ->breadcrumb(__('products.title'), '/cp/products')
             ->breadcrumb(__('products.create'))
-            ->primaryAction(__('admin.actions.save') . ' ' . strtolower(__('products.single')), null, ['form' => 'product-form'])
+            ->primaryAction(__('admin.actions.save').' '.strtolower(__('products.single')), null, ['form' => 'product-form'])
             ->secondaryActions([
-                ['label' => __('admin.actions.save') . ' & ' . __('admin.actions.continue_editing'), 'action' => 'save_continue'],
-                ['label' => __('admin.actions.save') . ' & ' . __('admin.actions.add_another'), 'action' => 'save_add_another'],
+                ['label' => __('admin.actions.save').' & '.__('admin.actions.continue_editing'), 'action' => 'save_continue'],
+                ['label' => __('admin.actions.save').' & '.__('admin.actions.add_another'), 'action' => 'save_add_another'],
             ]);
 
         // Product form tabs
@@ -103,36 +104,36 @@ class ProductsController extends Controller
         // Load schema and build validation rules
         $schema = $this->schemas->getCollection('products');
         $validationRules = $this->buildValidationRules($schema);
-        
+
         $validated = $request->validate($validationRules);
-        
+
         // Create DTO from validated data
         $productDto = ProductDto::from($validated);
-        
+
         // Additional DTO validation
         $dtoErrors = $productDto->validate();
-        if (!empty($dtoErrors)) {
+        if (! empty($dtoErrors)) {
             return response()->json(['errors' => $dtoErrors], 422);
         }
 
         // Create product from DTO
         $product = Product::create($productDto->toArray());
-        
+
         // Handle different save actions
         $action = $request->input('_action', 'save');
-        
+
         return match ($action) {
             'save_continue' => response()->json([
                 'message' => __('products.messages.created'),
-                'redirect' => "/cp/products/{$product->id}/edit"
+                'redirect' => "/cp/products/{$product->id}/edit",
             ]),
             'save_add_another' => response()->json([
                 'message' => __('products.messages.created'),
-                'redirect' => '/cp/products/create'
+                'redirect' => '/cp/products/create',
             ]),
             default => response()->json([
                 'message' => __('products.messages.created'),
-                'redirect' => '/cp/products'
+                'redirect' => '/cp/products',
             ])
         };
     }
@@ -155,7 +156,7 @@ class ProductsController extends Controller
             ->primaryAction(__('products.edit'), "/cp/products/{$product->id}/edit")
             ->secondaryActions([
                 ['label' => __('admin.actions.duplicate'), 'action' => 'duplicate'],
-                ['label' => __('admin.actions.view') . ' ' . __('admin.navigation.storefront'), 'url' => "/products/{$product->handle}", 'target' => '_blank'],
+                ['label' => __('admin.actions.view').' '.__('admin.navigation.storefront'), 'url' => "/products/{$product->handle}", 'target' => '_blank'],
                 ['label' => __('admin.actions.delete'), 'action' => 'delete', 'destructive' => true],
             ]);
 
@@ -173,22 +174,22 @@ class ProductsController extends Controller
     {
         // Load schema from JSON file
         $schema = $this->schemas->getCollection('products');
-        
-        if (!$schema) {
+
+        if (! $schema) {
             abort(404, 'Product schema not found');
         }
 
         $product->load(['category', 'brand', 'variants', 'media']);
 
-        $page = Page::make(__('products.edit') . " {$product->name}")
+        $page = Page::make(__('products.edit')." {$product->name}")
             ->breadcrumb(__('admin.navigation.home'), '/cp')
             ->breadcrumb(__('products.title'), '/cp/products')
             ->breadcrumb($product->name, "/cp/products/{$product->id}")
             ->breadcrumb(__('admin.actions.edit'))
-            ->primaryAction(__('admin.actions.update') . ' ' . strtolower(__('products.single')), null, ['form' => 'product-form'])
+            ->primaryAction(__('admin.actions.update').' '.strtolower(__('products.single')), null, ['form' => 'product-form'])
             ->secondaryActions([
-                ['label' => __('admin.actions.view') . ' ' . strtolower(__('products.single')), 'url' => "/cp/products/{$product->id}"],
-                ['label' => __('admin.actions.view') . ' ' . __('admin.navigation.storefront'), 'url' => "/products/{$product->handle}", 'target' => '_blank'],
+                ['label' => __('admin.actions.view').' '.strtolower(__('products.single')), 'url' => "/cp/products/{$product->id}"],
+                ['label' => __('admin.actions.view').' '.__('admin.navigation.storefront'), 'url' => "/products/{$product->handle}", 'target' => '_blank'],
                 ['label' => __('admin.actions.duplicate'), 'action' => 'duplicate'],
                 ['label' => __('admin.actions.delete'), 'action' => 'delete', 'destructive' => true],
             ]);
@@ -220,26 +221,26 @@ class ProductsController extends Controller
         // Load schema and build validation rules
         $schema = $this->schemas->getCollection('products');
         $validationRules = $this->buildValidationRules($schema);
-        
+
         // Make handle unique validation exclude current product
         if (isset($validationRules['handle'])) {
-            $validationRules['handle'][] = 'unique:products,handle,' . $product->id;
+            $validationRules['handle'][] = 'unique:products,handle,'.$product->id;
         }
-        
+
         $validated = $request->validate($validationRules);
-        
+
         // Create DTO from validated data
         $productDto = ProductDto::from($validated);
-        
+
         // Additional DTO validation
         $dtoErrors = $productDto->validate();
-        if (!empty($dtoErrors)) {
+        if (! empty($dtoErrors)) {
             return response()->json(['errors' => $dtoErrors], 422);
         }
 
         // Update product from DTO
         $product->update($productDto->toArray());
-        
+
         return response()->json([
             'message' => __('products.messages.updated'),
             'product' => new ProductResource($product->fresh(['category', 'brand'])),
@@ -252,7 +253,7 @@ class ProductsController extends Controller
     public function destroy(Product $product)
     {
         $product->delete();
-        
+
         return response()->json([
             'message' => __('products.messages.deleted'),
         ]);
@@ -265,13 +266,13 @@ class ProductsController extends Controller
     {
         $action = $request->input('action');
         $ids = $request->input('ids', []);
-        
+
         if (empty($ids)) {
             return response()->json(['error' => __('admin.messages.no_items_selected')], 422);
         }
 
         $products = Product::whereIn('id', $ids);
-        
+
         return match ($action) {
             'activate' => $this->bulkActivate($products),
             'draft' => $this->bulkDraft($products),
@@ -287,7 +288,7 @@ class ProductsController extends Controller
      */
     protected function buildValidationRules($schema): array
     {
-        if (!$schema || !isset($schema['fields'])) {
+        if (! $schema || ! isset($schema['fields'])) {
             return [
                 'name' => 'required|string|max:255',
                 'handle' => 'required|string|max:255|unique:products',
@@ -297,11 +298,11 @@ class ProductsController extends Controller
         }
 
         $rules = [];
-        
+
         foreach ($schema['fields'] as $field => $config) {
-            if (!empty($config['validate'])) {
-                $rules[$field] = is_array($config['validate']) 
-                    ? $config['validate'] 
+            if (! empty($config['validate'])) {
+                $rules[$field] = is_array($config['validate'])
+                    ? $config['validate']
                     : explode('|', $config['validate']);
             } elseif ($config['required'] ?? false) {
                 $rules[$field] = ['required'];
@@ -317,6 +318,7 @@ class ProductsController extends Controller
     protected function bulkActivate($products)
     {
         $count = $products->update(['status' => 'active']);
+
         return response()->json(['message' => __('products.messages.bulk_activated', ['count' => $count])]);
     }
 
@@ -326,6 +328,7 @@ class ProductsController extends Controller
     protected function bulkDraft($products)
     {
         $count = $products->update(['status' => 'draft']);
+
         return response()->json(['message' => "Set {$count} products as draft"]);
     }
 
@@ -335,6 +338,7 @@ class ProductsController extends Controller
     protected function bulkArchive($products)
     {
         $count = $products->update(['status' => 'archived']);
+
         return response()->json(['message' => __('products.messages.bulk_archived', ['count' => $count])]);
     }
 
@@ -345,6 +349,7 @@ class ProductsController extends Controller
     {
         $count = $products->count();
         $products->delete();
+
         return response()->json(['message' => __('products.messages.bulk_deleted', ['count' => $count])]);
     }
 
@@ -355,9 +360,10 @@ class ProductsController extends Controller
     {
         // TODO: Implement export logic
         $count = $products->count();
+
         return response()->json([
             'message' => __('products.messages.bulk_exported', ['count' => $count]),
-            'download_url' => '/cp/products/export/download/' . uniqid(),
+            'download_url' => '/cp/products/export/download/'.uniqid(),
         ]);
     }
 }

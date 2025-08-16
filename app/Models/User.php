@@ -12,7 +12,7 @@ use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasApiTokens, HasFactory, Notifiable, HasRoles;
+    use HasApiTokens, HasFactory, HasRoles, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -102,7 +102,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function isOAuthUser(): bool
     {
-        return !is_null($this->provider) || $this->socialAccounts()->exists();
+        return ! is_null($this->provider) || $this->socialAccounts()->exists();
     }
 
     /**
@@ -110,7 +110,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function hasPassword(): bool
     {
-        return !is_null($this->password);
+        return ! is_null($this->password);
     }
 
     /**
@@ -136,6 +136,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
         // Generate Gravatar
         $hash = md5(strtolower(trim($this->email)));
+
         return "https://www.gravatar.com/avatar/{$hash}?d=mp&s=200";
     }
 
@@ -185,7 +186,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
         if ($socialAccount) {
             $user = $socialAccount->user;
-            
+
             // Update social account data
             $socialAccount->update([
                 'provider_token' => $providerUser->token,
@@ -200,6 +201,7 @@ class User extends Authenticatable implements MustVerifyEmail
             ]);
 
             $user->updateLastLogin();
+
             return $user;
         }
 
@@ -223,6 +225,7 @@ class User extends Authenticatable implements MustVerifyEmail
             ]);
 
             $user->updateLastLogin();
+
             return $user;
         }
 

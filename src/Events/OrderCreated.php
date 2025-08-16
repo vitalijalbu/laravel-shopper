@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace LaravelShopper\Events;
 
-
-
 class OrderCreated extends Event
 {
     public function __construct($order)

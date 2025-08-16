@@ -8,16 +8,16 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('shopper_sections', function (Blueprint $table) {
+        Schema::create('sections', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('site_id')->constrained('shopper_sites')->cascadeOnDelete();
+            $table->foreignId('site_id')->constrained('sites')->cascadeOnDelete();
             $table->string('handle')->unique(); // hero, featured-products, testimonials
             $table->string('name');
             $table->text('description')->nullable();
             $table->string('component_path'); // Path to Vue/Blade component
-            $table->jsonb('schema')->default('{}'); // Section schema (settings definition)
-            $table->jsonb('preset_data')->default('{}'); // Default data for new instances
-            $table->jsonb('blocks')->default('[]'); // Block definitions
+            $table->jsonb('schema')->nullable(); // Section schema (settings definition)
+            $table->jsonb('preset_data')->nullable(); // Default data for new instances
+            $table->jsonb('blocks')->nullable(); // Block definitions
             $table->string('category')->default('content'); // content, media, layout, custom
             $table->boolean('is_global')->default(false); // Can be used across all templates
             $table->boolean('is_active')->default(true);
@@ -34,6 +34,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('shopper_sections');
+        Schema::dropIfExists('sections');
     }
 };

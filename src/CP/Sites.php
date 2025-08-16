@@ -5,9 +5,13 @@ namespace LaravelShopper\CP;
 class Site
 {
     protected $handle;
+
     protected $name;
+
     protected $url;
+
     protected $locale;
+
     protected $attributes = [];
 
     public function __construct($handle, $attributes = [])
@@ -52,6 +56,7 @@ class Site
     public function set($key, $value)
     {
         $this->attributes[$key] = $value;
+
         return $this;
     }
 
@@ -62,7 +67,7 @@ class Site
             'name' => $this->name,
             'url' => $this->url,
             'locale' => $this->locale,
-            'attributes' => $this->attributes
+            'attributes' => $this->attributes,
         ];
     }
 }
@@ -70,18 +75,20 @@ class Site
 class Sites
 {
     protected static $sites = [];
+
     protected static $default = 'default';
+
     protected static $current = null;
 
     public static function make()
     {
-        return new static();
+        return new static;
     }
 
     public static function setSites($sites)
     {
         static::$sites = [];
-        
+
         foreach ($sites as $handle => $config) {
             static::$sites[$handle] = Site::make($handle, $config);
         }
@@ -159,10 +166,10 @@ class Sites
     public static function config()
     {
         return [
-            'sites' => array_map(fn($site) => $site->toArray(), static::$sites),
+            'sites' => array_map(fn ($site) => $site->toArray(), static::$sites),
             'default' => static::$default,
             'current' => static::current()?->handle(),
-            'multisite' => static::isMultisite()
+            'multisite' => static::isMultisite(),
         ];
     }
 
@@ -174,7 +181,7 @@ class Sites
                 'name' => 'Default Site',
                 'url' => '/',
                 'locale' => 'en',
-            ]
+            ],
         ]);
     }
 }

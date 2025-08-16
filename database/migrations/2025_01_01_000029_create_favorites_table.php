@@ -18,7 +18,6 @@ return new class extends Migration
 
             $table->unique(['favoriteable_type', 'favoriteable_id', 'customer_id']);
             $table->index(['customer_id', 'type']);
-            $table->index(['favoriteable_type', 'favoriteable_id']);
         });
     }
 

@@ -175,7 +175,8 @@
 
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { usePage } from '@inertiajs/vue3'
+import { route } from 'ziggy-js'
 import { useShopperStore } from '../stores/shopper'
 import CpNavigation from './cp-navigation.vue'
 
@@ -186,7 +187,7 @@ const props = defineProps({
   breadcrumbs: Array
 })
 
-const route = useRoute()
+const page = usePage()
 const shopperStore = useShopperStore()
 
 // State
@@ -225,16 +226,16 @@ const performGlobalSearch = async () => {
 const toggleLivePreview = () => {
   livePreviewMode.value = !livePreviewMode.value
   
-  if (livePreviewMode.value && route.meta.previewable) {
-    previewUrl.value = route.meta.previewUrl || generatePreviewUrl()
+  if (livePreviewMode.value) {
+    previewUrl.value = generatePreviewUrl()
   }
 }
 
 const generatePreviewUrl = () => {
-  // Generate preview URL based on current route/entry
-  const params = route.params
-  if (params.collection && params.id) {
-    return `/preview/${params.collection}/${params.id}`
+  // Generate preview URL based on current page
+  const url = page.url
+  if (url.includes('/collections/') && url.includes('/entries/')) {
+    return `/preview${url}`
   }
   return '/'
 }
@@ -295,15 +296,6 @@ const getToastIcon = (type) => {
   return icons[type] || 'information-circle'
 }
 
-// Watch for route changes to update preview
-watch(() => route.path, () => {
-  showLivePreview.value = route.meta?.previewable || false
-  
-  if (livePreviewMode.value) {
-    previewUrl.value = generatePreviewUrl()
-  }
-})
-
 // Load notifications
 const loadNotifications = async () => {
   try {
@@ -329,7 +321,7 @@ onMounted(() => {
   document.addEventListener('click', handleClickOutside)
   
   // Set up live preview detection
-  showLivePreview.value = route.meta?.previewable || false
+  showLivePreview.value = false
 })
 
 // Expose methods for child components

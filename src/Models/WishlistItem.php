@@ -42,11 +42,11 @@ class WishlistItem extends Model
     public function getDisplayNameAttribute(): string
     {
         $name = $this->product->name;
-        
+
         if ($this->variant) {
-            $name .= ' - ' . $this->variant->name;
+            $name .= ' - '.$this->variant->name;
         }
-        
+
         return $name;
     }
 

@@ -72,7 +72,7 @@ class CartDto extends BaseDto
             'expires_at' => $this->expires_at?->format('Y-m-d H:i:s'),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-        ], fn($value) => $value !== null);
+        ], fn ($value) => $value !== null);
     }
 
     /**
@@ -82,7 +82,7 @@ class CartDto extends BaseDto
     {
         $errors = [];
 
-        if (!in_array($this->status, ['active', 'abandoned', 'converted', 'expired'])) {
+        if (! in_array($this->status, ['active', 'abandoned', 'converted', 'expired'])) {
             $errors['status'] = 'Cart status must be active, abandoned, converted, or expired';
         }
 
@@ -106,17 +106,17 @@ class CartDto extends BaseDto
             $errors['total'] = 'Total cannot be negative';
         }
 
-        if ($this->expires_at && $this->expires_at <= new DateTime()) {
+        if ($this->expires_at && $this->expires_at <= new DateTime) {
             $errors['expires_at'] = 'Expiration date must be in the future';
         }
 
         // Validate addresses
-        if (!empty($this->shipping_address)) {
+        if (! empty($this->shipping_address)) {
             $addressErrors = $this->validateAddress($this->shipping_address, 'shipping_address');
             $errors = array_merge($errors, $addressErrors);
         }
 
-        if (!empty($this->billing_address)) {
+        if (! empty($this->billing_address)) {
             $addressErrors = $this->validateAddress($this->billing_address, 'billing_address');
             $errors = array_merge($errors, $addressErrors);
         }
@@ -132,10 +132,10 @@ class CartDto extends BaseDto
         $errors = [];
 
         $required = ['first_name', 'last_name', 'address_line_1', 'city', 'country_id'];
-        
+
         foreach ($required as $field) {
             if (empty($address[$field] ?? '')) {
-                $errors["{$prefix}.{$field}"] = ucfirst(str_replace('_', ' ', $field)) . ' is required';
+                $errors["{$prefix}.{$field}"] = ucfirst(str_replace('_', ' ', $field)).' is required';
             }
         }
 
@@ -171,8 +171,8 @@ class CartDto extends BaseDto
      */
     public function isExpired(): bool
     {
-        return $this->status === 'expired' || 
-               ($this->expires_at && $this->expires_at <= new DateTime());
+        return $this->status === 'expired' ||
+               ($this->expires_at && $this->expires_at <= new DateTime);
     }
 
     /**
@@ -188,7 +188,7 @@ class CartDto extends BaseDto
      */
     public function hasShippingAddress(): bool
     {
-        return !empty($this->shipping_address);
+        return ! empty($this->shipping_address);
     }
 
     /**
@@ -196,7 +196,7 @@ class CartDto extends BaseDto
      */
     public function hasBillingAddress(): bool
     {
-        return !empty($this->billing_address);
+        return ! empty($this->billing_address);
     }
 
     /**
@@ -204,7 +204,7 @@ class CartDto extends BaseDto
      */
     public function hasDiscounts(): bool
     {
-        return !empty($this->applied_discounts) && $this->discount_total > 0;
+        return ! empty($this->applied_discounts) && $this->discount_total > 0;
     }
 
     /**
@@ -212,7 +212,7 @@ class CartDto extends BaseDto
      */
     public function getFormattedTotal(string $currency = 'EUR'): string
     {
-        return number_format($this->total, 2, '.', ',') . ' ' . $currency;
+        return number_format($this->total, 2, '.', ',').' '.$currency;
     }
 
     /**
@@ -220,7 +220,7 @@ class CartDto extends BaseDto
      */
     public function getFormattedSubtotal(string $currency = 'EUR'): string
     {
-        return number_format($this->subtotal, 2, '.', ',') . ' ' . $currency;
+        return number_format($this->subtotal, 2, '.', ',').' '.$currency;
     }
 
     /**
@@ -228,7 +228,7 @@ class CartDto extends BaseDto
      */
     public function getFormattedTaxTotal(string $currency = 'EUR'): string
     {
-        return number_format($this->tax_total, 2, '.', ',') . ' ' . $currency;
+        return number_format($this->tax_total, 2, '.', ',').' '.$currency;
     }
 
     /**
@@ -236,7 +236,7 @@ class CartDto extends BaseDto
      */
     public function getFormattedShippingTotal(string $currency = 'EUR'): string
     {
-        return number_format($this->shipping_total, 2, '.', ',') . ' ' . $currency;
+        return number_format($this->shipping_total, 2, '.', ',').' '.$currency;
     }
 
     /**
@@ -244,7 +244,7 @@ class CartDto extends BaseDto
      */
     public function getFormattedDiscountTotal(string $currency = 'EUR'): string
     {
-        return number_format($this->discount_total, 2, '.', ',') . ' ' . $currency;
+        return number_format($this->discount_total, 2, '.', ',').' '.$currency;
     }
 
     /**
@@ -301,13 +301,13 @@ class CartDto extends BaseDto
      */
     public function getExpiryMinutesRemaining(): ?int
     {
-        if (!$this->expires_at) {
+        if (! $this->expires_at) {
             return null;
         }
 
-        $now = new DateTime();
+        $now = new DateTime;
         $diff = $this->expires_at->getTimestamp() - $now->getTimestamp();
-        
+
         return max(0, (int) ceil($diff / 60));
     }
 
@@ -317,7 +317,7 @@ class CartDto extends BaseDto
     public function isExpiringSoon(): bool
     {
         $remaining = $this->getExpiryMinutesRemaining();
-        
+
         return $remaining !== null && $remaining <= 30;
     }
 }

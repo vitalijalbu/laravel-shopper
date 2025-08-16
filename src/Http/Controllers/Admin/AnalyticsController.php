@@ -2,12 +2,12 @@
 
 namespace LaravelShopper\Http\Controllers\Admin;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
-use LaravelShopper\Models\UserPreference;
 use LaravelShopper\Models\AnalyticsEvent;
-use Carbon\Carbon;
+use LaravelShopper\Models\UserPreference;
 
 class AnalyticsController extends Controller
 {
@@ -29,16 +29,16 @@ class AnalyticsController extends Controller
 
         // Revenue data
         $revenueData = $this->getRevenueData($dateFrom, $dateTo);
-        
+
         // Orders data
         $ordersData = $this->getOrdersData($dateFrom, $dateTo);
-        
+
         // Visitors data
         $visitorsData = $this->getVisitorsData($dateFrom, $dateTo);
-        
+
         // Top products
         $topProducts = $this->getTopProducts($dateFrom, $dateTo);
-        
+
         // Recent orders
         $recentOrders = $this->getRecentOrders();
 

@@ -3,6 +3,7 @@
 namespace LaravelShopper\Entries;
 
 use ArrayAccess;
+use Carbon\Carbon;
 use Illuminate\Contracts\Support\Arrayable;
 use LaravelShopper\Contracts\Entries\Entry as Contract;
 use LaravelShopper\Data\ContainsCascadingData;
@@ -17,26 +18,35 @@ use LaravelShopper\Events\Entries\EntrySaving;
 use LaravelShopper\Facades\Collection;
 use LaravelShopper\Facades\Site;
 use LaravelShopper\Support\Traits\FluentlyGetsAndSets;
-use Carbon\Carbon;
-
-use function LaravelShopper\trans as __;
 
 class Entry implements Arrayable, ArrayAccess, Contract
 {
     use ContainsCascadingData, ExistsAsFile, FluentlyGetsAndSets, HasAugmentedData;
 
     protected $id;
+
     protected $slug;
+
     protected $uri;
+
     protected $collection;
+
     protected $blueprint;
+
     protected $locale;
+
     protected $origin;
+
     protected $published = true;
+
     protected $date;
+
     protected $data = [];
+
     protected $supplements = [];
+
     protected $withEvents = true;
+
     protected $afterSaveCallbacks = [];
 
     public function __construct()
@@ -346,7 +356,7 @@ class Entry implements Arrayable, ArrayAccess, Contract
             return null;
         }
 
-        return number_format($price, 2, '.', ',') . ' ' . $currency;
+        return number_format($price, 2, '.', ',').' '.$currency;
     }
 
     public function inStock()
@@ -419,7 +429,7 @@ class Entry implements Arrayable, ArrayAccess, Contract
         return vsprintf('%s/%s/%s.md', [
             rtrim(app('stache')->store('entries')->directory(), '/'),
             $this->collectionHandle(),
-            $this->slug()
+            $this->slug(),
         ]);
     }
 

@@ -21,10 +21,10 @@ class TextFieldType extends FieldType
     {
         $errors = parent::validate($value);
 
-        if (!empty($value)) {
+        if (! empty($value)) {
             $maxlength = $this->config['maxlength'] ?? null;
             if ($maxlength && strlen($value) > $maxlength) {
-                $errors[] = $this->getDisplayName() . " must be {$maxlength} characters or less";
+                $errors[] = $this->getDisplayName()." must be {$maxlength} characters or less";
             }
         }
 
@@ -77,8 +77,8 @@ class NumberFieldType extends FieldType
     {
         $errors = parent::validate($value);
 
-        if (!empty($value) && !is_numeric($value)) {
-            $errors[] = $this->getDisplayName() . ' must be a number';
+        if (! empty($value) && ! is_numeric($value)) {
+            $errors[] = $this->getDisplayName().' must be a number';
         }
 
         if (is_numeric($value)) {
@@ -86,11 +86,11 @@ class NumberFieldType extends FieldType
             $max = $this->config['max'] ?? null;
 
             if ($min !== null && $value < $min) {
-                $errors[] = $this->getDisplayName() . " must be at least {$min}";
+                $errors[] = $this->getDisplayName()." must be at least {$min}";
             }
 
             if ($max !== null && $value > $max) {
-                $errors[] = $this->getDisplayName() . " must be no more than {$max}";
+                $errors[] = $this->getDisplayName()." must be no more than {$max}";
             }
         }
 
@@ -119,7 +119,7 @@ class SelectFieldType extends FieldType
         $options = $this->config['options'] ?? [];
 
         // Support for different option formats
-        if (is_array($options) && !empty($options)) {
+        if (is_array($options) && ! empty($options)) {
             // Already in correct format
             if (isset($options[0]) && is_array($options[0]) && isset($options[0]['value'])) {
                 return $options;
@@ -138,22 +138,22 @@ class SelectFieldType extends FieldType
     {
         $errors = parent::validate($value);
 
-        if (!empty($value)) {
+        if (! empty($value)) {
             $validValues = collect($this->getOptions())->pluck('value')->toArray();
 
             if ($this->config['multiple'] ?? false) {
-                if (!is_array($value)) {
-                    $errors[] = $this->getDisplayName() . ' must be an array';
+                if (! is_array($value)) {
+                    $errors[] = $this->getDisplayName().' must be an array';
                 } else {
                     foreach ($value as $v) {
-                        if (!in_array($v, $validValues)) {
+                        if (! in_array($v, $validValues)) {
                             $errors[] = "Invalid option selected for {$this->getDisplayName()}";
                             break;
                         }
                     }
                 }
             } else {
-                if (!in_array($value, $validValues)) {
+                if (! in_array($value, $validValues)) {
                     $errors[] = "Invalid option selected for {$this->getDisplayName()}";
                 }
             }
@@ -199,7 +199,7 @@ class DateFieldType extends FieldType
 
     public function preProcess($value)
     {
-        if ($value && !$value instanceof \Carbon\Carbon) {
+        if ($value && ! $value instanceof \Carbon\Carbon) {
             try {
                 return \Carbon\Carbon::parse($value);
             } catch (\Exception $e) {
@@ -231,8 +231,8 @@ class EmailFieldType extends TextFieldType
     {
         $errors = parent::validate($value);
 
-        if (!empty($value) && !filter_var($value, FILTER_VALIDATE_EMAIL)) {
-            $errors[] = $this->getDisplayName() . ' must be a valid email address';
+        if (! empty($value) && ! filter_var($value, FILTER_VALIDATE_EMAIL)) {
+            $errors[] = $this->getDisplayName().' must be a valid email address';
         }
 
         return $errors;

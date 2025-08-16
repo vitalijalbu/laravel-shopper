@@ -5,10 +5,12 @@ namespace LaravelShopper\CP;
 abstract class PageBlock
 {
     protected int $order = 100;
+
     protected array $props = [];
+
     protected string $component;
 
-    public function __construct(string $component = null)
+    public function __construct(?string $component = null)
     {
         $this->component = $component ?? $this->getDefaultComponent();
     }
@@ -19,6 +21,7 @@ abstract class PageBlock
     public function order(int $order): self
     {
         $this->order = $order;
+
         return $this;
     }
 
@@ -28,6 +31,7 @@ abstract class PageBlock
     public function props(array $props): self
     {
         $this->props = array_merge($this->props, $props);
+
         return $this;
     }
 
@@ -52,11 +56,14 @@ abstract class PageBlock
 class PageCard extends PageBlock
 {
     protected ?string $title = null;
+
     protected array $actions = [];
+
     protected array $content = [];
+
     protected bool $sectioned = true;
 
-    public function __construct(string $title = null)
+    public function __construct(?string $title = null)
     {
         parent::__construct();
         $this->title = $title;
@@ -73,6 +80,7 @@ class PageCard extends PageBlock
     public function title(string $title): self
     {
         $this->title = $title;
+
         return $this;
     }
 
@@ -86,6 +94,7 @@ class PageCard extends PageBlock
             'url' => $url,
             'options' => $options,
         ];
+
         return $this;
     }
 
@@ -98,6 +107,7 @@ class PageCard extends PageBlock
             'component' => $component,
             'props' => $props,
         ];
+
         return $this;
     }
 
@@ -107,6 +117,7 @@ class PageCard extends PageBlock
     public function sectioned(bool $sectioned = true): self
     {
         $this->sectioned = $sectioned;
+
         return $this;
     }
 
@@ -142,6 +153,7 @@ class PageLayout extends PageBlock
     {
         $section = new PageLayoutSection('oneColumn');
         $this->sections[] = $section;
+
         return $section;
     }
 
@@ -155,6 +167,7 @@ class PageLayout extends PageBlock
             'secondaryWidth' => $secondaryWidth,
         ]);
         $this->sections[] = $section;
+
         return $section;
     }
 
@@ -164,7 +177,7 @@ class PageLayout extends PageBlock
             'component' => $this->component,
             'props' => [
                 'sections' => collect($this->sections)
-                    ->map(fn($section) => $section->compile())
+                    ->map(fn ($section) => $section->compile())
                     ->toArray(),
                 ...$this->props,
             ],
@@ -176,8 +189,11 @@ class PageLayout extends PageBlock
 class PageLayoutSection
 {
     protected string $type;
+
     protected array $props;
+
     protected array $primary = [];
+
     protected array $secondary = [];
 
     public function __construct(string $type, array $props = [])
@@ -195,6 +211,7 @@ class PageLayoutSection
             'component' => $component,
             'props' => $props,
         ];
+
         return $this;
     }
 
@@ -207,6 +224,7 @@ class PageLayoutSection
             'component' => $component,
             'props' => $props,
         ];
+
         return $this;
     }
 

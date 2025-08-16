@@ -25,7 +25,6 @@ return new class extends Migration
             $table->boolean('is_default')->default(false);
             $table->timestamps();
 
-            $table->index(['addressable_type', 'addressable_id']);
             $table->index(['type', 'is_default']);
         });
     }

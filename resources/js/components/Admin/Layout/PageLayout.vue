@@ -2,7 +2,7 @@
   <div class="min-h-full">
     <!-- Page header -->
     <div class="bg-white shadow-sm">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
         <div class="py-6">
           <!-- Breadcrumb -->
           <nav v-if="breadcrumbs.length" class="flex mb-4" aria-label="Breadcrumb">
@@ -94,7 +94,7 @@
     </div>
 
     <!-- Page content -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <!-- Loading state -->
       <div v-if="loading" class="flex items-center justify-center py-12">
         <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>

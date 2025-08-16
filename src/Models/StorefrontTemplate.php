@@ -55,8 +55,8 @@ class StorefrontTemplate extends Model
             'template_id',
             'section_id'
         )->withPivot(['settings', 'blocks_data', 'sort_order', 'is_visible', 'section_key'])
-          ->withTimestamps()
-          ->orderBy('pivot_sort_order');
+            ->withTimestamps()
+            ->orderBy('pivot_sort_order');
     }
 
     // Scopes
@@ -87,7 +87,7 @@ class StorefrontTemplate extends Model
     public function compile(): array
     {
         $compiledSections = [];
-        
+
         foreach ($this->sections as $section) {
             $compiledSections[] = [
                 'id' => $section->pivot->section_key ?? $section->id,

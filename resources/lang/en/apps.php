@@ -3,7 +3,7 @@
 return [
     'title' => 'Apps',
     'single' => 'App',
-    
+
     // Store
     'store' => [
         'title' => 'App Store',

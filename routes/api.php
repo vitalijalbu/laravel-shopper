@@ -2,19 +2,16 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use LaravelShopper\Http\Controllers\Api\ProductController;
-use LaravelShopper\Http\Controllers\Api\CategoryController;
+use LaravelShopper\Http\Controllers\Api\AuthController;
 use LaravelShopper\Http\Controllers\Api\BrandController;
 use LaravelShopper\Http\Controllers\Api\CartController;
-use LaravelShopper\Http\Controllers\Api\AuthController;
-use LaravelShopper\Http\Controllers\Api\OrderController;
-use LaravelShopper\Http\Controllers\Api\CustomerController;
-use LaravelShopper\Http\Controllers\Api\CollectionController;
+use LaravelShopper\Http\Controllers\Api\CategoryController;
+use LaravelShopper\Http\Controllers\Api\ProductController;
 use LaravelShopper\Http\Middleware\HandleSiteContext;
 
 /*
 |--------------------------------------------------------------------------
-| API Routes with Handle Support  
+| API Routes with Handle Support
 |--------------------------------------------------------------------------
 |
 | Routes support both ID and handle/slug for all resources:
@@ -28,30 +25,30 @@ Route::group([
     'middleware' => ['api'],
 ], function () {
 
-    // Authentication routes
-    Route::post('/login', [AuthController::class, 'login'])->name('shopper.api.login');
-    Route::post('/register', [AuthController::class, 'register'])->name('shopper.api.register');
-    Route::post('/logout', [AuthController::class, 'logout'])
-        ->middleware('auth:sanctum')
-        ->name('shopper.api.logout');
+    // Authentication routes (public)
+    Route::post('/login', [AuthController::class, 'login'])->name('api.login');
+    Route::post('/register', [AuthController::class, 'register'])->name('api.register');
 
-    // Public routes
-    Route::get('/products', [ProductController::class, 'index'])->name('shopper.api.products.index');
-    Route::get('/products/{product}', [ProductController::class, 'show'])->name('shopper.api.products.show');
-    
-    Route::get('/categories', [CategoryController::class, 'index'])->name('shopper.api.categories.index');
-    Route::get('/categories/{category}', [CategoryController::class, 'show'])->name('shopper.api.categories.show');
-    
-    Route::get('/brands', [BrandController::class, 'index'])->name('shopper.api.brands.index');
-    Route::get('/brands/{brand}', [BrandController::class, 'show'])->name('shopper.api.brands.show');
+    Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout'])
+        ->name('api.logout');
+
+    // Product routes (public)
+    Route::get('/products', [ProductController::class, 'index'])->name('api.products.index');
+    Route::get('/products/{product}', [ProductController::class, 'show'])->name('api.products.show');
+
+    Route::get('/categories', [CategoryController::class, 'index'])->name('api.categories.index');
+    Route::get('/categories/{category}', [CategoryController::class, 'show'])->name('api.categories.show');
+
+    Route::get('/brands', [BrandController::class, 'index'])->name('api.brands.index');
+    Route::get('/brands/{brand}', [BrandController::class, 'show'])->name('api.brands.show');
 
     // Cart routes (require authentication)
     Route::middleware('auth:sanctum')->group(function () {
-        Route::get('/cart', [CartController::class, 'show'])->name('shopper.api.cart.show');
-        Route::post('/cart/add', [CartController::class, 'add'])->name('shopper.api.cart.add');
-        Route::put('/cart/{item}', [CartController::class, 'update'])->name('shopper.api.cart.update');
-        Route::delete('/cart/{item}', [CartController::class, 'remove'])->name('shopper.api.cart.remove');
-        Route::delete('/cart', [CartController::class, 'clear'])->name('shopper.api.cart.clear');
+        Route::get('/cart', [CartController::class, 'show'])->name('api.cart.show');
+        Route::post('/cart/add', [CartController::class, 'add'])->name('api.cart.add');
+        Route::put('/cart/{item}', [CartController::class, 'update'])->name('api.cart.update');
+        Route::delete('/cart/{item}', [CartController::class, 'remove'])->name('api.cart.remove');
+        Route::delete('/cart', [CartController::class, 'clear'])->name('api.cart.clear');
     });
 
     // User routes (require authentication)
@@ -69,10 +66,10 @@ Route::group([
 */
 
 Route::middleware([HandleSiteContext::class])->group(function () {
-    
+
     // Enhanced routes supporting handles (slug or ID)
     Route::prefix('api/v2')->group(function () {
-        
+
         // Products API with handle support
         Route::get('products', [ProductController::class, 'index']);
         Route::post('products', [ProductController::class, 'store']);
@@ -80,13 +77,13 @@ Route::middleware([HandleSiteContext::class])->group(function () {
         Route::put('products/{product:handle}', [ProductController::class, 'update']);
         Route::delete('products/{product:handle}', [ProductController::class, 'destroy']);
         Route::post('products/{product:handle}/duplicate', [ProductController::class, 'duplicate']);
-        
+
         // Categories API with handle support
         Route::get('categories/{category:handle}', [CategoryController::class, 'show']);
         Route::put('categories/{category:handle}', [CategoryController::class, 'update']);
         Route::delete('categories/{category:handle}', [CategoryController::class, 'destroy']);
         Route::get('categories/{category:handle}/products', [CategoryController::class, 'products']);
-        
+
         // Site-specific routes
         Route::prefix('sites/{site:handle}')->group(function () {
             Route::get('products', [ProductController::class, 'index']);

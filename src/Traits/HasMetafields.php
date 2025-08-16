@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace LaravelShopper\Traits;
 
-use LaravelShopper\Models\Metafield;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use LaravelShopper\Models\Metafield;
 
 trait HasMetafields
 {
@@ -25,7 +25,7 @@ trait HasMetafields
     public function getMetafieldValue(string $namespace, string $key, mixed $default = null): mixed
     {
         $metafield = $this->getMetafield($namespace, $key);
-        
+
         return $metafield ? $metafield->getCastedValue() : $default;
     }
 
@@ -36,7 +36,7 @@ trait HasMetafields
             ->where('key', $key)
             ->first();
 
-        if (!$metafield) {
+        if (! $metafield) {
             $metafield = new Metafield([
                 'namespace' => $namespace,
                 'key' => $key,
@@ -80,7 +80,7 @@ trait HasMetafields
     {
         // Delete existing metafields for this namespace
         $this->metafields()->where('namespace', $namespace)->delete();
-        
+
         // Create new ones
         $this->setMetafields($namespace, $fields);
     }

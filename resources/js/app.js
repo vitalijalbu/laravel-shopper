@@ -1,84 +1,57 @@
-import { createApp } from 'vue'
+import { createApp, h } from 'vue'
+import { createInertiaApp } from '@inertiajs/vue3'
 import { createPinia } from 'pinia'
-import router from './router'
+import { ZiggyVue } from 'ziggy-js'
 import { TranslationPlugin } from './Utils/translator'
-import './components/icons'
-
-// Import main layout component
-import App from './App.vue'
+import './components/Icons'
 
 // Import global styles
 import '../css/app.css'
 
-// Create Vue app
-const app = createApp(App)
+createInertiaApp({
+  resolve: name => {
+    const pages = import.meta.glob('./pages/**/*.vue', { eager: true })
+    return pages[`./pages/${name}.vue`]
+  },
+  setup({ el, App, props, plugin }) {
+    const app = createApp({ render: () => h(App, props) })
+      .use(plugin)
+      .use(createPinia())
+      .use(ZiggyVue)
+      .use(TranslationPlugin, {
+        translations: window.ShopperConfig?.translations || {},
+        locale: window.ShopperConfig?.locale || 'en'
+      })
 
-// Install Pinia for state management
-app.use(createPinia())
+    // Global Properties
+    app.config.globalProperties.$shopperConfig = window.ShopperConfig || {}
 
-// Install Vue Router
-app.use(router)
+    // Global Components Registration
+    import('./components/icon.vue').then(module => app.component('Icon', module.default))
+    import('./components/page.vue').then(module => app.component('Page', module.default))
+    import('./components/data-table.vue').then(module => app.component('DataTable', module.default))
+    import('./components/modal.vue').then(module => app.component('Modal', module.default))
 
-// Install Translation Plugin
-app.use(TranslationPlugin, {
-  translations: window.ShopperConfig?.translations || {},
-  locale: window.ShopperConfig?.locale || 'en'
-})
-
-// Global Properties
-app.config.globalProperties.$shopperConfig = window.ShopperConfig || {}
-
-// Global Components Registration
-import Icon from './components/icon.vue'
-import Page from './components/page.vue'
-import DataTable from './components/data-table.vue'
-import Modal from './components/modal.vue'
-import ConfirmModal from './components/confirm-modal.vue'
-
-app.component('Icon', Icon)
-app.component('Page', Page) 
-app.component('DataTable', DataTable)
-app.component('Modal', Modal)
-app.component('ConfirmModal', ConfirmModal)
-
-// Error Handler
-app.config.errorHandler = (err, vm, info) => {
-  console.error('Vue Error:', err, info)
-  
-  // Send to error reporting service
-  if (window.Sentry) {
-    window.Sentry.captureException(err, {
-      contexts: {
-        vue: {
-          componentName: vm.$options.name,
-          propsData: vm.$options.propsData,
-          info: info
-        }
+    // Error Handler
+    app.config.errorHandler = (err, vm, info) => {
+      console.error('Vue Error:', err, info)
+      
+      // Send to error reporting service
+      if (window.Sentry) {
+        window.Sentry.captureException(err, {
+          contexts: {
+            vue: {
+              componentName: vm?.$options?.name,
+              info: info
+            }
+          }
+        })
       }
-    })
-  }
-}
-
-// Mount the app
-app.mount('#app')
-
-// Hot Module Replacement (HMR)
-if (import.meta.hot) {
-  import.meta.hot.accept()
-}
-
-// Service Worker Registration (for PWA features)
-if ('serviceWorker' in navigator && import.meta.env.PROD) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
-      .then((registration) => {
-        console.log('SW registered: ', registration)
-      })
-      .catch((registrationError) => {
-        console.log('SW registration failed: ', registrationError)
-      })
-  })
-}
+    }
+    
+    return app.mount(el)
+  },
+})
 
 // Export for debugging
 if (import.meta.env.DEV) {

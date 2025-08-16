@@ -5,6 +5,7 @@ namespace LaravelShopper\Events;
 abstract class Event
 {
     protected $data = [];
+
     protected static $listeners = [];
 
     public function __construct(array $data = [])
@@ -25,6 +26,7 @@ abstract class Event
     public function set($key, $value)
     {
         $this->data[$key] = $value;
+
         return $this;
     }
 
@@ -67,7 +69,7 @@ abstract class Event
      */
     public static function listen($event, $listener, $priority = 0)
     {
-        if (!isset(static::$listeners[$event])) {
+        if (! isset(static::$listeners[$event])) {
             static::$listeners[$event] = [];
         }
 
@@ -87,7 +89,7 @@ abstract class Event
      */
     public static function getListeners($event)
     {
-        if (!isset(static::$listeners[$event])) {
+        if (! isset(static::$listeners[$event])) {
             return [];
         }
 
@@ -111,7 +113,7 @@ abstract class Event
      */
     public static function hasListeners($event)
     {
-        return isset(static::$listeners[$event]) && !empty(static::$listeners[$event]);
+        return isset(static::$listeners[$event]) && ! empty(static::$listeners[$event]);
     }
 
     /**

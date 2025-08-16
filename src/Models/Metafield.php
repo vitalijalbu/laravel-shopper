@@ -38,7 +38,7 @@ class Metafield extends Model
     public function scopeForOwner($query, Model $owner)
     {
         return $query->where('metafieldable_type', get_class($owner))
-                    ->where('metafieldable_id', $owner->getKey());
+            ->where('metafieldable_id', $owner->getKey());
     }
 
     public function scopeByNamespace($query, string $namespace)
@@ -58,12 +58,12 @@ class Metafield extends Model
 
     public function getFullKey(): string
     {
-        return $this->namespace . '.' . $this->key;
+        return $this->namespace.'.'.$this->key;
     }
 
     public function getCastedValue(): mixed
     {
-        if (!$this->definition) {
+        if (! $this->definition) {
             return $this->value;
         }
 

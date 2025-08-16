@@ -51,7 +51,7 @@ class StorefrontSection extends Model
             'section_id',
             'template_id'
         )->withPivot(['settings', 'blocks_data', 'sort_order', 'is_visible', 'section_key'])
-          ->withTimestamps();
+            ->withTimestamps();
     }
 
     // Scopes
@@ -96,7 +96,7 @@ class StorefrontSection extends Model
             'section_id' => $this->id,
             'settings' => array_merge($this->preset_data ?? [], $settings),
             'blocks_data' => $blocks,
-            'section_key' => uniqid($this->handle . '_'),
+            'section_key' => uniqid($this->handle.'_'),
         ];
     }
 }

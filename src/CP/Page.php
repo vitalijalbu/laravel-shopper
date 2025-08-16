@@ -2,22 +2,29 @@
 
 namespace LaravelShopper\CP;
 
-use Illuminate\Support\Collection;
-
 class Page
 {
     protected string $title;
+
     protected string $handle;
+
     protected array $actions = [];
+
     protected array $headerActions = [];
+
     protected array $blocks = [];
+
     protected array $tabs = [];
+
     protected array $breadcrumbs = [];
+
     protected ?string $subtitle = null;
+
     protected ?string $backUrl = null;
+
     protected array $meta = [];
 
-    public function __construct(string $title, string $handle = null)
+    public function __construct(string $title, ?string $handle = null)
     {
         $this->title = $title;
         $this->handle = $handle ?? str($title)->slug()->toString();
@@ -26,7 +33,7 @@ class Page
     /**
      * Create new page
      */
-    public static function make(string $title, string $handle = null): self
+    public static function make(string $title, ?string $handle = null): self
     {
         return new static($title, $handle);
     }
@@ -37,6 +44,7 @@ class Page
     public function subtitle(string $subtitle): self
     {
         $this->subtitle = $subtitle;
+
         return $this;
     }
 
@@ -46,13 +54,14 @@ class Page
     public function backUrl(string $url): self
     {
         $this->backUrl = $url;
+
         return $this;
     }
 
     /**
      * Add primary action (Shopify style)
      */
-    public function primaryAction(string $label, string $url = null, array $options = []): self
+    public function primaryAction(string $label, ?string $url = null, array $options = []): self
     {
         $this->actions['primary'] = [
             'label' => $label,
@@ -60,6 +69,7 @@ class Page
             'type' => 'primary',
             'options' => $options,
         ];
+
         return $this;
     }
 
@@ -69,6 +79,7 @@ class Page
     public function secondaryActions(array $actions): self
     {
         $this->actions['secondary'] = $actions;
+
         return $this;
     }
 
@@ -81,18 +92,20 @@ class Page
             'component' => $component,
             'props' => $props,
         ];
+
         return $this;
     }
 
     /**
      * Add breadcrumb
      */
-    public function breadcrumb(string $label, string $url = null): self
+    public function breadcrumb(string $label, ?string $url = null): self
     {
         $this->breadcrumbs[] = [
             'label' => $label,
             'url' => $url,
         ];
+
         return $this;
     }
 
@@ -106,16 +119,18 @@ class Page
             'props' => $props,
             'order' => $order,
         ];
+
         return $this;
     }
 
     /**
      * Add card block
      */
-    public function card(string $title = null): PageCard
+    public function card(?string $title = null): PageCard
     {
         $card = new PageCard($title);
         $this->blocks[] = $card;
+
         return $card;
     }
 
@@ -124,8 +139,9 @@ class Page
      */
     public function layout(): PageLayout
     {
-        $layout = new PageLayout();
+        $layout = new PageLayout;
         $this->blocks[] = $layout;
+
         return $layout;
     }
 
@@ -140,6 +156,7 @@ class Page
             'component' => $component,
             'props' => $props,
         ];
+
         return $this;
     }
 
@@ -150,12 +167,13 @@ class Page
     {
         foreach ($tabs as $name => $config) {
             $this->tab(
-                $name, 
-                $config['label'] ?? ucfirst($name), 
-                $config['component'] ?? 'DefaultComponent', 
+                $name,
+                $config['label'] ?? ucfirst($name),
+                $config['component'] ?? 'DefaultComponent',
                 $config['props'] ?? []
             );
         }
+
         return $this;
     }
 
@@ -165,6 +183,7 @@ class Page
     public function meta(array $meta): self
     {
         $this->meta = array_merge($this->meta, $meta);
+
         return $this;
     }
 
@@ -197,6 +216,7 @@ class Page
                 if ($block instanceof PageBlock) {
                     return $block->compile();
                 }
+
                 return $block;
             })
             ->sortBy('order')

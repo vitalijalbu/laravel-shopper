@@ -83,8 +83,9 @@ class Cart extends Model
                 'quantity' => $existingLine->quantity + $quantity,
                 'line_total' => $existingLine->line_total + $lineTotal,
             ]);
-            
+
             $this->calculateTotals();
+
             return $existingLine;
         }
 
@@ -98,6 +99,7 @@ class Cart extends Model
         ]);
 
         $this->calculateTotals();
+
         return $line;
     }
 
@@ -105,6 +107,7 @@ class Cart extends Model
     {
         $result = $line->delete();
         $this->calculateTotals();
+
         return $result;
     }
 
@@ -118,6 +121,7 @@ class Cart extends Model
             'discount_total' => 0,
             'total' => 0,
         ]);
+
         return $result;
     }
 

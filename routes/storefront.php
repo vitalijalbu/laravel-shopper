@@ -6,8 +6,8 @@ use LaravelShopper\Http\Middleware\StorefrontTemplateMiddleware;
 
 // Storefront Routes with Template Support
 Route::middleware([
-    'web', 
-    StorefrontTemplateMiddleware::class
+    'web',
+    StorefrontTemplateMiddleware::class,
 ])->group(function () {
 
     // Home page
@@ -18,7 +18,7 @@ Route::middleware([
     Route::prefix('products')->name('storefront.products.')->group(function () {
         Route::get('/', [StorefrontController::class, 'productIndex'])
             ->name('index');
-        
+
         Route::get('/{handle}', [StorefrontController::class, 'productShow'])
             ->name('show')
             ->where('handle', '[a-zA-Z0-9\-_]+');
@@ -28,7 +28,7 @@ Route::middleware([
     Route::prefix('collections')->name('storefront.categories.')->group(function () {
         Route::get('/', [StorefrontController::class, 'categoryIndex'])
             ->name('index');
-        
+
         Route::get('/{handle}', [StorefrontController::class, 'categoryShow'])
             ->name('show')
             ->where('handle', '[a-zA-Z0-9\-_]+');
@@ -45,7 +45,7 @@ Route::middleware([
     Route::prefix('blog')->name('storefront.blog.')->group(function () {
         Route::get('/', [StorefrontController::class, 'blogIndex'])
             ->name('index');
-        
+
         Route::get('/{handle}', [StorefrontController::class, 'blogShow'])
             ->name('show')
             ->where('handle', '[a-zA-Z0-9\-_]+');
@@ -59,13 +59,13 @@ Route::middleware([
     Route::prefix('cart')->name('storefront.cart.')->group(function () {
         Route::get('/', [StorefrontController::class, 'cartShow'])
             ->name('show');
-        
+
         Route::post('/add', [StorefrontController::class, 'cartAdd'])
             ->name('add');
-        
+
         Route::put('/update/{line}', [StorefrontController::class, 'cartUpdate'])
             ->name('update');
-        
+
         Route::delete('/remove/{line}', [StorefrontController::class, 'cartRemove'])
             ->name('remove');
     });
@@ -74,10 +74,10 @@ Route::middleware([
     Route::prefix('account')->middleware('auth:customers')->name('storefront.account.')->group(function () {
         Route::get('/', [StorefrontController::class, 'accountDashboard'])
             ->name('dashboard');
-        
+
         Route::get('/orders', [StorefrontController::class, 'accountOrders'])
             ->name('orders');
-        
+
         Route::get('/orders/{order}', [StorefrontController::class, 'accountOrderShow'])
             ->name('orders.show');
     });

@@ -7,6 +7,7 @@ use LaravelShopper\Fields\Field;
 abstract class Fieldtype
 {
     protected $field;
+
     protected $config = [];
 
     public function setField(Field $field)
@@ -178,7 +179,8 @@ abstract class Fieldtype
     public function component()
     {
         $type = class_basename(static::class);
-        return 'field-' . kebab_case($type);
+
+        return 'field-'.kebab_case($type);
     }
 
     /**

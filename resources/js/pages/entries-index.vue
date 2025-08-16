@@ -282,25 +282,34 @@
 
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { router, usePage } from '@inertiajs/vue3'
+import { route } from 'ziggy-js'
 import { useShopperStore } from '../stores/shopper'
 import Page from '../components/page.vue'
 import DataTable from '../components/data-table.vue'
 import EntryCard from '../components/entry-card.vue'
 import ConfirmModal from '../components/confirm-modal.vue'
 
-const route = useRoute()
-const router = useRouter()
+const page = usePage()
 const shopperStore = useShopperStore()
 
-// Props from route
-const collectionHandle = route.params.collection
+// Props from controller
+const props = defineProps({
+  collection: {
+    type: Object,
+    required: true
+  },
+  entries: {
+    type: Array,
+    default: () => []
+  }
+})
+
+const collectionHandle = props.collection.handle
 
 // State
-const collection = ref({})
-const entries = ref([])
 const selectedEntries = ref([])
-const loading = ref(true)
+const loading = ref(false)
 const searchQuery = ref('')
 const viewMode = ref('table')
 const currentPage = ref(1)
@@ -426,13 +435,8 @@ const loadEntries = async () => {
 }
 
 const loadCollection = () => {
-  const collectionData = shopperStore.getCollection(collectionHandle)
-  if (collectionData) {
-    collection.value = collectionData
-  } else {
-    // Handle 404 or redirect
-    router.push('/cp/collections')
-  }
+  // Con Inertia, la collection arriva già come prop dal controller
+  // Non serve più caricarla qui
 }
 
 const performSearch = () => {
@@ -468,11 +472,11 @@ const handlePageChange = (page) => {
 }
 
 const createEntry = () => {
-  router.push(`/cp/collections/${collectionHandle}/entries/create`)
+  router.visit(route('cp.collections.entries.create', { collection: collectionHandle }))
 }
 
 const editEntry = (entry) => {
-  router.push(`/cp/collections/${collectionHandle}/entries/${entry.id}`)
+  router.visit(route('cp.collections.entries.edit', { collection: collectionHandle, entry: entry.id }))
 }
 
 const viewEntry = (entry) => {
@@ -532,9 +536,9 @@ const changeTab = (tabId) => {
   activeTab.value = tabId
   
   if (tabId === 'blueprint') {
-    router.push(`/cp/collections/${collectionHandle}/blueprint`)
+    router.visit(route('cp.collections.blueprint', { collection: collectionHandle }))
   } else if (tabId === 'settings') {
-    router.push(`/cp/collections/${collectionHandle}/settings`)
+    router.visit(route('cp.collections.settings', { collection: collectionHandle }))
   }
 }
 
@@ -563,16 +567,13 @@ const getSiteName = (siteHandle) => {
 
 // Load data on mount
 onMounted(() => {
-  loadCollection()
-  loadEntries()
+  // Con Inertia non serve più caricare manualmente
+  // loadCollection()
+  // loadEntries()
 })
 
-// Watch for collection changes
-watch(() => route.params.collection, (newCollection) => {
-  if (newCollection !== collectionHandle) {
-    router.push(`/cp/collections/${newCollection}`)
-  }
-})
+// Con Inertia, quando cambia la collection, Laravel reinderizza la pagina
+// Non serve più il watch per route.params
 </script>
 
 <style scoped>

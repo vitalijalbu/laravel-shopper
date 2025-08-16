@@ -59,9 +59,9 @@ abstract class BaseResourceCollection extends ResourceCollection
     protected function getActiveFilters(Request $request): array
     {
         $filters = [];
-        
+
         foreach ($request->query() as $key => $value) {
-            if (str_starts_with($key, 'filter_') && !empty($value)) {
+            if (str_starts_with($key, 'filter_') && ! empty($value)) {
                 $filters[str_replace('filter_', '', $key)] = $value;
             }
         }

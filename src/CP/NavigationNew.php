@@ -3,13 +3,13 @@
 namespace LaravelShopper\CP;
 
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Auth;
 
 class Navigation
 {
     protected static array $items = [];
+
     protected static array $sections = [];
-    
+
     /**
      * Add navigation item
      */
@@ -17,16 +17,18 @@ class Navigation
     {
         $item = new NavigationItem($name);
         static::$items[$name] = $item;
+
         return $item;
     }
 
     /**
      * Add navigation section
      */
-    public static function section(string $name, string $label = null): NavigationSection
+    public static function section(string $name, ?string $label = null): NavigationSection
     {
         $section = new NavigationSection($name, $label ?? $name);
         static::$sections[$name] = $section;
+
         return $section;
     }
 
@@ -36,7 +38,7 @@ class Navigation
     public static function items(): Collection
     {
         return collect(static::$items)
-            ->filter(fn($item) => $item->canView())
+            ->filter(fn ($item) => $item->canView())
             ->sortBy('order')
             ->values();
     }
@@ -49,12 +51,13 @@ class Navigation
         return collect(static::$sections)
             ->map(function ($section) {
                 $section->items = $section->items()
-                    ->filter(fn($item) => $item->canView())
+                    ->filter(fn ($item) => $item->canView())
                     ->sortBy('order')
                     ->values();
+
                 return $section;
             })
-            ->filter(fn($section) => $section->items->isNotEmpty())
+            ->filter(fn ($section) => $section->items->isNotEmpty())
             ->sortBy('order')
             ->values();
     }
@@ -91,7 +94,7 @@ class Navigation
             ->icon('shopping-bag')
             ->url('/cp/orders')
             ->section('orders')
-            ->badge(fn() => \LaravelShopper\Models\Order::pending()->count())
+            ->badge(fn () => \LaravelShopper\Models\Order::pending()->count())
             ->order(1);
 
         static::item('orders.drafts')

@@ -5,20 +5,35 @@ namespace LaravelShopper\Data;
 class ProductVariantDto extends BaseDto
 {
     public ?int $id = null;
+
     public ?int $product_id = null;
+
     public ?string $title = null;
+
     public ?string $sku = null;
+
     public ?int $price = null;
+
     public ?int $compare_price = null;
+
     public ?int $inventory_quantity = null;
+
     public ?string $inventory_policy = null;
+
     public ?string $fulfillment_service = null;
+
     public ?bool $requires_shipping = null;
+
     public ?bool $taxable = null;
+
     public ?string $barcode = null;
+
     public ?float $weight = null;
+
     public ?string $weight_unit = null;
+
     public ?array $option_values = null;
+
     public ?string $image = null;
 
     /**
@@ -42,11 +57,11 @@ class ProductVariantDto extends BaseDto
      */
     public function getVariantTitle(): string
     {
-        if (!empty($this->title)) {
+        if (! empty($this->title)) {
             return $this->title;
         }
 
-        if (!empty($this->option_values)) {
+        if (! empty($this->option_values)) {
             return implode(' / ', array_values($this->option_values));
         }
 
@@ -70,6 +85,6 @@ class ProductVariantDto extends BaseDto
             return null;
         }
 
-        return $this->weight . ' ' . ($this->weight_unit ?? 'kg');
+        return $this->weight.' '.($this->weight_unit ?? 'kg');
     }
 }

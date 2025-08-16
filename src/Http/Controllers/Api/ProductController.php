@@ -2,9 +2,9 @@
 
 namespace LaravelShopper\Http\Controllers\Api;
 
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Routing\Controller;
+use Illuminate\Http\Request;
+use LaravelShopper\Http\Controllers\Controller;
 use LaravelShopper\Models\Product;
 
 class ProductController extends Controller
@@ -18,8 +18,8 @@ class ProductController extends Controller
         if ($search = $request->get('search')) {
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'LIKE', "%{$search}%")
-                  ->orWhere('description', 'LIKE', "%{$search}%")
-                  ->orWhere('sku', 'LIKE', "%{$search}%");
+                    ->orWhere('description', 'LIKE', "%{$search}%")
+                    ->orWhere('sku', 'LIKE', "%{$search}%");
             });
         }
 
@@ -49,7 +49,7 @@ class ProductController extends Controller
         // Sorting
         $sort = $request->get('sort', 'created_at');
         $direction = $request->get('direction', 'desc');
-        
+
         $allowedSorts = ['name', 'price', 'created_at'];
         if (in_array($sort, $allowedSorts)) {
             $query->orderBy($sort, $direction);
@@ -70,9 +70,9 @@ class ProductController extends Controller
 
     public function show(Product $product): JsonResponse
     {
-        if (!$product->is_active) {
+        if (! $product->is_active) {
             return response()->json([
-                'message' => 'Product not found.'
+                'message' => 'Product not found.',
             ], 404);
         }
 

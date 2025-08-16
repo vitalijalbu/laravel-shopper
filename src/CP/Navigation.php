@@ -5,11 +5,12 @@ namespace LaravelShopper\CP;
 class Navigation
 {
     protected static $nav = [];
+
     protected static $preferences = [];
 
     public static function make()
     {
-        return new static();
+        return new static;
     }
 
     public static function build()
@@ -19,13 +20,13 @@ class Navigation
                 'display' => 'Dashboard',
                 'url' => '/cp',
                 'icon' => 'dashboard',
-                'children' => []
+                'children' => [],
             ],
             'collections' => [
                 'display' => 'Collections',
                 'url' => '/cp/collections',
                 'icon' => 'collection',
-                'children' => static::getCollectionNavItems()
+                'children' => static::getCollectionNavItems(),
             ],
             'ecommerce' => [
                 'display' => 'E-commerce',
@@ -35,34 +36,34 @@ class Navigation
                     'products' => [
                         'display' => 'Products',
                         'url' => '/cp/collections/products',
-                        'icon' => 'box'
+                        'icon' => 'box',
                     ],
                     'orders' => [
                         'display' => 'Orders',
                         'url' => '/cp/collections/orders',
-                        'icon' => 'document-text'
+                        'icon' => 'document-text',
                     ],
                     'customers' => [
                         'display' => 'Customers',
                         'url' => '/cp/collections/customers',
-                        'icon' => 'users'
+                        'icon' => 'users',
                     ],
                     'categories' => [
                         'display' => 'Categories',
                         'url' => '/cp/collections/categories',
-                        'icon' => 'folder'
+                        'icon' => 'folder',
                     ],
                     'inventory' => [
                         'display' => 'Inventory',
                         'url' => '/cp/ecommerce/inventory',
-                        'icon' => 'archive'
+                        'icon' => 'archive',
                     ],
                     'analytics' => [
                         'display' => 'Analytics',
                         'url' => '/cp/ecommerce/analytics',
-                        'icon' => 'chart-bar'
-                    ]
-                ]
+                        'icon' => 'chart-bar',
+                    ],
+                ],
             ],
             'fields' => [
                 'display' => 'Fields',
@@ -72,20 +73,20 @@ class Navigation
                     'blueprints' => [
                         'display' => 'Blueprints',
                         'url' => '/cp/fields/blueprints',
-                        'icon' => 'document-duplicate'
+                        'icon' => 'document-duplicate',
                     ],
                     'fieldsets' => [
                         'display' => 'Fieldsets',
                         'url' => '/cp/fields/fieldsets',
-                        'icon' => 'clipboard-list'
-                    ]
-                ]
+                        'icon' => 'clipboard-list',
+                    ],
+                ],
             ],
             'sites' => [
                 'display' => 'Sites',
                 'url' => '/cp/sites',
                 'icon' => 'globe',
-                'children' => static::getSiteNavItems()
+                'children' => static::getSiteNavItems(),
             ],
             'users' => [
                 'display' => 'Users',
@@ -95,25 +96,25 @@ class Navigation
                     'users' => [
                         'display' => 'All Users',
                         'url' => '/cp/users',
-                        'icon' => 'users'
+                        'icon' => 'users',
                     ],
                     'roles' => [
                         'display' => 'Roles',
                         'url' => '/cp/users/roles',
-                        'icon' => 'key'
+                        'icon' => 'key',
                     ],
                     'permissions' => [
                         'display' => 'Permissions',
                         'url' => '/cp/users/permissions',
-                        'icon' => 'shield-check'
-                    ]
-                ]
+                        'icon' => 'shield-check',
+                    ],
+                ],
             ],
             'assets' => [
                 'display' => 'Assets',
                 'url' => '/cp/assets',
                 'icon' => 'photograph',
-                'children' => []
+                'children' => [],
             ],
             'utilities' => [
                 'display' => 'Utilities',
@@ -123,20 +124,20 @@ class Navigation
                     'cache' => [
                         'display' => 'Cache Manager',
                         'url' => '/cp/utilities/cache',
-                        'icon' => 'lightning-bolt'
+                        'icon' => 'lightning-bolt',
                     ],
                     'updates' => [
                         'display' => 'Updates',
                         'url' => '/cp/utilities/updates',
-                        'icon' => 'refresh'
+                        'icon' => 'refresh',
                     ],
                     'phpinfo' => [
                         'display' => 'PHP Info',
                         'url' => '/cp/utilities/phpinfo',
-                        'icon' => 'code'
-                    ]
-                ]
-            ]
+                        'icon' => 'code',
+                    ],
+                ],
+            ],
         ];
 
         // Merge custom nav items
@@ -153,7 +154,7 @@ class Navigation
 
     public static function extend($section, $items)
     {
-        if (!isset(static::$nav[$section])) {
+        if (! isset(static::$nav[$section])) {
             static::$nav[$section] = [];
         }
 
@@ -170,7 +171,7 @@ class Navigation
                 'display' => $collection['title'],
                 'url' => "/cp/collections/{$collection['handle']}",
                 'icon' => $collection['icon'] ?? 'collection',
-                'collection' => $collection['handle']
+                'collection' => $collection['handle'],
             ];
         }
 
@@ -187,7 +188,7 @@ class Navigation
                 'display' => $site['name'],
                 'url' => "/cp/sites/{$site['handle']}",
                 'icon' => 'globe',
-                'site' => $site['handle']
+                'site' => $site['handle'],
             ];
         }
 
@@ -203,7 +204,7 @@ class Navigation
             ['handle' => 'customers', 'title' => 'Customers', 'icon' => 'users'],
             ['handle' => 'categories', 'title' => 'Categories', 'icon' => 'folder'],
             ['handle' => 'pages', 'title' => 'Pages', 'icon' => 'document'],
-            ['handle' => 'blog', 'title' => 'Blog', 'icon' => 'pencil']
+            ['handle' => 'blog', 'title' => 'Blog', 'icon' => 'pencil'],
         ];
     }
 
@@ -213,7 +214,7 @@ class Navigation
         return [
             ['handle' => 'default', 'name' => 'Main Site', 'url' => 'https://example.com'],
             ['handle' => 'blog', 'name' => 'Blog', 'url' => 'https://blog.example.com'],
-            ['handle' => 'shop', 'name' => 'Shop', 'url' => 'https://shop.example.com']
+            ['handle' => 'shop', 'name' => 'Shop', 'url' => 'https://shop.example.com'],
         ];
     }
 
@@ -221,8 +222,8 @@ class Navigation
     {
         // Filter navigation items based on user permissions
         $user = auth()->user();
-        
-        if (!$user) {
+
+        if (! $user) {
             return [];
         }
 
@@ -230,7 +231,7 @@ class Navigation
 
         foreach ($nav as $key => $item) {
             if (static::userCanAccess($user, $key, $item)) {
-                if (isset($item['children']) && !empty($item['children'])) {
+                if (isset($item['children']) && ! empty($item['children'])) {
                     $item['children'] = static::filterByPermissions($item['children']);
                 }
                 $filtered[$key] = $item;
@@ -244,7 +245,7 @@ class Navigation
     {
         // Check if user has permission to access this nav item
         $permission = "access_{$key}";
-        
+
         // Super admin can access everything
         if ($user->can('super_admin')) {
             return true;
@@ -258,32 +259,32 @@ class Navigation
     {
         $crumbs = [];
         $nav = static::build();
-        
+
         // Home breadcrumb
         $crumbs[] = [
             'title' => 'Control Panel',
-            'url' => '/cp'
+            'url' => '/cp',
         ];
 
         // Find current page in navigation
         $parts = explode('/', trim($currentUrl, '/'));
-        
+
         if (count($parts) >= 2 && $parts[0] === 'cp') {
             $section = $parts[1] ?? null;
-            
+
             if ($section && isset($nav[$section])) {
                 $crumbs[] = [
                     'title' => $nav[$section]['display'],
-                    'url' => $nav[$section]['url']
+                    'url' => $nav[$section]['url'],
                 ];
-                
+
                 // Add subsection if exists
                 if (count($parts) >= 3) {
                     $subsection = $parts[2];
                     if (isset($nav[$section]['children'][$subsection])) {
                         $crumbs[] = [
                             'title' => $nav[$section]['children'][$subsection]['display'],
-                            'url' => $nav[$section]['children'][$subsection]['url']
+                            'url' => $nav[$section]['children'][$subsection]['url'],
                         ];
                     }
                 }
@@ -315,7 +316,7 @@ class Navigation
             'preferences' => static::getPreferences(),
             'breadcrumbs' => static::breadcrumbs(request()->path()),
             'user' => auth()->user(),
-            'sites' => static::getSites()
+            'sites' => static::getSites(),
         ];
     }
 }

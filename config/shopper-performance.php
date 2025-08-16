@@ -21,7 +21,7 @@ return [
         |
         */
         'enabled' => env('SHOPPER_CACHE_ENABLED', true),
-        
+
         'ttl' => [
             'products' => env('SHOPPER_CACHE_PRODUCTS_TTL', 3600), // 1 hour
             'categories' => env('SHOPPER_CACHE_CATEGORIES_TTL', 7200), // 2 hours
@@ -129,7 +129,7 @@ return [
         |
         */
         'default' => env('SHOPPER_QUEUE_DEFAULT', 'default'),
-        
+
         'queues' => [
             'orders' => env('SHOPPER_QUEUE_ORDERS', 'orders'),
             'indexing' => env('SHOPPER_QUEUE_INDEXING', 'indexing'),
@@ -216,7 +216,7 @@ return [
         |
         */
         'enabled' => env('SHOPPER_MONITORING_ENABLED', true),
-        
+
         'metrics' => [
             'response_time' => true,
             'memory_usage' => true,
@@ -252,7 +252,7 @@ return [
         'csrf_protection' => env('SHOPPER_CSRF_PROTECTION', true),
         'xss_protection' => env('SHOPPER_XSS_PROTECTION', true),
         'sql_injection_protection' => env('SHOPPER_SQL_INJECTION_PROTECTION', true),
-        
+
         'input_validation' => [
             'strict_mode' => env('SHOPPER_STRICT_VALIDATION', true),
             'sanitize_input' => env('SHOPPER_SANITIZE_INPUT', true),
@@ -272,7 +272,7 @@ return [
         'enabled' => env('SHOPPER_CDN_ENABLED', false),
         'url' => env('SHOPPER_CDN_URL', ''),
         'pull_zone' => env('SHOPPER_CDN_PULL_ZONE', ''),
-        
+
         'assets' => [
             'css' => env('SHOPPER_CDN_CSS', true),
             'js' => env('SHOPPER_CDN_JS', true),

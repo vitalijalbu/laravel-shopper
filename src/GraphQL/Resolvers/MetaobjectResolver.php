@@ -2,9 +2,9 @@
 
 namespace LaravelShopper\GraphQL\Resolvers;
 
+use GraphQL\Type\Definition\ResolveInfo;
 use LaravelShopper\Models\Metaobject;
 use LaravelShopper\Models\MetaobjectDefinition;
-use GraphQL\Type\Definition\ResolveInfo;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
 class MetaobjectResolver
@@ -18,17 +18,17 @@ class MetaobjectResolver
     {
         $definition = MetaobjectDefinition::findOrFail($args['id']);
         $definition->update($args['input'] ?? []);
-        
+
         return $definition->fresh();
     }
 
     public function deleteDefinition($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo): bool
     {
         $definition = MetaobjectDefinition::findOrFail($args['id']);
-        
+
         // Delete all associated metaobjects
         $definition->metaobjects()->delete();
-        
+
         return $definition->delete();
     }
 
@@ -41,13 +41,14 @@ class MetaobjectResolver
     {
         $metaobject = Metaobject::findOrFail($args['id']);
         $metaobject->update($args['input'] ?? []);
-        
+
         return $metaobject->fresh(['definition']);
     }
 
     public function delete($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo): bool
     {
         $metaobject = Metaobject::findOrFail($args['id']);
+
         return $metaobject->delete();
     }
 
@@ -55,7 +56,7 @@ class MetaobjectResolver
     {
         $metaobject = Metaobject::findOrFail($args['id']);
         $metaobject->publish();
-        
+
         return $metaobject->fresh(['definition']);
     }
 
@@ -63,7 +64,7 @@ class MetaobjectResolver
     {
         $metaobject = Metaobject::findOrFail($args['id']);
         $metaobject->unpublish();
-        
+
         return $metaobject->fresh(['definition']);
     }
 

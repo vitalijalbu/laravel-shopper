@@ -31,8 +31,8 @@ trait HasHandle
     {
         // Try to find by slug first, then by ID
         return $this->where('slug', $value)
-                   ->orWhere($this->getKeyName(), $value)
-                   ->first() ?? abort(404);
+            ->orWhere($this->getKeyName(), $value)
+            ->first() ?? abort(404);
     }
 
     /**
@@ -42,15 +42,15 @@ trait HasHandle
     {
         $source = $value ?? $this->name ?? $this->title ?? '';
         $handle = Str::slug($source);
-        
+
         // Ensure uniqueness
         $original = $handle;
         $count = 1;
-        
+
         while ($this->where('slug', $handle)->where('id', '!=', $this->id ?? 0)->exists()) {
-            $handle = $original . '-' . $count++;
+            $handle = $original.'-'.$count++;
         }
-        
+
         return $handle;
     }
 

@@ -23,11 +23,11 @@ class HandleInertiaRequests
                     'name' => $request->user()->name,
                     'email' => $request->user()->email,
                     'avatar_url' => $request->user()->avatar_url ?? $this->getGravatar($request->user()->email),
-                    'roles' => method_exists($request->user(), 'getRoleNames') 
-                        ? $request->user()->getRoleNames()->toArray() 
+                    'roles' => method_exists($request->user(), 'getRoleNames')
+                        ? $request->user()->getRoleNames()->toArray()
                         : [],
-                    'permissions' => method_exists($request->user(), 'getAllPermissions') 
-                        ? $request->user()->getAllPermissions()->pluck('name')->toArray() 
+                    'permissions' => method_exists($request->user(), 'getAllPermissions')
+                        ? $request->user()->getAllPermissions()->pluck('name')->toArray()
                         : [],
                     'can_access_cp' => $this->canUserAccessCP($request->user()),
                 ] : null,
@@ -65,7 +65,7 @@ class HandleInertiaRequests
      */
     protected function canUserAccessCP($user): bool
     {
-        if (!$user) {
+        if (! $user) {
             return false;
         }
 
@@ -90,6 +90,6 @@ class HandleInertiaRequests
      */
     protected function getGravatar(string $email): string
     {
-        return 'https://www.gravatar.com/avatar/' . md5(strtolower(trim($email))) . '?s=64&d=mp';
+        return 'https://www.gravatar.com/avatar/'.md5(strtolower(trim($email))).'?s=64&d=mp';
     }
 }

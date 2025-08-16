@@ -2,12 +2,11 @@
 
 namespace LaravelShopper\Http\Controllers\Api;
 
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
+use LaravelShopper\Http\Controllers\Controller;
 
 class AuthController extends Controller
 {
@@ -21,7 +20,7 @@ class AuthController extends Controller
         $userModel = config('shopper.auth.model', 'App\\Models\\User');
         $user = $userModel::where('email', $request->email)->first();
 
-        if (!$user || !Hash::check($request->password, $user->password)) {
+        if (! $user || ! Hash::check($request->password, $user->password)) {
             throw ValidationException::withMessages([
                 'email' => ['The provided credentials are incorrect.'],
             ]);
@@ -44,7 +43,7 @@ class AuthController extends Controller
         ]);
 
         $userModel = config('shopper.auth.model', 'App\\Models\\User');
-        
+
         $user = $userModel::create([
             'name' => $request->name,
             'email' => $request->email,

@@ -100,13 +100,13 @@ class Order extends Model
 
     public function canBeCancelled(): bool
     {
-        return in_array($this->status, ['pending', 'confirmed']) && 
+        return in_array($this->status, ['pending', 'confirmed']) &&
                $this->payment_status !== 'paid';
     }
 
     public function canBeShipped(): bool
     {
-        return $this->status === 'confirmed' && 
+        return $this->status === 'confirmed' &&
                $this->payment_status === 'paid' &&
                $this->fulfillment_status === 'unfulfilled';
     }
@@ -117,7 +117,7 @@ class Order extends Model
 
         static::creating(function ($order) {
             if (empty($order->order_number)) {
-                $order->order_number = 'ORD-' . strtoupper(uniqid());
+                $order->order_number = 'ORD-'.strtoupper(uniqid());
             }
         });
     }

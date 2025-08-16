@@ -1,14 +1,11 @@
 <?php
 
-namespace Shopper\Http\Controllers\Cp;
+namespace LaravelShopper\Http\Controllers\Cp;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Routing\Controller;
-use Illuminate\Support\Collection;
-use Shopper\Core\Models\Collection as CollectionModel;
-use Shopper\Support\Navigation;
+use LaravelShopper\Http\Controllers\Controller;
 
 class EntriesController extends Controller
 {
@@ -38,7 +35,7 @@ class EntriesController extends Controller
                 'featured_image' => '/storage/products/headphones-1.jpg',
                 'published_at' => now()->subDays(5)->toISOString(),
                 'created_at' => now()->subDays(10)->toISOString(),
-                'updated_at' => now()->subDays(2)->toISOString()
+                'updated_at' => now()->subDays(2)->toISOString(),
             ],
             [
                 'id' => 2,
@@ -62,7 +59,7 @@ class EntriesController extends Controller
                 'featured_image' => '/storage/products/watch-1.jpg',
                 'published_at' => now()->subDays(8)->toISOString(),
                 'created_at' => now()->subDays(12)->toISOString(),
-                'updated_at' => now()->subDays(1)->toISOString()
+                'updated_at' => now()->subDays(1)->toISOString(),
             ],
             [
                 'id' => 3,
@@ -86,7 +83,7 @@ class EntriesController extends Controller
                 'featured_image' => '/storage/products/speaker-1.jpg',
                 'published_at' => null,
                 'created_at' => now()->subDays(3)->toISOString(),
-                'updated_at' => now()->subHours(4)->toISOString()
+                'updated_at' => now()->subHours(4)->toISOString(),
             ],
             [
                 'id' => 4,
@@ -110,7 +107,7 @@ class EntriesController extends Controller
                 'featured_image' => '/storage/products/keyboard-1.jpg',
                 'published_at' => now()->addDays(2)->toISOString(),
                 'created_at' => now()->subDays(7)->toISOString(),
-                'updated_at' => now()->subDays(1)->toISOString()
+                'updated_at' => now()->subDays(1)->toISOString(),
             ],
             [
                 'id' => 5,
@@ -134,8 +131,8 @@ class EntriesController extends Controller
                 'featured_image' => '/storage/products/charger-1.jpg',
                 'published_at' => now()->subDays(15)->toISOString(),
                 'created_at' => now()->subDays(20)->toISOString(),
-                'updated_at' => now()->subDays(3)->toISOString()
-            ]
+                'updated_at' => now()->subDays(3)->toISOString(),
+            ],
         ]);
 
         // Apply filters
@@ -174,14 +171,14 @@ class EntriesController extends Controller
         // Sort
         $sortBy = $request->get('sort_by', 'updated_at');
         $sortDirection = $request->get('sort_direction', 'desc');
-        
+
         $entries = $entries->sortBy($sortBy, SORT_REGULAR, $sortDirection === 'desc');
 
         // Paginate manually for demo
         $perPage = $request->get('per_page', 15);
         $page = $request->get('page', 1);
         $total = $entries->count();
-        
+
         $paginatedEntries = $entries->slice(($page - 1) * $perPage, $perPage)->values();
 
         $pagination = new LengthAwarePaginator(
@@ -191,7 +188,7 @@ class EntriesController extends Controller
             $page,
             [
                 'path' => $request->url(),
-                'pageName' => 'page'
+                'pageName' => 'page',
             ]
         );
 
@@ -204,24 +201,24 @@ class EntriesController extends Controller
                 'total' => $pagination->total(),
                 'from' => $pagination->firstItem(),
                 'to' => $pagination->lastItem(),
-                'has_more_pages' => $pagination->hasMorePages()
+                'has_more_pages' => $pagination->hasMorePages(),
             ],
             'filters' => [
                 'statuses' => [
                     ['value' => 'published', 'label' => 'Published', 'count' => 3],
                     ['value' => 'draft', 'label' => 'Draft', 'count' => 1],
-                    ['value' => 'scheduled', 'label' => 'Scheduled', 'count' => 1]
+                    ['value' => 'scheduled', 'label' => 'Scheduled', 'count' => 1],
                 ],
                 'sites' => [
                     ['value' => 'default', 'label' => 'Default Site', 'count' => 4],
-                    ['value' => 'gaming', 'label' => 'Gaming Site', 'count' => 1]
+                    ['value' => 'gaming', 'label' => 'Gaming Site', 'count' => 1],
                 ],
                 'stock_statuses' => [
                     ['value' => 'in_stock', 'label' => 'In Stock', 'count' => 4],
                     ['value' => 'out_of_stock', 'label' => 'Out of Stock', 'count' => 1],
-                    ['value' => 'low_stock', 'label' => 'Low Stock', 'count' => 1]
-                ]
-            ]
+                    ['value' => 'low_stock', 'label' => 'Low Stock', 'count' => 1],
+                ],
+            ],
         ]);
     }
 
@@ -256,8 +253,8 @@ class EntriesController extends Controller
                 'description' => 'Experience superior audio with our premium wireless headphones.',
                 'price' => 299.99,
                 'stock_quantity' => 25,
-                'featured_image' => '/storage/products/headphones-1.jpg'
-            ]
+                'featured_image' => '/storage/products/headphones-1.jpg',
+            ],
         ];
 
         return response()->json(['entry' => $entry]);
@@ -270,7 +267,7 @@ class EntriesController extends Controller
             'slug' => 'nullable|string|max:255|unique:entries,slug',
             'status' => 'in:published,draft,scheduled',
             'is_featured' => 'boolean',
-            'fields' => 'array'
+            'fields' => 'array',
         ]);
 
         // Mock creation - in real app would create in database
@@ -287,12 +284,12 @@ class EntriesController extends Controller
             'site' => 'default',
             'created_at' => now()->toISOString(),
             'updated_at' => now()->toISOString(),
-            'fields' => $request->get('fields', [])
+            'fields' => $request->get('fields', []),
         ];
 
         return response()->json([
             'entry' => $entry,
-            'message' => 'Entry created successfully'
+            'message' => 'Entry created successfully',
         ], 201);
     }
 
@@ -303,7 +300,7 @@ class EntriesController extends Controller
             'slug' => 'nullable|string|max:255',
             'status' => 'in:published,draft,scheduled',
             'is_featured' => 'boolean',
-            'fields' => 'array'
+            'fields' => 'array',
         ]);
 
         // Mock update - in real app would update in database
@@ -320,12 +317,12 @@ class EntriesController extends Controller
             'site' => 'default',
             'created_at' => now()->subDays(10)->toISOString(),
             'updated_at' => now()->toISOString(),
-            'fields' => $request->get('fields', [])
+            'fields' => $request->get('fields', []),
         ];
 
         return response()->json([
             'entry' => $entry,
-            'message' => 'Entry updated successfully'
+            'message' => 'Entry updated successfully',
         ]);
     }
 
@@ -333,7 +330,7 @@ class EntriesController extends Controller
     {
         // Mock deletion - in real app would delete from database
         return response()->json([
-            'message' => 'Entry deleted successfully'
+            'message' => 'Entry deleted successfully',
         ]);
     }
 
@@ -342,7 +339,7 @@ class EntriesController extends Controller
         $request->validate([
             'action' => 'required|in:delete,publish,unpublish,feature,unfeature',
             'entries' => 'required|array|min:1',
-            'entries.*' => 'integer'
+            'entries.*' => 'integer',
         ]);
 
         $action = $request->get('action');
@@ -351,19 +348,19 @@ class EntriesController extends Controller
         // Mock bulk action - in real app would perform bulk operation
         switch ($action) {
             case 'delete':
-                $message = count($entryIds) . ' entries deleted successfully';
+                $message = count($entryIds).' entries deleted successfully';
                 break;
             case 'publish':
-                $message = count($entryIds) . ' entries published successfully';
+                $message = count($entryIds).' entries published successfully';
                 break;
             case 'unpublish':
-                $message = count($entryIds) . ' entries unpublished successfully';
+                $message = count($entryIds).' entries unpublished successfully';
                 break;
             case 'feature':
-                $message = count($entryIds) . ' entries featured successfully';
+                $message = count($entryIds).' entries featured successfully';
                 break;
             case 'unfeature':
-                $message = count($entryIds) . ' entries unfeatured successfully';
+                $message = count($entryIds).' entries unfeatured successfully';
                 break;
             default:
                 $message = 'Bulk action completed successfully';
@@ -371,7 +368,7 @@ class EntriesController extends Controller
 
         return response()->json([
             'message' => $message,
-            'affected_count' => count($entryIds)
+            'affected_count' => count($entryIds),
         ]);
     }
 }
