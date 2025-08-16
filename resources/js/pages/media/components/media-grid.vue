@@ -9,13 +9,13 @@
             :checked="allSelected"
             @change="$emit('select-all', $event.target.checked)"
             class="rounded border-gray-300 text-blue-600 shadow-sm focus:ring-blue-500"
-          >
+          />
           <span class="ml-2 text-sm text-gray-700">
-            {{ $t('common.select_all') }}
+            {{ t("common.select_all") }}
           </span>
         </label>
         <span v-if="selected.length > 0" class="text-sm text-gray-600">
-          {{ $t('common.selected_count', { count: selected.length }) }}
+          {{ t("common.selected_count", { count: selected.length }) }}
         </span>
       </div>
 
@@ -24,25 +24,32 @@
           @click="$emit('view-mode', 'grid')"
           :class="[
             'p-2 rounded-md',
-            viewMode === 'grid' ? 'bg-blue-100 text-blue-600' : 'text-gray-400 hover:text-gray-600'
+            viewMode === 'grid'
+              ? 'bg-blue-100 text-blue-600'
+              : 'text-gray-400 hover:text-gray-600',
           ]"
         >
-          <GridIcon class="w-5 h-5" />
+          <BeakerIcon class="w-5 h-5" />
         </button>
         <button
           @click="$emit('view-mode', 'list')"
           :class="[
             'p-2 rounded-md',
-            viewMode === 'list' ? 'bg-blue-100 text-blue-600' : 'text-gray-400 hover:text-gray-600'
+            viewMode === 'list'
+              ? 'bg-blue-100 text-blue-600'
+              : 'text-gray-400 hover:text-gray-600',
           ]"
         >
-          <ListIcon class="w-5 h-5" />
+          <ListBulletIcon class="w-5 h-5" />
         </button>
       </div>
     </div>
 
     <!-- Grid View -->
-    <div v-if="viewMode === 'grid'" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+    <div
+      v-if="viewMode === 'grid'"
+      class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4"
+    >
       <media-item-card
         v-for="item in media"
         :key="item.id"
@@ -66,28 +73,42 @@
                 :checked="allSelected"
                 @change="$emit('select-all', $event.target.checked)"
                 class="rounded border-gray-300 text-blue-600 shadow-sm focus:ring-blue-500"
-              >
+              />
             </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              {{ $t('media.preview') }}
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              {{ t("media.preview") }}
             </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              {{ $t('media.name') }}
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              {{ t("media.name") }}
             </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              {{ $t('media.type') }}
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              {{ t("media.type") }}
             </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              {{ $t('media.size') }}
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              {{ t("media.size") }}
             </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              {{ $t('media.collection') }}
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              {{ t("media.collection") }}
             </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              {{ $t('common.date') }}
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              {{ t("common.date") }}
             </th>
-            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-              {{ $t('common.actions') }}
+            <th
+              class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              {{ t("common.actions") }}
             </th>
           </tr>
         </thead>
@@ -109,51 +130,59 @@
     <!-- Empty State -->
     <div v-if="media.length === 0" class="text-center py-12">
       <PhotoIcon class="mx-auto h-12 w-12 text-gray-400" />
-      <h3 class="mt-2 text-sm font-medium text-gray-900">{{ $t('media.no_media') }}</h3>
-      <p class="mt-1 text-sm text-gray-500">{{ $t('media.no_media_description') }}</p>
+      <h3 class="mt-2 text-sm font-medium text-gray-900">
+        {{ t("media.no_media") }}
+      </h3>
+      <p class="mt-1 text-sm text-gray-500">
+        {{ t("media.no_media_description") }}
+      </p>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { GridIcon, ListIcon, PhotoIcon } from '@heroicons/vue/24/outline'
+import { computed } from "vue";
+import { useTranslations } from "@/composables/useTranslations";
+import {
+  BeakerIcon,
+  ListBulletIcon,
+  PhotoIcon,
+} from "@heroicons/vue/24/outline";
 
 interface MediaItem {
-  id: number
-  name: string
-  file_name: string
-  mime_type: string
-  size: number
-  collection_name: string
-  url: string
-  conversions: Record<string, string>
-  custom_properties: Record<string, any>
-  created_at: string
-  updated_at: string
+  id: number;
+  name: string;
+  file_name: string;
+  mime_type: string;
+  size: number;
+  collection_name: string;
+  url: string;
+  conversions: Record<string, string>;
+  custom_properties: Record<string, any>;
+  created_at: string;
+  updated_at: string;
 }
 
 interface Props {
-  media: MediaItem[]
-  selected: number[]
-  viewMode: 'grid' | 'list'
+  media: MediaItem[];
+  selected: number[];
+  viewMode: "grid" | "list";
 }
 
 interface Emits {
-  (e: 'select', mediaId: number, selected: boolean): void
-  (e: 'select-all', selected: boolean): void
-  (e: 'edit', media: MediaItem): void
-  (e: 'delete', media: MediaItem): void
-  (e: 'view', media: MediaItem): void
-  (e: 'view-mode', mode: 'grid' | 'list'): void
+  (e: "select", mediaId: number, selected: boolean): void;
+  (e: "select-all", selected: boolean): void;
+  (e: "edit", media: MediaItem): void;
+  (e: "delete", media: MediaItem): void;
+  (e: "view", media: MediaItem): void;
+  (e: "view-mode", mode: "grid" | "list"): void;
 }
 
-const props = defineProps<Props>()
-const emit = defineEmits<Emits>()
-const { t } = useI18n()
+const props = defineProps<Props>();
+const emit = defineEmits<Emits>();
+const { t } = useTranslations();
 
 const allSelected = computed(() => {
-  return props.media.length > 0 && props.selected.length === props.media.length
-})
+  return props.media.length > 0 && props.selected.length === props.media.length;
+});
 </script>

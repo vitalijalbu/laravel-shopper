@@ -1,7 +1,7 @@
 <template>
   <div class="cp-layout">
     <!-- Navigation Sidebar -->
-    <cp-navigation 
+    <cp-navigation
       :navigation="navigation"
       :user="user"
       :sites="sites"
@@ -15,8 +15,12 @@
         <!-- Breadcrumbs -->
         <nav v-if="breadcrumbs && breadcrumbs.length > 0" class="breadcrumbs">
           <ol class="breadcrumb-list">
-            <li v-for="(crumb, index) in breadcrumbs" :key="index" class="breadcrumb-item">
-              <router-link 
+            <li
+              v-for="(crumb, index) in breadcrumbs"
+              :key="index"
+              class="breadcrumb-item"
+            >
+              <router-link
                 v-if="crumb.url && index < breadcrumbs.length - 1"
                 :to="crumb.url"
                 class="breadcrumb-link"
@@ -24,7 +28,11 @@
                 {{ crumb.title }}
               </router-link>
               <span v-else class="breadcrumb-current">{{ crumb.title }}</span>
-              <span v-if="index < breadcrumbs.length - 1" class="breadcrumb-separator">/</span>
+              <span
+                v-if="index < breadcrumbs.length - 1"
+                class="breadcrumb-separator"
+                >/</span
+              >
             </li>
           </ol>
         </nav>
@@ -34,7 +42,7 @@
           <!-- Search -->
           <div class="global-search">
             <div class="search-wrapper">
-              <input 
+              <input
                 v-model="globalSearchQuery"
                 type="text"
                 placeholder="Search everything..."
@@ -48,9 +56,20 @@
             </div>
 
             <!-- Search Results Dropdown -->
-            <div v-if="showSearchResults && searchResults.length > 0" class="search-results">
-              <div v-for="result in searchResults" :key="result.id" class="search-result">
-                <router-link :to="result.url" class="result-link" @click="showSearchResults = false">
+            <div
+              v-if="showSearchResults && searchResults.length > 0"
+              class="search-results"
+            >
+              <div
+                v-for="result in searchResults"
+                :key="result.id"
+                class="search-result"
+              >
+                <router-link
+                  :to="result.url"
+                  class="result-link"
+                  @click="showSearchResults = false"
+                >
                   <div class="result-icon">
                     <icon :name="result.icon" />
                   </div>
@@ -64,10 +83,10 @@
           </div>
 
           <!-- Live Preview Toggle -->
-          <button 
+          <button
             v-if="showLivePreview"
             class="live-preview-toggle"
-            :class="{ 'active': livePreviewMode }"
+            :class="{ active: livePreviewMode }"
             @click="toggleLivePreview"
           >
             <icon name="eye" class="preview-icon" />
@@ -77,7 +96,11 @@
           <!-- Site Selector (mobile) -->
           <div v-if="isMultisite" class="mobile-site-selector">
             <select v-model="currentSite" class="site-select-mobile">
-              <option v-for="site in sites" :key="site.handle" :value="site.handle">
+              <option
+                v-for="site in sites"
+                :key="site.handle"
+                :value="site.handle"
+              >
                 {{ site.name }}
               </option>
             </select>
@@ -85,38 +108,53 @@
 
           <!-- Notifications -->
           <div class="notifications">
-            <button class="notification-button" @click="showNotifications = !showNotifications">
+            <button
+              class="notification-button"
+              @click="showNotifications = !showNotifications"
+            >
               <icon name="bell" class="notification-icon" />
-              <span v-if="unreadCount > 0" class="notification-badge">{{ unreadCount }}</span>
+              <span v-if="unreadCount > 0" class="notification-badge">{{
+                unreadCount
+              }}</span>
             </button>
 
             <div v-if="showNotifications" class="notification-dropdown">
               <div class="notification-header">
                 <h3>Notifications</h3>
-                <button @click="markAllAsRead" class="mark-all-read">Mark all as read</button>
+                <button @click="markAllAsRead" class="mark-all-read">
+                  Mark all as read
+                </button>
               </div>
-              
+
               <div v-if="notifications.length === 0" class="no-notifications">
                 No notifications
               </div>
-              
+
               <div v-else class="notification-list">
-                <div 
+                <div
                   v-for="notification in notifications.slice(0, 5)"
                   :key="notification.id"
-                  :class="['notification-item', { 'unread': !notification.read }]"
+                  :class="['notification-item', { unread: !notification.read }]"
                   @click="markAsRead(notification.id)"
                 >
                   <div class="notification-content">
-                    <div class="notification-title">{{ notification.title }}</div>
-                    <div class="notification-message">{{ notification.message }}</div>
-                    <div class="notification-time">{{ formatTime(notification.created_at) }}</div>
+                    <div class="notification-title">
+                      {{ notification.title }}
+                    </div>
+                    <div class="notification-message">
+                      {{ notification.message }}
+                    </div>
+                    <div class="notification-time">
+                      {{ formatTime(notification.created_at) }}
+                    </div>
                   </div>
                 </div>
               </div>
 
               <div v-if="notifications.length > 5" class="notification-footer">
-                <router-link to="/cp/notifications" class="view-all">View all notifications</router-link>
+                <router-link to="/cp/notifications" class="view-all"
+                  >View all notifications</router-link
+                >
               </div>
             </div>
           </div>
@@ -146,7 +184,7 @@
             </button>
           </div>
         </div>
-        <iframe 
+        <iframe
           :src="previewUrl"
           :class="['preview-iframe', `device-${previewDevice}`]"
           ref="previewFrame"
@@ -156,7 +194,7 @@
 
     <!-- Toast Notifications -->
     <div class="toast-container">
-      <div 
+      <div
         v-for="toast in toasts"
         :key="toast.id"
         :class="['toast', `toast-${toast.type}`]"
@@ -174,160 +212,162 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue'
-import { usePage } from '@inertiajs/vue3'
-import { route } from 'ziggy-js'
-import { useShopperStore } from '../stores/shopper'
-import CpNavigation from './cp-navigation.vue'
+import { ref, computed, onMounted, watch } from "vue";
+import { usePage } from "@inertiajs/vue3";
+import { route } from "ziggy-js";
+import { useShopperStore } from "../stores/shopper";
+import CpNavigation from "./cp-navigation.vue";
 
 const props = defineProps({
   navigation: Object,
   user: Object,
   sites: Array,
-  breadcrumbs: Array
-})
+  breadcrumbs: Array,
+});
 
-const page = usePage()
-const shopperStore = useShopperStore()
+const page = usePage();
+const shopperStore = useShopperStore();
 
 // State
-const globalSearchQuery = ref('')
-const showSearchResults = ref(false)
-const searchResults = ref([])
-const livePreviewMode = ref(false)
-const showLivePreview = ref(false)
-const previewDevice = ref('desktop')
-const previewUrl = ref('')
-const currentSite = ref('default')
-const showNotifications = ref(false)
-const notifications = ref([])
-const toasts = ref([])
+const globalSearchQuery = ref("");
+const showSearchResults = ref(false);
+const searchResults = ref([]);
+const livePreviewMode = ref(false);
+const showLivePreview = ref(false);
+const previewDevice = ref("desktop");
+const previewUrl = ref("");
+const currentSite = ref("default");
+const showNotifications = ref(false);
+const notifications = ref([]);
+const toasts = ref([]);
 
 // Computed
-const isMultisite = computed(() => props.sites && props.sites.length > 1)
+const isMultisite = computed(() => props.sites && props.sites.length > 1);
 
 const unreadCount = computed(() => {
-  return notifications.value.filter(n => !n.read).length
-})
+  return notifications.value.filter((n) => !n.read).length;
+});
 
 // Methods
 const performGlobalSearch = async () => {
-  if (!globalSearchQuery.value.trim()) return
+  if (!globalSearchQuery.value.trim()) return;
 
   try {
-    const response = await fetch(`/cp/api/search?q=${encodeURIComponent(globalSearchQuery.value)}`)
-    searchResults.value = await response.json()
-    showSearchResults.value = true
+    const response = await fetch(
+      `/cp/api/search?q=${encodeURIComponent(globalSearchQuery.value)}`,
+    );
+    searchResults.value = await response.json();
+    showSearchResults.value = true;
   } catch (error) {
-    console.error('Search error:', error)
+    console.error("Search error:", error);
   }
-}
+};
 
 const toggleLivePreview = () => {
-  livePreviewMode.value = !livePreviewMode.value
-  
+  livePreviewMode.value = !livePreviewMode.value;
+
   if (livePreviewMode.value) {
-    previewUrl.value = generatePreviewUrl()
+    previewUrl.value = generatePreviewUrl();
   }
-}
+};
 
 const generatePreviewUrl = () => {
   // Generate preview URL based on current page
-  const url = page.url
-  if (url.includes('/collections/') && url.includes('/entries/')) {
-    return `/preview${url}`
+  const url = page.url;
+  if (url.includes("/collections/") && url.includes("/entries/")) {
+    return `/preview${url}`;
   }
-  return '/'
-}
+  return "/";
+};
 
 const refreshPreview = () => {
   if (previewFrame.value) {
-    previewFrame.value.contentWindow.location.reload()
+    previewFrame.value.contentWindow.location.reload();
   }
-}
+};
 
 const markAsRead = (notificationId) => {
-  const notification = notifications.value.find(n => n.id === notificationId)
+  const notification = notifications.value.find((n) => n.id === notificationId);
   if (notification) {
-    notification.read = true
+    notification.read = true;
   }
-}
+};
 
 const markAllAsRead = () => {
-  notifications.value.forEach(n => n.read = true)
-}
+  notifications.value.forEach((n) => (n.read = true));
+};
 
 const formatTime = (timestamp) => {
-  return new Intl.RelativeTimeFormat('en', { numeric: 'auto' }).format(
+  return new Intl.RelativeTimeFormat("en", { numeric: "auto" }).format(
     Math.round((new Date(timestamp) - new Date()) / (1000 * 60 * 60 * 24)),
-    'day'
-  )
-}
+    "day",
+  );
+};
 
-const addToast = (message, type = 'info') => {
+const addToast = (message, type = "info") => {
   const toast = {
     id: Date.now() + Math.random(),
     message,
-    type
-  }
-  
-  toasts.value.push(toast)
-  
+    type,
+  };
+
+  toasts.value.push(toast);
+
   // Auto remove after 5 seconds
   setTimeout(() => {
-    removeToast(toast.id)
-  }, 5000)
-}
+    removeToast(toast.id);
+  }, 5000);
+};
 
 const removeToast = (toastId) => {
-  const index = toasts.value.findIndex(t => t.id === toastId)
+  const index = toasts.value.findIndex((t) => t.id === toastId);
   if (index > -1) {
-    toasts.value.splice(index, 1)
+    toasts.value.splice(index, 1);
   }
-}
+};
 
 const getToastIcon = (type) => {
   const icons = {
-    success: 'check-circle',
-    error: 'x-circle',
-    warning: 'exclamation-triangle',
-    info: 'information-circle'
-  }
-  return icons[type] || 'information-circle'
-}
+    success: "check-circle",
+    error: "x-circle",
+    warning: "exclamation-triangle",
+    info: "information-circle",
+  };
+  return icons[type] || "information-circle";
+};
 
 // Load notifications
 const loadNotifications = async () => {
   try {
-    const response = await fetch('/cp/api/notifications')
-    notifications.value = await response.json()
+    const response = await fetch("/cp/api/notifications");
+    notifications.value = await response.json();
   } catch (error) {
-    console.error('Failed to load notifications:', error)
+    console.error("Failed to load notifications:", error);
   }
-}
+};
 
 // Click outside handler for dropdowns
 const handleClickOutside = (event) => {
-  if (!event.target.closest('.global-search')) {
-    showSearchResults.value = false
+  if (!event.target.closest(".global-search")) {
+    showSearchResults.value = false;
   }
-  if (!event.target.closest('.notifications')) {
-    showNotifications.value = false
+  if (!event.target.closest(".notifications")) {
+    showNotifications.value = false;
   }
-}
+};
 
 onMounted(() => {
-  loadNotifications()
-  document.addEventListener('click', handleClickOutside)
-  
+  loadNotifications();
+  document.addEventListener("click", handleClickOutside);
+
   // Set up live preview detection
-  showLivePreview.value = false
-})
+  showLivePreview.value = false;
+});
 
 // Expose methods for child components
 defineExpose({
-  addToast
-})
+  addToast,
+});
 </script>
 
 <style scoped>

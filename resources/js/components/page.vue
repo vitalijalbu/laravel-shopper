@@ -7,20 +7,28 @@
           <div v-if="breadcrumbs" class="breadcrumbs">
             <nav class="breadcrumb-nav">
               <ol class="breadcrumb-list">
-                <li v-for="(crumb, index) in breadcrumbs" :key="index" class="breadcrumb-item">
-                  <component 
+                <li
+                  v-for="(crumb, index) in breadcrumbs"
+                  :key="index"
+                  class="breadcrumb-item"
+                >
+                  <component
                     :is="crumb.href ? 'router-link' : 'span'"
                     :to="crumb.href"
                     :class="{ 'breadcrumb-link': crumb.href }"
                   >
                     {{ crumb.title }}
                   </component>
-                  <span v-if="index < breadcrumbs.length - 1" class="breadcrumb-separator">/</span>
+                  <span
+                    v-if="index < breadcrumbs.length - 1"
+                    class="breadcrumb-separator"
+                    >/</span
+                  >
                 </li>
               </ol>
             </nav>
           </div>
-          
+
           <div class="page-title-section">
             <h1 v-if="title" class="page-title">{{ title }}</h1>
             <p v-if="subtitle" class="page-subtitle">{{ subtitle }}</p>
@@ -59,7 +67,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed } from "vue";
 
 const props = defineProps({
   title: String,
@@ -69,49 +77,49 @@ const props = defineProps({
   activeTab: String,
   fullWidth: {
     type: Boolean,
-    default: false
+    default: false,
   },
   loading: {
     type: Boolean,
-    default: false
-  }
-})
+    default: false,
+  },
+});
 
-const emit = defineEmits(['tab-change'])
+const emit = defineEmits(["tab-change"]);
 
 const hasHeader = computed(() => {
-  return props.title || props.subtitle || props.breadcrumbs || props.tabs
-})
+  return props.title || props.subtitle || props.breadcrumbs || props.tabs;
+});
 
 const hasActions = computed(() => {
   // Check if actions slot has content
-  return true // This would need to be properly implemented
-})
+  return true; // This would need to be properly implemented
+});
 
 const hasTabs = computed(() => {
-  return props.tabs && props.tabs.length > 0
-})
+  return props.tabs && props.tabs.length > 0;
+});
 
 const pageClasses = computed(() => {
   return [
-    'shopper-page',
+    "shopper-page",
     {
-      'page-full-width': props.fullWidth,
-      'page-loading': props.loading,
-      'page-with-tabs': hasTabs.value
-    }
-  ]
-})
+      "page-full-width": props.fullWidth,
+      "page-loading": props.loading,
+      "page-with-tabs": hasTabs.value,
+    },
+  ];
+});
 
 const tabClasses = (tab) => {
   return [
-    'tab-button',
+    "tab-button",
     {
-      'tab-active': tab.id === props.activeTab,
-      'tab-disabled': tab.disabled
-    }
-  ]
-}
+      "tab-active": tab.id === props.activeTab,
+      "tab-disabled": tab.disabled,
+    },
+  ];
+};
 </script>
 
 <style scoped>

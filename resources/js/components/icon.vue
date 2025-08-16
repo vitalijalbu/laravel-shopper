@@ -1,14 +1,14 @@
 <template>
   <div class="icon-wrapper" :class="iconClass">
     <!-- Heroicons SVG Icons -->
-    <svg 
-      :width="size" 
-      :height="size" 
-      viewBox="0 0 24 24" 
-      fill="none" 
+    <svg
+      :width="size"
+      :height="size"
+      viewBox="0 0 24 24"
+      fill="none"
       :stroke="strokeColor"
       :stroke-width="strokeWidth"
-      stroke-linecap="round" 
+      stroke-linecap="round"
       stroke-linejoin="round"
     >
       <!-- Plus Icon -->
@@ -31,13 +31,17 @@
 
       <!-- Pencil Icon -->
       <g v-else-if="name === 'pencil'">
-        <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+        <path
+          d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"
+        ></path>
       </g>
 
       <!-- Trash Icon -->
       <g v-else-if="name === 'trash'">
         <polyline points="3,6 5,6 21,6"></polyline>
-        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+        <path
+          d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
+        ></path>
       </g>
 
       <!-- X Icon -->
@@ -61,7 +65,9 @@
 
       <!-- Exclamation Triangle -->
       <g v-else-if="name === 'exclamation-triangle'">
-        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+        <path
+          d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"
+        ></path>
         <line x1="12" y1="9" x2="12" y2="13"></line>
         <line x1="12" y1="17" x2="12.01" y2="17"></line>
       </g>
@@ -101,12 +107,16 @@
       <g v-else-if="name === 'shopping-cart'">
         <circle cx="9" cy="21" r="1"></circle>
         <circle cx="20" cy="21" r="1"></circle>
-        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+        <path
+          d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"
+        ></path>
       </g>
 
       <!-- Box -->
       <g v-else-if="name === 'box'">
-        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+        <path
+          d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"
+        ></path>
         <polyline points="3.27,6.96 12,12.01 20.73,6.96"></polyline>
         <line x1="12" y1="22.08" x2="12" y2="12"></line>
       </g>
@@ -121,7 +131,9 @@
 
       <!-- Document Text -->
       <g v-else-if="name === 'document-text'">
-        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+        <path
+          d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+        ></path>
         <polyline points="14,2 14,8 20,8"></polyline>
         <line x1="16" y1="13" x2="8" y2="13"></line>
         <line x1="16" y1="17" x2="8" y2="17"></line>
@@ -130,14 +142,18 @@
 
       <!-- Folder -->
       <g v-else-if="name === 'folder'">
-        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+        <path
+          d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"
+        ></path>
       </g>
 
       <!-- Globe -->
       <g v-else-if="name === 'globe'">
         <circle cx="12" cy="12" r="10"></circle>
         <line x1="2" y1="12" x2="22" y2="12"></line>
-        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+        <path
+          d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"
+        ></path>
       </g>
 
       <!-- Table -->
@@ -166,7 +182,9 @@
       <g v-else-if="name === 'refresh'">
         <polyline points="23,4 23,10 17,10"></polyline>
         <polyline points="1,20 1,14 7,14"></polyline>
-        <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"></path>
+        <path
+          d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"
+        ></path>
       </g>
 
       <!-- Download -->
@@ -185,44 +203,44 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed } from "vue";
 
 const props = defineProps({
   name: {
     type: String,
-    required: true
+    required: true,
   },
   size: {
     type: [String, Number],
-    default: 24
+    default: 24,
   },
   color: {
     type: String,
-    default: 'currentColor'
+    default: "currentColor",
   },
   strokeWidth: {
     type: [String, Number],
-    default: 2
+    default: 2,
   },
   filled: {
     type: Boolean,
-    default: false
-  }
-})
+    default: false,
+  },
+});
 
 const strokeColor = computed(() => {
-  return props.filled ? 'none' : props.color
-})
+  return props.filled ? "none" : props.color;
+});
 
 const iconClass = computed(() => {
   return [
-    'icon',
+    "icon",
     `icon-${props.name}`,
     {
-      'icon-filled': props.filled
-    }
-  ]
-})
+      "icon-filled": props.filled,
+    },
+  ];
+});
 </script>
 
 <style scoped>

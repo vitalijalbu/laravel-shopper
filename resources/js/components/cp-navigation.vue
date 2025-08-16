@@ -5,7 +5,7 @@
       <router-link to="/cp" class="brand-link">
         <div class="brand-logo">
           <svg viewBox="0 0 24 24" class="brand-icon">
-            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
           </svg>
         </div>
         <span class="brand-text">Shopper</span>
@@ -25,15 +25,18 @@
     <nav class="nav-main">
       <ul class="nav-sections">
         <li v-for="(section, key) in navigation" :key="key" class="nav-section">
-          <div v-if="section.children && Object.keys(section.children).length > 0" class="nav-section-with-children">
+          <div
+            v-if="section.children && Object.keys(section.children).length > 0"
+            class="nav-section-with-children"
+          >
             <!-- Section Header -->
-            <div 
+            <div
               class="nav-section-header"
               :class="{ 'section-expanded': expandedSections.includes(key) }"
               @click="toggleSection(key)"
             >
-              <router-link 
-                :to="section.url" 
+              <router-link
+                :to="section.url"
                 class="nav-section-link"
                 :class="{ 'nav-active': isActive(section.url) }"
               >
@@ -41,28 +44,38 @@
                 <span class="nav-text">{{ section.display }}</span>
               </router-link>
               <button class="section-toggle" @click.stop="toggleSection(key)">
-                <icon 
-                  :name="expandedSections.includes(key) ? 'chevron-down' : 'chevron-right'" 
-                  class="toggle-icon" 
+                <icon
+                  :name="
+                    expandedSections.includes(key)
+                      ? 'chevron-down'
+                      : 'chevron-right'
+                  "
+                  class="toggle-icon"
                 />
               </button>
             </div>
 
             <!-- Section Children -->
-            <div 
-              v-show="expandedSections.includes(key)" 
+            <div
+              v-show="expandedSections.includes(key)"
               class="nav-section-children"
             >
               <ul class="nav-children-list">
-                <li v-for="(child, childKey) in section.children" :key="childKey" class="nav-child">
-                  <router-link 
-                    :to="child.url" 
+                <li
+                  v-for="(child, childKey) in section.children"
+                  :key="childKey"
+                  class="nav-child"
+                >
+                  <router-link
+                    :to="child.url"
                     class="nav-child-link"
                     :class="{ 'nav-active': isActive(child.url) }"
                   >
                     <icon :name="child.icon" class="nav-child-icon" />
                     <span class="nav-child-text">{{ child.display }}</span>
-                    <span v-if="child.badge" class="nav-badge">{{ child.badge }}</span>
+                    <span v-if="child.badge" class="nav-badge">{{
+                      child.badge
+                    }}</span>
                   </router-link>
                 </li>
               </ul>
@@ -71,14 +84,16 @@
 
           <!-- Simple Section (no children) -->
           <div v-else class="nav-section-simple">
-            <router-link 
-              :to="section.url" 
+            <router-link
+              :to="section.url"
               class="nav-section-link"
               :class="{ 'nav-active': isActive(section.url) }"
             >
               <icon :name="section.icon" class="nav-icon" />
               <span class="nav-text">{{ section.display }}</span>
-              <span v-if="section.badge" class="nav-badge">{{ section.badge }}</span>
+              <span v-if="section.badge" class="nav-badge">{{
+                section.badge
+              }}</span>
             </router-link>
           </div>
         </li>
@@ -94,7 +109,7 @@
             {{ user.name?.charAt(0)?.toUpperCase() }}
           </div>
         </div>
-        
+
         <div class="user-details">
           <div class="user-name">{{ user.name }}</div>
           <div class="user-role">{{ user.role }}</div>
@@ -106,7 +121,11 @@
           <icon name="dots-vertical" class="menu-icon" />
         </button>
 
-        <div v-if="showUserMenu" class="user-menu-dropdown" @click.away="showUserMenu = false">
+        <div
+          v-if="showUserMenu"
+          class="user-menu-dropdown"
+          @click.away="showUserMenu = false"
+        >
           <router-link to="/cp/account" class="menu-item">
             <icon name="user" class="menu-item-icon" />
             Account
@@ -127,101 +146,101 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import { router, usePage } from '@inertiajs/vue3'
-import { route } from 'ziggy-js'
-import { useShopperStore } from '../stores/shopper'
+import { ref, computed, onMounted } from "vue";
+import { router, usePage } from "@inertiajs/vue3";
+import { route } from "ziggy-js";
+import { useShopperStore } from "../stores/shopper";
 
 const props = defineProps({
   navigation: {
     type: Object,
-    default: () => ({})
+    default: () => ({}),
   },
   user: {
     type: Object,
-    default: () => ({})
+    default: () => ({}),
   },
   sites: {
     type: Array,
-    default: () => []
-  }
-})
+    default: () => [],
+  },
+});
 
-const page = usePage()
-const shopperStore = useShopperStore()
+const page = usePage();
+const shopperStore = useShopperStore();
 
 // State
-const expandedSections = ref([])
-const showUserMenu = ref(false)
-const currentSite = ref('default')
+const expandedSections = ref([]);
+const showUserMenu = ref(false);
+const currentSite = ref("default");
 
 // Computed
-const isMultisite = computed(() => props.sites.length > 1)
+const isMultisite = computed(() => props.sites.length > 1);
 
 // Methods
 const isActive = (url) => {
-  return page.url.startsWith(url)
-}
+  return page.url.startsWith(url);
+};
 
 const toggleSection = (key) => {
-  const index = expandedSections.value.indexOf(key)
+  const index = expandedSections.value.indexOf(key);
   if (index > -1) {
-    expandedSections.value.splice(index, 1)
+    expandedSections.value.splice(index, 1);
   } else {
-    expandedSections.value.push(key)
+    expandedSections.value.push(key);
   }
-  
+
   // Save preference
-  shopperStore.setPreference('expandedNavSections', expandedSections.value)
-}
+  shopperStore.setPreference("expandedNavSections", expandedSections.value);
+};
 
 const changeSite = () => {
   // Handle site change
-  shopperStore.setPreference('currentSite', currentSite.value)
+  shopperStore.setPreference("currentSite", currentSite.value);
   // Emit event or trigger site change logic
-}
+};
 
 const logout = async () => {
   try {
-    await fetch('/cp/auth/logout', { method: 'POST' })
-    window.location.href = '/cp/auth/login'
+    await fetch("/cp/auth/logout", { method: "POST" });
+    window.location.href = "/cp/auth/login";
   } catch (error) {
-    console.error('Logout error:', error)
+    console.error("Logout error:", error);
   }
-}
+};
 
 // Auto-expand current section
 const autoExpandCurrentSection = () => {
-  const path = page.url
-  
-  Object.keys(props.navigation).forEach(key => {
-    const section = props.navigation[key]
-    
+  const path = page.url;
+
+  Object.keys(props.navigation).forEach((key) => {
+    const section = props.navigation[key];
+
     if (section.children) {
-      Object.values(section.children).forEach(child => {
+      Object.values(section.children).forEach((child) => {
         if (path.startsWith(child.url)) {
           if (!expandedSections.value.includes(key)) {
-            expandedSections.value.push(key)
+            expandedSections.value.push(key);
           }
         }
-      })
+      });
     }
-  })
-}
+  });
+};
 
 // Load preferences
 const loadPreferences = () => {
-  const savedExpanded = shopperStore.getPreference('expandedNavSections', [])
-  expandedSections.value = savedExpanded
-  
-  const savedSite = shopperStore.getPreference('currentSite', 'default')
-  currentSite.value = savedSite
-}
+  const savedExpanded = shopperStore.getPreference("expandedNavSections", []);
+  expandedSections.value = savedExpanded;
+
+  const savedSite = shopperStore.getPreference("currentSite", "default");
+  currentSite.value = savedSite;
+};
 
 onMounted(() => {
-  loadPreferences()
-  autoExpandCurrentSection()
-})
+  loadPreferences();
+  autoExpandCurrentSection();
+});
 </script>
 
 <style scoped>

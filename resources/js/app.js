@@ -1,59 +1,62 @@
-import { createApp, h } from 'vue'
-import { createInertiaApp } from '@inertiajs/vue3'
-import { createPinia } from 'pinia'
-import { ZiggyVue } from 'ziggy-js'
-import { TranslationPlugin } from './Utils/translator'
-import './components/Icons'
+import { createApp, h } from "vue";
+import { createInertiaApp } from "@inertiajs/vue3";
+import { createPinia } from "pinia";
+import { ZiggyVue } from "ziggy-js";
+import "@/components/Icons";
 
 // Import global styles
-import '../css/app.css'
+import "../css/app.css";
 
 createInertiaApp({
-  resolve: name => {
-    const pages = import.meta.glob('./pages/**/*.vue', { eager: true })
-    return pages[`./pages/${name}.vue`]
+  resolve: (name) => {
+    const pages = import.meta.glob("./pages/**/*.vue", { eager: true });
+    return pages[`./pages/${name}.vue`];
   },
   setup({ el, App, props, plugin }) {
     const app = createApp({ render: () => h(App, props) })
       .use(plugin)
       .use(createPinia())
-      .use(ZiggyVue)
-      .use(TranslationPlugin, {
-        translations: window.ShopperConfig?.translations || {},
-        locale: window.ShopperConfig?.locale || 'en'
-      })
+      .use(ZiggyVue);
 
     // Global Properties
-    app.config.globalProperties.$shopperConfig = window.ShopperConfig || {}
+    app.config.globalProperties.$shopperConfig = window.ShopperConfig || {};
 
     // Global Components Registration
-    import('./components/icon.vue').then(module => app.component('Icon', module.default))
-    import('./components/page.vue').then(module => app.component('Page', module.default))
-    import('./components/data-table.vue').then(module => app.component('DataTable', module.default))
-    import('./components/modal.vue').then(module => app.component('Modal', module.default))
+    import("@/components/icon.vue").then((module) =>
+      app.component("Icon", module.default),
+    );
+    import("@/components/page.vue").then((module) =>
+      app.component("Page", module.default),
+    );
+    import("@/components/data-table.vue").then((module) =>
+      app.component("DataTable", module.default),
+    );
+    import("@/components/modal.vue").then((module) =>
+      app.component("Modal", module.default),
+    );
 
     // Error Handler
     app.config.errorHandler = (err, vm, info) => {
-      console.error('Vue Error:', err, info)
-      
+      console.error("Vue Error:", err, info);
+
       // Send to error reporting service
       if (window.Sentry) {
         window.Sentry.captureException(err, {
           contexts: {
             vue: {
               componentName: vm?.$options?.name,
-              info: info
-            }
-          }
-        })
+              info: info,
+            },
+          },
+        });
       }
-    }
-    
-    return app.mount(el)
+    };
+
+    return app.mount(el);
   },
-})
+});
 
 // Export for debugging
 if (import.meta.env.DEV) {
-  window.ShopperApp = app
+  window.ShopperApp = app;
 }

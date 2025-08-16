@@ -8,10 +8,10 @@
           {{ selectedItems.length }} of {{ totalItems }} selected
         </div>
       </div>
-      
+
       <div class="toolbar-right">
         <slot name="toolbar" />
-        
+
         <!-- Search -->
         <div v-if="searchable" class="search-input">
           <input
@@ -22,12 +22,14 @@
             @input="handleSearch"
           />
         </div>
-        
+
         <!-- Filters -->
         <div v-if="filterable" class="filter-dropdown">
           <button class="filter-button" @click="showFilters = !showFilters">
             Filters
-            <span v-if="activeFilters > 0" class="filter-badge">{{ activeFilters }}</span>
+            <span v-if="activeFilters > 0" class="filter-badge">{{
+              activeFilters
+            }}</span>
           </button>
         </div>
       </div>
@@ -58,7 +60,7 @@
                 @change="toggleAll"
               />
             </th>
-            
+
             <th
               v-for="column in columns"
               :key="column.key"
@@ -68,8 +70,18 @@
               <div class="column-header">
                 <span class="column-title">{{ column.title }}</span>
                 <span v-if="column.sortable" class="sort-icon">
-                  <svg v-if="sortBy === column.key" class="sort-active" viewBox="0 0 20 20">
-                    <path :d="sortDirection === 'asc' ? 'M5 8l5-5 5 5H5z' : 'M5 12l5 5 5-5H5z'" />
+                  <svg
+                    v-if="sortBy === column.key"
+                    class="sort-active"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      :d="
+                        sortDirection === 'asc'
+                          ? 'M5 8l5-5 5 5H5z'
+                          : 'M5 12l5 5 5-5H5z'
+                      "
+                    />
                   </svg>
                   <svg v-else class="sort-inactive" viewBox="0 0 20 20">
                     <path d="M5 8l5-5 5 5H5zM5 12l5 5 5-5H5z" />
@@ -77,7 +89,7 @@
                 </span>
               </div>
             </th>
-            
+
             <th v-if="hasActions" class="actions-column">Actions</th>
           </tr>
         </thead>
@@ -92,7 +104,7 @@
               </div>
             </td>
           </tr>
-          
+
           <tr v-else-if="items.length === 0" class="empty-row">
             <td :colspan="totalColumns" class="empty-cell">
               <div class="empty-state">
@@ -102,7 +114,7 @@
               </div>
             </td>
           </tr>
-          
+
           <tr
             v-else
             v-for="(item, index) in items"
@@ -119,7 +131,7 @@
                 @click.stop
               />
             </td>
-            
+
             <td
               v-for="column in columns"
               :key="`${getRowKey(item, index)}-${column.key}`"
@@ -135,7 +147,7 @@
                 {{ formatCellValue(item, column) }}
               </slot>
             </td>
-            
+
             <td v-if="hasActions" class="actions-cell">
               <div class="row-actions">
                 <slot name="row-actions" :item="item" :index="index" />
@@ -151,7 +163,7 @@
       <div class="pagination-info">
         Showing {{ startItem }} to {{ endItem }} of {{ totalItems }} results
       </div>
-      
+
       <div class="pagination-controls">
         <button
           class="pagination-button"
@@ -160,7 +172,7 @@
         >
           Previous
         </button>
-        
+
         <div class="page-numbers">
           <button
             v-for="page in visiblePages"
@@ -171,7 +183,7 @@
             {{ page }}
           </button>
         </div>
-        
+
         <button
           class="pagination-button"
           :disabled="currentPage >= totalPages"
@@ -185,259 +197,268 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch } from "vue";
 
 const props = defineProps({
   title: String,
   items: {
     type: Array,
-    default: () => []
+    default: () => [],
   },
   columns: {
     type: Array,
-    default: () => []
+    default: () => [],
   },
   loading: {
     type: Boolean,
-    default: false
+    default: false,
   },
   selectable: {
     type: Boolean,
-    default: false
+    default: false,
   },
   searchable: {
     type: Boolean,
-    default: false
+    default: false,
   },
   filterable: {
     type: Boolean,
-    default: false
+    default: false,
   },
   sortable: {
     type: Boolean,
-    default: true
+    default: true,
   },
   paginated: {
     type: Boolean,
-    default: true
+    default: true,
   },
   perPage: {
     type: Number,
-    default: 20
+    default: 20,
   },
   totalItems: {
     type: Number,
-    default: 0
+    default: 0,
   },
   currentPage: {
     type: Number,
-    default: 1
+    default: 1,
   },
   rowKey: {
     type: String,
-    default: 'id'
-  }
-})
+    default: "id",
+  },
+});
 
 const emit = defineEmits([
-  'sort',
-  'search', 
-  'filter',
-  'page-change',
-  'row-click',
-  'selection-change'
-])
+  "sort",
+  "search",
+  "filter",
+  "page-change",
+  "row-click",
+  "selection-change",
+]);
 
 // State
-const selectedItems = ref([])
-const searchQuery = ref('')
-const sortBy = ref('')
-const sortDirection = ref('asc')
-const showFilters = ref(false)
+const selectedItems = ref([]);
+const searchQuery = ref("");
+const sortBy = ref("");
+const sortDirection = ref("asc");
+const showFilters = ref(false);
 
 // Computed
 const hasToolbar = computed(() => {
-  return props.title || props.searchable || props.filterable
-})
+  return props.title || props.searchable || props.filterable;
+});
 
 const hasSelection = computed(() => {
-  return props.selectable && selectedItems.value.length > 0
-})
+  return props.selectable && selectedItems.value.length > 0;
+});
 
 const hasActions = computed(() => {
   // Check if row-actions slot has content
-  return true // This would need to be properly implemented
-})
+  return true; // This would need to be properly implemented
+});
 
 const totalColumns = computed(() => {
-  let count = props.columns.length
-  if (props.selectable) count++
-  if (hasActions.value) count++
-  return count
-})
+  let count = props.columns.length;
+  if (props.selectable) count++;
+  if (hasActions.value) count++;
+  return count;
+});
 
 const allSelected = computed(() => {
-  return props.items.length > 0 && selectedItems.value.length === props.items.length
-})
+  return (
+    props.items.length > 0 && selectedItems.value.length === props.items.length
+  );
+});
 
 const someSelected = computed(() => {
-  return selectedItems.value.length > 0 && selectedItems.value.length < props.items.length
-})
+  return (
+    selectedItems.value.length > 0 &&
+    selectedItems.value.length < props.items.length
+  );
+});
 
 const activeFilters = computed(() => {
   // Count active filters
-  return 0
-})
+  return 0;
+});
 
 const totalPages = computed(() => {
-  return Math.ceil(props.totalItems / props.perPage)
-})
+  return Math.ceil(props.totalItems / props.perPage);
+});
 
 const startItem = computed(() => {
-  return ((props.currentPage - 1) * props.perPage) + 1
-})
+  return (props.currentPage - 1) * props.perPage + 1;
+});
 
 const endItem = computed(() => {
-  return Math.min(props.currentPage * props.perPage, props.totalItems)
-})
+  return Math.min(props.currentPage * props.perPage, props.totalItems);
+});
 
 const visiblePages = computed(() => {
-  const pages = []
-  const maxVisible = 5
-  let start = Math.max(1, props.currentPage - Math.floor(maxVisible / 2))
-  let end = Math.min(totalPages.value, start + maxVisible - 1)
-  
+  const pages = [];
+  const maxVisible = 5;
+  let start = Math.max(1, props.currentPage - Math.floor(maxVisible / 2));
+  let end = Math.min(totalPages.value, start + maxVisible - 1);
+
   if (end - start + 1 < maxVisible) {
-    start = Math.max(1, end - maxVisible + 1)
+    start = Math.max(1, end - maxVisible + 1);
   }
-  
+
   for (let i = start; i <= end; i++) {
-    pages.push(i)
+    pages.push(i);
   }
-  
-  return pages
-})
+
+  return pages;
+});
 
 // Methods
 const getRowKey = (item, index) => {
-  return item[props.rowKey] || index
-}
+  return item[props.rowKey] || index;
+};
 
 const getCellValue = (item, key) => {
-  return key.split('.').reduce((obj, k) => obj?.[k], item)
-}
+  return key.split(".").reduce((obj, k) => obj?.[k], item);
+};
 
 const formatCellValue = (item, column) => {
-  const value = getCellValue(item, column.key)
-  
-  if (column.formatter && typeof column.formatter === 'function') {
-    return column.formatter(value, item)
+  const value = getCellValue(item, column.key);
+
+  if (column.formatter && typeof column.formatter === "function") {
+    return column.formatter(value, item);
   }
-  
-  return value
-}
+
+  return value;
+};
 
 const isSelected = (item) => {
-  const key = getRowKey(item, -1)
-  return selectedItems.value.some(selected => getRowKey(selected, -1) === key)
-}
+  const key = getRowKey(item, -1);
+  return selectedItems.value.some(
+    (selected) => getRowKey(selected, -1) === key,
+  );
+};
 
 const toggleSelection = (item) => {
-  const key = getRowKey(item, -1)
-  const index = selectedItems.value.findIndex(selected => getRowKey(selected, -1) === key)
-  
+  const key = getRowKey(item, -1);
+  const index = selectedItems.value.findIndex(
+    (selected) => getRowKey(selected, -1) === key,
+  );
+
   if (index >= 0) {
-    selectedItems.value.splice(index, 1)
+    selectedItems.value.splice(index, 1);
   } else {
-    selectedItems.value.push(item)
+    selectedItems.value.push(item);
   }
-  
-  emit('selection-change', selectedItems.value)
-}
+
+  emit("selection-change", selectedItems.value);
+};
 
 const toggleAll = () => {
   if (allSelected.value) {
-    selectedItems.value = []
+    selectedItems.value = [];
   } else {
-    selectedItems.value = [...props.items]
+    selectedItems.value = [...props.items];
   }
-  
-  emit('selection-change', selectedItems.value)
-}
+
+  emit("selection-change", selectedItems.value);
+};
 
 const handleSort = (column) => {
-  if (!column.sortable && !props.sortable) return
-  
+  if (!column.sortable && !props.sortable) return;
+
   if (sortBy.value === column.key) {
-    sortDirection.value = sortDirection.value === 'asc' ? 'desc' : 'asc'
+    sortDirection.value = sortDirection.value === "asc" ? "desc" : "asc";
   } else {
-    sortBy.value = column.key
-    sortDirection.value = 'asc'
+    sortBy.value = column.key;
+    sortDirection.value = "asc";
   }
-  
-  emit('sort', {
+
+  emit("sort", {
     column: column.key,
-    direction: sortDirection.value
-  })
-}
+    direction: sortDirection.value,
+  });
+};
 
 const handleSearch = () => {
-  emit('search', searchQuery.value)
-}
+  emit("search", searchQuery.value);
+};
 
 const handleRowClick = (item, index) => {
-  emit('row-click', { item, index })
-}
+  emit("row-click", { item, index });
+};
 
 const goToPage = (page) => {
   if (page >= 1 && page <= totalPages.value) {
-    emit('page-change', page)
+    emit("page-change", page);
   }
-}
+};
 
 // CSS Classes
 const columnClasses = (column) => {
   return [
-    'table-column',
+    "table-column",
     `column-${column.key}`,
     {
-      'sortable': column.sortable || props.sortable,
-      'sorted': sortBy.value === column.key,
-      'text-right': column.align === 'right',
-      'text-center': column.align === 'center'
-    }
-  ]
-}
+      sortable: column.sortable || props.sortable,
+      sorted: sortBy.value === column.key,
+      "text-right": column.align === "right",
+      "text-center": column.align === "center",
+    },
+  ];
+};
 
 const cellClasses = (column, item) => {
   return [
-    'table-cell',
+    "table-cell",
     `cell-${column.key}`,
     {
-      'text-right': column.align === 'right',
-      'text-center': column.align === 'center'
-    }
-  ]
-}
+      "text-right": column.align === "right",
+      "text-center": column.align === "center",
+    },
+  ];
+};
 
 const rowClasses = (item, index) => {
   return [
-    'table-row',
+    "table-row",
     {
-      'row-selected': isSelected(item),
-      'row-clickable': true
-    }
-  ]
-}
+      "row-selected": isSelected(item),
+      "row-clickable": true,
+    },
+  ];
+};
 
 const pageButtonClasses = (page) => {
   return [
-    'page-button',
+    "page-button",
     {
-      'page-active': page === props.currentPage
-    }
-  ]
-}
+      "page-active": page === props.currentPage,
+    },
+  ];
+};
 </script>
 
 <style scoped>
@@ -497,7 +518,9 @@ const pageButtonClasses = (page) => {
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .table-pagination {

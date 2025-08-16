@@ -1,11 +1,11 @@
 <template>
-  <page 
+  <page
     title="Collections"
     subtitle="Manage your content collections and structures"
     :breadcrumbs="breadcrumbs"
   >
     <template #actions>
-      <button 
+      <button
         class="btn btn-primary"
         @click="showCreateModal = true"
         v-if="canCreate"
@@ -70,7 +70,7 @@
         <p class="empty-description">
           Collections help you organize and manage different types of content.
         </p>
-        <button 
+        <button
           class="btn btn-primary"
           @click="showCreateModal = true"
           v-if="canCreate"
@@ -107,179 +107,193 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import { router } from '@inertiajs/vue3'
-import { route } from 'ziggy-js'
-import { useShopperStore } from '../stores/shopper'
-import Page from '../components/page.vue'
-import CollectionCard from '../components/collection-card.vue'
-import Modal from '../components/modal.vue'
+import { ref, computed, onMounted } from "vue";
+import { router } from "@inertiajs/vue3";
+import { route } from "ziggy-js";
+import { useShopperStore } from "../stores/shopper";
+import Page from "../components/page.vue";
+import CollectionCard from "../components/collection-card.vue";
+import Modal from "../components/modal.vue";
 
-const shopperStore = useShopperStore()
+const shopperStore = useShopperStore();
 
 // State
-const showCreateModal = ref(false)
-const showEditModal = ref(false)
-const showDeleteModal = ref(false)
-const editingCollection = ref(null)
-const deletingCollection = ref(null)
-const loading = ref(true)
+const showCreateModal = ref(false);
+const showEditModal = ref(false);
+const showDeleteModal = ref(false);
+const editingCollection = ref(null);
+const deletingCollection = ref(null);
+const loading = ref(true);
 
 // Props from route or parent
 const sites = ref([
-  { handle: 'default', name: 'Main Site' },
-  { handle: 'blog', name: 'Blog' },
-  { handle: 'shop', name: 'Shop' }
-])
+  { handle: "default", name: "Main Site" },
+  { handle: "blog", name: "Blog" },
+  { handle: "shop", name: "Shop" },
+]);
 
 // Computed
-const collections = computed(() => shopperStore.collections)
+const collections = computed(() => shopperStore.collections);
 
 const ecommerceCollections = computed(() => {
-  return collections.value.filter(c => 
-    ['products', 'orders', 'customers', 'categories'].includes(c.handle)
-  )
-})
+  return collections.value.filter((c) =>
+    ["products", "orders", "customers", "categories"].includes(c.handle),
+  );
+});
 
 const contentCollections = computed(() => {
-  return collections.value.filter(c => 
-    ['pages', 'blog', 'news'].includes(c.handle)
-  )
-})
+  return collections.value.filter((c) =>
+    ["pages", "blog", "news"].includes(c.handle),
+  );
+});
 
 const customCollections = computed(() => {
-  return collections.value.filter(c => 
-    !['products', 'orders', 'customers', 'categories', 'pages', 'blog', 'news'].includes(c.handle)
-  )
-})
+  return collections.value.filter(
+    (c) =>
+      ![
+        "products",
+        "orders",
+        "customers",
+        "categories",
+        "pages",
+        "blog",
+        "news",
+      ].includes(c.handle),
+  );
+});
 
 const canCreate = computed(() => {
-  return shopperStore.canManage('collections')
-})
+  return shopperStore.canManage("collections");
+});
 
 const breadcrumbs = computed(() => [
-  { title: 'Control Panel', url: '/cp' },
-  { title: 'Collections', url: '/cp/collections' }
-])
+  { title: "Control Panel", url: "/cp" },
+  { title: "Collections", url: "/cp/collections" },
+]);
 
 // Methods
 const editCollection = (collection) => {
-  editingCollection.value = collection
-  showEditModal.value = true
-}
+  editingCollection.value = collection;
+  showEditModal.value = true;
+};
 
 const deleteCollection = (collection) => {
-  deletingCollection.value = collection
-  showDeleteModal.value = true
-}
+  deletingCollection.value = collection;
+  showDeleteModal.value = true;
+};
 
 const viewEntries = (collection) => {
-  router.visit(route('cp.collections.entries.index', { collection: collection.handle }))
-}
+  router.visit(
+    route("cp.collections.entries.index", { collection: collection.handle }),
+  );
+};
 
 const saveCollection = async (collectionData) => {
   try {
-    shopperStore.setLoading(true)
-    
+    shopperStore.setLoading(true);
+
     if (editingCollection.value) {
-      shopperStore.updateCollection(editingCollection.value.handle, collectionData)
-      shopperStore.addToast('Collection updated successfully', 'success')
+      shopperStore.updateCollection(
+        editingCollection.value.handle,
+        collectionData,
+      );
+      shopperStore.addToast("Collection updated successfully", "success");
     } else {
-      shopperStore.createCollection(collectionData)
-      shopperStore.addToast('Collection created successfully', 'success')
+      shopperStore.createCollection(collectionData);
+      shopperStore.addToast("Collection created successfully", "success");
     }
-    
-    closeModal()
+
+    closeModal();
   } catch (error) {
-    shopperStore.addError(error)
-    shopperStore.addToast('Failed to save collection', 'error')
+    shopperStore.addError(error);
+    shopperStore.addToast("Failed to save collection", "error");
   } finally {
-    shopperStore.setLoading(false)
+    shopperStore.setLoading(false);
   }
-}
+};
 
 const confirmDelete = async () => {
   try {
-    shopperStore.setLoading(true)
-    shopperStore.deleteCollection(deletingCollection.value.handle)
-    shopperStore.addToast('Collection deleted successfully', 'success')
-    showDeleteModal.value = false
+    shopperStore.setLoading(true);
+    shopperStore.deleteCollection(deletingCollection.value.handle);
+    shopperStore.addToast("Collection deleted successfully", "success");
+    showDeleteModal.value = false;
   } catch (error) {
-    shopperStore.addError(error)
-    shopperStore.addToast('Failed to delete collection', 'error')
+    shopperStore.addError(error);
+    shopperStore.addToast("Failed to delete collection", "error");
   } finally {
-    shopperStore.setLoading(false)
+    shopperStore.setLoading(false);
   }
-}
+};
 
 const closeModal = () => {
-  showCreateModal.value = false
-  showEditModal.value = false
-  editingCollection.value = null
-}
+  showCreateModal.value = false;
+  showEditModal.value = false;
+  editingCollection.value = null;
+};
 
 // Load collections on mount
 onMounted(async () => {
   try {
-    await shopperStore.fetchCollections()
-    
+    await shopperStore.fetchCollections();
+
     // Create default e-commerce collections if they don't exist
     const defaultCollections = [
       {
-        handle: 'products',
-        title: 'Products',
-        type: 'ecommerce',
-        icon: 'box',
-        blueprint: 'product',
-        sites: ['default', 'shop'],
-        route: '/products/{slug}',
-        sort_by: 'title',
-        sort_direction: 'asc'
+        handle: "products",
+        title: "Products",
+        type: "ecommerce",
+        icon: "box",
+        blueprint: "product",
+        sites: ["default", "shop"],
+        route: "/products/{slug}",
+        sort_by: "title",
+        sort_direction: "asc",
       },
       {
-        handle: 'orders',
-        title: 'Orders',
-        type: 'ecommerce',
-        icon: 'document-text',
-        blueprint: 'order',
-        sites: ['default'],
-        sort_by: 'created_at',
-        sort_direction: 'desc'
+        handle: "orders",
+        title: "Orders",
+        type: "ecommerce",
+        icon: "document-text",
+        blueprint: "order",
+        sites: ["default"],
+        sort_by: "created_at",
+        sort_direction: "desc",
       },
       {
-        handle: 'customers',
-        title: 'Customers',
-        type: 'ecommerce',
-        icon: 'users',
-        blueprint: 'customer',
-        sites: ['default'],
-        sort_by: 'name',
-        sort_direction: 'asc'
+        handle: "customers",
+        title: "Customers",
+        type: "ecommerce",
+        icon: "users",
+        blueprint: "customer",
+        sites: ["default"],
+        sort_by: "name",
+        sort_direction: "asc",
       },
       {
-        handle: 'categories',
-        title: 'Categories',
-        type: 'ecommerce',
-        icon: 'folder',
-        blueprint: 'category',
-        sites: ['default', 'shop'],
-        route: '/categories/{slug}',
-        sort_by: 'title',
-        sort_direction: 'asc'
-      }
-    ]
+        handle: "categories",
+        title: "Categories",
+        type: "ecommerce",
+        icon: "folder",
+        blueprint: "category",
+        sites: ["default", "shop"],
+        route: "/categories/{slug}",
+        sort_by: "title",
+        sort_direction: "asc",
+      },
+    ];
 
     for (const collectionData of defaultCollections) {
       if (!shopperStore.getCollection(collectionData.handle)) {
-        shopperStore.createCollection(collectionData)
+        shopperStore.createCollection(collectionData);
       }
     }
   } catch (error) {
-    shopperStore.addError(error)
+    shopperStore.addError(error);
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-})
+});
 </script>
 
 <style scoped>

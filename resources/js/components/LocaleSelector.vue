@@ -9,8 +9,8 @@
     >
       <globe-alt-icon class="w-4 h-4" />
       <span>{{ currentLocaleLabel }}</span>
-      <chevron-down-icon 
-        class="w-4 h-4 transition-transform" 
+      <chevron-down-icon
+        class="w-4 h-4 transition-transform"
         :class="{ 'rotate-180': isOpen }"
       />
     </button>
@@ -35,13 +35,13 @@
             @click="changeLocale(option.value)"
             type="button"
             class="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors"
-            :class="{ 
+            :class="{
               'bg-blue-50 text-blue-600': option.value === locale,
-              'font-medium': option.value === locale 
+              'font-medium': option.value === locale,
             }"
           >
             <span class="flex-1 text-left">{{ option.label }}</span>
-            <check-icon 
+            <check-icon
               v-if="option.value === locale"
               class="w-4 h-4 text-blue-600"
             />
@@ -51,122 +51,111 @@
     </transition>
 
     <!-- Backdrop -->
-    <div
-      v-if="isOpen"
-      @click="isOpen = false"
-      class="fixed inset-0 z-40"
-    ></div>
+    <div v-if="isOpen" @click="isOpen = false" class="fixed inset-0 z-40"></div>
   </div>
 </template>
 
 <script>
-import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
-import { useTranslation } from '../stores/locale'
-import { 
-  GlobeAltIcon, 
-  ChevronDownIcon, 
-  CheckIcon 
-} from '@heroicons/vue/24/outline'
+import { ref, computed, watch, onMounted, onUnmounted } from "vue";
+import { useTranslation } from "../stores/locale";
+import {
+  GlobeAltIcon,
+  ChevronDownIcon,
+  CheckIcon,
+} from "@heroicons/vue/24/outline";
 
 export default {
-  name: 'LocaleSelector',
-  
+  name: "LocaleSelector",
+
   components: {
     GlobeAltIcon,
     ChevronDownIcon,
-    CheckIcon
+    CheckIcon,
   },
 
   setup() {
-    const { 
-      locale, 
-      availableLocales, 
-      localeOptions, 
-      setLocale, 
-      t 
-    } = useTranslation()
-    
-    const isOpen = ref(false)
-    const isChanging = ref(false)
+    const { locale, availableLocales, localeOptions, setLocale, t } =
+      useTranslation();
+
+    const isOpen = ref(false);
+    const isChanging = ref(false);
 
     // Computed
     const currentLocaleLabel = computed(() => {
-      const current = localeOptions.value.find(option => option.value === locale.value)
-      return current ? current.label : locale.value.toUpperCase()
-    })
+      const current = localeOptions.value.find(
+        (option) => option.value === locale.value,
+      );
+      return current ? current.label : locale.value.toUpperCase();
+    });
 
     // Methods
     const changeLocale = async (newLocale) => {
       if (newLocale === locale.value || isChanging.value) {
-        isOpen.value = false
-        return
+        isOpen.value = false;
+        return;
       }
 
-      isChanging.value = true
-      
+      isChanging.value = true;
+
       try {
-        await setLocale(newLocale)
-        isOpen.value = false
-        
+        await setLocale(newLocale);
+        isOpen.value = false;
+
         // Show success message
         if (window.showNotification) {
           window.showNotification(
-            t('admin.messages.locale_updated'), 
-            'success'
-          )
+            t("admin.messages.locale_updated"),
+            "success",
+          );
         }
-        
+
         // Optional: Reload page to apply new translations everywhere
         if (shouldReloadOnLocaleChange()) {
           setTimeout(() => {
-            window.location.reload()
-          }, 500)
+            window.location.reload();
+          }, 500);
         }
-        
       } catch (error) {
-        console.error('Failed to change locale:', error)
-        
+        console.error("Failed to change locale:", error);
+
         if (window.showNotification) {
-          window.showNotification(
-            t('admin.messages.error'), 
-            'error'
-          )
+          window.showNotification(t("admin.messages.error"), "error");
         }
       } finally {
-        isChanging.value = false
+        isChanging.value = false;
       }
-    }
+    };
 
     const shouldReloadOnLocaleChange = () => {
       // Check if app config suggests reloading
-      return window.ShopperConfig?.reloadOnLocaleChange !== false
-    }
+      return window.ShopperConfig?.reloadOnLocaleChange !== false;
+    };
 
     const handleKeydown = (event) => {
-      if (event.key === 'Escape') {
-        isOpen.value = false
+      if (event.key === "Escape") {
+        isOpen.value = false;
       }
-    }
+    };
 
     // Lifecycle
     onMounted(() => {
-      document.addEventListener('keydown', handleKeydown)
-    })
+      document.addEventListener("keydown", handleKeydown);
+    });
 
     onUnmounted(() => {
-      document.removeEventListener('keydown', handleKeydown)
-    })
+      document.removeEventListener("keydown", handleKeydown);
+    });
 
     // Close dropdown when clicking outside
     watch(isOpen, (newValue) => {
       if (newValue) {
         // Focus management for accessibility
-        const firstOption = document.querySelector('[data-locale-option]')
+        const firstOption = document.querySelector("[data-locale-option]");
         if (firstOption) {
-          firstOption.focus()
+          firstOption.focus();
         }
       }
-    })
+    });
 
     return {
       isOpen,
@@ -176,10 +165,10 @@ export default {
       localeOptions,
       currentLocaleLabel,
       changeLocale,
-      t
-    }
-  }
-}
+      t,
+    };
+  },
+};
 </script>
 
 <style scoped>

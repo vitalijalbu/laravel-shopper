@@ -32,12 +32,12 @@
   "devDependencies": {
     "@headlessui/vue": "^1.7.23",
     "@heroicons/vue": "^2.2.0",
-    "@inertiajs/vue3": "^2.1.1",
+    "@inertiajs/vue3": "^2.1.2",
     "@tailwindcss/vite": "^4.1.12",
-    "@types/node": "^24.2.1",
+    "@types/node": "^24.3.0",
     "@vitejs/plugin-vue": "^6.0.1",
     "@vue/eslint-config-typescript": "^14.6.0",
-    "@vue/tsconfig": "^0.7.0",
+    "@vue/tsconfig": "^0.8.0",
     "axios": "^1.11.0",
     "chart.js": "^4.5.0",
     "eslint": "^9.33.0",
@@ -63,7 +63,6 @@
     "tailwind-merge": "^3.3.1",
     "vue-chartjs": "^5.3.2",
     "vue-draggable-plus": "^0.6.0",
-    "vue-i18n": "^10.0.8",
     "ziggy-js": "^2.5.3"
   }
 }

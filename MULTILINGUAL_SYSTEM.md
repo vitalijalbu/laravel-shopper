@@ -168,7 +168,7 @@ formatRelativeTime(date, 'it-IT') // 2 ore fa
 ### 2. Plugin Vue Globale
 ```javascript
 // Disponibile in tutti i componenti
-this.$t('key')
+this.t('key')
 this.$tc('key', count)
 this.$te('key') // verifica esistenza
 ```

@@ -1,96 +1,120 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
-import { Head, router } from '@inertiajs/vue3'
-import Card from '../../Components/ui/Card.vue'
-import CardHeader from '../../Components/ui/CardHeader.vue'
-import CardTitle from '../../Components/ui/CardTitle.vue'
-import CardContent from '../../Components/ui/CardContent.vue'
-import { Line, Bar, Doughnut } from 'vue-chartjs'
-import { formatCurrency, formatNumber, formatPercentage } from '../../utils/formatters'
+import { ref, computed, watch } from "vue";
+import { Head, router } from "@inertiajs/vue3";
+import Card from "../../Components/ui/Card.vue";
+import CardHeader from "../../Components/ui/CardHeader.vue";
+import CardTitle from "../../Components/ui/CardTitle.vue";
+import CardContent from "../../Components/ui/CardContent.vue";
+import { Line, Bar, Doughnut } from "vue-chartjs";
+import {
+  formatCurrency,
+  formatNumber,
+  formatPercentage,
+} from "../../utils/formatters";
 
 interface ReportData {
   summary?: {
     revenue: {
-      total: number
-      chart_data: Array<{ date: string; value: number }>
-    }
+      total: number;
+      chart_data: Array<{ date: string; value: number }>;
+    };
     orders: {
-      total: number
-      chart_data: Array<{ date: string; value: number }>
-    }
+      total: number;
+      chart_data: Array<{ date: string; value: number }>;
+    };
     visitors: {
-      total: number
-      chart_data: Array<{ date: string; value: number }>
-    }
-  }
-  trends?: any[]
-  page_views?: number
-  unique_visitors?: number
-  bounce_rate?: number
-  average_session_duration?: string
-  total_sales?: number
-  orders_count?: number
-  average_order_value?: number
+      total: number;
+      chart_data: Array<{ date: string; value: number }>;
+    };
+  };
+  trends?: any[];
+  page_views?: number;
+  unique_visitors?: number;
+  bounce_rate?: number;
+  average_session_duration?: string;
+  total_sales?: number;
+  orders_count?: number;
+  average_order_value?: number;
   top_selling_products?: Array<{
-    id: number
-    name: string
-    sales: number
-    revenue: number
-  }>
+    id: number;
+    name: string;
+    sales: number;
+    revenue: number;
+  }>;
   most_viewed?: Array<{
-    id: number
-    name: string
-    views: number
-  }>
+    id: number;
+    name: string;
+    views: number;
+  }>;
   best_converting?: Array<{
-    id: number
-    name: string
-    conversion_rate: number
-  }>
+    id: number;
+    name: string;
+    conversion_rate: number;
+  }>;
   inventory_alerts?: Array<{
-    id: number
-    name: string
-    stock: number
-  }>
-  new_customers?: number
-  returning_customers?: number
-  customer_lifetime_value?: number
+    id: number;
+    name: string;
+    stock: number;
+  }>;
+  new_customers?: number;
+  returning_customers?: number;
+  customer_lifetime_value?: number;
   top_customers?: Array<{
-    id: number
-    name: string
-    total_spent: number
-    orders_count: number
-  }>
+    id: number;
+    name: string;
+    total_spent: number;
+    orders_count: number;
+  }>;
 }
 
 interface Props {
-  report_type: string
-  period: string
-  data: ReportData
+  report_type: string;
+  period: string;
+  data: ReportData;
 }
 
-const props = defineProps<Props>()
+const props = defineProps<Props>();
 
-const selectedReportType = ref(props.report_type)
-const selectedPeriod = ref(props.period)
-const isLoading = ref(false)
+const selectedReportType = ref(props.report_type);
+const selectedPeriod = ref(props.period);
+const isLoading = ref(false);
 
 // Report type options
 const reportTypes = [
-  { value: 'overview', label: 'Overview', description: 'General performance metrics' },
-  { value: 'traffic', label: 'Traffic', description: 'Website traffic analysis' },
-  { value: 'sales', label: 'Sales', description: 'Sales performance and revenue' },
-  { value: 'products', label: 'Products', description: 'Product performance insights' },
-  { value: 'customers', label: 'Customers', description: 'Customer behavior and metrics' },
-]
+  {
+    value: "overview",
+    label: "Overview",
+    description: "General performance metrics",
+  },
+  {
+    value: "traffic",
+    label: "Traffic",
+    description: "Website traffic analysis",
+  },
+  {
+    value: "sales",
+    label: "Sales",
+    description: "Sales performance and revenue",
+  },
+  {
+    value: "products",
+    label: "Products",
+    description: "Product performance insights",
+  },
+  {
+    value: "customers",
+    label: "Customers",
+    description: "Customer behavior and metrics",
+  },
+];
 
 // Period options
 const periodOptions = [
-  { value: '7', label: 'Last 7 days' },
-  { value: '30', label: 'Last 30 days' },
-  { value: '90', label: 'Last 90 days' },
-  { value: '365', label: 'Last year' },
-]
+  { value: "7", label: "Last 7 days" },
+  { value: "30", label: "Last 30 days" },
+  { value: "90", label: "Last 90 days" },
+  { value: "365", label: "Last year" },
+];
 
 // Chart options
 const chartOptions = {
@@ -98,7 +122,7 @@ const chartOptions = {
   maintainAspectRatio: false,
   plugins: {
     legend: {
-      position: 'top' as const,
+      position: "top" as const,
     },
   },
   scales: {
@@ -106,116 +130,132 @@ const chartOptions = {
       beginAtZero: true,
     },
   },
-}
+};
 
 // Revenue chart data (for overview report)
 const revenueChartData = computed(() => {
-  if (!props.data.summary?.revenue?.chart_data) return null
-  
+  if (!props.data.summary?.revenue?.chart_data) return null;
+
   return {
-    labels: props.data.summary.revenue.chart_data.map(d => new Date(d.date).toLocaleDateString()),
+    labels: props.data.summary.revenue.chart_data.map((d) =>
+      new Date(d.date).toLocaleDateString(),
+    ),
     datasets: [
       {
-        label: 'Revenue',
-        data: props.data.summary.revenue.chart_data.map(d => d.value),
-        borderColor: 'rgb(59, 130, 246)',
-        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+        label: "Revenue",
+        data: props.data.summary.revenue.chart_data.map((d) => d.value),
+        borderColor: "rgb(59, 130, 246)",
+        backgroundColor: "rgba(59, 130, 246, 0.1)",
         tension: 0.3,
         fill: true,
       },
     ],
-  }
-})
+  };
+});
 
 // Orders chart data (for overview report)
 const ordersChartData = computed(() => {
-  if (!props.data.summary?.orders?.chart_data) return null
-  
+  if (!props.data.summary?.orders?.chart_data) return null;
+
   return {
-    labels: props.data.summary.orders.chart_data.map(d => new Date(d.date).toLocaleDateString()),
+    labels: props.data.summary.orders.chart_data.map((d) =>
+      new Date(d.date).toLocaleDateString(),
+    ),
     datasets: [
       {
-        label: 'Orders',
-        data: props.data.summary.orders.chart_data.map(d => d.value),
-        backgroundColor: 'rgba(34, 197, 94, 0.8)',
-        borderColor: 'rgb(34, 197, 94)',
+        label: "Orders",
+        data: props.data.summary.orders.chart_data.map((d) => d.value),
+        backgroundColor: "rgba(34, 197, 94, 0.8)",
+        borderColor: "rgb(34, 197, 94)",
         borderWidth: 1,
       },
     ],
-  }
-})
+  };
+});
 
 // Traffic sources chart data (for traffic report)
 const trafficSourcesData = computed(() => {
   // Mock data for traffic sources
   return {
-    labels: ['Direct', 'Search', 'Social', 'Referral', 'Email'],
+    labels: ["Direct", "Search", "Social", "Referral", "Email"],
     datasets: [
       {
         data: [45, 30, 15, 7, 3],
         backgroundColor: [
-          '#3B82F6',
-          '#10B981',
-          '#8B5CF6',
-          '#F59E0B',
-          '#EF4444',
+          "#3B82F6",
+          "#10B981",
+          "#8B5CF6",
+          "#F59E0B",
+          "#EF4444",
         ],
         borderWidth: 0,
       },
     ],
-  }
-})
+  };
+});
 
 // Handle report type change
 const handleReportTypeChange = () => {
-  if (selectedReportType.value === props.report_type) return
-  
-  isLoading.value = true
-  router.get(`/admin/analytics/reports?type=${selectedReportType.value}&period=${selectedPeriod.value}`)
-}
+  if (selectedReportType.value === props.report_type) return;
+
+  isLoading.value = true;
+  router.get(
+    `/admin/analytics/reports?type=${selectedReportType.value}&period=${selectedPeriod.value}`,
+  );
+};
 
 // Handle period change
 const handlePeriodChange = () => {
-  if (selectedPeriod.value === props.period) return
-  
-  isLoading.value = true
-  router.get(`/admin/analytics/reports?type=${selectedReportType.value}&period=${selectedPeriod.value}`)
-}
+  if (selectedPeriod.value === props.period) return;
+
+  isLoading.value = true;
+  router.get(
+    `/admin/analytics/reports?type=${selectedReportType.value}&period=${selectedPeriod.value}`,
+  );
+};
 
 // Get current report type info
 const currentReportType = computed(() => {
-  return reportTypes.find(type => type.value === props.report_type) || reportTypes[0]
-})
+  return (
+    reportTypes.find((type) => type.value === props.report_type) ||
+    reportTypes[0]
+  );
+});
 
 // Export report
 const exportReport = () => {
   const params = new URLSearchParams({
     type: props.report_type,
     period: props.period,
-    export: 'true',
-  })
-  
-  window.open(`/admin/analytics/reports?${params.toString()}`)
-}
+    export: "true",
+  });
+
+  window.open(`/admin/analytics/reports?${params.toString()}`);
+};
 
 // Watch for route changes to update loading state
-watch(() => [props.report_type, props.period], () => {
-  isLoading.value = false
-})
+watch(
+  () => [props.report_type, props.period],
+  () => {
+    isLoading.value = false;
+  },
+);
 </script>
 
 <template>
   <Head :title="`${currentReportType.label} Report`" />
-  
+
   <AdminLayout>
     <div class="space-y-6">
       <!-- Header -->
       <div class="flex items-center justify-between">
         <div>
-          <h1 class="text-3xl font-bold text-gray-900">{{ currentReportType.label }} Report</h1>
+          <h1 class="text-3xl font-bold text-gray-900">
+            {{ currentReportType.label }} Report
+          </h1>
           <p class="text-gray-600 mt-1">{{ currentReportType.description }}</p>
         </div>
-        
+
         <div class="flex items-center gap-4">
           <select
             v-model="selectedPeriod"
@@ -230,13 +270,23 @@ watch(() => [props.report_type, props.period], () => {
               {{ option.label }}
             </option>
           </select>
-          
+
           <button
             @click="exportReport"
             class="btn btn-outline flex items-center gap-2"
           >
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              />
             </svg>
             Export
           </button>
@@ -250,12 +300,15 @@ watch(() => [props.report_type, props.period], () => {
             <button
               v-for="reportType in reportTypes"
               :key="reportType.value"
-              @click="selectedReportType = reportType.value; handleReportTypeChange()"
+              @click="
+                selectedReportType = reportType.value;
+                handleReportTypeChange();
+              "
               :class="[
                 'px-4 py-2 rounded-lg text-sm font-medium transition-colors',
                 reportType.value === props.report_type
                   ? 'bg-blue-100 text-blue-900 border-blue-200'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200',
               ]"
             >
               {{ reportType.label }}
@@ -333,7 +386,7 @@ watch(() => [props.report_type, props.period], () => {
             <CardContent class="p-6">
               <div class="text-center">
                 <p class="text-3xl font-bold text-gray-900">
-                  {{ data.average_session_duration || '0:00' }}
+                  {{ data.average_session_duration || "0:00" }}
                 </p>
                 <p class="text-sm font-medium text-gray-600">Avg. Session</p>
               </div>
@@ -349,7 +402,10 @@ watch(() => [props.report_type, props.period], () => {
             </CardHeader>
             <CardContent>
               <div class="h-64">
-                <Doughnut :data="trafficSourcesData" :options="{ responsive: true, maintainAspectRatio: false }" />
+                <Doughnut
+                  :data="trafficSourcesData"
+                  :options="{ responsive: true, maintainAspectRatio: false }"
+                />
               </div>
             </CardContent>
           </Card>
@@ -417,7 +473,9 @@ watch(() => [props.report_type, props.period], () => {
                 <p class="text-3xl font-bold text-gray-900">
                   {{ formatCurrency(data.average_order_value || 0) }}
                 </p>
-                <p class="text-sm font-medium text-gray-600">Avg. Order Value</p>
+                <p class="text-sm font-medium text-gray-600">
+                  Avg. Order Value
+                </p>
               </div>
             </CardContent>
           </Card>
@@ -440,7 +498,9 @@ watch(() => [props.report_type, props.period], () => {
                   <p class="text-sm text-gray-600">{{ product.sales }} sales</p>
                 </div>
                 <div class="text-right">
-                  <p class="font-medium text-gray-900">{{ formatCurrency(product.revenue) }}</p>
+                  <p class="font-medium text-gray-900">
+                    {{ formatCurrency(product.revenue) }}
+                  </p>
                 </div>
               </div>
             </div>
@@ -464,7 +524,9 @@ watch(() => [props.report_type, props.period], () => {
                   class="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
                 >
                   <p class="font-medium text-gray-900">{{ product.name }}</p>
-                  <span class="text-gray-600">{{ formatNumber(product.views) }} views</span>
+                  <span class="text-gray-600"
+                    >{{ formatNumber(product.views) }} views</span
+                  >
                 </div>
               </div>
             </CardContent>
@@ -483,7 +545,9 @@ watch(() => [props.report_type, props.period], () => {
                   class="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
                 >
                   <p class="font-medium text-gray-900">{{ product.name }}</p>
-                  <span class="text-green-600 font-medium">{{ formatPercentage(product.conversion_rate) }}</span>
+                  <span class="text-green-600 font-medium">{{
+                    formatPercentage(product.conversion_rate)
+                  }}</span>
                 </div>
               </div>
             </CardContent>
@@ -506,7 +570,9 @@ watch(() => [props.report_type, props.period], () => {
                   <p class="font-medium text-gray-900">{{ product.name }}</p>
                   <p class="text-sm text-red-600">Low stock warning</p>
                 </div>
-                <span class="text-red-600 font-medium">{{ product.stock }} remaining</span>
+                <span class="text-red-600 font-medium"
+                  >{{ product.stock }} remaining</span
+                >
               </div>
             </div>
           </CardContent>
@@ -533,7 +599,9 @@ watch(() => [props.report_type, props.period], () => {
                 <p class="text-3xl font-bold text-gray-900">
                   {{ formatNumber(data.returning_customers || 0) }}
                 </p>
-                <p class="text-sm font-medium text-gray-600">Returning Customers</p>
+                <p class="text-sm font-medium text-gray-600">
+                  Returning Customers
+                </p>
               </div>
             </CardContent>
           </Card>
@@ -564,10 +632,14 @@ watch(() => [props.report_type, props.period], () => {
               >
                 <div>
                   <p class="font-medium text-gray-900">{{ customer.name }}</p>
-                  <p class="text-sm text-gray-600">{{ customer.orders_count }} orders</p>
+                  <p class="text-sm text-gray-600">
+                    {{ customer.orders_count }} orders
+                  </p>
                 </div>
                 <div class="text-right">
-                  <p class="font-medium text-gray-900">{{ formatCurrency(customer.total_spent) }}</p>
+                  <p class="font-medium text-gray-900">
+                    {{ formatCurrency(customer.total_spent) }}
+                  </p>
                 </div>
               </div>
             </div>
@@ -582,7 +654,9 @@ watch(() => [props.report_type, props.period], () => {
       >
         <div class="bg-white p-6 rounded-lg shadow-lg">
           <div class="flex items-center space-x-3">
-            <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+            <div
+              class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"
+            ></div>
             <span>Loading report...</span>
           </div>
         </div>
