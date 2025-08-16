@@ -5,7 +5,9 @@ namespace LaravelShopper\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
+use LaravelShopper\Http\Resources\UserResource;
 use Symfony\Component\HttpFoundation\Response;
 
 class HandleInertiaRequests
@@ -17,21 +19,20 @@ class HandleInertiaRequests
     {
         // Share auth data globally with Inertia
         Inertia::share([
-            'auth' => [
-                'user' => $request->user() ? [
-                    'id' => $request->user()->id,
-                    'name' => $request->user()->name,
-                    'email' => $request->user()->email,
-                    'avatar_url' => $request->user()->avatar_url ?? $this->getGravatar($request->user()->email),
-                    'roles' => method_exists($request->user(), 'getRoleNames')
-                        ? $request->user()->getRoleNames()->toArray()
-                        : [],
-                    'permissions' => method_exists($request->user(), 'getAllPermissions')
-                        ? $request->user()->getAllPermissions()->pluck('name')->toArray()
-                        : [],
-                    'can_access_cp' => $this->canUserAccessCP($request->user()),
-                ] : null,
-            ],
+            'csrf_token' => csrf_token(),
+            // Authentication
+            'auth' => function () {
+                $user = Auth::user();
+                Log::info('HandleInertiaRequests - Auth data', [
+                    'auth_check' => Auth::check(),
+                    'user_id' => $user ? $user->id : null,
+                    'user_email' => $user ? $user->email : null,
+                ]);
+
+                return [
+                    'user' => $user ? new UserResource($user) : null,
+                ];
+            },
             'flash' => [
                 'success' => fn () => $request->session()->get('success'),
                 'error' => fn () => $request->session()->get('error'),

@@ -7,6 +7,14 @@ import "@/components/Icons";
 // Import global styles
 import "../css/app.css";
 
+// Configure CSRF token for requests
+const token = document.head.querySelector('meta[name="csrf-token"]');
+if (token) {
+    window.Laravel = {
+        csrfToken: token.content
+    };
+}
+
 createInertiaApp({
   resolve: (name) => {
     const pages = import.meta.glob("./pages/**/*.vue", { eager: true });
@@ -17,6 +25,11 @@ createInertiaApp({
       .use(plugin)
       .use(createPinia())
       .use(ZiggyVue);
+
+    // Configure CSRF token for Inertia requests
+    if (window.Laravel && window.Laravel.csrfToken) {
+      app.config.globalProperties.$csrf = window.Laravel.csrfToken;
+    }
 
     // Global Properties
     app.config.globalProperties.$shopperConfig = window.ShopperConfig || {};

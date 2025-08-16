@@ -1,9 +1,9 @@
 <?php
 
 namespace LaravelShopper\Data;
-use Illuminate\Support\Str;
 
 use DateTime;
+use Illuminate\Support\Str;
 
 class PageDto extends BaseDto
 {

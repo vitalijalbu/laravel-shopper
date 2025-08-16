@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Providers;
+namespace LaravelShopper\Providers;
 
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Lang;
@@ -41,35 +41,49 @@ class InertiaServiceProvider extends ServiceProvider
                 ];
             },
 
-            // Locale and translations
-            'locale' => function () {
-                return [
-                    'current' => App::getLocale(),
-                    'available' => config('app.available_locales', ['en', 'it']),
-                ];
-            },
-
-            // Translations - Statamic CMS style
+            // Translations - Direct file loading approach
             'translations' => function () {
                 $locale = App::getLocale();
 
+                // Helper function to load translation files directly
+                $loadTranslations = function ($filename, $locale) {
+                    // Use the package's lang directory, not the application's
+                    $path = __DIR__."/../../resources/lang/{$locale}/{$filename}.php";
+
+                    if (file_exists($path)) {
+                        $translations = include $path;
+
+                        return $translations;
+                    }
+
+                    // Fallback to English if locale file doesn't exist
+                    $fallbackPath = __DIR__."/../../resources/lang/en/{$filename}.php";
+
+                    if (file_exists($fallbackPath)) {
+                        $translations = include $fallbackPath;
+
+                        return $translations;
+                    }
+
+                    return [];
+                };
+
                 return [
+                    // Shopper specific translations (load directly)
+                    'shopper' => $loadTranslations('shopper', $locale),
+
                     // Core admin translations
-                    'admin' => Lang::get('admin', [], $locale),
+                    'admin' => $loadTranslations('admin', $locale),
 
                     // Module-specific translations
-                    'products' => Lang::get('products', [], $locale),
-                    'categories' => Lang::get('categories', [], $locale),
-                    'brands' => Lang::get('brands', [], $locale),
-                    'pages' => Lang::get('pages', [], $locale),
+                    'products' => $loadTranslations('products', $locale),
+                    'categories' => $loadTranslations('categories', $locale),
+                    'brands' => $loadTranslations('brands', $locale),
+                    'pages' => $loadTranslations('pages', $locale),
 
-                    // Laravel validation messages
+                    // Laravel system translations (use Lang facade)
                     'validation' => Lang::get('validation', [], $locale),
-
-                    // Auth messages
                     'auth' => Lang::get('auth', [], $locale),
-
-                    // Pagination
                     'pagination' => Lang::get('pagination', [], $locale),
                 ];
             },

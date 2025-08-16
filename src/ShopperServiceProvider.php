@@ -5,7 +5,9 @@ namespace LaravelShopper;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use LaravelShopper\Console\Commands\OptimizeCommand;
+use LaravelShopper\Console\CreateAdminUserCommand;
 use LaravelShopper\Contracts\ProductRepositoryInterface;
+use LaravelShopper\Providers\InertiaServiceProvider;
 use LaravelShopper\Repositories\ProductRepository;
 use LaravelShopper\Services\CacheService;
 use LaravelShopper\Services\InventoryService;
@@ -18,11 +20,15 @@ class ShopperServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__.'/../config/shopper.php', 'shopper');
         $this->mergeConfigFrom(__DIR__.'/../config/shopper-performance.php', 'shopper-performance');
+        $this->mergeConfigFrom(__DIR__.'/../config/permission.php', 'permission');
 
         // Register OAuth services configuration
         if (file_exists(__DIR__.'/../config/services.php')) {
             $this->mergeConfigFrom(__DIR__.'/../config/services.php', 'services');
         }
+
+        // Register Inertia Service Provider
+        $this->app->register(InertiaServiceProvider::class);
 
         // Register services
         $this->app->singleton(CacheService::class);
@@ -37,6 +43,7 @@ class ShopperServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 OptimizeCommand::class,
+                CreateAdminUserCommand::class,
             ]);
         }
     }
@@ -56,6 +63,11 @@ class ShopperServiceProvider extends ServiceProvider
             $this->publishes([
                 __DIR__.'/../config/shopper.php' => config_path('shopper.php'),
             ], 'shopper-config');
+
+            // Publish permission configuration
+            $this->publishes([
+                __DIR__.'/../config/permission.php' => config_path('permission.php'),
+            ], 'shopper-permission-config');
 
             // Publish OAuth services configuration
             $this->publishes([
@@ -107,6 +119,9 @@ class ShopperServiceProvider extends ServiceProvider
         $router->aliasMiddleware('shopper.inertia', \LaravelShopper\Http\Middleware\HandleInertiaRequests::class);
         $router->aliasMiddleware('shopper.auth', \LaravelShopper\Http\Middleware\Authenticate::class);
 
+        // Register policies
+        $this->registerPolicies();
+
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'shopper');
     }
 
@@ -155,5 +170,33 @@ class ShopperServiceProvider extends ServiceProvider
                 $this->loadRoutesFrom(__DIR__.'/../routes/api-auth.php');
             });
         }
+    }
+
+    /**
+     * Register the package policies.
+     */
+    protected function registerPolicies(): void
+    {
+        $gate = $this->app[\Illuminate\Contracts\Auth\Access\Gate::class];
+
+        // Register policies for Shopper models
+        $policies = [
+            \LaravelShopper\Models\Product::class => \LaravelShopper\Policies\ProductPolicy::class,
+            // Add more model-policy mappings here as needed
+        ];
+
+        foreach ($policies as $model => $policy) {
+            $gate->policy($model, $policy);
+        }
+
+        // Register control panel gates
+        $gate->define('access-cp', \LaravelShopper\Policies\ControlPanelPolicy::class.'@access');
+        $gate->define('view-dashboard', \LaravelShopper\Policies\ControlPanelPolicy::class.'@viewDashboard');
+        $gate->define('view-analytics', \LaravelShopper\Policies\ControlPanelPolicy::class.'@viewAnalytics');
+        $gate->define('view-reports', \LaravelShopper\Policies\ControlPanelPolicy::class.'@viewReports');
+        $gate->define('manage-settings', \LaravelShopper\Policies\ControlPanelPolicy::class.'@manageSettings');
+        $gate->define('edit-settings', \LaravelShopper\Policies\ControlPanelPolicy::class.'@editSettings');
+        $gate->define('manage-users', \LaravelShopper\Policies\ControlPanelPolicy::class.'@manageUsers');
+        $gate->define('manage-roles', \LaravelShopper\Policies\ControlPanelPolicy::class.'@manageRoles');
     }
 }

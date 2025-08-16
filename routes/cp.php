@@ -30,7 +30,7 @@ Route::prefix($cpPrefix)->name('cp.')->middleware(['web', 'shopper.inertia'])->g
             ->name('login');
 
         Route::post('login', [AuthenticatedSessionController::class, 'store'])
-            ->name('login.store');
+            ->name('login');
 
         Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])
             ->name('password.request');
@@ -46,7 +46,7 @@ Route::prefix($cpPrefix)->name('cp.')->middleware(['web', 'shopper.inertia'])->g
     });
 
     // Authenticated Routes (CP access required)
-    Route::middleware(['shopper.auth', 'cp'])->group(function () {
+    Route::middleware(['shopper.auth', 'cp', 'shopper.inertia'])->group(function () {
         Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
             ->name('logout');
 

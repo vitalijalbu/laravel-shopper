@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Password;
 use LaravelShopper\Models\Brand;
 use LaravelShopper\Models\Category;
 use LaravelShopper\Models\Channel;
@@ -14,6 +15,8 @@ use LaravelShopper\Models\ProductType;
 use LaravelShopper\Models\Setting;
 use LaravelShopper\Models\Site;
 use LaravelShopper\Models\User;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class ShopperSeeder extends Seeder
 {
@@ -73,18 +76,29 @@ class ShopperSeeder extends Seeder
             Country::firstOrCreate(['code' => $country['code']], $country);
         }
 
+        // Create permissions and roles
+        $this->command->info('🔑 Creating permissions and roles...');
+        $this->createPermissionsAndRoles();
+
         // Create default admin user
         $this->command->info('👤 Creating admin user...');
         $user = User::firstOrCreate(
             ['email' => 'admin@example.com'],
             [
+                'name' => 'Admin User',
                 'first_name' => 'Admin',
                 'last_name' => 'User',
                 'email' => 'admin@example.com',
                 'email_verified_at' => now(),
-                'password' => bcrypt('password'),
+                'password' => Password::make('password'),
             ]
         );
+
+        // Assign super-admin role to user
+        if (! $user->hasRole('super-admin')) {
+            $user->assignRole('super-admin');
+            $this->command->info('✅ Assigned super-admin role to admin user');
+        }
 
         // Get main site
         $mainSite = Site::where('handle', 'main')->first();
@@ -178,5 +192,148 @@ class ShopperSeeder extends Seeder
         $this->command->info('✅ Laravel Shopper multi-site seeding completed!');
         $this->command->info('📍 Sites created: Main Store (main), Store Italia (it)');
         $this->command->info('🔑 Admin login: admin@example.com / password');
+    }
+
+    /**
+     * Create permissions and roles for the control panel.
+     */
+    protected function createPermissionsAndRoles(): void
+    {
+        // Define Control Panel permissions (similar to Statamic)
+        $permissions = [
+            // Dashboard
+            'access-cp' => 'Access Control Panel',
+            'view-dashboard' => 'View Dashboard',
+
+            // Products
+            'view-products' => 'View Products',
+            'create-products' => 'Create Products',
+            'edit-products' => 'Edit Products',
+            'delete-products' => 'Delete Products',
+            'manage-product-variants' => 'Manage Product Variants',
+
+            // Categories
+            'view-categories' => 'View Categories',
+            'create-categories' => 'Create Categories',
+            'edit-categories' => 'Edit Categories',
+            'delete-categories' => 'Delete Categories',
+
+            // Brands
+            'view-brands' => 'View Brands',
+            'create-brands' => 'Create Brands',
+            'edit-brands' => 'Edit Brands',
+            'delete-brands' => 'Delete Brands',
+
+            // Collections
+            'view-collections' => 'View Collections',
+            'create-collections' => 'Create Collections',
+            'edit-collections' => 'Edit Collections',
+            'delete-collections' => 'Delete Collections',
+
+            // Orders
+            'view-orders' => 'View Orders',
+            'edit-orders' => 'Edit Orders',
+            'delete-orders' => 'Delete Orders',
+            'manage-order-status' => 'Manage Order Status',
+
+            // Customers
+            'view-customers' => 'View Customers',
+            'create-customers' => 'Create Customers',
+            'edit-customers' => 'Edit Customers',
+            'delete-customers' => 'Delete Customers',
+
+            // Settings
+            'view-settings' => 'View Settings',
+            'edit-settings' => 'Edit Settings',
+            'manage-sites' => 'Manage Sites',
+            'manage-channels' => 'Manage Channels',
+
+            // Users & Permissions
+            'view-users' => 'View Users',
+            'create-users' => 'Create Users',
+            'edit-users' => 'Edit Users',
+            'delete-users' => 'Delete Users',
+            'manage-roles' => 'Manage Roles',
+            'manage-permissions' => 'Manage Permissions',
+
+            // Analytics & Reports
+            'view-analytics' => 'View Analytics',
+            'view-reports' => 'View Reports',
+
+            // Media
+            'view-media' => 'View Media',
+            'upload-media' => 'Upload Media',
+            'delete-media' => 'Delete Media',
+        ];
+
+        // Create permissions
+        foreach ($permissions as $name => $description) {
+            Permission::firstOrCreate(
+                ['name' => $name, 'guard_name' => 'web'],
+                ['name' => $name, 'guard_name' => 'web']
+            );
+        }
+
+        // Define roles
+        $roles = [
+            'super-admin' => [
+                'description' => 'Super Administrator - Full access to everything',
+                'permissions' => array_keys($permissions), // All permissions
+            ],
+            'admin' => [
+                'description' => 'Administrator - Full access to store management',
+                'permissions' => [
+                    'access-cp', 'view-dashboard',
+                    'view-products', 'create-products', 'edit-products', 'delete-products', 'manage-product-variants',
+                    'view-categories', 'create-categories', 'edit-categories', 'delete-categories',
+                    'view-brands', 'create-brands', 'edit-brands', 'delete-brands',
+                    'view-collections', 'create-collections', 'edit-collections', 'delete-collections',
+                    'view-orders', 'edit-orders', 'manage-order-status',
+                    'view-customers', 'create-customers', 'edit-customers',
+                    'view-settings', 'edit-settings',
+                    'view-analytics', 'view-reports',
+                    'view-media', 'upload-media',
+                ],
+            ],
+            'manager' => [
+                'description' => 'Store Manager - Limited administrative access',
+                'permissions' => [
+                    'access-cp', 'view-dashboard',
+                    'view-products', 'create-products', 'edit-products',
+                    'view-categories', 'create-categories', 'edit-categories',
+                    'view-brands', 'create-brands', 'edit-brands',
+                    'view-collections', 'create-collections', 'edit-collections',
+                    'view-orders', 'edit-orders', 'manage-order-status',
+                    'view-customers', 'create-customers', 'edit-customers',
+                    'view-analytics', 'view-reports',
+                    'view-media', 'upload-media',
+                ],
+            ],
+            'editor' => [
+                'description' => 'Content Editor - Content management only',
+                'permissions' => [
+                    'access-cp', 'view-dashboard',
+                    'view-products', 'create-products', 'edit-products',
+                    'view-categories', 'create-categories', 'edit-categories',
+                    'view-brands', 'create-brands', 'edit-brands',
+                    'view-collections', 'create-collections', 'edit-collections',
+                    'view-media', 'upload-media',
+                ],
+            ],
+        ];
+
+        // Create roles and assign permissions
+        foreach ($roles as $roleName => $roleData) {
+            $role = Role::firstOrCreate(
+                ['name' => $roleName, 'guard_name' => 'web'],
+                ['name' => $roleName, 'guard_name' => 'web']
+            );
+
+            // Sync permissions
+            $permissions = Permission::whereIn('name', $roleData['permissions'])->get();
+            $role->syncPermissions($permissions);
+
+            $this->command->info("✅ Created role: {$roleName} with ".count($roleData['permissions']).' permissions');
+        }
     }
 }

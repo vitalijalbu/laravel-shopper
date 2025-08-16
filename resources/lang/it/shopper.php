@@ -1,32 +1,45 @@
 <?php
 
-// Esempio di come dovresti configurare le traduzioni nel tuo controller Laravel
-// Questo file mostra come passare le traduzioni a Inertia
+// Traduzioni specifiche per Shopper Control Panel
 
 return [
-    'shopper' => [
-        'auth' => [
-            'headings' => [
-                'login' => 'Accedi al Control Panel',
-            ],
-            'descriptions' => [
-                'login' => 'Inserisci le tue credenziali per accedere',
-            ],
-            'labels' => [
-                'email' => 'Email',
-                'password' => 'Password',
-                'remember_me' => 'Ricordami',
-                'forgot_password' => 'Password dimenticata?',
-                'login' => 'Accedi',
-            ],
-            'placeholders' => [
-                'email' => 'inserisci@email.com',
-                'password' => 'La tua password',
-            ],
-            'actions' => [
-                'signing_in' => 'Accesso in corso...',
-            ],
+    'auth' => [
+        'headings' => [
+            'login' => 'Accedi al Control Panel',
         ],
+        'descriptions' => [
+            'login' => 'Inserisci le tue credenziali per accedere',
+        ],
+        'labels' => [
+            'email' => 'Email',
+            'password' => 'Password',
+            'remember_me' => 'Ricordami',
+            'forgot_password' => 'Password dimenticata?',
+            'login' => 'Accedi',
+            'logout' => 'Esci',
+        ],
+        'placeholders' => [
+            'email' => 'inserisci@email.com',
+            'password' => 'La tua password',
+        ],
+        'actions' => [
+            'signing_in' => 'Accesso in corso...',
+        ],
+    ],
+    'dashboard' => [
+        'title' => 'Dashboard',
+        'welcome' => 'Benvenuto',
+        'welcome_message' => 'Benvenuto nel Control Panel di Shopper',
+        'description' => 'Gestisci il tuo e-commerce da qui. Controlla vendite, prodotti, ordini e molto altro.',
+        'revenue' => 'Ricavi',
+        'orders' => 'Ordini',
+        'products' => 'Prodotti',
+        'customers' => 'Clienti',
+        'quick_actions' => 'Azioni Rapide',
+        'add_product' => 'Aggiungi Prodotto',
+        'view_orders' => 'Vedi Ordini',
+        'manage_customers' => 'Gestisci Clienti',
+        'settings' => 'Impostazioni',
     ],
     'apps' => [
         'installed' => [
