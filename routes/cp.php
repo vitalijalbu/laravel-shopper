@@ -163,3 +163,5 @@ Route::prefix('cp')->group(function () {
         return redirect()->route('shopper.cp.auth.login');
     })->name('shopper.cp.auth.logout');
 });
+
+});

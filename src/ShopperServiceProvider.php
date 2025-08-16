@@ -76,7 +76,7 @@ class ShopperServiceProvider extends ServiceProvider
 
             // Publish translations
             $this->publishes([
-                __DIR__ . '/../lang' => lang_path(),
+                __DIR__ . '/../resources/lang' => lang_path(),
             ], 'shopper-lang');
 
             $this->publishes([

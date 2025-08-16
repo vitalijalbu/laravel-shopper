@@ -68,6 +68,13 @@ return [
     ],
 
     'default_locale' => 'it',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Admin Settings
+    |--------------------------------------------------------------------------
+    */
+    'admin' => [
         'enabled' => env('SHOPPER_ADMIN_ENABLED', true),
         'route_prefix' => env('SHOPPER_ADMIN_ROUTE_PREFIX', 'admin'),
         'middleware' => ['web', 'auth:sanctum'],
