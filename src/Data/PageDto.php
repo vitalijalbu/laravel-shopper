@@ -1,6 +1,7 @@
 <?php
 
 namespace LaravelShopper\Data;
+use Illuminate\Support\Str;
 
 use DateTime;
 
@@ -55,7 +56,7 @@ class PageDto extends BaseDto
             'id' => $this->id,
             'site_id' => $this->site_id,
             'title' => $this->title,
-            'handle' => $this->handle ?: str($this->title)->slug()->toString(),
+            'handle' => $this->handle ?: Str::slug($this->title),
             'content' => $this->content,
             'status' => $this->status,
             'template_id' => $this->template_id,
@@ -179,7 +180,7 @@ class PageDto extends BaseDto
      */
     public function getHandle(): string
     {
-        return $this->handle ?: str($this->title)->slug()->toString();
+        return $this->handle ?: Str::slug($this->title);
     }
 
     /**
