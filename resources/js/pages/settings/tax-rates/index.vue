@@ -349,7 +349,8 @@
       </div>
     </div>
 
-    <!-- Create/Edit Modal -->
+    <!-- TODO: Create/Edit Modal Component needed -->
+    <!-- 
     <TaxRateModal
       :show="showCreateModal || showEditModal"
       :tax-rate="selectedTaxRate"
@@ -357,14 +358,18 @@
       @close="closeModal"
       @saved="handleTaxRateSaved"
     />
+    -->
 
     <!-- Delete Confirmation Modal -->
-    <ConfirmModal
-      :show="showDeleteModal"
-      title="Elimina Aliquota Fiscale"
-      :message="`Sei sicuro di voler eliminare l'aliquota '${selectedTaxRate?.name}'? Questa azione non può essere annullata.`"
-      @confirm="confirmDelete"
-      @cancel="showDeleteModal = false"
+    <ConfirmDialog
+      :show="confirmState.show"
+      :title="confirmState.title"
+      :message="confirmState.message"
+      :confirm-text="confirmState.confirmText"
+      :cancel-text="confirmState.cancelText"
+      :confirm-class="confirmState.confirmClass"
+      @confirm="confirmState.onConfirm"
+      @cancel="confirmState.onCancel"
     />
   </div>
 </template>
@@ -381,8 +386,8 @@ import {
   PlusIcon,
   TrashIcon
 } from '@heroicons/vue/24/outline'
-import TaxRateModal from './TaxRateModal.vue'
-import ConfirmModal from '@/Components/ConfirmModal.vue'
+import ConfirmDialog from '@/components/ConfirmDialog.vue'
+import { useConfirm } from '@/composables/useConfirm.js'
 
 const props = defineProps({
   page: Object,
@@ -392,10 +397,12 @@ const props = defineProps({
   filters: Object
 })
 
+// Use confirm composable
+const { confirmState, confirmDelete: confirmDeleteComposable } = useConfirm()
+
 // Modal states
 const showCreateModal = ref(false)
 const showEditModal = ref(false)
-const showDeleteModal = ref(false)
 const selectedTaxRate = ref(null)
 
 // Tax calculator
@@ -434,8 +441,14 @@ const editTaxRate = (taxRate) => {
 }
 
 const deleteTaxRate = (taxRate) => {
-  selectedTaxRate.value = taxRate
-  showDeleteModal.value = true
+  confirmDeleteComposable(`l'aliquota '${taxRate.name}'`, () => {
+    router.delete(route('cp.settings.tax-rates.destroy', taxRate.id), {
+      preserveScroll: true,
+      onSuccess: () => {
+        // Tax rate deleted successfully
+      }
+    })
+  })
 }
 
 const duplicateTaxRate = (taxRate) => {
@@ -452,16 +465,6 @@ const toggleStatus = (taxRate) => {
     preserveScroll: true,
     onSuccess: () => {
       // Tax rate status updated
-    }
-  })
-}
-
-const confirmDelete = () => {
-  router.delete(route('cp.settings.tax-rates.destroy', selectedTaxRate.value.id), {
-    preserveScroll: true,
-    onSuccess: () => {
-      showDeleteModal.value = false
-      selectedTaxRate.value = null
     }
   })
 }

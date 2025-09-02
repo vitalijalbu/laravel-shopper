@@ -9,7 +9,8 @@
           <h1 class="text-3xl font-bold text-gray-900">Metodi di Spedizione</h1>
           <p class="mt-2 text-gray-600">Configura spedizioni, zone di consegna e calcolo dei costi</p>
         </div>
-        <div class="flex space-x-3">
+  import AlertDialog from "@/components/ui/AlertDialog.vue"
+import { useConfirm } from "@/composables/useConfirm.js"
           <Link 
             :href="route('cp.settings.index')"
             class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
@@ -374,7 +375,8 @@
       </div>
     </div>
 
-    <!-- Create/Edit Modal -->
+    <!-- TODO: Create/Edit Modal Component needed -->
+    <!-- 
     <ShippingMethodModal
       :show="showCreateModal || showEditModal"
       :shipping-method="selectedMethod"
@@ -383,16 +385,17 @@
       @close="closeModal"
       @saved="handleMethodSaved"
     />
+    -->
 
     <!-- Delete Confirmation Modal -->
-    <ConfirmModal
+    <AlertDialog
       :show="showDeleteModal"
       title="Elimina Metodo di Spedizione"
       :message="`Sei sicuro di voler eliminare il metodo '${selectedMethod?.name}'? Questa azione non può essere annullata.`"
       @confirm="confirmDelete"
       @cancel="showDeleteModal = false"
     />
-  </div>
+
 </template>
 
 <script setup>
@@ -407,8 +410,8 @@ import {
   TrashIcon,
   TruckIcon
 } from '@heroicons/vue/24/outline'
-import ShippingMethodModal from './ShippingMethodModal.vue'
-import ConfirmModal from '@/Components/ConfirmModal.vue'
+import AlertDialog from "@/components/ui/AlertDialog.vue"
+import { useConfirm } from "@/composables/useConfirm.js"
 
 const props = defineProps({
   page: Object,

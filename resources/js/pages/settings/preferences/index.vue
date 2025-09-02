@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import { Head, useForm } from '@inertiajs/vue3'
-import Card from '../../Components/ui/Card.vue'
-import CardHeader from '../../Components/ui/CardHeader.vue'
-import CardTitle from '../../Components/ui/CardTitle.vue'
-import CardContent from '../../Components/ui/CardContent.vue'
+import Card from '@/components/ui/Card.vue'
+import CardHeader from '@/components/ui/CardHeader.vue'
+import CardTitle from '@/components/ui/CardTitle.vue'
+import CardContent from '@/components/ui/CardContent.vue'
 import { SwitchRoot, SwitchThumb } from 'reka-ui'
 
 interface PreferenceOption {
@@ -439,5 +439,5 @@ if (typeof window !== 'undefined') {
         </div>
       </div>
     </div>
-  </div>
+  
 </template>

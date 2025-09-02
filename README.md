@@ -90,7 +90,7 @@ GITHUB_CLIENT_SECRET=your_github_client_secret
 </template>
 
 <script setup>
-import SocialAuthComponent from '@/Components/Shopper/Auth/SocialAuthComponent.vue'
+import SocialAuthComponent from '@/components/Shopper/Auth/SocialAuthComponent.vue'
 
 const handleSuccess = (data) => {
   console.log('Authentication successful:', data)

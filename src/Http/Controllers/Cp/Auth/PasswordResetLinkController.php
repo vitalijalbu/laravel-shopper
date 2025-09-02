@@ -19,7 +19,7 @@ class PasswordResetLinkController extends Controller
      */
     public function create(): Response
     {
-        return Inertia::render('Cp/Auth/ForgotPassword', [
+        return Inertia::render('auth/forgot-password', [
             'status' => session('status'),
             'locale' => app()->getLocale(),
             'locales' => config('shopper.locales', ['en', 'it']),

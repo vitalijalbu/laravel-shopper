@@ -110,7 +110,7 @@ Il package include un componente Vue.js pronto per l'uso:
 </template>
 
 <script setup>
-import SocialAuthComponent from '@/Components/Auth/SocialAuthComponent.vue'
+import SocialAuthComponent from '@/components/Auth/SocialAuthComponent.vue'
 
 const handleSuccess = (data) => {
   console.log('Authentication successful:', data)

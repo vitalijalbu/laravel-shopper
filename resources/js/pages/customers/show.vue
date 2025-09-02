@@ -195,7 +195,7 @@
     </div>
 
     <!-- Confirm Delete Modal -->
-    <ConfirmModal
+    <AlertDialog
       :show="showDeleteModal"
       @close="showDeleteModal = false"
       @confirm="deleteCustomer"
@@ -208,13 +208,17 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { router } from '@inertiajs/vue3'
-import ConfirmModal from '@/components/confirm-modal.vue'
+import AlertDialog from "@/components/ui/AlertDialog.vue"
+import { useConfirm } from "@/composables/useConfirm.js"
 import { PencilIcon, TrashIcon, PlusIcon, EnvelopeIcon } from '@heroicons/vue/24/outline'
 
 // Props
 const props = defineProps({
   customer: Object
 })
+
+// Use confirm composable
+const { confirmState, confirmDelete } = useConfirm()
 
 // Reactive data
 const showDeleteModal = ref(false)

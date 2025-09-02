@@ -309,13 +309,15 @@
     </div>
 
     <!-- Delete Confirmation -->
-    <confirm-modal
-      v-if="showDeleteModal"
-      :title="`Delete ${deletingEntry?.title || 'Entry'}?`"
-      message="This action cannot be undone."
-      danger
-      @confirm="confirmDelete"
-      @cancel="showDeleteModal = false"
+    <AlertDialog
+      :show="confirmState.show"
+      :title="confirmState.title"
+      :message="confirmState.message"
+      :confirm-text="confirmState.confirmText"
+      :cancel-text="confirmState.cancelText"
+      :variant="confirmState.variant"
+      @confirm="confirmState.onConfirm"
+      @cancel="confirmState.onCancel"
     />
   </page>
 </template>
@@ -324,14 +326,18 @@
 import { ref, computed, onMounted, watch } from "vue";
 import { router, usePage } from "@inertiajs/vue3";
 import { route } from "ziggy-js";
-import { useShopperStore } from "../stores/shopper";
-import Page from "../components/page.vue";
-import DataTable from "../components/data-table.vue";
-import EntryCard from "../components/entry-card.vue";
-import ConfirmModal from "../components/confirm-modal.vue";
+import { useShopperStore } from "../../stores/shopper";
+import Page from "../../components/page.vue";
+import DataTable from "../../components/data-table.vue";
+import EntryCard from "../../components/entry-card.vue";
+import AlertDialog from "../../components/ui/AlertDialog.vue";
+import { useConfirm } from "../../composables/useConfirm.js";
 
 const page = usePage();
 const shopperStore = useShopperStore();
+
+// Use confirm composable
+const { confirmState, confirmDelete: confirmDeleteComposable } = useConfirm();
 
 // Props from controller
 const props = defineProps({
@@ -355,8 +361,6 @@ const viewMode = ref("table");
 const currentPage = ref(1);
 const perPage = ref(20);
 const totalEntries = ref(0);
-const showDeleteModal = ref(false);
-const deletingEntry = ref(null);
 const activeTab = ref("entries");
 
 const filters = ref({
@@ -544,22 +548,16 @@ const viewEntry = (entry) => {
 };
 
 const deleteEntry = (entry) => {
-  deletingEntry.value = entry;
-  showDeleteModal.value = true;
-};
-
-const confirmDelete = async () => {
-  try {
-    await shopperStore.deleteEntryById(deletingEntry.value.id);
-    shopperStore.addToast("Entry deleted successfully", "success");
-    loadEntries();
-  } catch (error) {
-    shopperStore.addError(error);
-    shopperStore.addToast("Failed to delete entry", "error");
-  } finally {
-    showDeleteModal.value = false;
-    deletingEntry.value = null;
-  }
+  confirmDeleteComposable(`"${entry.title}"`, async () => {
+    try {
+      await shopperStore.deleteEntryById(entry.id);
+      shopperStore.addToast("Entry deleted successfully", "success");
+      loadEntries();
+    } catch (error) {
+      shopperStore.addError(error);
+      shopperStore.addToast("Failed to delete entry", "error");
+    }
+  });
 };
 
 const bulkPublish = async () => {

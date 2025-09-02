@@ -3,6 +3,7 @@ import { createInertiaApp } from "@inertiajs/vue3";
 import { createPinia } from "pinia";
 import { ZiggyVue } from "ziggy-js";
 import "@/components/Icons";
+import CpLayout from "@/components/cp-layout.vue";
 
 // Import global styles
 import "../css/app.css";
@@ -18,7 +19,14 @@ if (token) {
 createInertiaApp({
   resolve: (name) => {
     const pages = import.meta.glob("./pages/**/*.vue", { eager: true });
-    return pages[`./pages/${name}.vue`];
+    const page = pages[`./pages/${name}.vue`];
+    
+    // Set default layout if not specified
+    if (page && page.default && !page.default.layout) {
+      page.default.layout = CpLayout;
+    }
+    
+    return page;
   },
   setup({ el, App, props, plugin }) {
     const app = createApp({ render: () => h(App, props) })

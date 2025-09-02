@@ -39,7 +39,7 @@ class DashboardController extends Controller
 
             \Illuminate\Support\Facades\Log::info('DashboardController - About to render Inertia');
 
-            return Inertia::render('Cp/Dashboard/index', [
+            return Inertia::render('index', [
                 'user' => [
                     'id' => $user->id,
                     'name' => $user->name ?? (($user->first_name ?? '') . ' ' . ($user->last_name ?? '')),

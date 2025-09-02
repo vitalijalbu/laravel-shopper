@@ -1,6 +1,6 @@
 <?php
 
-namespace Shopper\Http\Controllers\Admin;
+namespace Shopper\Http\Controllers\Cp;
 
 use Illuminate\Http\Request;
 use Inertia\Inertia;

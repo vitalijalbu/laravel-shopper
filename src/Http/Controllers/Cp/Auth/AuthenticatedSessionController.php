@@ -24,7 +24,7 @@ class AuthenticatedSessionController extends Controller
             return redirect()->intended(route('cp.dashboard'));
         }
 
-        return Inertia::render('Cp/Auth/Login', [
+        return Inertia::render('auth/login', [
             'status' => session('status'),
             'canResetPassword' => true,
             'locale' => app()->getLocale(),

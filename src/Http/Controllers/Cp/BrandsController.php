@@ -31,7 +31,7 @@ class BrandsController extends Controller
             ->orderBy('name')
             ->paginate(50);
 
-        return Inertia::render('Brands/index', [
+        return Inertia::render('brands/index', [
             'page' => $page->compile(),
             'navigation' => Navigation::tree(),
             'brands' => $brands,
@@ -54,7 +54,7 @@ class BrandsController extends Controller
                 ['label' => 'Save & add another', 'action' => 'save_add_another'],
             ]);
 
-        return Inertia::render('Brands/Create', [
+        return Inertia::render('brands/Create', [
             'page' => $page->compile(),
             'navigation' => Navigation::tree(),
         ]);
@@ -128,7 +128,7 @@ class BrandsController extends Controller
                 ['label' => 'Delete', 'action' => 'delete', 'destructive' => true],
             ]);
 
-        return Inertia::render('Brands/Show', [
+        return Inertia::render('brands/Show', [
             'page' => $page->compile(),
             'navigation' => Navigation::tree(),
             'brand' => $brand,
@@ -160,7 +160,7 @@ class BrandsController extends Controller
                 'products' => ['label' => 'Products', 'component' => 'BrandProductsForm'],
             ]);
 
-        return Inertia::render('Brands/Edit', [
+        return Inertia::render('brands/Edit', [
             'page' => $page->compile(),
             'navigation' => Navigation::tree(),
             'brand' => $brand,

@@ -425,7 +425,7 @@
     </Modal>
 
     <!-- Confirm Delete Modal -->
-    <ConfirmModal
+    <AlertDialog
       :show="showDeleteModal"
       @close="showDeleteModal = false"
       @confirm="deleteOrder"
@@ -440,7 +440,8 @@ import { ref, reactive, computed, watch, onMounted } from 'vue'
 import { router } from '@inertiajs/vue3'
 import DataTable from '@/components/Admin/Table/DataTable.vue'
 import Modal from '@/components/modal.vue'
-import ConfirmModal from '@/components/confirm-modal.vue'
+import AlertDialog from "@/components/ui/AlertDialog.vue"
+import { useConfirm } from "@/composables/useConfirm.js"
 import { PlusIcon, ChevronLeftIcon, ChevronRightIcon, TrashIcon } from '@heroicons/vue/24/outline'
 
 // Props

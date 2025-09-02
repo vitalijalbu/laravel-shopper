@@ -1,15 +1,11 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { Head, router, useForm } from '@inertiajs/vue3'
-import Card from '../../Components/ui/Card.vue'
-import CardHeader from '../../Components/ui/CardHeader.vue'
-import CardTitle from '../../Components/ui/CardTitle.vue'
-import CardContent from '../../Components/ui/CardContent.vue'
-import AdminLayout from '@/layouts/admin-layout.vue'
-import MetaobjectDefinitionForm from '@/components/metaobjects/metaobject-definition-form.vue'
-import MetaobjectInstanceForm from '@/components/metaobjects/metaobject-instance-form.vue'
-import DataTable from '@/components/ui/data-table.vue'
-import SearchInput from '@/components/ui/search-input.vue'
+import Card from '@/components/ui/Card.vue'
+import CardHeader from '@/components/ui/CardHeader.vue'
+import CardTitle from '@/components/ui/CardTitle.vue'
+import CardContent from '@/components/ui/CardContent.vue'
+import DataTable from '@/components/data-table.vue'
 import { formatDate } from '@/utils/formatters'
 
 interface MetafieldDefinition {
@@ -193,8 +189,7 @@ const pageTitle = computed(() => {
 <template>
   <Head :title="pageTitle" />
   
-  <AdminLayout>
-    <div class="space-y-6">
+  <div class="space-y-6">
       <!-- Header with breadcrumbs -->
       <div class="flex items-center justify-between">
         <div>
@@ -534,5 +529,4 @@ const pageTitle = computed(() => {
         </div>
       </div>
     </div>
-  </AdminLayout>
 </template>

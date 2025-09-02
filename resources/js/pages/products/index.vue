@@ -227,9 +227,8 @@
 <script setup>
 import { ref, computed, onMounted } from "vue";
 import { Link, router, usePage } from "@inertiajs/vue3";
-import PageLayout from "@/Components/Admin/Layout/PageLayout.vue";
-import DataTable from "@/Components/Admin/Table/DataTable.vue";
-import FormBuilder from "@/Components/Admin/Form/FormBuilder.vue";
+import DataTable from "@/components/Admin/Table/DataTable.vue";
+import FormBuilder from "@/components/Admin/Form/FormBuilder.vue";
 
 // Props
 const props = defineProps({

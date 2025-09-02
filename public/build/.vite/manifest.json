@@ -1,0 +1,26 @@
+{
+  "_ui-CelgmUti.js": {
+    "file": "assets/ui-CelgmUti.js",
+    "name": "ui",
+    "imports": [
+      "_vendor-B2ExBNFi.js"
+    ]
+  },
+  "_vendor-B2ExBNFi.js": {
+    "file": "assets/vendor-B2ExBNFi.js",
+    "name": "vendor"
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-_C0ftH5o.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true,
+    "imports": [
+      "_vendor-B2ExBNFi.js",
+      "_ui-CelgmUti.js"
+    ],
+    "css": [
+      "assets/app-CUXtbfUd.css"
+    ]
+  }
+}

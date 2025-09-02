@@ -110,10 +110,10 @@
 import { ref, computed, onMounted } from "vue";
 import { router } from "@inertiajs/vue3";
 import { route } from "ziggy-js";
-import { useShopperStore } from "../stores/shopper";
-import Page from "../components/page.vue";
-import CollectionCard from "../components/collection-card.vue";
-import Modal from "../components/modal.vue";
+import { useShopperStore } from "../../stores/shopper";
+import Page from "../../components/page.vue";
+import CollectionCard from "../../components/collection-card.vue";
+import Modal from "../../components/modal.vue";
 
 const shopperStore = useShopperStore();
 

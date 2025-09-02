@@ -291,12 +291,15 @@
     />
 
     <!-- Delete Confirmation Modal -->
-    <ConfirmModal
-      :show="showDeleteModal"
-      title="Elimina Gateway"
-      :message="`Sei sicuro di voler eliminare il gateway '${selectedGateway?.name}'? Questa azione non può essere annullata.`"
-      @confirm="confirmDelete"
-      @cancel="showDeleteModal = false"
+    <ConfirmDialog
+      :show="confirmState.show"
+      :title="confirmState.title"
+      :message="confirmState.message"
+      :confirm-text="confirmState.confirmText"
+      :cancel-text="confirmState.cancelText"
+      :confirm-class="confirmState.confirmClass"
+      @confirm="confirmState.onConfirm"
+      @cancel="confirmState.onCancel"
     />
   </div>
 </template>
@@ -314,7 +317,8 @@ import {
   TrashIcon
 } from '@heroicons/vue/24/outline'
 import GatewayModal from './GatewayModal.vue'
-import ConfirmModal from '@/Components/ConfirmModal.vue'
+import ConfirmDialog from '@/components/ConfirmDialog.vue'
+import { useConfirm } from '@/composables/useConfirm.js'
 
 const props = defineProps({
   page: Object,
@@ -324,10 +328,12 @@ const props = defineProps({
   filters: Object
 })
 
+// Use confirm composable
+const { confirmState, confirmDelete: confirmDeleteComposable } = useConfirm()
+
 // Modal states
 const showCreateModal = ref(false)
 const showEditModal = ref(false)
-const showDeleteModal = ref(false)
 const selectedGateway = ref(null)
 
 // Filters
@@ -355,8 +361,14 @@ const editGateway = (gateway) => {
 }
 
 const deleteGateway = (gateway) => {
-  selectedGateway.value = gateway
-  showDeleteModal.value = true
+  confirmDeleteComposable(`il gateway '${gateway.name}'`, () => {
+    router.delete(route('cp.settings.payment-gateways.destroy', gateway.id), {
+      preserveScroll: true,
+      onSuccess: () => {
+        // Gateway deleted successfully
+      }
+    })
+  })
 }
 
 const toggleStatus = (gateway) => {
@@ -373,16 +385,6 @@ const setAsDefault = (gateway) => {
     preserveScroll: true,
     onSuccess: () => {
       // Gateway set as default
-    }
-  })
-}
-
-const confirmDelete = () => {
-  router.delete(route('cp.settings.payment-gateways.destroy', selectedGateway.value.id), {
-    preserveScroll: true,
-    onSuccess: () => {
-      showDeleteModal.value = false
-      selectedGateway.value = null
     }
   })
 }

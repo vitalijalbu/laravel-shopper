@@ -48,7 +48,7 @@ class ProductsController extends Controller
                 ['label' => __('admin.actions.export'), 'url' => '/cp/products/export'],
             ]);
 
-        return Inertia::render('Products/index', [
+        return Inertia::render('products/index', [
             'page' => $page->compile(),
             'navigation' => Navigation::tree(),
             'dataTable' => $dataTable->getConfig(),
@@ -87,7 +87,7 @@ class ProductsController extends Controller
             'variants' => ['label' => __('products.tabs.variants'), 'component' => 'ProductVariantsForm'],
         ]);
 
-        return Inertia::render('Products/Create', [
+        return Inertia::render('products/Create', [
             'page' => $page->compile(),
             'navigation' => Navigation::tree(),
             'schema' => $schema->toArray(),
@@ -160,7 +160,7 @@ class ProductsController extends Controller
                 ['label' => __('admin.actions.delete'), 'action' => 'delete', 'destructive' => true],
             ]);
 
-        return Inertia::render('Products/Show', [
+        return Inertia::render('products/Show', [
             'page' => $page->compile(),
             'navigation' => Navigation::tree(),
             'product' => new ProductResource($product),
@@ -203,7 +203,7 @@ class ProductsController extends Controller
             'variants' => ['label' => __('products.tabs.variants'), 'component' => 'ProductVariantsForm'],
         ]);
 
-        return Inertia::render('Products/Edit', [
+        return Inertia::render('products/Edit', [
             'page' => $page->compile(),
             'navigation' => Navigation::tree(),
             'schema' => $schema->toArray(),
