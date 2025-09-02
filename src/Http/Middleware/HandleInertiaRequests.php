@@ -22,26 +22,58 @@ class HandleInertiaRequests
             'csrf_token' => csrf_token(),
             // Authentication
             'auth' => function () {
-                $user = Auth::user();
-                Log::info('HandleInertiaRequests - Auth data', [
-                    'auth_check' => Auth::check(),
-                    'user_id' => $user ? $user->id : null,
-                    'user_email' => $user ? $user->email : null,
-                ]);
+                try {
+                    $user = Auth::user();
+                    Log::info('HandleInertiaRequests - Auth data', [
+                        'auth_check' => Auth::check(),
+                        'user_id' => $user ? $user->id : null,
+                        'user_email' => $user ? $user->email : null,
+                    ]);
 
-                if (!$user) {
+                    if (!$user) {
+                        return ['user' => null];
+                    }
+
+                    // Get user name safely
+                    $name = $user->name ?? 
+                           (isset($user->first_name) ? trim($user->first_name . ' ' . ($user->last_name ?? '')) : null) ??
+                           'User';
+
+                    // Safely check CP access without causing issues
+                    $canAccessCP = true; // Default to true to avoid blocking
+                    
+                    try {
+                        if (method_exists($user, 'can') && method_exists($user, 'hasRole')) {
+                            $canAccessCP = $user->can('access-cp') || 
+                                         $user->hasRole('admin') || 
+                                         $user->hasRole('super-admin');
+                        } elseif (isset($user->can_access_cp)) {
+                            $canAccessCP = (bool) $user->can_access_cp;
+                        }
+                    } catch (\Exception $e) {
+                        Log::warning('HandleInertiaRequests - Permission check failed', [
+                            'error' => $e->getMessage(),
+                            'user_id' => $user->id,
+                        ]);
+                        // Keep default true value
+                    }
+
+                    return [
+                        'user' => [
+                            'id' => $user->id,
+                            'name' => $name,
+                            'email' => $user->email,
+                            'can_access_cp' => $canAccessCP,
+                        ],
+                    ];
+                } catch (\Exception $e) {
+                    Log::error('HandleInertiaRequests - Critical error', [
+                        'error' => $e->getMessage(),
+                        'trace' => $e->getTraceAsString(),
+                    ]);
+                    
                     return ['user' => null];
                 }
-
-                // Simple user data to avoid timeout
-                return [
-                    'user' => [
-                        'id' => $user->id,
-                        'name' => $user->name ?? ($user->first_name . ' ' . $user->last_name),
-                        'email' => $user->email,
-                        'can_access_cp' => true, // Simplified for now
-                    ],
-                ];
             },
             'flash' => [
                 'success' => fn () => $request->session()->get('success'),

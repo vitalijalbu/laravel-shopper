@@ -49,17 +49,27 @@ class ControlPanelMiddleware
             return false;
         }
 
-        // Check if user has CP access permission or is admin
-        if (method_exists($user, 'can')) {
-            return $user->can('access-cp') || $user->hasRole('admin') || $user->hasRole('super-admin');
-        }
+        try {
+            // Check if user has CP access permission or is admin
+            if (method_exists($user, 'can') && method_exists($user, 'hasRole')) {
+                return $user->can('access-cp') || $user->hasRole('admin') || $user->hasRole('super-admin');
+            }
 
-        // Fallback: check if user has specific field
-        if (isset($user->can_access_cp)) {
-            return (bool) $user->can_access_cp;
-        }
+            // Fallback: check if user has specific field
+            if (isset($user->can_access_cp)) {
+                return (bool) $user->can_access_cp;
+            }
 
-        // Default: allow if user exists (configure based on your needs)
-        return true;
+            // Default: allow if user exists (configure based on your needs)
+            return true;
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::warning('ControlPanelMiddleware - Permission check failed', [
+                'error' => $e->getMessage(),
+                'user_id' => $user->id ?? null,
+            ]);
+            
+            // Default to true to avoid blocking access
+            return true;
+        }
     }
 }

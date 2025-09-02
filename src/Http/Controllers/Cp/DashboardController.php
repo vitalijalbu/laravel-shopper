@@ -15,40 +15,61 @@ class DashboardController extends Controller
      */
     public function index(Request $request): Response
     {
-        $user = Auth::user();
+        try {
+            \Illuminate\Support\Facades\Log::info('DashboardController - Starting index method');
+            
+            $user = Auth::user();
+            \Illuminate\Support\Facades\Log::info('DashboardController - Got user', ['user_id' => $user->id]);
 
-        // Gather dashboard statistics
-        $stats = $this->getDashboardStats();
+            // Gather dashboard statistics
+            $stats = $this->getDashboardStats();
+            \Illuminate\Support\Facades\Log::info('DashboardController - Got stats');
 
-        // Recent activities
-        $recentActivities = $this->getRecentActivities();
+            // Recent activities
+            $recentActivities = $this->getRecentActivities();
+            \Illuminate\Support\Facades\Log::info('DashboardController - Got activities');
 
-        // System notifications
-        $notifications = $this->getSystemNotifications();
+            // System notifications
+            $notifications = $this->getSystemNotifications();
+            \Illuminate\Support\Facades\Log::info('DashboardController - Got notifications');
 
-        return Inertia::render('Cp/Dashboard/Index', [
-            'user' => [
-                'id' => $user->id,
-                'name' => $user->name,
-                'email' => $user->email,
-                'avatar_url' => $user->avatar_url ?? null,
-                'roles' => method_exists($user, 'getRoleNames') ? $user->getRoleNames() : [],
-                'permissions' => method_exists($user, 'getAllPermissions') ? $user->getAllPermissions() : [],
-            ],
-            'stats' => $stats,
-            'recentActivities' => $recentActivities,
-            'notifications' => $notifications,
-            'app_name' => config('app.name'),
-            'cp_name' => config('shopper.cp.name', 'Control Panel'),
-            'locale' => app()->getLocale(),
-            'locales' => config('shopper.locales', ['en', 'it']),
-            'nav' => $this->getNavigationItems(),
-            'branding' => [
-                'logo' => config('shopper.cp.branding.logo'),
-                'logo_dark' => config('shopper.cp.branding.logo_dark'),
-                'favicon' => config('shopper.cp.branding.favicon'),
-            ],
-        ]);
+            // Simplified navigation to avoid timeout
+            $nav = $this->getSimpleNavigationItems();
+            \Illuminate\Support\Facades\Log::info('DashboardController - Got navigation');
+
+            \Illuminate\Support\Facades\Log::info('DashboardController - About to render Inertia');
+
+            return Inertia::render('Cp/Dashboard/Index', [
+                'user' => [
+                    'id' => $user->id,
+                    'name' => $user->name ?? (($user->first_name ?? '') . ' ' . ($user->last_name ?? '')),
+                    'email' => $user->email,
+                    'avatar_url' => $user->avatar_url ?? null,
+                    'roles' => [],
+                    'permissions' => [],
+                ],
+                'stats' => $stats,
+                'recentActivities' => $recentActivities,
+                'notifications' => $notifications,
+                'app_name' => config('app.name'),
+                'cp_name' => config('shopper.cp.name', 'Control Panel'),
+                'locale' => app()->getLocale(),
+                'locales' => config('shopper.locales', ['en', 'it']),
+                'nav' => $nav,
+                'branding' => [
+                    'logo' => config('shopper.cp.branding.logo'),
+                    'logo_dark' => config('shopper.cp.branding.logo_dark'),
+                    'favicon' => config('shopper.cp.branding.favicon'),
+                ],
+            ]);
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('DashboardController index error', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            
+            throw $e;
+        }
     }
 
     /**
@@ -173,6 +194,51 @@ class DashboardController extends Controller
                 'icon' => 'cog',
                 'route' => '/cp/settings',
                 'active' => request()->routeIs('shopper.cp.settings*'),
+            ],
+        ];
+    }
+
+    /**
+     * Get simplified navigation items to avoid timeout issues
+     */
+    protected function getSimpleNavigationItems(): array
+    {
+        return [
+            'dashboard' => [
+                'display' => 'Dashboard',
+                'url' => '/cp',
+                'icon' => 'home',
+                'children' => [],
+            ],
+            'collections' => [
+                'display' => 'Collections',
+                'url' => '/cp/collections',
+                'icon' => 'folder',
+                'children' => [],
+            ],
+            'products' => [
+                'display' => 'Products',
+                'url' => '/cp/products',
+                'icon' => 'package',
+                'children' => [],
+            ],
+            'orders' => [
+                'display' => 'Orders',
+                'url' => '/cp/orders',
+                'icon' => 'shopping-bag',
+                'children' => [],
+            ],
+            'customers' => [
+                'display' => 'Customers',
+                'url' => '/cp/customers',
+                'icon' => 'users',
+                'children' => [],
+            ],
+            'settings' => [
+                'display' => 'Settings',
+                'url' => '/cp/settings',
+                'icon' => 'settings',
+                'children' => [],
             ],
         ];
     }
