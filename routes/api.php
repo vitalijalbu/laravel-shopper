@@ -2,12 +2,12 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use LaravelShopper\Http\Controllers\Api\AuthController;
-use LaravelShopper\Http\Controllers\Api\BrandController;
-use LaravelShopper\Http\Controllers\Api\CartController;
-use LaravelShopper\Http\Controllers\Api\CategoryController;
-use LaravelShopper\Http\Controllers\Api\ProductController;
-use LaravelShopper\Http\Middleware\HandleSiteContext;
+use Shopper\Http\Controllers\Api\AuthController;
+use Shopper\Http\Controllers\Api\BrandController;
+use Shopper\Http\Controllers\Api\CartController;
+use Shopper\Http\Controllers\Api\CategoryController;
+use Shopper\Http\Controllers\Api\ProductController;
+use Shopper\Http\Middleware\HandleSiteContext;
 
 /*
 |--------------------------------------------------------------------------
@@ -85,35 +85,35 @@ Route::group([
             
             // Permission Management
             Route::prefix('permissions')->name('permissions.')->group(function () {
-                Route::get('/', [\LaravelShopper\Http\Controllers\Api\PermissionController::class, 'index'])->name('index');
-                Route::get('/roles/{role}/permissions', [\LaravelShopper\Http\Controllers\Api\PermissionController::class, 'rolePermissions'])->name('role.permissions');
-                Route::put('/roles/{role}/permissions', [\LaravelShopper\Http\Controllers\Api\PermissionController::class, 'updateRolePermissions'])->name('role.update');
-                Route::post('/generate', [\LaravelShopper\Http\Controllers\Api\PermissionController::class, 'generatePermissions'])->name('generate');
-                Route::post('/super-role', [\LaravelShopper\Http\Controllers\Api\PermissionController::class, 'createSuperRole'])->name('super.create');
-                Route::get('/tree', [\LaravelShopper\Http\Controllers\Api\PermissionController::class, 'permissionTree'])->name('tree');
+                Route::get('/', [\Shopper\Http\Controllers\Api\PermissionController::class, 'index'])->name('index');
+                Route::get('/roles/{role}/permissions', [\Shopper\Http\Controllers\Api\PermissionController::class, 'rolePermissions'])->name('role.permissions');
+                Route::put('/roles/{role}/permissions', [\Shopper\Http\Controllers\Api\PermissionController::class, 'updateRolePermissions'])->name('role.update');
+                Route::post('/generate', [\Shopper\Http\Controllers\Api\PermissionController::class, 'generatePermissions'])->name('generate');
+                Route::post('/super-role', [\Shopper\Http\Controllers\Api\PermissionController::class, 'createSuperRole'])->name('super.create');
+                Route::get('/tree', [\Shopper\Http\Controllers\Api\PermissionController::class, 'permissionTree'])->name('tree');
             });
 
             // Role Management
             Route::prefix('roles')->name('roles.')->group(function () {
-                Route::get('/', [\LaravelShopper\Http\Controllers\Api\RoleController::class, 'index'])->name('index');
-                Route::post('/', [\LaravelShopper\Http\Controllers\Api\RoleController::class, 'store'])->name('store');
-                Route::get('/{role}', [\LaravelShopper\Http\Controllers\Api\RoleController::class, 'show'])->name('show');
-                Route::put('/{role}', [\LaravelShopper\Http\Controllers\Api\RoleController::class, 'update'])->name('update');
-                Route::delete('/{role}', [\LaravelShopper\Http\Controllers\Api\RoleController::class, 'destroy'])->name('destroy');
-                Route::post('/{role}/assign-users', [\LaravelShopper\Http\Controllers\Api\RoleController::class, 'assignUsers'])->name('assign.users');
-                Route::post('/{role}/remove-users', [\LaravelShopper\Http\Controllers\Api\RoleController::class, 'removeUsers'])->name('remove.users');
-                Route::post('/{role}/clone', [\LaravelShopper\Http\Controllers\Api\RoleController::class, 'clone'])->name('clone');
-                Route::get('/statistics', [\LaravelShopper\Http\Controllers\Api\RoleController::class, 'statistics'])->name('statistics');
+                Route::get('/', [\Shopper\Http\Controllers\Api\RoleController::class, 'index'])->name('index');
+                Route::post('/', [\Shopper\Http\Controllers\Api\RoleController::class, 'store'])->name('store');
+                Route::get('/{role}', [\Shopper\Http\Controllers\Api\RoleController::class, 'show'])->name('show');
+                Route::put('/{role}', [\Shopper\Http\Controllers\Api\RoleController::class, 'update'])->name('update');
+                Route::delete('/{role}', [\Shopper\Http\Controllers\Api\RoleController::class, 'destroy'])->name('destroy');
+                Route::post('/{role}/assign-users', [\Shopper\Http\Controllers\Api\RoleController::class, 'assignUsers'])->name('assign.users');
+                Route::post('/{role}/remove-users', [\Shopper\Http\Controllers\Api\RoleController::class, 'removeUsers'])->name('remove.users');
+                Route::post('/{role}/clone', [\Shopper\Http\Controllers\Api\RoleController::class, 'clone'])->name('clone');
+                Route::get('/statistics', [\Shopper\Http\Controllers\Api\RoleController::class, 'statistics'])->name('statistics');
             });
 
             // Permission Builder
             Route::prefix('permission-builder')->name('builder.')->group(function () {
-                Route::get('/', [\LaravelShopper\Http\Controllers\Api\PermissionBuilderController::class, 'builder'])->name('index');
-                Route::put('/matrix', [\LaravelShopper\Http\Controllers\Api\PermissionBuilderController::class, 'updateMatrix'])->name('matrix.update');
-                Route::post('/apply-template', [\LaravelShopper\Http\Controllers\Api\PermissionBuilderController::class, 'applyTemplate'])->name('template.apply');
-                Route::post('/generate-resource', [\LaravelShopper\Http\Controllers\Api\PermissionBuilderController::class, 'generateResourcePermissions'])->name('resource.generate');
-                Route::get('/export', [\LaravelShopper\Http\Controllers\Api\PermissionBuilderController::class, 'export'])->name('export');
-                Route::post('/import', [\LaravelShopper\Http\Controllers\Api\PermissionBuilderController::class, 'import'])->name('import');
+                Route::get('/', [\Shopper\Http\Controllers\Api\PermissionBuilderController::class, 'builder'])->name('index');
+                Route::put('/matrix', [\Shopper\Http\Controllers\Api\PermissionBuilderController::class, 'updateMatrix'])->name('matrix.update');
+                Route::post('/apply-template', [\Shopper\Http\Controllers\Api\PermissionBuilderController::class, 'applyTemplate'])->name('template.apply');
+                Route::post('/generate-resource', [\Shopper\Http\Controllers\Api\PermissionBuilderController::class, 'generateResourcePermissions'])->name('resource.generate');
+                Route::get('/export', [\Shopper\Http\Controllers\Api\PermissionBuilderController::class, 'export'])->name('export');
+                Route::post('/import', [\Shopper\Http\Controllers\Api\PermissionBuilderController::class, 'import'])->name('import');
             });
         });
     });

@@ -1,11 +1,11 @@
 <?php
 
-namespace LaravelShopper\Http\Controllers\Api;
+namespace Shopper\Http\Controllers\Api;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use LaravelShopper\Http\Controllers\Controller;
-use LaravelShopper\Repositories\TaxRateRepository;
+use Shopper\Http\Controllers\Controller;
+use Shopper\Repositories\TaxRateRepository;
 
 class TaxRateController extends Controller
 {

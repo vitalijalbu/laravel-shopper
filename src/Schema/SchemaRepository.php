@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelShopper\Schema;
+namespace Shopper\Schema;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;

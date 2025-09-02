@@ -1,13 +1,13 @@
 <?php
 
-namespace LaravelShopper\Http\Middleware;
+namespace Shopper\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use LaravelShopper\Models\Category;
-use LaravelShopper\Models\Product;
-use LaravelShopper\Models\Site;
-use LaravelShopper\Services\TemplateEngine;
+use Shopper\Models\Category;
+use Shopper\Models\Product;
+use Shopper\Models\Site;
+use Shopper\Services\TemplateEngine;
 
 class StorefrontTemplateMiddleware
 {

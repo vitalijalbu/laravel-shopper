@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelShopper\Http\Requests\Api;
+namespace Shopper\Http\Requests\Api;
 
 use Illuminate\Foundation\Http\FormRequest;
 

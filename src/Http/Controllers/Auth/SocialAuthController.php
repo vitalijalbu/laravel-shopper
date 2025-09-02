@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelShopper\Http\Controllers\Auth;
+namespace Shopper\Http\Controllers\Auth;
 
 use App\Models\SocialAccount;
 use App\Models\User;
@@ -13,7 +13,7 @@ use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 use Laravel\Socialite\Facades\Socialite;
-use LaravelShopper\Http\Controllers\Controller;
+use Shopper\Http\Controllers\Controller;
 
 class SocialAuthController extends Controller
 {

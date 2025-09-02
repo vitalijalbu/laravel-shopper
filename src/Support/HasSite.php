@@ -1,10 +1,10 @@
 <?php
 
-namespace LaravelShopper\Support;
+namespace Shopper\Support;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use LaravelShopper\Models\Site;
+use Shopper\Models\Site;
 
 trait HasSite
 {

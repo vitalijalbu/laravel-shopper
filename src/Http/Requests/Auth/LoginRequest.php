@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelShopper\Http\Requests\Auth;
+namespace Shopper\Http\Requests\Auth;
 
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\Http\FormRequest;

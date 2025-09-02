@@ -1,11 +1,11 @@
 <?php
 
-namespace LaravelShopper\Http\Controllers\Cp;
+namespace Shopper\Http\Controllers\Cp;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
-use LaravelShopper\Http\Controllers\Controller;
+use Shopper\Http\Controllers\Controller;
 
 class CollectionsController extends Controller
 {

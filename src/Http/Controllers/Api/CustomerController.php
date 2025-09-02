@@ -1,11 +1,11 @@
 <?php
 
-namespace LaravelShopper\Http\Controllers\Api;
+namespace Shopper\Http\Controllers\Api;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use LaravelShopper\Http\Controllers\Controller;
-use LaravelShopper\Repositories\CustomerRepository;
+use Shopper\Http\Controllers\Controller;
+use Shopper\Repositories\CustomerRepository;
 
 class CustomerController extends Controller
 {

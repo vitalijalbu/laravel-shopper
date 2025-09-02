@@ -1,11 +1,11 @@
 <?php
 
-namespace LaravelShopper\Http\Controllers\Cp;
+namespace Shopper\Http\Controllers\Cp;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use LaravelShopper\Http\Controllers\Controller;
+use Shopper\Http\Controllers\Controller;
 use League\Csv\Reader;
 use League\Csv\Writer;
 use SplTempFileObject;

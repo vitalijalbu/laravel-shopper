@@ -5,7 +5,7 @@
          colors="true"
 >
     <testsuites>
-        <testsuite name="LaravelShopper">
+        <testsuite name="Shopper">
             <directory>tests</directory>
         </testsuite>
         <testsuite name="Unit">

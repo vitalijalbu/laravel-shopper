@@ -1,23 +1,23 @@
 <?php
 
-namespace LaravelShopper\Entries;
+namespace Shopper\Entries;
 
 use ArrayAccess;
 use Carbon\Carbon;
 use Illuminate\Contracts\Support\Arrayable;
-use LaravelShopper\Contracts\Entries\Entry as Contract;
-use LaravelShopper\Data\ContainsCascadingData;
-use LaravelShopper\Data\ExistsAsFile;
-use LaravelShopper\Data\HasAugmentedData;
-use LaravelShopper\Events\Entries\EntryCreated;
-use LaravelShopper\Events\Entries\EntryCreating;
-use LaravelShopper\Events\Entries\EntryDeleted;
-use LaravelShopper\Events\Entries\EntryDeleting;
-use LaravelShopper\Events\Entries\EntrySaved;
-use LaravelShopper\Events\Entries\EntrySaving;
-use LaravelShopper\Facades\Collection;
-use LaravelShopper\Facades\Site;
-use LaravelShopper\Support\Traits\FluentlyGetsAndSets;
+use Shopper\Contracts\Entries\Entry as Contract;
+use Shopper\Data\ContainsCascadingData;
+use Shopper\Data\ExistsAsFile;
+use Shopper\Data\HasAugmentedData;
+use Shopper\Events\Entries\EntryCreated;
+use Shopper\Events\Entries\EntryCreating;
+use Shopper\Events\Entries\EntryDeleted;
+use Shopper\Events\Entries\EntryDeleting;
+use Shopper\Events\Entries\EntrySaved;
+use Shopper\Events\Entries\EntrySaving;
+use Shopper\Facades\Collection;
+use Shopper\Facades\Site;
+use Shopper\Support\Traits\FluentlyGetsAndSets;
 
 class Entry implements Arrayable, ArrayAccess, Contract
 {
@@ -82,7 +82,7 @@ class Entry implements Arrayable, ArrayAccess, Contract
             return null;
         }
 
-        return app(\LaravelShopper\Contracts\Routing\UrlBuilder::class)
+        return app(\Shopper\Contracts\Routing\UrlBuilder::class)
             ->content($this)
             ->merge($this->routeData())
             ->build($this->route());
@@ -91,7 +91,7 @@ class Entry implements Arrayable, ArrayAccess, Contract
     public function collection($collection = null)
     {
         if (func_num_args() === 0) {
-            return $this->collection instanceof \LaravelShopper\Collections\Collection
+            return $this->collection instanceof \Shopper\Collections\Collection
                 ? $this->collection
                 : Collection::findByHandle($this->collection);
         }
@@ -103,7 +103,7 @@ class Entry implements Arrayable, ArrayAccess, Contract
 
     public function collectionHandle()
     {
-        return $this->collection instanceof \LaravelShopper\Collections\Collection
+        return $this->collection instanceof \Shopper\Collections\Collection
             ? $this->collection->handle()
             : $this->collection;
     }
@@ -387,7 +387,7 @@ class Entry implements Arrayable, ArrayAccess, Contract
         $this->ensureId();
 
         // Save the entry through the repository
-        app(\LaravelShopper\Contracts\Entries\EntryRepository::class)->save($this);
+        app(\Shopper\Contracts\Entries\EntryRepository::class)->save($this);
 
         if ($withEvents) {
             if ($isNew) {
@@ -408,7 +408,7 @@ class Entry implements Arrayable, ArrayAccess, Contract
     {
         EntryDeleting::dispatch($this);
 
-        app(\LaravelShopper\Contracts\Entries\EntryRepository::class)->delete($this);
+        app(\Shopper\Contracts\Entries\EntryRepository::class)->delete($this);
 
         EntryDeleted::dispatch($this);
     }

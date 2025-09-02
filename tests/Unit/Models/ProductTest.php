@@ -1,13 +1,13 @@
 <?php
 
-namespace LaravelShopper\Tests\Unit\Models;
+namespace Shopper\Tests\Unit\Models;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use LaravelShopper\Models\Brand;
-use LaravelShopper\Models\Category;
-use LaravelShopper\Models\Collection;
-use LaravelShopper\Models\Product;
-use LaravelShopper\Tests\TestCase;
+use Shopper\Models\Brand;
+use Shopper\Models\Category;
+use Shopper\Models\Collection;
+use Shopper\Models\Product;
+use Shopper\Tests\TestCase;
 
 class ProductTest extends TestCase
 {

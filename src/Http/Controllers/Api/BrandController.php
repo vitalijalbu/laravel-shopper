@@ -1,15 +1,15 @@
 <?php
 
-namespace LaravelShopper\Http\Controllers\Api;
+namespace Shopper\Http\Controllers\Api;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use LaravelShopper\Http\Controllers\Controller;
-use LaravelShopper\Http\Requests\Api\BulkActionRequest;
-use LaravelShopper\Http\Requests\Api\StoreBrandRequest;
-use LaravelShopper\Http\Requests\Api\UpdateBrandRequest;
-use LaravelShopper\Http\Traits\ApiResponseTrait;
-use LaravelShopper\Models\Brand;
+use Shopper\Http\Controllers\Controller;
+use Shopper\Http\Requests\Api\BulkActionRequest;
+use Shopper\Http\Requests\Api\StoreBrandRequest;
+use Shopper\Http\Requests\Api\UpdateBrandRequest;
+use Shopper\Http\Traits\ApiResponseTrait;
+use Shopper\Models\Brand;
 
 class BrandController extends Controller
 {

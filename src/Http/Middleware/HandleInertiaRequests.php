@@ -1,13 +1,13 @@
 <?php
 
-namespace LaravelShopper\Http\Middleware;
+namespace Shopper\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
-use LaravelShopper\Http\Resources\UserResource;
+use Shopper\Http\Resources\UserResource;
 use Symfony\Component\HttpFoundation\Response;
 
 class HandleInertiaRequests

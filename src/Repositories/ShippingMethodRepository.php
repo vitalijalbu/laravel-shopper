@@ -1,11 +1,11 @@
 <?php
 
-namespace LaravelShopper\Repositories;
+namespace Shopper\Repositories;
 
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
-use LaravelShopper\Models\ShippingMethod;
+use Shopper\Models\ShippingMethod;
 
 class ShippingMethodRepository extends BaseRepository
 {

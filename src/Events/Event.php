@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelShopper\Events;
+namespace Shopper\Events;
 
 abstract class Event
 {

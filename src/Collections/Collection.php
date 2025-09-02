@@ -1,29 +1,29 @@
 <?php
 
-namespace LaravelShopper\Collections;
+namespace Shopper\Collections;
 
 use ArrayAccess;
 use Illuminate\Contracts\Support\Arrayable;
-use LaravelShopper\Contracts\Collections\Collection as Contract;
-use LaravelShopper\Data\ContainsCascadingData;
-use LaravelShopper\Data\ExistsAsFile;
-use LaravelShopper\Data\HasAugmentedData;
-use LaravelShopper\Events\Collections\CollectionCreated;
-use LaravelShopper\Events\Collections\CollectionCreating;
-use LaravelShopper\Events\Collections\CollectionDeleted;
-use LaravelShopper\Events\Collections\CollectionDeleting;
-use LaravelShopper\Events\Collections\CollectionSaved;
-use LaravelShopper\Events\Collections\CollectionSaving;
-use LaravelShopper\Facades\Blink;
-use LaravelShopper\Facades\Blueprint;
-use LaravelShopper\Facades\Entry;
-use LaravelShopper\Facades\Site;
-use LaravelShopper\Facades\Stache;
-use LaravelShopper\Support\Arr;
-use LaravelShopper\Support\Traits\FluentlyGetsAndSets;
+use Shopper\Contracts\Collections\Collection as Contract;
+use Shopper\Data\ContainsCascadingData;
+use Shopper\Data\ExistsAsFile;
+use Shopper\Data\HasAugmentedData;
+use Shopper\Events\Collections\CollectionCreated;
+use Shopper\Events\Collections\CollectionCreating;
+use Shopper\Events\Collections\CollectionDeleted;
+use Shopper\Events\Collections\CollectionDeleting;
+use Shopper\Events\Collections\CollectionSaved;
+use Shopper\Events\Collections\CollectionSaving;
+use Shopper\Facades\Blink;
+use Shopper\Facades\Blueprint;
+use Shopper\Facades\Entry;
+use Shopper\Facades\Site;
+use Shopper\Facades\Stache;
+use Shopper\Support\Arr;
+use Shopper\Support\Traits\FluentlyGetsAndSets;
 use Statamic\Contracts\Data\Augmentable as AugmentableContract;
 
-use function LaravelShopper\trans as __;
+use function Shopper\trans as __;
 
 class Collection implements Arrayable, ArrayAccess, AugmentableContract, Contract
 {

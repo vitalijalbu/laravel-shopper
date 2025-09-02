@@ -1,16 +1,16 @@
 <?php
 
-namespace LaravelShopper\Http\Controllers\Cp;
+namespace Shopper\Http\Controllers\Cp;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Inertia\Inertia;
 use Inertia\Response;
-use LaravelShopper\CP\Navigation;
-use LaravelShopper\CP\Page;
-use LaravelShopper\Http\Controllers\Controller;
-use LaravelShopper\Models\ShippingMethod;
-use LaravelShopper\Repositories\ShippingMethodRepository;
+use Shopper\CP\Navigation;
+use Shopper\CP\Page;
+use Shopper\Http\Controllers\Controller;
+use Shopper\Models\ShippingMethod;
+use Shopper\Repositories\ShippingMethodRepository;
 
 class ShippingMethodsController extends Controller
 {

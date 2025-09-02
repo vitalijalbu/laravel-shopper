@@ -1,11 +1,11 @@
 <?php
 
-namespace LaravelShopper\Services;
+namespace Shopper\Services;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\View;
-use LaravelShopper\Models\Site;
-use LaravelShopper\Models\StorefrontTemplate;
+use Shopper\Models\Site;
+use Shopper\Models\StorefrontTemplate;
 
 class TemplateEngine
 {

@@ -1,16 +1,16 @@
 <?php
 
-namespace LaravelShopper\Http\Controllers\Cp;
+namespace Shopper\Http\Controllers\Cp;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Inertia\Inertia;
 use Inertia\Response;
-use LaravelShopper\CP\Navigation;
-use LaravelShopper\CP\Page;
-use LaravelShopper\Http\Controllers\Controller;
-use LaravelShopper\Models\TaxRate;
-use LaravelShopper\Repositories\TaxRateRepository;
+use Shopper\CP\Navigation;
+use Shopper\CP\Page;
+use Shopper\Http\Controllers\Controller;
+use Shopper\Models\TaxRate;
+use Shopper\Repositories\TaxRateRepository;
 
 class TaxRatesController extends Controller
 {

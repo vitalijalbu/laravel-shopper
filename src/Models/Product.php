@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace LaravelShopper\Models;
+namespace Shopper\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -10,8 +10,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
-use LaravelShopper\Support\HasHandle;
-use LaravelShopper\Support\HasSite;
+use Shopper\Support\HasHandle;
+use Shopper\Support\HasSite;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;

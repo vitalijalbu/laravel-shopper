@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelShopper\Services;
+namespace Shopper\Services;
 
 use Closure;
 use Illuminate\Support\Collection;
@@ -336,24 +336,24 @@ class CacheService
     {
         // Warm up categories
         $this->rememberCategory('all', function () {
-            return \LaravelShopper\Models\Category::with('children')->get();
+            return \Shopper\Models\Category::with('children')->get();
         });
 
         // Warm up brands
         $this->rememberBrand('all', function () {
-            return \LaravelShopper\Models\Brand::all();
+            return \Shopper\Models\Brand::all();
         });
 
         // Warm up featured products
         $this->rememberProduct('featured', function () {
-            return \LaravelShopper\Models\Product::where('is_featured', true)
+            return \Shopper\Models\Product::where('is_featured', true)
                 ->with(['category', 'brand'])
                 ->get();
         });
 
         // Warm up navigation
         $this->rememberNavigation('main', function () {
-            return \LaravelShopper\Models\Category::whereNull('parent_id')
+            return \Shopper\Models\Category::whereNull('parent_id')
                 ->with('children')
                 ->orderBy('sort_order')
                 ->get();

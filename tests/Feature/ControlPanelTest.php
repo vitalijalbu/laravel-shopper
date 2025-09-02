@@ -1,7 +1,7 @@
 <?php
 
-use VitaliJalbu\LaravelShopper\Http\Controllers\Cp\CollectionsController;
-use VitaliJalbu\LaravelShopper\Http\Controllers\Cp\EntriesController;
+use VitaliJalbu\Shopper\Http\Controllers\Cp\CollectionsController;
+use VitaliJalbu\Shopper\Http\Controllers\Cp\EntriesController;
 
 // Collections Tests
 test('collections index returns collections data', function () {

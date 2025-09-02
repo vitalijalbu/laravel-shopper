@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelShopper\Http\Controllers\Cp\Auth;
+namespace Shopper\Http\Controllers\Cp\Auth;
 
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -10,7 +10,7 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\Rules;
 use Inertia\Inertia;
 use Inertia\Response;
-use LaravelShopper\Http\Controllers\Controller;
+use Shopper\Http\Controllers\Controller;
 
 class NewPasswordController extends Controller
 {

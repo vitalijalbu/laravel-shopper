@@ -1,12 +1,12 @@
 <?php
 
-namespace LaravelShopper\Http\Controllers\Api;
+namespace Shopper\Http\Controllers\Api;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use LaravelShopper\Http\Controllers\Controller;
-use LaravelShopper\Http\Requests\Api\RoleRequest;
-use LaravelShopper\Http\Traits\ApiResponseTrait;
+use Shopper\Http\Controllers\Controller;
+use Shopper\Http\Requests\Api\RoleRequest;
+use Shopper\Http\Traits\ApiResponseTrait;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 

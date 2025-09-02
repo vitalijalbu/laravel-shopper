@@ -1,20 +1,20 @@
 <?php
 
-namespace LaravelShopper\Database\Seeders;
+namespace Shopper\Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
-use LaravelShopper\Models\Brand;
-use LaravelShopper\Models\Category;
-use LaravelShopper\Models\Channel;
-use LaravelShopper\Models\Country;
-use LaravelShopper\Models\Currency;
-use LaravelShopper\Models\CustomerGroup;
-use LaravelShopper\Models\ProductType;
-use LaravelShopper\Models\Setting;
-use LaravelShopper\Models\Site;
-use LaravelShopper\Models\User;
+use Shopper\Models\Brand;
+use Shopper\Models\Category;
+use Shopper\Models\Channel;
+use Shopper\Models\Country;
+use Shopper\Models\Currency;
+use Shopper\Models\CustomerGroup;
+use Shopper\Models\ProductType;
+use Shopper\Models\Setting;
+use Shopper\Models\Site;
+use Shopper\Models\User;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 

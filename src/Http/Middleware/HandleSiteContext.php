@@ -1,10 +1,10 @@
 <?php
 
-namespace LaravelShopper\Http\Middleware;
+namespace Shopper\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use LaravelShopper\Models\Site;
+use Shopper\Models\Site;
 use Symfony\Component\HttpFoundation\Response;
 
 class HandleSiteContext

@@ -1,12 +1,12 @@
 <?php
 
-namespace LaravelShopper\Http\Controllers\Api;
+namespace Shopper\Http\Controllers\Api;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
-use LaravelShopper\Http\Controllers\Controller;
+use Shopper\Http\Controllers\Controller;
 
 class AuthController extends Controller
 {

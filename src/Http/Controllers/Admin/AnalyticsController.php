@@ -1,13 +1,13 @@
 <?php
 
-namespace LaravelShopper\Http\Controllers\Admin;
+namespace Shopper\Http\Controllers\Admin;
 
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
-use LaravelShopper\Models\AnalyticsEvent;
-use LaravelShopper\Models\UserPreference;
+use Shopper\Models\AnalyticsEvent;
+use Shopper\Models\UserPreference;
 
 class AnalyticsController extends Controller
 {

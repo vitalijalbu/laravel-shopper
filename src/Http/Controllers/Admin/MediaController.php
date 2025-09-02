@@ -1,11 +1,11 @@
 <?php
 
-namespace LaravelShopper\Http\Controllers\Admin;
+namespace Shopper\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
-use LaravelShopper\Models\Product;
+use Shopper\Models\Product;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class MediaController extends Controller

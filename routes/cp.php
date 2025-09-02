@@ -1,19 +1,19 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use LaravelShopper\Http\Controllers\Cp\AppsController;
-use LaravelShopper\Http\Controllers\Cp\Auth\AuthenticatedSessionController;
-use LaravelShopper\Http\Controllers\Cp\Auth\NewPasswordController;
-use LaravelShopper\Http\Controllers\Cp\Auth\PasswordResetLinkController;
-use LaravelShopper\Http\Controllers\Cp\CollectionsController;
-use LaravelShopper\Http\Controllers\Cp\CustomersController;
-use LaravelShopper\Http\Controllers\Cp\DashboardController;
-use LaravelShopper\Http\Controllers\Cp\EntriesController;
-use LaravelShopper\Http\Controllers\Cp\OrdersController;
-use LaravelShopper\Http\Controllers\Cp\PaymentGatewaysController;
-use LaravelShopper\Http\Controllers\Cp\SettingsController;
-use LaravelShopper\Http\Controllers\Cp\ShippingMethodsController;
-use LaravelShopper\Http\Controllers\Cp\TaxRatesController;
+use Shopper\Http\Controllers\Cp\AppsController;
+use Shopper\Http\Controllers\Cp\Auth\AuthenticatedSessionController;
+use Shopper\Http\Controllers\Cp\Auth\NewPasswordController;
+use Shopper\Http\Controllers\Cp\Auth\PasswordResetLinkController;
+use Shopper\Http\Controllers\Cp\CollectionsController;
+use Shopper\Http\Controllers\Cp\CustomersController;
+use Shopper\Http\Controllers\Cp\DashboardController;
+use Shopper\Http\Controllers\Cp\EntriesController;
+use Shopper\Http\Controllers\Cp\OrdersController;
+use Shopper\Http\Controllers\Cp\PaymentGatewaysController;
+use Shopper\Http\Controllers\Cp\SettingsController;
+use Shopper\Http\Controllers\Cp\ShippingMethodsController;
+use Shopper\Http\Controllers\Cp\TaxRatesController;
 
 /*
 |--------------------------------------------------------------------------

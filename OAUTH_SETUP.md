@@ -24,7 +24,7 @@ composer require vitalijalbu/laravel-shopper
 ### 2. Pubblicazione delle Risorse
 
 ```bash
-php artisan vendor:publish --provider="VitaliJalbu\LaravelShopper\ShopperServiceProvider"
+php artisan vendor:publish --provider="VitaliJalbu\Shopper\ShopperServiceProvider"
 ```
 
 ### 3. Esecuzione delle Migrazioni
@@ -183,7 +183,7 @@ Il package estende automaticamente il model User. Se vuoi personalizzare il comp
 ```php
 // In app/Models/User.php
 
-use VitaliJalbu\LaravelShopper\Traits\HasSocialAccounts;
+use VitaliJalbu\Shopper\Traits\HasSocialAccounts;
 
 class User extends Authenticatable
 {
@@ -198,7 +198,7 @@ class User extends Authenticatable
 Puoi estendere i controller per personalizzare il comportamento:
 
 ```php
-use VitaliJalbu\LaravelShopper\Http\Controllers\Auth\SocialAuthController;
+use VitaliJalbu\Shopper\Http\Controllers\Auth\SocialAuthController;
 
 class CustomSocialAuthController extends SocialAuthController
 {

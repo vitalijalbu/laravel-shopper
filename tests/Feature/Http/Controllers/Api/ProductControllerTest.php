@@ -1,12 +1,12 @@
 <?php
 
-namespace LaravelShopper\Tests\Feature\Http\Controllers\Api;
+namespace Shopper\Tests\Feature\Http\Controllers\Api;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\WithFaker;
 use Laravel\Sanctum\Sanctum;
-use LaravelShopper\Models\Product;
-use LaravelShopper\Tests\TestCase;
+use Shopper\Models\Product;
+use Shopper\Tests\TestCase;
 
 class ProductControllerTest extends TestCase
 {

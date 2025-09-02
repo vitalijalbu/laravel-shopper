@@ -1,10 +1,10 @@
 <?php
 
-namespace LaravelShopper\Repositories;
+namespace Shopper\Repositories;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
-use LaravelShopper\Models\Setting;
+use Shopper\Models\Setting;
 
 class SettingsRepository extends BaseRepository
 {

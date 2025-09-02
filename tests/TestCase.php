@@ -1,10 +1,10 @@
 <?php
 
-namespace LaravelShopper\Tests;
+namespace Shopper\Tests;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
-use LaravelShopper\ShopperServiceProvider;
+use Shopper\ShopperServiceProvider;
 use Orchestra\Testbench\Concerns\WithWorkbench;
 
 abstract class TestCase extends BaseTestCase

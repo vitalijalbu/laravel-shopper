@@ -1,12 +1,12 @@
 <?php
 
-namespace LaravelShopper\Models;
+namespace Shopper\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use LaravelShopper\Support\HasSite;
+use Shopper\Support\HasSite;
 
 class StorefrontTemplate extends Model
 {

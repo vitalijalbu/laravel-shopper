@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelShopper\Models;
+namespace Shopper\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -282,7 +282,7 @@ class App extends Model
     private function fireWebhook(string $event, array $data): void
     {
         // TODO: Implement webhook firing logic
-        event(new \LaravelShopper\Events\AppWebhookEvent($this, $event, $data));
+        event(new \Shopper\Events\AppWebhookEvent($this, $event, $data));
     }
 
     // Static methods

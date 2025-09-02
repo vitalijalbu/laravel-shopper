@@ -45,14 +45,14 @@ composer require vitalijalbu/laravel-shopper
 
 2. Publish and run migrations:
 ```bash
-php artisan vendor:publish --provider="LaravelShopper\ShopperServiceProvider" --tag="shopper-migrations"
+php artisan vendor:publish --provider="Shopper\ShopperServiceProvider" --tag="shopper-migrations"
 php artisan migrate
 ```
 
 3. Publish OAuth components (optional):
 ```bash
-php artisan vendor:publish --provider="LaravelShopper\ShopperServiceProvider" --tag="shopper-oauth-config"
-php artisan vendor:publish --provider="LaravelShopper\ShopperServiceProvider" --tag="shopper-components"
+php artisan vendor:publish --provider="Shopper\ShopperServiceProvider" --tag="shopper-oauth-config"
+php artisan vendor:publish --provider="Shopper\ShopperServiceProvider" --tag="shopper-components"
 ```
 
 ## OAuth Configuration
@@ -159,14 +159,14 @@ composer require vitalijalbu/laravel-shopper
 ### Publish and Run Migrations
 
 ```bash
-php artisan vendor:publish --provider="LaravelShopper\ShopperServiceProvider" --tag="migrations"
+php artisan vendor:publish --provider="Shopper\ShopperServiceProvider" --tag="migrations"
 php artisan migrate
 ```
 
 ### Publish Assets
 
 ```bash
-php artisan vendor:publish --provider="LaravelShopper\ShopperServiceProvider" --tag="assets"
+php artisan vendor:publish --provider="Shopper\ShopperServiceProvider" --tag="assets"
 npm install && npm run build
 ```
 
@@ -185,7 +185,7 @@ Visit `/cp` to access the Shopify-style control panel.
 ### 2. Create Your First Product
 
 ```php
-use LaravelShopper\Models\Product;
+use Shopper\Models\Product;
 
 $product = Product::create([
     'site_id' => 1,
@@ -200,7 +200,7 @@ $product = Product::create([
 ### 3. Create a Custom Template
 
 ```php
-use LaravelShopper\Models\StorefrontTemplate;
+use Shopper\Models\StorefrontTemplate;
 
 $template = StorefrontTemplate::create([
     'site_id' => 1,
@@ -222,7 +222,7 @@ $template = StorefrontTemplate::create([
 ### 4. Build Custom CP Pages
 
 ```php
-use LaravelShopper\CP\Page;
+use Shopper\CP\Page;
 
 $page = Page::make('My Custom Page')
     ->primaryAction('Save', '/save-url')
@@ -250,7 +250,7 @@ return Inertia::render('CP/CustomPage', [
 ### Creating Sections
 
 ```php
-use LaravelShopper\Models\StorefrontSection;
+use Shopper\Models\StorefrontSection;
 
 $section = StorefrontSection::create([
     'site_id' => 1,
@@ -288,7 +288,7 @@ $section = StorefrontSection::create([
 ### Custom Dashboard Cards
 
 ```php
-use LaravelShopper\CP\Dashboard;
+use Shopper\CP\Dashboard;
 
 Dashboard::card('SalesChart', [
     'title' => 'Sales Overview',
@@ -303,7 +303,7 @@ Dashboard::metric('Total Sales', function () {
 ### Navigation Items
 
 ```php
-use LaravelShopper\CP\Navigation;
+use Shopper\CP\Navigation;
 
 Navigation::section('custom', 'My Section')
     ->order(50);
@@ -319,7 +319,7 @@ Navigation::item('custom.reports')
 ### Extensible Pages
 
 ```php
-use LaravelShopper\CP\Page;
+use Shopper\CP\Page;
 
 $page = Page::make('Advanced Product')
     ->primaryAction('Save Product', null, ['form' => 'product-form'])
@@ -404,7 +404,7 @@ composer test
 Publish the config file:
 
 ```bash
-php artisan vendor:publish --provider="LaravelShopper\ShopperServiceProvider" --tag="config"
+php artisan vendor:publish --provider="Shopper\ShopperServiceProvider" --tag="config"
 ```
 
 ### Key Configuration Options

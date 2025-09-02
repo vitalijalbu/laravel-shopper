@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelShopper\CP;
+namespace Shopper\CP;
 
 class Page
 {

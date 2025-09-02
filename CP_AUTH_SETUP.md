@@ -19,7 +19,7 @@ Il Control Panel di Laravel Shopper include un sistema completo di autenticazion
 ```bash
 php artisan shopper:install --oauth
 # oppure
-php artisan vendor:publish --provider="LaravelShopper\ShopperServiceProvider" --tag="shopper-components"
+php artisan vendor:publish --provider="Shopper\ShopperServiceProvider" --tag="shopper-components"
 ```
 
 ### 2. Configurazione Ambiente

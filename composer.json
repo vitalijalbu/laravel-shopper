@@ -33,12 +33,12 @@
     },
     "autoload": {
         "psr-4": {
-            "LaravelShopper\\": "src/"
+            "Shopper\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "LaravelShopper\\Tests\\": "tests/",
+            "Shopper\\Tests\\": "tests/",
             "Workbench\\App\\": "workbench/app/",
             "Workbench\\Database\\Factories\\": "workbench/database/factories/",
             "Workbench\\Database\\Seeders\\": "workbench/database/seeders/"
@@ -75,7 +75,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "LaravelShopper\\ShopperServiceProvider"
+                "Shopper\\ShopperServiceProvider"
             ]
         }
     },

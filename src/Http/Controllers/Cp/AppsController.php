@@ -1,14 +1,14 @@
 <?php
 
-namespace LaravelShopper\Http\Controllers\Cp;
+namespace Shopper\Http\Controllers\Cp;
 
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use LaravelShopper\CP\Navigation;
-use LaravelShopper\CP\Page;
-use LaravelShopper\Http\Controllers\Controller;
-use LaravelShopper\Models\App;
-use LaravelShopper\Models\AppReview;
+use Shopper\CP\Navigation;
+use Shopper\CP\Page;
+use Shopper\Http\Controllers\Controller;
+use Shopper\Models\App;
+use Shopper\Models\AppReview;
 
 class AppsController extends Controller
 {

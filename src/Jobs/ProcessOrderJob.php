@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelShopper\Jobs;
+namespace Shopper\Jobs;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -9,10 +9,10 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use LaravelShopper\Models\Order;
-use LaravelShopper\Services\CacheService;
-use LaravelShopper\Services\InventoryService;
-use LaravelShopper\Services\NotificationService;
+use Shopper\Models\Order;
+use Shopper\Services\CacheService;
+use Shopper\Services\InventoryService;
+use Shopper\Services\NotificationService;
 
 class ProcessOrderJob implements ShouldQueue
 {

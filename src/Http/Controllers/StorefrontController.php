@@ -1,12 +1,12 @@
 <?php
 
-namespace LaravelShopper\Http\Controllers;
+namespace Shopper\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use LaravelShopper\Models\Category;
-use LaravelShopper\Models\Product;
-use LaravelShopper\Services\TemplateEngine;
+use Shopper\Models\Category;
+use Shopper\Models\Product;
+use Shopper\Services\TemplateEngine;
 
 class StorefrontController extends Controller
 {

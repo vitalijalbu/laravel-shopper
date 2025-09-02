@@ -1,20 +1,20 @@
 <?php
 
-namespace LaravelShopper\Http\Controllers\Cp;
+namespace Shopper\Http\Controllers\Cp;
 
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use LaravelShopper\CP\Navigation;
-use LaravelShopper\CP\Page;
-use LaravelShopper\Data\ProductDto;
-use LaravelShopper\DataTable\ProductDataTable;
-use LaravelShopper\Http\Controllers\Controller;
-use LaravelShopper\Http\Resources\ProductCollection;
-use LaravelShopper\Http\Resources\ProductResource;
-use LaravelShopper\Models\Brand;
-use LaravelShopper\Models\Category;
-use LaravelShopper\Models\Product;
-use LaravelShopper\Schema\SchemaRepository;
+use Shopper\CP\Navigation;
+use Shopper\CP\Page;
+use Shopper\Data\ProductDto;
+use Shopper\DataTable\ProductDataTable;
+use Shopper\Http\Controllers\Controller;
+use Shopper\Http\Resources\ProductCollection;
+use Shopper\Http\Resources\ProductResource;
+use Shopper\Models\Brand;
+use Shopper\Models\Category;
+use Shopper\Models\Product;
+use Shopper\Schema\SchemaRepository;
 
 class ProductsController extends Controller
 {

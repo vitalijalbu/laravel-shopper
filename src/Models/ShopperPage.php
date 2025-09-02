@@ -1,11 +1,11 @@
 <?php
 
-namespace LaravelShopper\Models;
+namespace Shopper\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use LaravelShopper\Support\HasHandle;
-use LaravelShopper\Support\HasSite;
+use Shopper\Support\HasHandle;
+use Shopper\Support\HasSite;
 
 class ShopperPage extends Model
 {

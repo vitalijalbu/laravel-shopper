@@ -1,8 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use LaravelShopper\Http\Controllers\StorefrontController;
-use LaravelShopper\Http\Middleware\StorefrontTemplateMiddleware;
+use Shopper\Http\Controllers\StorefrontController;
+use Shopper\Http\Middleware\StorefrontTemplateMiddleware;
 
 // Storefront Routes with Template Support
 Route::middleware([

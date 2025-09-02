@@ -1,9 +1,9 @@
 <?php
 
-namespace LaravelShopper\Contracts;
+namespace Shopper\Contracts;
 
 use Illuminate\Database\Eloquent\Collection;
-use LaravelShopper\Models\Product;
+use Shopper\Models\Product;
 
 interface ProductRepositoryInterface extends RepositoryInterface
 {

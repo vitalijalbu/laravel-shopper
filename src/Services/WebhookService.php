@@ -1,10 +1,10 @@
 <?php
 
-namespace LaravelShopper\Services;
+namespace Shopper\Services;
 
 use Illuminate\Support\Facades\Log;
-use LaravelShopper\Jobs\DispatchWebhookJob;
-use LaravelShopper\Models\Webhook;
+use Shopper\Jobs\DispatchWebhookJob;
+use Shopper\Models\Webhook;
 
 class WebhookService
 {

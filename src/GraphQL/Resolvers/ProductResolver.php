@@ -1,9 +1,9 @@
 <?php
 
-namespace LaravelShopper\GraphQL\Resolvers;
+namespace Shopper\GraphQL\Resolvers;
 
 use GraphQL\Type\Definition\ResolveInfo;
-use LaravelShopper\Models\Product;
+use Shopper\Models\Product;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
 class ProductResolver

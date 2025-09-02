@@ -1,10 +1,10 @@
 <?php
 
-namespace LaravelShopper\Repositories;
+namespace Shopper\Repositories;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
-use LaravelShopper\Models\TaxRate;
+use Shopper\Models\TaxRate;
 
 class TaxRateRepository extends BaseRepository
 {

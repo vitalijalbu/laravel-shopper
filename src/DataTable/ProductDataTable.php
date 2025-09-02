@@ -1,9 +1,9 @@
 <?php
 
-namespace LaravelShopper\DataTable;
+namespace Shopper\DataTable;
 
 use Illuminate\Database\Eloquent\Builder;
-use LaravelShopper\Models\Product;
+use Shopper\Models\Product;
 
 class ProductDataTable extends BaseDataTable
 {

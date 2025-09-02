@@ -1,9 +1,9 @@
 <?php
 
-namespace LaravelShopper\Models;
+namespace Shopper\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use LaravelShopper\Support\HasHandle;
+use Shopper\Support\HasHandle;
 
 class Site extends Model
 {

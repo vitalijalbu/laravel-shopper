@@ -1,18 +1,18 @@
 <?php
 
-namespace LaravelShopper\Http\Controllers\Cp;
+namespace Shopper\Http\Controllers\Cp;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Inertia\Inertia;
 use Inertia\Response;
-use LaravelShopper\CP\Navigation;
-use LaravelShopper\CP\Page;
-use LaravelShopper\Http\Controllers\Controller;
-use LaravelShopper\Repositories\SettingRepository;
-use LaravelShopper\Repositories\PaymentGatewayRepository;
-use LaravelShopper\Repositories\TaxRateRepository;
-use LaravelShopper\Repositories\ShippingMethodRepository;
+use Shopper\CP\Navigation;
+use Shopper\CP\Page;
+use Shopper\Http\Controllers\Controller;
+use Shopper\Repositories\SettingRepository;
+use Shopper\Repositories\PaymentGatewayRepository;
+use Shopper\Repositories\TaxRateRepository;
+use Shopper\Repositories\ShippingMethodRepository;
 
 class SettingsController extends Controller
 {

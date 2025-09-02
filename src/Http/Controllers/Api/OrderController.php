@@ -1,16 +1,16 @@
 <?php
 
-namespace LaravelShopper\Http\Controllers\Api;
+namespace Shopper\Http\Controllers\Api;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use LaravelShopper\Http\Controllers\Controller;
-use LaravelShopper\Http\Requests\Api\BulkOrderActionRequest;
-use LaravelShopper\Http\Requests\Api\MarkOrderAsShippedRequest;
-use LaravelShopper\Http\Requests\Api\StoreOrderRequest;
-use LaravelShopper\Http\Requests\Api\UpdateOrderRequest;
-use LaravelShopper\Http\Traits\ApiResponseTrait;
-use LaravelShopper\Repositories\OrderRepository;
+use Shopper\Http\Controllers\Controller;
+use Shopper\Http\Requests\Api\BulkOrderActionRequest;
+use Shopper\Http\Requests\Api\MarkOrderAsShippedRequest;
+use Shopper\Http\Requests\Api\StoreOrderRequest;
+use Shopper\Http\Requests\Api\UpdateOrderRequest;
+use Shopper\Http\Traits\ApiResponseTrait;
+use Shopper\Repositories\OrderRepository;
 
 class OrderController extends Controller
 {

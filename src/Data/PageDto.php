@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelShopper\Data;
+namespace Shopper\Data;
 
 use DateTime;
 use Illuminate\Support\Str;

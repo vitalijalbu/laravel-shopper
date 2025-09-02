@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelShopper\Jobs;
+namespace Shopper\Jobs;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -8,9 +8,9 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
-use LaravelShopper\Models\Product;
-use LaravelShopper\Services\CacheService;
-use LaravelShopper\Services\SearchService;
+use Shopper\Models\Product;
+use Shopper\Services\CacheService;
+use Shopper\Services\SearchService;
 
 class UpdateProductIndexJob implements ShouldQueue
 {

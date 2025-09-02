@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace LaravelShopper\Models;
+namespace Shopper\Models;
 
 use Illuminate\Database\Eloquent\Model;
 

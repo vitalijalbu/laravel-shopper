@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelShopper\Http\Controllers\Api\Auth;
+namespace Shopper\Http\Controllers\Api\Auth;
 
 use App\Models\SocialAccount;
 use App\Models\User;
@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Socialite\Facades\Socialite;
-use LaravelShopper\Http\Controllers\Controller;
+use Shopper\Http\Controllers\Controller;
 
 class SocialAuthApiController extends Controller
 {

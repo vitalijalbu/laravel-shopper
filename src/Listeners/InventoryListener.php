@@ -1,12 +1,12 @@
 <?php
 
-namespace LaravelShopper\Listeners;
+namespace Shopper\Listeners;
 
-use LaravelShopper\Events\InventoryUpdated;
-use LaravelShopper\Events\OrderCreated;
-use LaravelShopper\Events\OrderStatusChanged;
-use LaravelShopper\Events\ProductCreated;
-use LaravelShopper\Events\ProductUpdated;
+use Shopper\Events\InventoryUpdated;
+use Shopper\Events\OrderCreated;
+use Shopper\Events\OrderStatusChanged;
+use Shopper\Events\ProductCreated;
+use Shopper\Events\ProductUpdated;
 
 class InventoryListener extends Listener
 {

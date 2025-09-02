@@ -1,15 +1,15 @@
 <?php
 
-namespace LaravelShopper\Http\Controllers\Api;
+namespace Shopper\Http\Controllers\Api;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use LaravelShopper\Http\Controllers\Controller;
-use LaravelShopper\Http\Requests\Api\BulkActionRequest;
-use LaravelShopper\Http\Requests\Api\StoreCategoryRequest;
-use LaravelShopper\Http\Requests\Api\UpdateCategoryRequest;
-use LaravelShopper\Http\Traits\ApiResponseTrait;
-use LaravelShopper\Repositories\CategoryRepository;
+use Shopper\Http\Controllers\Controller;
+use Shopper\Http\Requests\Api\BulkActionRequest;
+use Shopper\Http\Requests\Api\StoreCategoryRequest;
+use Shopper\Http\Requests\Api\UpdateCategoryRequest;
+use Shopper\Http\Traits\ApiResponseTrait;
+use Shopper\Repositories\CategoryRepository;
 
 class CategoryController extends Controller
 {

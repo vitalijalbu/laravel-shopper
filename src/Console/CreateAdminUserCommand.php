@@ -1,11 +1,11 @@
 <?php
 
-namespace LaravelShopper\Console;
+namespace Shopper\Console;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use LaravelShopper\Models\User;
+use Shopper\Models\User;
 
 class CreateAdminUserCommand extends Command
 {

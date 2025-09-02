@@ -1,8 +1,8 @@
 <?php
 
-namespace LaravelShopper\Fieldtypes;
+namespace Shopper\Fieldtypes;
 
-use LaravelShopper\Fields\Field;
+use Shopper\Fields\Field;
 
 abstract class Fieldtype
 {

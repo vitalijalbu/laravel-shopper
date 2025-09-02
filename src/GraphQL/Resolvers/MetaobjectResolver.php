@@ -1,10 +1,10 @@
 <?php
 
-namespace LaravelShopper\GraphQL\Resolvers;
+namespace Shopper\GraphQL\Resolvers;
 
 use GraphQL\Type\Definition\ResolveInfo;
-use LaravelShopper\Models\Metaobject;
-use LaravelShopper\Models\MetaobjectDefinition;
+use Shopper\Models\Metaobject;
+use Shopper\Models\MetaobjectDefinition;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
 class MetaobjectResolver

@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelShopper\Listeners;
+namespace Shopper\Listeners;
 
 abstract class Listener
 {

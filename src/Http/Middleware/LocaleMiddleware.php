@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelShopper\Http\Middleware;
+namespace Shopper\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;

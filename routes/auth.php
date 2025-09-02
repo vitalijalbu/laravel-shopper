@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use LaravelShopper\Http\Controllers\Auth\SocialAuthController;
+use Shopper\Http\Controllers\Auth\SocialAuthController;
 
 /*
 |--------------------------------------------------------------------------

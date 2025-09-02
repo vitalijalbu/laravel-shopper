@@ -1,23 +1,23 @@
 <?php
 
-namespace LaravelShopper\Http\Controllers\Api;
+namespace Shopper\Http\Controllers\Api;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use LaravelShopper\Http\Controllers\Controller;
-use LaravelShopper\Models\Channel;
+use Shopper\Http\Controllers\Controller;
+use Shopper\Models\Channel;
 
 class ChannelController extends Controller
 {
 <?php
 
-namespace LaravelShopper\Http\Controllers\Api;
+namespace Shopper\Http\Controllers\Api;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use LaravelShopper\Http\Controllers\Controller;
-use LaravelShopper\Http\Traits\ApiResponseTrait;
-use LaravelShopper\Models\Channel;
+use Shopper\Http\Controllers\Controller;
+use Shopper\Http\Traits\ApiResponseTrait;
+use Shopper\Models\Channel;
 
 class ChannelController extends Controller
 {

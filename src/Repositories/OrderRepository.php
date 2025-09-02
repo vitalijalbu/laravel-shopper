@@ -1,12 +1,12 @@
 <?php
 
-namespace LaravelShopper\Repositories;
+namespace Shopper\Repositories;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
-use LaravelShopper\Models\Order;
-use LaravelShopper\Models\Customer;
-use LaravelShopper\Models\Product;
+use Shopper\Models\Order;
+use Shopper\Models\Customer;
+use Shopper\Models\Product;
 
 class OrderRepository extends BaseRepository
 {

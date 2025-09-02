@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelShopper\CP;
+namespace Shopper\CP;
 
 use Illuminate\Support\Collection;
 
@@ -94,7 +94,7 @@ class Navigation
             ->icon('shopping-bag')
             ->url('/cp/orders')
             ->section('orders')
-            ->badge(fn () => \LaravelShopper\Models\Order::pending()->count())
+            ->badge(fn () => \Shopper\Models\Order::pending()->count())
             ->order(1);
 
         static::item('orders.drafts')

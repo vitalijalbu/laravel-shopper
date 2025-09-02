@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelShopper\Fieldtypes;
+namespace Shopper\Fieldtypes;
 
 class Money extends Fieldtype
 {

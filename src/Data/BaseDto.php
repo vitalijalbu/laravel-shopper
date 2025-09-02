@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelShopper\Data;
+namespace Shopper\Data;
 
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Http\Request;

@@ -1,17 +1,17 @@
 <?php
 
-namespace LaravelShopper\Http\Controllers\Api;
+namespace Shopper\Http\Controllers\Api;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use LaravelShopper\Contracts\ProductRepositoryInterface;
-use LaravelShopper\Http\Requests\StoreProductRequest;
-use LaravelShopper\Http\Requests\UpdateProductRequest;
-use LaravelShopper\Http\Resources\ProductResource;
-use LaravelShopper\Jobs\UpdateProductIndexJob;
-use LaravelShopper\Services\CacheService;
-use LaravelShopper\Services\WebhookService;
+use Shopper\Contracts\ProductRepositoryInterface;
+use Shopper\Http\Requests\StoreProductRequest;
+use Shopper\Http\Requests\UpdateProductRequest;
+use Shopper\Http\Resources\ProductResource;
+use Shopper\Jobs\UpdateProductIndexJob;
+use Shopper\Services\CacheService;
+use Shopper\Services\WebhookService;
 
 class ProductController extends BaseController
 {

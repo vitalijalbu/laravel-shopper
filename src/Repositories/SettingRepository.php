@@ -1,11 +1,11 @@
 <?php
 
-namespace LaravelShopper\Repositories;
+namespace Shopper\Repositories;
 
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
-use LaravelShopper\Models\Setting;
+use Shopper\Models\Setting;
 
 class SettingRepository extends BaseRepository
 {

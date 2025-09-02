@@ -1,14 +1,14 @@
 <?php
 
-namespace LaravelShopper\Http\Controllers\Cp;
+namespace Shopper\Http\Controllers\Cp;
 
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use LaravelShopper\CP\Navigation;
-use LaravelShopper\CP\Page;
-use LaravelShopper\Data\CategoryDto;
-use LaravelShopper\Http\Controllers\Controller;
-use LaravelShopper\Models\Category;
+use Shopper\CP\Navigation;
+use Shopper\CP\Page;
+use Shopper\Data\CategoryDto;
+use Shopper\Http\Controllers\Controller;
+use Shopper\Models\Category;
 
 class CategoriesController extends Controller
 {

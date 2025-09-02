@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelShopper\Http\Controllers;
+namespace Shopper\Http\Controllers;
 
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests;

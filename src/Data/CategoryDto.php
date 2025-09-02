@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelShopper\Data;
+namespace Shopper\Data;
 
 class CategoryDto extends BaseDto
 {

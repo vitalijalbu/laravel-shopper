@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelShopper\Support;
+namespace Shopper\Support;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;

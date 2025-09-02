@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelShopper\CP;
+namespace Shopper\CP;
 
 use Illuminate\Support\Collection;
 
@@ -59,7 +59,7 @@ class NavigationSection
      */
     public function items(): Collection
     {
-        return collect(\LaravelShopper\CP\Navigation::$items ?? [])
+        return collect(\Shopper\CP\Navigation::$items ?? [])
             ->filter(fn ($item) => $item->section === $this->name);
     }
 

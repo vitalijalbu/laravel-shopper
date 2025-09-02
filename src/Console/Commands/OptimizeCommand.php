@@ -1,13 +1,13 @@
 <?php
 
-namespace LaravelShopper\Console\Commands;
+namespace Shopper\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
-use LaravelShopper\Services\CacheService;
+use Shopper\Services\CacheService;
 
 class OptimizeCommand extends Command
 {

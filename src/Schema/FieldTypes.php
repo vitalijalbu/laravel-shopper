@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelShopper\Schema;
+namespace Shopper\Schema;
 
 class TextFieldType extends FieldType
 {

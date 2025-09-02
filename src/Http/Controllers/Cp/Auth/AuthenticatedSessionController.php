@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelShopper\Http\Controllers\Cp\Auth;
+namespace Shopper\Http\Controllers\Cp\Auth;
 
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -9,8 +9,8 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
-use LaravelShopper\Http\Controllers\Controller;
-use LaravelShopper\Http\Requests\Auth\LoginRequest;
+use Shopper\Http\Controllers\Controller;
+use Shopper\Http\Requests\Auth\LoginRequest;
 
 class AuthenticatedSessionController extends Controller
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelShopper\Console\Commands;
+namespace Shopper\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
@@ -103,7 +103,7 @@ class InstallShopperCommand extends Command
     {
         $this->info('📝 Publishing configuration files...');
 
-        $params = ['--provider' => 'LaravelShopper\ShopperServiceProvider'];
+        $params = ['--provider' => 'Shopper\ShopperServiceProvider'];
 
         if ($this->option('force')) {
             $params['--force'] = true;
@@ -121,7 +121,7 @@ class InstallShopperCommand extends Command
     {
         $this->info('🔑 Publishing permissions configuration...');
 
-        $params = ['--provider' => 'LaravelShopper\ShopperServiceProvider'];
+        $params = ['--provider' => 'Shopper\ShopperServiceProvider'];
 
         if ($this->option('force')) {
             $params['--force'] = true;
@@ -139,7 +139,7 @@ class InstallShopperCommand extends Command
     {
         $this->info('🔐 Publishing OAuth authentication system...');
 
-        $params = ['--provider' => 'LaravelShopper\ShopperServiceProvider'];
+        $params = ['--provider' => 'Shopper\ShopperServiceProvider'];
 
         if ($this->option('force')) {
             $params['--force'] = true;
@@ -182,7 +182,7 @@ class InstallShopperCommand extends Command
     {
         $this->info('🎨 Publishing assets...');
 
-        $params = ['--provider' => 'LaravelShopper\ShopperServiceProvider'];
+        $params = ['--provider' => 'Shopper\ShopperServiceProvider'];
 
         if ($this->option('force')) {
             $params['--force'] = true;
@@ -212,7 +212,7 @@ class InstallShopperCommand extends Command
             $this->info('   Seeding roles, permissions, and sample data...');
 
             $exitCode = Artisan::call('db:seed', [
-                '--class' => 'LaravelShopper\\Database\\Seeders\\ShopperSeeder',
+                '--class' => 'Shopper\\Database\\Seeders\\ShopperSeeder',
                 '--force' => true,
             ]);
 
@@ -227,7 +227,7 @@ class InstallShopperCommand extends Command
 
         } catch (\Exception $e) {
             $this->warn('⚠️  Seeder failed: '.$e->getMessage());
-            $this->line('   You can run seeders manually: php artisan db:seed --class=LaravelShopper\\Database\\Seeders\\ShopperSeeder');
+            $this->line('   You can run seeders manually: php artisan db:seed --class=Shopper\\Database\\Seeders\\ShopperSeeder');
         }
     }
 
@@ -312,7 +312,7 @@ class InstallShopperCommand extends Command
 
         if (! $this->option('skip-migrations') && ! $this->option('seed')) {
             $this->line('1. Run migrations: php artisan migrate');
-            $this->line('2. Seed data: php artisan db:seed --class=LaravelShopper\\Database\\Seeders\\ShopperSeeder');
+            $this->line('2. Seed data: php artisan db:seed --class=Shopper\\Database\\Seeders\\ShopperSeeder');
         }
 
         if (! $this->option('admin') && $this->option('seed')) {

@@ -31,7 +31,7 @@ $product = $repository->find($id); // Cached per 1 ora
 
 ### 3. **Sistema di Cache Avanzato**
 ```php
-use LaravelShopper\Services\CacheService;
+use Shopper\Services\CacheService;
 
 $cache = app(CacheService::class);
 
@@ -179,7 +179,7 @@ docker stats
 
 ### Webhook System
 ```php
-use LaravelShopper\Services\WebhookService;
+use Shopper\Services\WebhookService;
 
 $webhooks = app(WebhookService::class);
 

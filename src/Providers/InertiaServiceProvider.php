@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelShopper\Providers;
+namespace Shopper\Providers;
 
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Lang;

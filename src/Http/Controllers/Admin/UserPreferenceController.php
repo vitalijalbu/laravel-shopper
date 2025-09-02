@@ -1,12 +1,12 @@
 <?php
 
-namespace LaravelShopper\Http\Controllers\Admin;
+namespace Shopper\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
-use LaravelShopper\Http\Requests\UserPreferenceRequest;
-use LaravelShopper\Models\UserPreference;
+use Shopper\Http\Requests\UserPreferenceRequest;
+use Shopper\Models\UserPreference;
 
 class UserPreferenceController extends Controller
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelShopper\Exceptions;
+namespace Shopper\Exceptions;
 
 use Exception;
 

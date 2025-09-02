@@ -1,10 +1,10 @@
 <?php
 
-namespace LaravelShopper\Repositories;
+namespace Shopper\Repositories;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
-use LaravelShopper\Models\PaymentMethod;
+use Shopper\Models\PaymentMethod;
 
 class PaymentMethodRepository extends BaseRepository
 {

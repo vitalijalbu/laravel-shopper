@@ -1,16 +1,16 @@
 <?php
 
-namespace LaravelShopper\Http\Controllers\Api;
+namespace Shopper\Http\Controllers\Api;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use LaravelShopper\Http\Controllers\Controller;
-use LaravelShopper\Http\Requests\Api\AssignPermissionRequest;
-use LaravelShopper\Http\Requests\Api\BulkActionRequest;
-use LaravelShopper\Http\Requests\Api\StoreUserGroupRequest;
-use LaravelShopper\Http\Requests\Api\UpdateUserGroupRequest;
-use LaravelShopper\Http\Traits\ApiResponseTrait;
-use LaravelShopper\Models\UserGroup;
+use Shopper\Http\Controllers\Controller;
+use Shopper\Http\Requests\Api\AssignPermissionRequest;
+use Shopper\Http\Requests\Api\BulkActionRequest;
+use Shopper\Http\Requests\Api\StoreUserGroupRequest;
+use Shopper\Http\Requests\Api\UpdateUserGroupRequest;
+use Shopper\Http\Traits\ApiResponseTrait;
+use Shopper\Models\UserGroup;
 
 class UserGroupController extends Controller
 {

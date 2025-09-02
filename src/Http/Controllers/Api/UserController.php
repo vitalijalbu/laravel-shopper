@@ -1,16 +1,16 @@
 <?php
 
-namespace LaravelShopper\Http\Controllers\Api;
+namespace Shopper\Http\Controllers\Api;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use LaravelShopper\Http\Controllers\Controller;
-use LaravelShopper\Http\Requests\Api\AssignPermissionRequest;
-use LaravelShopper\Http\Requests\Api\AssignRoleRequest;
-use LaravelShopper\Http\Requests\Api\StoreUserRequest;
-use LaravelShopper\Http\Requests\Api\UpdateUserRequest;
-use LaravelShopper\Http\Traits\ApiResponseTrait;
-use LaravelShopper\Models\User;
+use Shopper\Http\Controllers\Controller;
+use Shopper\Http\Requests\Api\AssignPermissionRequest;
+use Shopper\Http\Requests\Api\AssignRoleRequest;
+use Shopper\Http\Requests\Api\StoreUserRequest;
+use Shopper\Http\Requests\Api\UpdateUserRequest;
+use Shopper\Http\Traits\ApiResponseTrait;
+use Shopper\Models\User;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use Illuminate\Support\Facades\Hash;

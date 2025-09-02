@@ -1,14 +1,14 @@
 <?php
 
-namespace LaravelShopper\Http\Controllers\Cp;
+namespace Shopper\Http\Controllers\Cp;
 
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use LaravelShopper\CP\Navigation;
-use LaravelShopper\CP\Page;
-use LaravelShopper\Data\PageDto;
-use LaravelShopper\Http\Controllers\Controller;
-use LaravelShopper\Models\Page as ShopperPage;
+use Shopper\CP\Navigation;
+use Shopper\CP\Page;
+use Shopper\Data\PageDto;
+use Shopper\Http\Controllers\Controller;
+use Shopper\Models\Page as ShopperPage;
 
 class PagesController extends Controller
 {

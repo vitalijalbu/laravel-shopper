@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelShopper\DataTable;
+namespace Shopper\DataTable;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;

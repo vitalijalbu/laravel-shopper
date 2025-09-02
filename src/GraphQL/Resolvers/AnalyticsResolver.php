@@ -1,10 +1,10 @@
 <?php
 
-namespace LaravelShopper\GraphQL\Resolvers;
+namespace Shopper\GraphQL\Resolvers;
 
 use Carbon\Carbon;
 use GraphQL\Type\Definition\ResolveInfo;
-use LaravelShopper\Models\AnalyticsEvent;
+use Shopper\Models\AnalyticsEvent;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
 class AnalyticsResolver

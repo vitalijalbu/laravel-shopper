@@ -1,9 +1,9 @@
 <?php
 
-namespace LaravelShopper\Console\Commands;
+namespace Shopper\Console\Commands;
 
 use Illuminate\Console\Command;
-use LaravelShopper\Models\User;
+use Shopper\Models\User;
 
 class ShowAdminUsersCommand extends Command
 {
@@ -32,7 +32,7 @@ class ShowAdminUsersCommand extends Command
 
         if ($users->isEmpty()) {
             $this->warn('❌ No users found in the database.');
-            $this->line('   Run the seeder first: php artisan db:seed --class=LaravelShopper\\Database\\Seeders\\ShopperSeeder');
+            $this->line('   Run the seeder first: php artisan db:seed --class=Shopper\\Database\\Seeders\\ShopperSeeder');
 
             return 1;
         }

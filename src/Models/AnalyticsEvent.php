@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace LaravelShopper\Models;
+namespace Shopper\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;

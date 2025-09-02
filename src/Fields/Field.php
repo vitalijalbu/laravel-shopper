@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelShopper\Fields;
+namespace Shopper\Fields;
 
 use Illuminate\Support\Str;
 
@@ -86,14 +86,14 @@ class Field
     {
         $type = $this->type();
 
-        $class = 'LaravelShopper\\Fieldtypes\\'.Str::studly($type);
+        $class = 'Shopper\\Fieldtypes\\'.Str::studly($type);
 
         if (class_exists($class)) {
             return app($class)->setField($this);
         }
 
         // Fallback to text fieldtype
-        return app('LaravelShopper\\Fieldtypes\\Text')->setField($this);
+        return app('Shopper\\Fieldtypes\\Text')->setField($this);
     }
 
     public function setValue($value)

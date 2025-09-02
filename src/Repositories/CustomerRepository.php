@@ -1,11 +1,11 @@
 <?php
 
-namespace LaravelShopper\Repositories;
+namespace Shopper\Repositories;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
-use LaravelShopper\Models\Customer;
-use LaravelShopper\Models\CustomerGroup;
+use Shopper\Models\Customer;
+use Shopper\Models\CustomerGroup;
 
 class CustomerRepository extends BaseRepository
 {

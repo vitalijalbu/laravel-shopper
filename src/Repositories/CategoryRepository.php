@@ -1,12 +1,12 @@
 <?php
 
-namespace LaravelShopper\Repositories;
+namespace Shopper\Repositories;
 
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Cache;
-use LaravelShopper\Models\Category;
+use Shopper\Models\Category;
 
 class CategoryRepository extends BaseRepository
 {

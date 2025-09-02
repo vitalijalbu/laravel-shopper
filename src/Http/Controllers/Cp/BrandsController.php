@@ -1,14 +1,14 @@
 <?php
 
-namespace LaravelShopper\Http\Controllers\Cp;
+namespace Shopper\Http\Controllers\Cp;
 
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use LaravelShopper\CP\Navigation;
-use LaravelShopper\CP\Page;
-use LaravelShopper\Data\BrandDto;
-use LaravelShopper\Http\Controllers\Controller;
-use LaravelShopper\Models\Brand;
+use Shopper\CP\Navigation;
+use Shopper\CP\Page;
+use Shopper\Data\BrandDto;
+use Shopper\Http\Controllers\Controller;
+use Shopper\Models\Brand;
 
 class BrandsController extends Controller
 {

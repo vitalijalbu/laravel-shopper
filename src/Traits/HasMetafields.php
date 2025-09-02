@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace LaravelShopper\Traits;
+namespace Shopper\Traits;
 
 use Illuminate\Database\Eloquent\Relations\MorphMany;
-use LaravelShopper\Models\Metafield;
+use Shopper\Models\Metafield;
 
 trait HasMetafields
 {

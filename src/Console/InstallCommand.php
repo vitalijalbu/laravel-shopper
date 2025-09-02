@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelShopper\Console;
+namespace Shopper\Console;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
@@ -40,7 +40,7 @@ class InstallCommand extends Command
         if ($this->confirm('Would you like to seed the database with sample data?')) {
             $this->info('Seeding database...');
             Artisan::call('db:seed', [
-                '--class' => 'LaravelShopper\\Database\\Seeders\\ShopperSeeder',
+                '--class' => 'Shopper\\Database\\Seeders\\ShopperSeeder',
             ]);
             $this->info('Database seeded.');
         }

@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelShopper\Http\Traits;
+namespace Shopper\Http\Traits;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Pagination\LengthAwarePaginator;

@@ -1,11 +1,11 @@
 <?php
 
-namespace LaravelShopper\Repositories;
+namespace Shopper\Repositories;
 
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
-use LaravelShopper\Contracts\ProductRepositoryInterface;
-use LaravelShopper\Models\Product;
+use Shopper\Contracts\ProductRepositoryInterface;
+use Shopper\Models\Product;
 
 class ProductRepository extends BaseRepository implements ProductRepositoryInterface
 {

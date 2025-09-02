@@ -1,12 +1,12 @@
 <?php
 
-namespace LaravelShopper\Services;
+namespace Shopper\Services;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
-use LaravelShopper\Exceptions\InsufficientStockException;
-use LaravelShopper\Models\Order;
-use LaravelShopper\Models\Product;
+use Shopper\Exceptions\InsufficientStockException;
+use Shopper\Models\Order;
+use Shopper\Models\Product;
 
 class InventoryService
 {

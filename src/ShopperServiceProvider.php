@@ -1,25 +1,25 @@
 <?php
 
-namespace LaravelShopper;
+namespace Shopper;
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
-use LaravelShopper\Console\Commands\OptimizeCommand;
-use LaravelShopper\Console\Commands\ShowAdminUsersCommand;
-use LaravelShopper\Console\CreateAdminUserCommand;
-use LaravelShopper\Contracts\ProductRepositoryInterface;
-use LaravelShopper\Providers\InertiaServiceProvider;
-use LaravelShopper\Repositories\CustomerRepository;
-use LaravelShopper\Repositories\OrderRepository;
-use LaravelShopper\Repositories\PaymentGatewayRepository;
-use LaravelShopper\Repositories\ProductRepository;
-use LaravelShopper\Repositories\SettingRepository;
-use LaravelShopper\Repositories\ShippingMethodRepository;
-use LaravelShopper\Repositories\TaxRateRepository;
-use LaravelShopper\Services\CacheService;
-use LaravelShopper\Services\InventoryService;
-use LaravelShopper\Services\NotificationService;
-use LaravelShopper\Services\WebhookService;
+use Shopper\Console\Commands\OptimizeCommand;
+use Shopper\Console\Commands\ShowAdminUsersCommand;
+use Shopper\Console\CreateAdminUserCommand;
+use Shopper\Contracts\ProductRepositoryInterface;
+use Shopper\Providers\InertiaServiceProvider;
+use Shopper\Repositories\CustomerRepository;
+use Shopper\Repositories\OrderRepository;
+use Shopper\Repositories\PaymentGatewayRepository;
+use Shopper\Repositories\ProductRepository;
+use Shopper\Repositories\SettingRepository;
+use Shopper\Repositories\ShippingMethodRepository;
+use Shopper\Repositories\TaxRateRepository;
+use Shopper\Services\CacheService;
+use Shopper\Services\InventoryService;
+use Shopper\Services\NotificationService;
+use Shopper\Services\WebhookService;
 
 class ShopperServiceProvider extends ServiceProvider
 {
@@ -121,7 +121,7 @@ class ShopperServiceProvider extends ServiceProvider
 
             // Register commands
             $this->commands([
-                \LaravelShopper\Console\Commands\InstallShopperCommand::class,
+                \Shopper\Console\Commands\InstallShopperCommand::class,
                 ShowAdminUsersCommand::class,
                 OptimizeCommand::class,
             ]);
@@ -129,9 +129,9 @@ class ShopperServiceProvider extends ServiceProvider
 
         // Register middleware aliases (always, not just in console)
         $router = $this->app['router'];
-        $router->aliasMiddleware('cp', \LaravelShopper\Http\Middleware\ControlPanelMiddleware::class);
-        $router->aliasMiddleware('shopper.inertia', \LaravelShopper\Http\Middleware\HandleInertiaRequests::class);
-        $router->aliasMiddleware('shopper.auth', \LaravelShopper\Http\Middleware\Authenticate::class);
+        $router->aliasMiddleware('cp', \Shopper\Http\Middleware\ControlPanelMiddleware::class);
+        $router->aliasMiddleware('shopper.inertia', \Shopper\Http\Middleware\HandleInertiaRequests::class);
+        $router->aliasMiddleware('shopper.auth', \Shopper\Http\Middleware\Authenticate::class);
 
         // Register policies
         $this->registerPolicies();
@@ -195,7 +195,7 @@ class ShopperServiceProvider extends ServiceProvider
 
         // Register policies for Shopper models
         $policies = [
-            \LaravelShopper\Models\Product::class => \LaravelShopper\Policies\ProductPolicy::class,
+            \Shopper\Models\Product::class => \Shopper\Policies\ProductPolicy::class,
             // Add more model-policy mappings here as needed
         ];
 
@@ -204,13 +204,13 @@ class ShopperServiceProvider extends ServiceProvider
         }
 
         // Register control panel gates
-        $gate->define('access-cp', \LaravelShopper\Policies\ControlPanelPolicy::class.'@access');
-        $gate->define('view-dashboard', \LaravelShopper\Policies\ControlPanelPolicy::class.'@viewDashboard');
-        $gate->define('view-analytics', \LaravelShopper\Policies\ControlPanelPolicy::class.'@viewAnalytics');
-        $gate->define('view-reports', \LaravelShopper\Policies\ControlPanelPolicy::class.'@viewReports');
-        $gate->define('manage-settings', \LaravelShopper\Policies\ControlPanelPolicy::class.'@manageSettings');
-        $gate->define('edit-settings', \LaravelShopper\Policies\ControlPanelPolicy::class.'@editSettings');
-        $gate->define('manage-users', \LaravelShopper\Policies\ControlPanelPolicy::class.'@manageUsers');
-        $gate->define('manage-roles', \LaravelShopper\Policies\ControlPanelPolicy::class.'@manageRoles');
+        $gate->define('access-cp', \Shopper\Policies\ControlPanelPolicy::class.'@access');
+        $gate->define('view-dashboard', \Shopper\Policies\ControlPanelPolicy::class.'@viewDashboard');
+        $gate->define('view-analytics', \Shopper\Policies\ControlPanelPolicy::class.'@viewAnalytics');
+        $gate->define('view-reports', \Shopper\Policies\ControlPanelPolicy::class.'@viewReports');
+        $gate->define('manage-settings', \Shopper\Policies\ControlPanelPolicy::class.'@manageSettings');
+        $gate->define('edit-settings', \Shopper\Policies\ControlPanelPolicy::class.'@editSettings');
+        $gate->define('manage-users', \Shopper\Policies\ControlPanelPolicy::class.'@manageUsers');
+        $gate->define('manage-roles', \Shopper\Policies\ControlPanelPolicy::class.'@manageRoles');
     }
 }

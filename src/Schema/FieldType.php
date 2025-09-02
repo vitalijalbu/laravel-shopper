@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelShopper\Schema;
+namespace Shopper\Schema;
 
 abstract class FieldType
 {
