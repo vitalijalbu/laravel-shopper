@@ -6,8 +6,14 @@ use LaravelShopper\Http\Controllers\Cp\Auth\AuthenticatedSessionController;
 use LaravelShopper\Http\Controllers\Cp\Auth\NewPasswordController;
 use LaravelShopper\Http\Controllers\Cp\Auth\PasswordResetLinkController;
 use LaravelShopper\Http\Controllers\Cp\CollectionsController;
+use LaravelShopper\Http\Controllers\Cp\CustomersController;
 use LaravelShopper\Http\Controllers\Cp\DashboardController;
 use LaravelShopper\Http\Controllers\Cp\EntriesController;
+use LaravelShopper\Http\Controllers\Cp\OrdersController;
+use LaravelShopper\Http\Controllers\Cp\PaymentGatewaysController;
+use LaravelShopper\Http\Controllers\Cp\SettingsController;
+use LaravelShopper\Http\Controllers\Cp\ShippingMethodsController;
+use LaravelShopper\Http\Controllers\Cp\TaxRatesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -98,6 +104,75 @@ Route::prefix($cpPrefix)->name('cp.')->middleware(['web', 'shopper.inertia'])->g
             Route::delete('/bulk-uninstall', [AppsController::class, 'bulkUninstall'])->name('bulk-uninstall');
             Route::get('/{installation}/analytics', [AppsController::class, 'analytics'])->name('analytics');
             Route::post('/{app}/reviews', [AppsController::class, 'storeReview'])->name('reviews.store');
+        });
+
+        // Customers Management
+        Route::prefix('customers')->name('customers.')->group(function () {
+            Route::get('/', [CustomersController::class, 'index'])->name('index');
+            Route::post('/', [CustomersController::class, 'store'])->name('store');
+            Route::get('/{customer}', [CustomersController::class, 'show'])->name('show');
+            Route::put('/{customer}', [CustomersController::class, 'update'])->name('update');
+            Route::delete('/{customer}', [CustomersController::class, 'destroy'])->name('destroy');
+        });
+
+        // Orders Management
+        Route::prefix('orders')->name('orders.')->group(function () {
+            Route::get('/', [OrdersController::class, 'index'])->name('index');
+            Route::post('/', [OrdersController::class, 'store'])->name('store');
+            Route::get('/{order}', [OrdersController::class, 'show'])->name('show');
+            Route::put('/{order}', [OrdersController::class, 'update'])->name('update');
+            Route::patch('/{order}/status', [OrdersController::class, 'updateStatus'])->name('update-status');
+            Route::delete('/{order}', [OrdersController::class, 'destroy'])->name('destroy');
+        });
+
+        // Settings Management
+        Route::prefix('settings')->name('settings.')->group(function () {
+            Route::get('/', [SettingsController::class, 'index'])->name('index');
+            Route::get('/general', [SettingsController::class, 'general'])->name('general');
+            Route::put('/general', [SettingsController::class, 'updateGeneral'])->name('general.update');
+            Route::get('/checkout', [SettingsController::class, 'checkout'])->name('checkout');
+            Route::put('/checkout', [SettingsController::class, 'updateCheckout'])->name('checkout.update');
+            Route::get('/email', [SettingsController::class, 'email'])->name('email');
+            Route::put('/email', [SettingsController::class, 'updateEmail'])->name('email.update');
+
+            // Payment Gateways
+            Route::prefix('payment-gateways')->name('payment-gateways.')->group(function () {
+                Route::get('/', [PaymentGatewaysController::class, 'index'])->name('index');
+                Route::post('/', [PaymentGatewaysController::class, 'store'])->name('store');
+                Route::get('/{paymentGateway}', [PaymentGatewaysController::class, 'show'])->name('show');
+                Route::put('/{paymentGateway}', [PaymentGatewaysController::class, 'update'])->name('update');
+                Route::patch('/{paymentGateway}/toggle-status', [PaymentGatewaysController::class, 'toggleStatus'])->name('toggle-status');
+                Route::patch('/{paymentGateway}/set-default', [PaymentGatewaysController::class, 'setDefault'])->name('set-default');
+                Route::patch('/{paymentGateway}/config', [PaymentGatewaysController::class, 'updateConfig'])->name('update-config');
+                Route::post('/sort-order', [PaymentGatewaysController::class, 'updateSortOrder'])->name('sort-order');
+                Route::delete('/{paymentGateway}', [PaymentGatewaysController::class, 'destroy'])->name('destroy');
+            });
+
+            // Tax Rates
+            Route::prefix('tax-rates')->name('tax-rates.')->group(function () {
+                Route::get('/', [TaxRatesController::class, 'index'])->name('index');
+                Route::post('/', [TaxRatesController::class, 'store'])->name('store');
+                Route::get('/{taxRate}', [TaxRatesController::class, 'show'])->name('show');
+                Route::put('/{taxRate}', [TaxRatesController::class, 'update'])->name('update');
+                Route::patch('/{taxRate}/toggle-status', [TaxRatesController::class, 'toggleStatus'])->name('toggle-status');
+                Route::post('/{taxRate}/duplicate', [TaxRatesController::class, 'duplicate'])->name('duplicate');
+                Route::post('/priorities', [TaxRatesController::class, 'updatePriorities'])->name('priorities');
+                Route::post('/calculate', [TaxRatesController::class, 'calculateTax'])->name('calculate');
+                Route::delete('/{taxRate}', [TaxRatesController::class, 'destroy'])->name('destroy');
+            });
+
+            // Shipping Methods
+            Route::prefix('shipping-methods')->name('shipping-methods.')->group(function () {
+                Route::get('/', [ShippingMethodsController::class, 'index'])->name('index');
+                Route::post('/', [ShippingMethodsController::class, 'store'])->name('store');
+                Route::get('/{shippingMethod}', [ShippingMethodsController::class, 'show'])->name('show');
+                Route::put('/{shippingMethod}', [ShippingMethodsController::class, 'update'])->name('update');
+                Route::patch('/{shippingMethod}/toggle-status', [ShippingMethodsController::class, 'toggleStatus'])->name('toggle-status');
+                Route::post('/{shippingMethod}/duplicate', [ShippingMethodsController::class, 'duplicate'])->name('duplicate');
+                Route::post('/sort-order', [ShippingMethodsController::class, 'updateSortOrder'])->name('sort-order');
+                Route::post('/calculate', [ShippingMethodsController::class, 'calculateShipping'])->name('calculate');
+                Route::delete('/{shippingMethod}', [ShippingMethodsController::class, 'destroy'])->name('destroy');
+            });
         });
     });
 });

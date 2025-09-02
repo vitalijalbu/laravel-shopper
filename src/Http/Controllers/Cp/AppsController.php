@@ -101,7 +101,7 @@ class AppsController extends Controller
                 ['label' => __('apps.store.submit'), 'url' => '/cp/apps/submit'],
             ]);
 
-        return Inertia::render('CP/Apps/Store', [
+        return Inertia::render('Apps/Store', [
             'page' => $page->compile(),
             'navigation' => Navigation::tree(),
             'apps' => $apps,
@@ -140,7 +140,7 @@ class AppsController extends Controller
                 ['label' => __('apps.store.submit'), 'url' => '/cp/apps/submit'],
             ]);
 
-        return Inertia::render('CP/Apps/Installed', [
+        return Inertia::render('Apps/Installed', [
             'page' => $page->compile(),
             'navigation' => Navigation::tree(),
             'apps' => $apps,
@@ -186,7 +186,7 @@ class AppsController extends Controller
             $page->primaryAction(__('apps.actions.install'), null, ['action' => 'install']);
         }
 
-        return Inertia::render('CP/Apps/Show', [
+        return Inertia::render('Apps/Show', [
             'page' => $page->compile(),
             'navigation' => Navigation::tree(),
             'app' => $app,
@@ -293,7 +293,7 @@ class AppsController extends Controller
             ->breadcrumb(__('admin.actions.configure'))
             ->primaryAction(__('admin.actions.save'), null, ['form' => 'app-settings-form']);
 
-        return Inertia::render('CP/Apps/Configure', [
+        return Inertia::render('Apps/Configure', [
             'page' => $page->compile(),
             'navigation' => Navigation::tree(),
             'app' => $app,
@@ -352,7 +352,7 @@ class AppsController extends Controller
             ->breadcrumb($app->name, "/cp/apps/{$app->id}")
             ->breadcrumb(__('apps.reviews.title'));
 
-        return Inertia::render('CP/Apps/Reviews', [
+        return Inertia::render('Apps/Reviews', [
             'page' => $page->compile(),
             'navigation' => Navigation::tree(),
             'app' => $app,

@@ -36,7 +36,7 @@ class PagesController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(20);
 
-        return Inertia::render('CP/Pages/Index', [
+        return Inertia::render('Pages/index', [
             'page' => $page->compile(),
             'navigation' => Navigation::tree(),
             'pages' => $pages,
@@ -60,7 +60,7 @@ class PagesController extends Controller
                 ['label' => 'Save & add another', 'action' => 'save_add_another'],
             ]);
 
-        return Inertia::render('CP/Pages/Create', [
+        return Inertia::render('Pages/Create', [
             'page' => $page->compile(),
             'navigation' => Navigation::tree(),
             'templates' => $this->getAvailableTemplates(),
@@ -141,7 +141,7 @@ class PagesController extends Controller
                 'seo' => ['label' => 'SEO', 'component' => 'PageSeoForm'],
             ]);
 
-        return Inertia::render('CP/Pages/Edit', [
+        return Inertia::render('Pages/Edit', [
             'page' => $pageBuilder->compile(),
             'navigation' => Navigation::tree(),
             'pageData' => $page,
@@ -212,7 +212,7 @@ class PagesController extends Controller
                 ['label' => 'Publish', 'action' => 'publish'],
             ]);
 
-        return Inertia::render('CP/Pages/Builder', [
+        return Inertia::render('Pages/Builder', [
             'page' => $pageBuilder->compile(),
             'navigation' => Navigation::tree(),
             'pageData' => $page,

@@ -1,0 +1,47 @@
+{
+    "settings": {
+        "title": "Impostazioni",
+        "subtitle": "Gestisci le impostazioni del tuo negozio",
+        "general": {
+            "title": "Impostazioni Generali",
+            "description": "Configura nome negozio, indirizzo, valuta predefinita e altre impostazioni di base",
+            "action": "Modifica impostazioni"
+        },
+        "payment_gateways": {
+            "title": "Gateway di Pagamento",
+            "description": "Gestisci Stripe, PayPal, e altri metodi di pagamento per il tuo negozio",
+            "action": "Gestisci gateway"
+        },
+        "tax_rates": {
+            "title": "Aliquote Fiscali",
+            "description": "Configura le tasse per paese, stato e città con calcolo automatico",
+            "action": "Gestisci tasse"
+        },
+        "shipping_methods": {
+            "title": "Metodi di Spedizione",
+            "description": "Configura spedizioni, zone di consegna e calcolo automatico dei costi",
+            "action": "Gestisci spedizioni"
+        },
+        "checkout": {
+            "title": "Checkout",
+            "description": "Personalizza il processo di checkout e le opzioni disponibili",
+            "action": "Configura checkout"
+        },
+        "email": {
+            "title": "Impostazioni Email",
+            "description": "Configura template email, notifiche automatiche e SMTP",
+            "action": "Configura email"
+        },
+        "configuration_status": {
+            "title": "Stato Configurazione",
+            "gateway_active": "Gateway Attivi",
+            "tax_zones": "Zone Fiscali",
+            "shipping": "Spedizioni",
+            "email": "Email",
+            "configured_of": ":active su :total configurati",
+            "active_rates": ":count aliquote attive",
+            "active_methods": ":count metodi attivi",
+            "configuration_complete": "Configurazione completa"
+        }
+    }
+}

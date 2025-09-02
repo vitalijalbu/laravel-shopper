@@ -33,7 +33,7 @@ class CategoriesController extends Controller
             ->orderBy('name')
             ->paginate(50);
 
-        return Inertia::render('CP/Categories/Index', [
+        return Inertia::render('categories/index', [
             'page' => $page->compile(),
             'navigation' => Navigation::tree(),
             'categories' => $categories,
@@ -56,7 +56,7 @@ class CategoriesController extends Controller
                 ['label' => 'Save & add another', 'action' => 'save_add_another'],
             ]);
 
-        return Inertia::render('CP/Categories/Create', [
+        return Inertia::render('categories/Create', [
             'page' => $page->compile(),
             'navigation' => Navigation::tree(),
             'parentCategories' => Category::whereNull('parent_id')->orderBy('name')->get(),
@@ -131,7 +131,7 @@ class CategoriesController extends Controller
                 ['label' => 'Delete', 'action' => 'delete', 'destructive' => true],
             ]);
 
-        return Inertia::render('CP/Categories/Show', [
+        return Inertia::render('categories/Show', [
             'page' => $page->compile(),
             'navigation' => Navigation::tree(),
             'category' => $category,
@@ -162,7 +162,7 @@ class CategoriesController extends Controller
                 'products' => ['label' => 'Products', 'component' => 'CategoryProductsForm'],
             ]);
 
-        return Inertia::render('CP/Categories/Edit', [
+        return Inertia::render('categories/Edit', [
             'page' => $page->compile(),
             'navigation' => Navigation::tree(),
             'category' => $category,

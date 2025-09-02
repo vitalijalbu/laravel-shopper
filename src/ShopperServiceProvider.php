@@ -6,11 +6,16 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use LaravelShopper\Console\Commands\OptimizeCommand;
 use LaravelShopper\Console\Commands\ShowAdminUsersCommand;
-use LaravelShopper\Console\Commands\TestLoginCommand;
 use LaravelShopper\Console\CreateAdminUserCommand;
 use LaravelShopper\Contracts\ProductRepositoryInterface;
 use LaravelShopper\Providers\InertiaServiceProvider;
+use LaravelShopper\Repositories\CustomerRepository;
+use LaravelShopper\Repositories\OrderRepository;
+use LaravelShopper\Repositories\PaymentGatewayRepository;
 use LaravelShopper\Repositories\ProductRepository;
+use LaravelShopper\Repositories\SettingRepository;
+use LaravelShopper\Repositories\ShippingMethodRepository;
+use LaravelShopper\Repositories\TaxRateRepository;
 use LaravelShopper\Services\CacheService;
 use LaravelShopper\Services\InventoryService;
 use LaravelShopper\Services\NotificationService;
@@ -40,6 +45,12 @@ class ShopperServiceProvider extends ServiceProvider
 
         // Register repositories
         $this->app->bind(ProductRepositoryInterface::class, ProductRepository::class);
+        $this->app->singleton(CustomerRepository::class);
+        $this->app->singleton(OrderRepository::class);
+        $this->app->singleton(SettingRepository::class);
+        $this->app->singleton(PaymentGatewayRepository::class);
+        $this->app->singleton(TaxRateRepository::class);
+        $this->app->singleton(ShippingMethodRepository::class);
 
         // Register console commands
         if ($this->app->runningInConsole()) {
@@ -112,7 +123,6 @@ class ShopperServiceProvider extends ServiceProvider
             $this->commands([
                 \LaravelShopper\Console\Commands\InstallShopperCommand::class,
                 ShowAdminUsersCommand::class,
-                TestLoginCommand::class,
                 OptimizeCommand::class,
             ]);
         }
