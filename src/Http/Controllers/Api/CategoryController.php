@@ -5,10 +5,15 @@ namespace LaravelShopper\Http\Controllers\Api;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use LaravelShopper\Http\Controllers\Controller;
+use LaravelShopper\Http\Requests\Api\BulkActionRequest;
+use LaravelShopper\Http\Requests\Api\StoreCategoryRequest;
+use LaravelShopper\Http\Requests\Api\UpdateCategoryRequest;
+use LaravelShopper\Http\Traits\ApiResponseTrait;
 use LaravelShopper\Repositories\CategoryRepository;
 
 class CategoryController extends Controller
 {
+    use ApiResponseTrait;
     public function __construct(
         protected CategoryRepository $categoryRepository
     ) {}
@@ -23,23 +28,7 @@ class CategoryController extends Controller
 
         $categories = $this->categoryRepository->getPaginatedWithFilters($filters, $perPage);
 
-        return response()->json([
-            'data' => $categories->items(),
-            'meta' => [
-                'current_page' => $categories->currentPage(),
-                'last_page' => $categories->lastPage(),
-                'per_page' => $categories->perPage(),
-                'total' => $categories->total(),
-                'from' => $categories->firstItem(),
-                'to' => $categories->lastItem(),
-            ],
-            'links' => [
-                'first' => $categories->url(1),
-                'last' => $categories->url($categories->lastPage()),
-                'prev' => $categories->previousPageUrl(),
-                'next' => $categories->nextPageUrl(),
-            ]
-        ]);
+        return $this->paginatedResponse($categories);
     }
 
     /**
