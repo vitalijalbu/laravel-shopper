@@ -5,11 +5,24 @@ namespace LaravelShopper\Http\Controllers\Api;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use LaravelShopper\Http\Controllers\Controller;
+use LaravelShopper\Http\Requests\Api\AssignPermissionRequest;
+use LaravelShopper\Http\Requests\Api\AssignRoleRequest;
+use LaravelShopper\Http\Requests\Api\StoreUserRequest;
+use LaravelShopper\Http\Requests\Api\UpdateUserRequest;
+use LaravelShopper\Http\Traits\ApiResponseTrait;
 use LaravelShopper\Models\User;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
+    use ApiResponseTrait;
+
+    public function __construct()
+    {
+        $this->middleware(['auth:api', 'permission:manage-users']);
+    }
     /**
      * Display a listing of users
      */
@@ -359,15 +372,187 @@ class UserController extends Controller
                 ], 207); // 207 Multi-Status
             }
 
-            return response()->json([
-                'message' => "Azione '{$validated['action']}' eseguita su {$count} utenti",
-                'data' => $result,
+            return $this->bulkActionResponse($count, "Azione '{$validated['action']}' eseguita", $result);
+        } catch (\Exception $e) {
+            return $this->errorResponse('Errore durante l\'esecuzione dell\'azione bulk');
+        }
+    }
+
+    /**
+     * Assign roles to user
+     */
+    public function assignRoles(AssignRoleRequest $request, string $id): JsonResponse
+    {
+        try {
+            $validated = $request->validated();
+            $user = User::findOrFail($id);
+            $user->syncRoles($validated['roles']);
+
+            return $this->successResponse($user->load('roles'), 'Ruoli assegnati con successo');
+        } catch (\Exception $e) {
+            return $this->errorResponse('Errore durante l\'assegnazione dei ruoli');
+        }
+    }
+
+    /**
+     * Remove roles from user
+     */
+    public function revokeRoles(AssignRoleRequest $request, string $id): JsonResponse
+    {
+        try {
+            $validated = $request->validated();
+            $user = User::findOrFail($id);
+            $user->removeRole($validated['roles']);
+
+            return $this->successResponse($user->load('roles'), 'Ruoli revocati con successo');
+        } catch (\Exception $e) {
+            return $this->errorResponse('Errore durante la revoca dei ruoli');
+        }
+    }
+
+    /**
+     * Assign direct permissions to user
+     */
+    public function assignPermissions(AssignPermissionRequest $request, string $id): JsonResponse
+    {
+        try {
+            $validated = $request->validated();
+            $user = User::findOrFail($id);
+            $user->givePermissionTo($validated['permissions']);
+
+            return $this->successResponse($user->load(['roles', 'permissions']), 'Permessi assegnati con successo');
+        } catch (\Exception $e) {
+            return $this->errorResponse('Errore durante l\'assegnazione dei permessi');
+        }
+    }
+
+    /**
+     * Remove direct permissions from user
+     */
+    public function revokePermissions(AssignPermissionRequest $request, string $id): JsonResponse
+    {
+        try {
+            $validated = $request->validated();
+            $user = User::findOrFail($id);
+            $user->revokePermissionTo($validated['permissions']);
+
+            return $this->successResponse($user->load(['roles', 'permissions']), 'Permessi revocati con successo');
+        } catch (\Exception $e) {
+            return $this->errorResponse('Errore durante la revoca dei permessi');
+        }
+    }
+
+    /**
+     * Get all permissions for user (direct + from roles)
+     */
+    public function userPermissions(string $id): JsonResponse
+    {
+        try {
+            $user = User::with(['roles.permissions', 'permissions'])->findOrFail($id);
+            
+            $allPermissions = $user->getAllPermissions();
+            $directPermissions = $user->getDirectPermissions();
+            $rolePermissions = $user->getPermissionsViaRoles();
+
+            return $this->successResponse([
+                'user' => $user->name,
+                'all_permissions' => $allPermissions,
+                'direct_permissions' => $directPermissions,
+                'role_permissions' => $rolePermissions,
+                'roles' => $user->roles,
             ]);
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Errore durante l\'esecuzione dell\'azione bulk',
-                'error' => $e->getMessage(),
-            ], 500);
+            return $this->notFoundResponse('Utente non trovato');
+        }
+    }
+
+    /**
+     * Check if user has specific permission
+     */
+    public function hasPermission(Request $request, string $id): JsonResponse
+    {
+        $validated = $request->validate([
+            'permission' => 'required|string|exists:permissions,name',
+        ]);
+
+        try {
+            $user = User::findOrFail($id);
+            $hasPermission = $user->hasPermissionTo($validated['permission']);
+
+            return $this->successResponse([
+                'user' => $user->name,
+                'permission' => $validated['permission'],
+                'has_permission' => $hasPermission,
+            ]);
+        } catch (\Exception $e) {
+            return $this->notFoundResponse('Utente non trovato');
+        }
+    }
+
+    /**
+     * Check if user has specific role
+     */
+    public function hasRole(Request $request, string $id): JsonResponse
+    {
+        $validated = $request->validate([
+            'role' => 'required|string|exists:roles,name',
+        ]);
+
+        try {
+            $user = User::findOrFail($id);
+            $hasRole = $user->hasRole($validated['role']);
+
+            return $this->successResponse([
+                'user' => $user->name,
+                'role' => $validated['role'],
+                'has_role' => $hasRole,
+            ]);
+        } catch (\Exception $e) {
+            return $this->notFoundResponse('Utente non trovato');
+        }
+    }
+
+    /**
+     * Get users by role
+     */
+    public function byRole(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'role' => 'required|string|exists:roles,name',
+        ]);
+
+        try {
+            $users = User::role($validated['role'])->with(['roles', 'permissions'])->get();
+
+            return $this->successResponse([
+                'role' => $validated['role'],
+                'users' => $users,
+                'count' => $users->count(),
+            ]);
+        } catch (\Exception $e) {
+            return $this->errorResponse('Errore durante il recupero degli utenti');
+        }
+    }
+
+    /**
+     * Get users by permission
+     */
+    public function byPermission(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'permission' => 'required|string|exists:permissions,name',
+        ]);
+
+        try {
+            $users = User::permission($validated['permission'])->with(['roles', 'permissions'])->get();
+
+            return $this->successResponse([
+                'permission' => $validated['permission'],
+                'users' => $users,
+                'count' => $users->count(),
+            ]);
+        } catch (\Exception $e) {
+            return $this->errorResponse('Errore durante il recupero degli utenti');
         }
     }
 }

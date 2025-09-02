@@ -4,6 +4,7 @@ namespace LaravelShopper\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -77,6 +78,32 @@ class User extends Authenticatable implements MustVerifyEmail
     public function getSocialAccount(string $provider): ?SocialAccount
     {
         return $this->socialAccounts()->where('provider', $provider)->first();
+    }
+
+    /**
+     * Get the user's groups.
+     */
+    public function userGroups(): BelongsToMany
+    {
+        return $this->belongsToMany(UserGroup::class, 'user_group_user', 'user_id', 'user_group_id')
+                    ->withTimestamps();
+    }
+
+    /**
+     * Check if user belongs to a specific group.
+     */
+    public function belongsToGroup(string $groupName): bool
+    {
+        return $this->userGroups()->where('name', $groupName)->exists();
+    }
+
+    /**
+     * Get user's default group.
+     */
+    public function getDefaultGroup(): ?UserGroup
+    {
+        return $this->userGroups()->where('is_default', true)->first() 
+               ?? UserGroup::where('is_default', true)->first();
     }
 
     /**
