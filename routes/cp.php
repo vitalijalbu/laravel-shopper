@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Support\Facades\Route;
 use Shopper\Http\Controllers\Cp\AppsController;
 use Shopper\Http\Controllers\Cp\Auth\AuthenticatedSessionController;
@@ -98,6 +100,35 @@ Route::prefix($cpPrefix)->name('cp.')->middleware(['web', 'shopper.inertia'])->g
                 Route::post('/items/reorder', [NavigationItemController::class, 'reorder'])->name('reorder');
                 Route::post('/items/{item}/move', [NavigationItemController::class, 'move'])->name('move');
             });
+        });
+
+        // Product Types Management
+        Route::prefix('product-types')->name('product-types.')->group(function () {
+            Route::get('/', [\Shopper\Http\Controllers\Cp\ProductTypesController::class, 'index'])->name('index');
+            Route::get('/create', [\Shopper\Http\Controllers\Cp\ProductTypesController::class, 'create'])->name('create');
+            Route::post('/', [\Shopper\Http\Controllers\Cp\ProductTypesController::class, 'store'])->name('store');
+            Route::get('/{productType}', [\Shopper\Http\Controllers\Cp\ProductTypesController::class, 'show'])->name('show');
+            Route::get('/{productType}/edit', [\Shopper\Http\Controllers\Cp\ProductTypesController::class, 'edit'])->name('edit');
+            Route::put('/{productType}', [\Shopper\Http\Controllers\Cp\ProductTypesController::class, 'update'])->name('update');
+            Route::delete('/{productType}', [\Shopper\Http\Controllers\Cp\ProductTypesController::class, 'destroy'])->name('destroy');
+            Route::post('/bulk', [\Shopper\Http\Controllers\Cp\ProductTypesController::class, 'bulk'])->name('bulk');
+            Route::post('/{productType}/duplicate', [\Shopper\Http\Controllers\Cp\ProductTypesController::class, 'duplicate'])->name('duplicate');
+            Route::get('/export', [\Shopper\Http\Controllers\Cp\ProductTypesController::class, 'export'])->name('export');
+        });
+
+        // Reviews Management
+        Route::prefix('reviews')->name('reviews.')->group(function () {
+            Route::get('/', [\Shopper\Http\Controllers\Cp\ReviewsController::class, 'index'])->name('index');
+            Route::post('/', [\Shopper\Http\Controllers\Cp\ReviewsController::class, 'store'])->name('store');
+            Route::get('/analytics', [\Shopper\Http\Controllers\Cp\ReviewsController::class, 'analytics'])->name('analytics');
+            Route::get('/export', [\Shopper\Http\Controllers\Cp\ReviewsController::class, 'export'])->name('export');
+            Route::get('/{review}', [\Shopper\Http\Controllers\Cp\ReviewsController::class, 'show'])->name('show');
+            Route::put('/{review}', [\Shopper\Http\Controllers\Cp\ReviewsController::class, 'update'])->name('update');
+            Route::delete('/{review}', [\Shopper\Http\Controllers\Cp\ReviewsController::class, 'destroy'])->name('destroy');
+            Route::put('/{review}/approve', [\Shopper\Http\Controllers\Cp\ReviewsController::class, 'approve'])->name('approve');
+            Route::put('/{review}/unapprove', [\Shopper\Http\Controllers\Cp\ReviewsController::class, 'unapprove'])->name('unapprove');
+            Route::post('/bulk-approve', [\Shopper\Http\Controllers\Cp\ReviewsController::class, 'bulkApprove'])->name('bulk.approve');
+            Route::post('/bulk-delete', [\Shopper\Http\Controllers\Cp\ReviewsController::class, 'bulkDelete'])->name('bulk.delete');
         });
 
         // Utilities

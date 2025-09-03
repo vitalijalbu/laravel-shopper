@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Support\Facades\Route;
 use Shopper\Http\Controllers\StorefrontController;
 use Shopper\Http\Middleware\StorefrontTemplateMiddleware;
@@ -24,12 +26,12 @@ Route::middleware([
             ->where('handle', '[a-zA-Z0-9\-_]+');
     });
 
-    // Collection/Category routes
-    Route::prefix('collections')->name('storefront.categories.')->group(function () {
-        Route::get('/', [StorefrontController::class, 'categoryIndex'])
+    // Collection routes
+    Route::prefix('collections')->name('storefront.collections.')->group(function () {
+        Route::get('/', [StorefrontController::class, 'collectionIndex'])
             ->name('index');
 
-        Route::get('/{handle}', [StorefrontController::class, 'categoryShow'])
+        Route::get('/{handle}', [StorefrontController::class, 'collectionShow'])
             ->name('show')
             ->where('handle', '[a-zA-Z0-9\-_]+');
     });

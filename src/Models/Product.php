@@ -50,6 +50,8 @@ class Product extends Model implements HasMedia
         'seo',
         'meta',
         'published_at',
+        'average_rating',
+        'review_count',
     ];
 
     protected $casts = [
@@ -69,6 +71,8 @@ class Product extends Model implements HasMedia
         'seo' => 'array',
         'meta' => 'array',
         'published_at' => 'datetime',
+        'average_rating' => 'decimal:2',
+        'review_count' => 'integer',
     ];
 
     public function brand(): BelongsTo
@@ -114,6 +118,16 @@ class Product extends Model implements HasMedia
     public function favorites(): MorphMany
     {
         return $this->morphMany(Favorite::class, 'favoriteable');
+    }
+
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(ProductReview::class);
+    }
+
+    public function approvedReviews(): HasMany
+    {
+        return $this->hasMany(ProductReview::class)->where('is_approved', true);
     }
 
     public function isFavoritedBy(Customer $customer): bool

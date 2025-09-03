@@ -1,11 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Shopper\Http\Controllers\Api\AuthController;
 use Shopper\Http\Controllers\Api\BrandController;
 use Shopper\Http\Controllers\Api\CartController;
-use Shopper\Http\Controllers\Api\CategoryController;
 use Shopper\Http\Controllers\Api\DiscountController;
 use Shopper\Http\Controllers\Api\FidelityController;
 use Shopper\Http\Controllers\Api\ProductController;
@@ -17,7 +18,7 @@ use Shopper\Http\Middleware\HandleSiteContext;
 |--------------------------------------------------------------------------
 |
 | API routes for Laravel Shopper with support for:
-| - Public product/category browsing
+| - Public product/collection browsing
 | - Authentication (Sanctum)
 | - Cart management
 | - Admin operations with permissions
@@ -43,10 +44,6 @@ Route::group([
     // Public Product Browsing
     Route::get('/products', [ProductController::class, 'index'])->name('api.products.index');
     Route::get('/products/{product}', [ProductController::class, 'show'])->name('api.products.show');
-
-    // Public Category Browsing
-    Route::get('/categories', [CategoryController::class, 'index'])->name('api.categories.index');
-    Route::get('/categories/{category}', [CategoryController::class, 'show'])->name('api.categories.show');
 
     // Public Brand Browsing
     Route::get('/brands', [BrandController::class, 'index'])->name('api.brands.index');
@@ -200,12 +197,6 @@ Route::group([
         Route::prefix('products')->name('products.')->group(function () {
             Route::get('/', [ProductController::class, 'index'])->name('index');
             Route::get('/{product}', [ProductController::class, 'show'])->name('show');
-        });
-
-        // Site-specific Categories
-        Route::prefix('categories')->name('categories.')->group(function () {
-            Route::get('/', [CategoryController::class, 'index'])->name('index');
-            Route::get('/{category}', [CategoryController::class, 'show'])->name('show');
         });
 
         // Site-specific Brands
