@@ -2,11 +2,18 @@
 
 namespace Shopper\Http\Controllers\Cp;
 
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 use Shopper\Http\Controllers\Controller;
+use Shopper\Http\Requests\Menu\StoreMenuRequest;
+use Shopper\Http\Requests\Menu\UpdateMenuRequest;
+use Shopper\Http\Requests\Menu\StoreMenuItemRequest;
+use Shopper\Http\Requests\Menu\UpdateMenuItemRequest;
+use Shopper\Http\Requests\Menu\ReorderMenuItemsRequest;
 use Shopper\Models\Menu;
+use Shopper\Models\MenuItem;
 use Shopper\Services\MenuService;
 
 class MenuController extends Controller
@@ -29,17 +36,9 @@ class MenuController extends Controller
         return Inertia::render('menus/create');
     }
 
-    public function store(Request $request)
+    public function store(StoreMenuRequest $request)
     {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'handle' => 'nullable|string|max:255|unique:menus,handle',
-            'description' => 'nullable|string',
-            'settings' => 'nullable|array',
-            'is_active' => 'boolean',
-        ]);
-
-        $menu = $this->menuService->createMenu($validated);
+        $menu = $this->menuService->createMenu($request->validated());
 
         return redirect()
             ->route('cp.menus.edit', $menu->handle)
@@ -56,18 +55,10 @@ class MenuController extends Controller
         ]);
     }
 
-    public function update(Request $request, string $handle)
+    public function update(UpdateMenuRequest $request, string $handle)
     {
         $menu = Menu::where('handle', $handle)->firstOrFail();
-
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'settings' => 'nullable|array',
-            'is_active' => 'boolean',
-        ]);
-
-        $this->menuService->updateMenu($menu, $validated);
+        $this->menuService->updateMenu($menu, $request->validated());
 
         return back()->with('success', 'Menu updated successfully.');
     }
@@ -90,5 +81,70 @@ class MenuController extends Controller
         return redirect()
             ->route('cp.menus.edit', $newMenu->handle)
             ->with('success', 'Menu duplicated successfully.');
+    }
+
+    // Menu Items Management
+    public function storeItem(StoreMenuItemRequest $request, string $menuHandle): JsonResponse
+    {
+        $menu = Menu::where('handle', $menuHandle)->firstOrFail();
+        $item = $this->menuService->createMenuItem($menu, $request->validated());
+
+        return response()->json([
+            'success' => true,
+            'item' => $item,
+            'message' => 'Menu item created successfully.',
+        ]);
+    }
+
+    public function updateItem(UpdateMenuItemRequest $request, string $menuHandle, MenuItem $item): JsonResponse
+    {
+        $item = $this->menuService->updateMenuItem($item, $request->validated());
+
+        return response()->json([
+            'success' => true,
+            'item' => $item,
+            'message' => 'Menu item updated successfully.',
+        ]);
+    }
+
+    public function destroyItem(string $menuHandle, MenuItem $item): JsonResponse
+    {
+        $this->menuService->deleteMenuItem($item);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Menu item deleted successfully.',
+        ]);
+    }
+
+    public function reorderItems(ReorderMenuItemsRequest $request, string $menuHandle): JsonResponse
+    {
+        $menu = Menu::where('handle', $menuHandle)->firstOrFail();
+        $this->menuService->reorderMenuItems($menu, $request->validated()['items']);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Menu items reordered successfully.',
+        ]);
+    }
+
+    public function moveItem(Request $request, string $menuHandle, MenuItem $item): JsonResponse
+    {
+        $validated = $request->validate([
+            'parent_id' => 'nullable|exists:menu_items,id',
+            'sort_order' => 'required|integer|min:0',
+        ]);
+
+        $item = $this->menuService->moveMenuItem(
+            $item,
+            $validated['parent_id'],
+            $validated['sort_order']
+        );
+
+        return response()->json([
+            'success' => true,
+            'item' => $item,
+            'message' => 'Menu item moved successfully.',
+        ]);
     }
 }

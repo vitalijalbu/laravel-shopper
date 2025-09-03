@@ -1,132 +1,247 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Shopper\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use Shopper\Enums\CartStatus;
+use Carbon\Carbon;
 
 class Cart extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
         'session_id',
         'customer_id',
-        'currency_id',
+        'email',
+        'status',
+        'items',
         'subtotal',
-        'tax_total',
-        'shipping_total',
-        'discount_total',
-        'total',
-        'applied_discounts',
+        'tax_amount',
+        'shipping_amount',
+        'discount_amount',
+        'total_amount',
+        'currency',
+        'last_activity_at',
+        'abandoned_at',
+        'recovery_emails_sent',
+        'last_recovery_email_sent_at',
+        'recovered',
+        'recovered_at',
+        'converted_order_id',
         'shipping_address',
         'billing_address',
-        'status',
-        'expires_at',
+        'metadata',
     ];
 
     protected $casts = [
+        'status' => CartStatus::class,
+        'items' => 'array',
         'subtotal' => 'decimal:2',
-        'tax_total' => 'decimal:2',
-        'shipping_total' => 'decimal:2',
-        'discount_total' => 'decimal:2',
-        'total' => 'decimal:2',
-        'applied_discounts' => 'array',
+        'tax_amount' => 'decimal:2',
+        'shipping_amount' => 'decimal:2',
+        'discount_amount' => 'decimal:2',
+        'total_amount' => 'decimal:2',
+        'recovery_emails_sent' => 'integer',
+        'recovered' => 'boolean',
         'shipping_address' => 'array',
         'billing_address' => 'array',
-        'expires_at' => 'datetime',
+        'metadata' => 'array',
+        'last_activity_at' => 'datetime',
+        'abandoned_at' => 'datetime',
+        'last_recovery_email_sent_at' => 'datetime',
+        'recovered_at' => 'datetime',
     ];
 
+    protected $dates = [
+        'last_activity_at',
+        'abandoned_at',
+        'last_recovery_email_sent_at',
+        'recovered_at',
+    ];
+
+    /**
+     * Relationship with customer
+     */
     public function customer(): BelongsTo
     {
         return $this->belongsTo(Customer::class);
     }
 
-    public function currency(): BelongsTo
+    /**
+     * Relationship with converted order
+     */
+    public function convertedOrder(): BelongsTo
     {
-        return $this->belongsTo(Currency::class);
+        return $this->belongsTo(Order::class, 'converted_order_id');
     }
 
-    public function lines(): HasMany
+    /**
+     * Check if cart is abandoned
+     */
+    public function isAbandoned(): bool
     {
-        return $this->hasMany(CartLine::class);
+        return $this->status === CartStatus::ABANDONED;
     }
 
-    public function getTotalQuantityAttribute(): int
+    /**
+     * Check if cart is active
+     */
+    public function isActive(): bool
     {
-        return $this->lines->sum('quantity');
+        return $this->status === CartStatus::ACTIVE;
     }
 
-    public function calculateTotals(): void
+    /**
+     * Check if cart is converted
+     */
+    public function isConverted(): bool
     {
-        $this->subtotal = $this->lines->sum('line_total');
-        $this->total = $this->subtotal + $this->tax_total + $this->shipping_total - $this->discount_total;
-        $this->save();
+        return $this->status === CartStatus::CONVERTED;
     }
 
-    public function addItem(Product $product, int $quantity = 1, ?ProductVariant $variant = null, array $options = []): CartLine
+    /**
+     * Check if cart is expired
+     */
+    public function isExpired(): bool
     {
-        $existingLine = $this->lines()
-            ->where('product_id', $product->id)
-            ->where('product_variant_id', $variant?->id)
-            ->first();
+        return $this->status === CartStatus::EXPIRED;
+    }
 
-        $unitPrice = $variant ? $variant->price : $product->price;
-        $lineTotal = $unitPrice * $quantity;
+    /**
+     * Mark cart as abandoned
+     */
+    public function markAsAbandoned(): void
+    {
+        $this->update([
+            'status' => CartStatus::ABANDONED,
+            'abandoned_at' => now(),
+        ]);
+    }
 
-        if ($existingLine) {
-            $existingLine->update([
-                'quantity' => $existingLine->quantity + $quantity,
-                'line_total' => $existingLine->line_total + $lineTotal,
-            ]);
+    /**
+     * Mark cart as recovered
+     */
+    public function markAsRecovered(): void
+    {
+        $this->update([
+            'recovered' => true,
+            'recovered_at' => now(),
+            'status' => CartStatus::ACTIVE,
+        ]);
+    }
 
-            $this->calculateTotals();
+    /**
+     * Mark cart as converted
+     */
+    public function markAsConverted(int $orderId): void
+    {
+        $this->update([
+            'status' => CartStatus::CONVERTED,
+            'converted_order_id' => $orderId,
+            'recovered' => true,
+            'recovered_at' => now(),
+        ]);
+    }
 
-            return $existingLine;
+    /**
+     * Update last activity
+     */
+    public function updateActivity(): void
+    {
+        $this->update([
+            'last_activity_at' => now(),
+        ]);
+    }
+
+    /**
+     * Check if cart can be considered abandoned based on time
+     */
+    public function canBeAbandoned(int $hoursThreshold = 1): bool
+    {
+        if (!$this->isActive()) {
+            return false;
         }
 
-        $line = $this->lines()->create([
-            'product_id' => $product->id,
-            'product_variant_id' => $variant?->id,
-            'quantity' => $quantity,
-            'unit_price' => $unitPrice,
-            'line_total' => $lineTotal,
-            'product_options' => $options,
-        ]);
-
-        $this->calculateTotals();
-
-        return $line;
+        $lastActivity = $this->last_activity_at ?? $this->updated_at;
+        
+        return $lastActivity->diffInHours(now()) >= $hoursThreshold;
     }
 
-    public function removeItem(CartLine $line): bool
+    /**
+     * Get items count
+     */
+    protected function itemsCount(): Attribute
     {
-        $result = $line->delete();
-        $this->calculateTotals();
-
-        return $result;
+        return Attribute::make(
+            get: fn() => collect($this->items ?? [])->sum('quantity')
+        );
     }
 
-    public function clear(): bool
+    /**
+     * Get cart age in hours
+     */
+    protected function ageInHours(): Attribute
     {
-        $result = $this->lines()->delete();
-        $this->update([
-            'subtotal' => 0,
-            'tax_total' => 0,
-            'shipping_total' => 0,
-            'discount_total' => 0,
-            'total' => 0,
-        ]);
-
-        return $result;
+        return Attribute::make(
+            get: fn() => $this->created_at->diffInHours(now())
+        );
     }
 
-    public function isEmpty(): bool
+    /**
+     * Check if eligible for recovery email
+     */
+    public function isEligibleForRecovery(): bool
     {
-        return $this->lines->isEmpty();
+        return $this->isAbandoned() 
+            && !$this->recovered 
+            && $this->recovery_emails_sent < 3
+            && ($this->last_recovery_email_sent_at === null || 
+                $this->last_recovery_email_sent_at->diffInHours(now()) >= 24);
+    }
+
+    /**
+     * Scope for abandoned carts
+     */
+    public function scopeAbandoned($query)
+    {
+        return $query->where('status', CartStatus::ABANDONED);
+    }
+
+    /**
+     * Scope for active carts
+     */
+    public function scopeActive($query)
+    {
+        return $query->where('status', CartStatus::ACTIVE);
+    }
+
+    /**
+     * Scope for carts that can be abandoned
+     */
+    public function scopeCanBeAbandoned($query, int $hoursThreshold = 1)
+    {
+        return $query->where('status', CartStatus::ACTIVE)
+            ->where(function($q) use ($hoursThreshold) {
+                $q->where('last_activity_at', '<=', now()->subHours($hoursThreshold))
+                  ->orWhere(function($subQ) use ($hoursThreshold) {
+                      $subQ->whereNull('last_activity_at')
+                           ->where('updated_at', '<=', now()->subHours($hoursThreshold));
+                  });
+            });
+    }
+
+    /**
+     * Scope for eligible recovery carts
+     */
+    public function scopeEligibleForRecovery($query)
+    {
+        return $query->abandoned()
+            ->where('recovered', false)
+            ->where('recovery_emails_sent', '<', 3)
+            ->where(function($q) {
+                $q->whereNull('last_recovery_email_sent_at')
+                  ->orWhere('last_recovery_email_sent_at', '<=', now()->subHours(24));
+            });
     }
 }

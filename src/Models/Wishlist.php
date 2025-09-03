@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
+use Shopper\Enums\WishlistStatus;
 
 class Wishlist extends Model
 {
@@ -25,6 +26,7 @@ class Wishlist extends Model
     ];
 
     protected $casts = [
+        'status' => WishlistStatus::class,
         'is_public' => 'boolean',
         'is_default' => 'boolean',
         'meta' => 'array',

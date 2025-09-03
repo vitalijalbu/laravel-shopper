@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
+use Shopper\Enums\StockNotificationStatus;
 
 class StockNotification extends Model
 {
@@ -28,6 +30,7 @@ class StockNotification extends Model
     ];
 
     protected $casts = [
+        'status' => StockNotificationStatus::class,
         'variant_data' => 'array',
         'requested_quantity' => 'integer',
         'is_notified' => 'boolean',
@@ -139,7 +142,7 @@ class StockNotification extends Model
                 $notifiedCount++;
             } catch (\Exception $e) {
                 // Log error but continue with other notifications
-                \Log::error('Failed to send stock notification', [
+                Log::error('Failed to send stock notification', [
                     'notification_id' => $notification->id,
                     'error' => $e->getMessage(),
                 ]);
