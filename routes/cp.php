@@ -8,6 +8,7 @@ use Shopper\Http\Controllers\Cp\Auth\PasswordResetLinkController;
 use Shopper\Http\Controllers\Cp\CollectionsController;
 use Shopper\Http\Controllers\Cp\CustomersController;
 use Shopper\Http\Controllers\Cp\DashboardController;
+use Shopper\Http\Controllers\Cp\DiscountController;
 use Shopper\Http\Controllers\Cp\EntriesController;
 use Shopper\Http\Controllers\Cp\NavigationController;
 use Shopper\Http\Controllers\Cp\NavigationItemController;
@@ -203,6 +204,17 @@ Route::prefix($cpPrefix)->name('cp.')->middleware(['web', 'shopper.inertia'])->g
             Route::put('/{order}', [OrdersController::class, 'update'])->name('update');
             Route::patch('/{order}/status', [OrdersController::class, 'updateStatus'])->name('update-status');
             Route::delete('/{order}', [OrdersController::class, 'destroy'])->name('destroy');
+        });
+
+        // Discounts Management
+        Route::prefix('discounts')->name('discounts.')->group(function () {
+            Route::get('/', [DiscountController::class, 'index'])->name('index');
+            Route::get('/create', [DiscountController::class, 'create'])->name('create');
+            Route::post('/', [DiscountController::class, 'store'])->name('store');
+            Route::get('/{discount}', [DiscountController::class, 'show'])->name('show');
+            Route::get('/{discount}/edit', [DiscountController::class, 'edit'])->name('edit');
+            Route::put('/{discount}', [DiscountController::class, 'update'])->name('update');
+            Route::delete('/{discount}', [DiscountController::class, 'destroy'])->name('destroy');
         });
 
         // Settings Management

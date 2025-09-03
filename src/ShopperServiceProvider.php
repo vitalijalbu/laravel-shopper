@@ -4,6 +4,7 @@ namespace Shopper;
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Shopper\Console\Commands\ExpireFidelityPoints;
 use Shopper\Console\Commands\OptimizeCommand;
 use Shopper\Console\Commands\ShowAdminUsersCommand;
 use Shopper\Console\CreateAdminUserCommand;
@@ -17,6 +18,7 @@ use Shopper\Repositories\SettingRepository;
 use Shopper\Repositories\ShippingMethodRepository;
 use Shopper\Repositories\TaxRateRepository;
 use Shopper\Services\CacheService;
+use Shopper\Services\FidelityService;
 use Shopper\Services\InventoryService;
 use Shopper\Services\NotificationService;
 use Shopper\Services\WebhookService;
@@ -39,6 +41,7 @@ class ShopperServiceProvider extends ServiceProvider
 
         // Register services
         $this->app->singleton(CacheService::class);
+        $this->app->singleton(FidelityService::class);
         $this->app->singleton(InventoryService::class);
         $this->app->singleton(NotificationService::class);
         $this->app->singleton(WebhookService::class);
@@ -57,6 +60,7 @@ class ShopperServiceProvider extends ServiceProvider
             $this->commands([
                 OptimizeCommand::class,
                 CreateAdminUserCommand::class,
+                ExpireFidelityPoints::class,
             ]);
         }
     }

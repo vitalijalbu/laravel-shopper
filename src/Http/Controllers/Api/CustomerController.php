@@ -285,4 +285,98 @@ class CustomerController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Get customer fidelity card information
+     */
+    public function fidelityCard(string $id): JsonResponse
+    {
+        try {
+            $customer = $this->customerRepository->findWithFidelityCard($id);
+            
+            if (!$customer) {
+                return response()->json([
+                    'message' => 'Cliente non trovato',
+                ], 404);
+            }
+
+            $fidelityStats = $this->customerRepository->getFidelityStatistics($id);
+
+            return response()->json([
+                'data' => $fidelityStats,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Errore durante il recupero dei dati fidelity',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Create fidelity card for customer
+     */
+    public function createFidelityCard(string $id): JsonResponse
+    {
+        try {
+            $customer = $this->customerRepository->find($id);
+            
+            if (!$customer) {
+                return response()->json([
+                    'message' => 'Cliente non trovato',
+                ], 404);
+            }
+
+            if ($customer->fidelityCard) {
+                return response()->json([
+                    'message' => 'Il cliente ha già una carta fedeltà',
+                ], 409);
+            }
+
+            $card = $customer->getOrCreateFidelityCard();
+
+            return response()->json([
+                'message' => 'Carta fedeltà creata con successo',
+                'data' => [
+                    'card_number' => $card->card_number,
+                    'issued_at' => $card->issued_at,
+                    'is_active' => $card->is_active,
+                ],
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Errore durante la creazione della carta fedeltà',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Get customers with fidelity card information
+     */
+    public function indexWithFidelity(Request $request): JsonResponse
+    {
+        $filters = $request->only(['search', 'status', 'group_id', 'has_fidelity_card', 'fidelity_tier']);
+        $perPage = $request->get('per_page', 25);
+
+        $customers = $this->customerRepository->getWithFidelityStats($filters, $perPage);
+
+        return response()->json([
+            'data' => $customers->items(),
+            'meta' => [
+                'current_page' => $customers->currentPage(),
+                'last_page' => $customers->lastPage(),
+                'per_page' => $customers->perPage(),
+                'total' => $customers->total(),
+                'from' => $customers->firstItem(),
+                'to' => $customers->lastItem(),
+            ],
+            'links' => [
+                'first' => $customers->url(1),
+                'last' => $customers->url($customers->lastPage()),
+                'prev' => $customers->previousPageUrl(),
+                'next' => $customers->nextPageUrl(),
+            ],
+        ]);
+    }
 }

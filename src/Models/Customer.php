@@ -7,6 +7,8 @@ namespace Shopper\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -46,6 +48,14 @@ class Customer extends Authenticatable
         'password' => 'hashed',
     ];
 
+    protected $appends = [
+        'full_name',
+        'fidelity_card_number',
+        'fidelity_points',
+        'fidelity_card_status',
+        'fidelity_tier',
+    ];
+
     public function groups(): BelongsToMany
     {
         return $this->belongsToMany(CustomerGroup::class, 'customer_customer_group');
@@ -76,6 +86,16 @@ class Customer extends Authenticatable
         return $this->hasMany(Favorite::class);
     }
 
+    public function fidelityCard(): HasOne
+    {
+        return $this->hasOne(FidelityCard::class);
+    }
+
+    public function fidelityTransactions(): HasManyThrough
+    {
+        return $this->hasManyThrough(FidelityTransaction::class, FidelityCard::class);
+    }
+
     public function getDefaultWishlistAttribute(): ?Wishlist
     {
         return $this->wishlists()->where('is_default', true)->first();
@@ -84,5 +104,94 @@ class Customer extends Authenticatable
     public function getFullNameAttribute(): string
     {
         return "{$this->first_name} {$this->last_name}";
+    }
+
+    public function getFidelityCardNumberAttribute(): ?string
+    {
+        return $this->fidelityCard?->card_number;
+    }
+
+    public function getFidelityPointsAttribute(): int
+    {
+        return $this->fidelityCard?->available_points ?? 0;
+    }
+
+    public function getFidelityCardStatusAttribute(): ?string
+    {
+        if (!$this->fidelityCard) {
+            return null;
+        }
+
+        return $this->fidelityCard->is_active ? 'active' : 'inactive';
+    }
+
+    public function getFidelityTierAttribute(): ?array
+    {
+        if (!$this->fidelityCard) {
+            return null;
+        }
+
+        return $this->fidelityCard->getCurrentTier();
+    }
+
+    // Fidelity Card Methods
+    public function getOrCreateFidelityCard(): FidelityCard
+    {
+        return $this->fidelityCard ?: $this->fidelityCard()->create([
+            'is_active' => true,
+        ]);
+    }
+
+    public function getFidelityCardNumber(): ?string
+    {
+        return $this->fidelity_card_number;
+    }
+
+    public function getFidelityPoints(): int
+    {
+        return $this->fidelity_points;
+    }
+
+    public function addFidelityPoints(int $points, string $reason = null, ?int $orderId = null): ?FidelityTransaction
+    {
+        if (!config('shopper.fidelity.enabled')) {
+            return null;
+        }
+
+        $card = $this->getOrCreateFidelityCard();
+        return $card->addPoints($points, $reason, $orderId);
+    }
+
+    public function redeemFidelityPoints(int $points, string $reason = null, ?int $orderId = null): ?FidelityTransaction
+    {
+        if (!config('shopper.fidelity.enabled') || !$this->fidelityCard) {
+            return null;
+        }
+
+        return $this->fidelityCard->redeemPoints($points, $reason, $orderId);
+    }
+
+    public function canRedeemPoints(int $points): bool
+    {
+        return $this->fidelityCard?->canRedeemPoints($points) ?? false;
+    }
+
+    public function processOrderForFidelity(Order $order): ?FidelityTransaction
+    {
+        if (!config('shopper.fidelity.points.enabled')) {
+            return null;
+        }
+
+        $card = $this->getOrCreateFidelityCard();
+        $points = $card->calculatePointsForAmount($order->total, $order->currency);
+        
+        if ($points > 0) {
+            // Aggiorna l'importo totale speso
+            $card->increment('total_spent_amount', $order->total);
+            
+            return $card->addPoints($points, "Points earned from order #{$order->number}", $order->id);
+        }
+
+        return null;
     }
 }
