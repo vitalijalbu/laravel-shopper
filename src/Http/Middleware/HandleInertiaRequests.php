@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
-use Shopper\Http\Resources\UserResource;
 use Symfony\Component\HttpFoundation\Response;
 
 class HandleInertiaRequests
@@ -30,22 +29,22 @@ class HandleInertiaRequests
                         'user_email' => $user ? $user->email : null,
                     ]);
 
-                    if (!$user) {
+                    if (! $user) {
                         return ['user' => null];
                     }
 
                     // Get user name safely
-                    $name = $user->name ?? 
-                           (isset($user->first_name) ? trim($user->first_name . ' ' . ($user->last_name ?? '')) : null) ??
+                    $name = $user->name ??
+                           (isset($user->first_name) ? trim($user->first_name.' '.($user->last_name ?? '')) : null) ??
                            'User';
 
                     // Safely check CP access without causing issues
                     $canAccessCP = true; // Default to true to avoid blocking
-                    
+
                     try {
                         if (method_exists($user, 'can') && method_exists($user, 'hasRole')) {
-                            $canAccessCP = $user->can('access-cp') || 
-                                         $user->hasRole('admin') || 
+                            $canAccessCP = $user->can('access-cp') ||
+                                         $user->hasRole('admin') ||
                                          $user->hasRole('super-admin');
                         } elseif (isset($user->can_access_cp)) {
                             $canAccessCP = (bool) $user->can_access_cp;
@@ -71,7 +70,7 @@ class HandleInertiaRequests
                         'error' => $e->getMessage(),
                         'trace' => $e->getTraceAsString(),
                     ]);
-                    
+
                     return ['user' => null];
                 }
             },
@@ -83,8 +82,8 @@ class HandleInertiaRequests
                 'status' => fn () => $request->session()->get('status'),
             ],
             'errors' => function () use ($request) {
-                return $request->session()->get('errors') 
-                    ? $request->session()->get('errors')->getBag('default')->getMessages() 
+                return $request->session()->get('errors')
+                    ? $request->session()->get('errors')->getBag('default')->getMessages()
                     : [];
             },
             'locale' => app()->getLocale(),

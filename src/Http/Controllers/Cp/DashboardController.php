@@ -17,7 +17,7 @@ class DashboardController extends Controller
     {
         try {
             \Illuminate\Support\Facades\Log::info('DashboardController - Starting index method');
-            
+
             $user = Auth::user();
             \Illuminate\Support\Facades\Log::info('DashboardController - Got user', ['user_id' => $user->id]);
 
@@ -42,7 +42,7 @@ class DashboardController extends Controller
             return Inertia::render('index', [
                 'user' => [
                     'id' => $user->id,
-                    'name' => $user->name ?? (($user->first_name ?? '') . ' ' . ($user->last_name ?? '')),
+                    'name' => $user->name ?? (($user->first_name ?? '').' '.($user->last_name ?? '')),
                     'email' => $user->email,
                     'avatar_url' => $user->avatar_url ?? null,
                     'roles' => [],
@@ -67,7 +67,7 @@ class DashboardController extends Controller
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
             ]);
-            
+
             throw $e;
         }
     }

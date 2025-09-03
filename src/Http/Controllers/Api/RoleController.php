@@ -6,7 +6,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Shopper\Http\Controllers\Controller;
 use Shopper\Http\Requests\Api\RoleRequest;
-use Shopper\Http\Traits\ApiResponseTrait;
+use Shopper\Traits\ApiResponseTrait;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
@@ -33,7 +33,7 @@ class RoleController extends Controller
             $roles = Role::with(['permissions', 'users'])
                 ->when($request->search, function ($query, $search) {
                     $query->where('name', 'like', "%{$search}%")
-                          ->orWhere('display_name', 'like', "%{$search}%");
+                        ->orWhere('display_name', 'like', "%{$search}%");
                 })
                 ->orderBy('name')
                 ->get()
@@ -85,7 +85,7 @@ class RoleController extends Controller
     {
         try {
             $role = Role::with(['permissions', 'users'])->findOrFail($id);
-            
+
             return $this->successResponse([
                 'role' => $this->formatRoleData($role),
                 'permission_groups' => $this->getPermissionGroupsWithStatus($role),
@@ -103,9 +103,9 @@ class RoleController extends Controller
     {
         try {
             $role = Role::findOrFail($id);
-            
+
             // Verifica che non sia il ruolo super se non si è super user
-            if ($role->name === 'super' && !$request->user()->hasRole('super')) {
+            if ($role->name === 'super' && ! $request->user()->hasRole('super')) {
                 return $this->forbiddenResponse('Non puoi modificare il ruolo Super User');
             }
 
@@ -135,7 +135,7 @@ class RoleController extends Controller
     {
         try {
             $role = Role::findOrFail($id);
-            
+
             // Verifica che non sia il ruolo super
             if ($role->name === 'super') {
                 return $this->forbiddenResponse('Non puoi eliminare il ruolo Super User');
@@ -168,7 +168,7 @@ class RoleController extends Controller
 
         try {
             $role = Role::findOrFail($id);
-            
+
             foreach ($request->user_ids as $userId) {
                 $user = config('auth.providers.users.model')::findOrFail($userId);
                 $user->assignRole($role);
@@ -176,7 +176,7 @@ class RoleController extends Controller
 
             return $this->successResponse(
                 $this->formatRoleData($role->load(['permissions', 'users'])),
-                count($request->user_ids) . ' utenti assegnati al ruolo'
+                count($request->user_ids).' utenti assegnati al ruolo'
             );
         } catch (\Exception $e) {
             return $this->errorResponse('Errore durante l\'assegnazione degli utenti');
@@ -195,7 +195,7 @@ class RoleController extends Controller
 
         try {
             $role = Role::findOrFail($id);
-            
+
             foreach ($request->user_ids as $userId) {
                 $user = config('auth.providers.users.model')::findOrFail($userId);
                 $user->removeRole($role);
@@ -203,7 +203,7 @@ class RoleController extends Controller
 
             return $this->successResponse(
                 $this->formatRoleData($role->load(['permissions', 'users'])),
-                count($request->user_ids) . ' utenti rimossi dal ruolo'
+                count($request->user_ids).' utenti rimossi dal ruolo'
             );
         } catch (\Exception $e) {
             return $this->errorResponse('Errore durante la rimozione degli utenti');
@@ -222,12 +222,12 @@ class RoleController extends Controller
 
         try {
             $originalRole = Role::with('permissions')->findOrFail($id);
-            
+
             $newRole = Role::create([
                 'name' => $request->name,
                 'guard_name' => 'api',
-                'display_name' => $request->display_name ?? $originalRole->display_name . ' (Copia)',
-                'description' => $originalRole->description . ' (Clonato da ' . $originalRole->name . ')',
+                'display_name' => $request->display_name ?? $originalRole->display_name.' (Copia)',
+                'description' => $originalRole->description.' (Clonato da '.$originalRole->name.')',
             ]);
 
             // Copia tutti i permessi
@@ -292,7 +292,7 @@ class RoleController extends Controller
     {
         $groups = [
             'content' => 'Content',
-            'collections' => 'Collections', 
+            'collections' => 'Collections',
             'commerce' => 'Commerce',
             'customers' => 'Customers',
             'users' => 'Users',
@@ -315,7 +315,7 @@ class RoleController extends Controller
     private function getPermissionGroupsWithStatus(Role $role): array
     {
         $groups = $this->getPermissionGroups();
-        
+
         foreach ($groups as &$group) {
             $groupPermissions = Permission::where('name', 'like', "%{$group['handle']}%")->get();
             $group['permissions'] = $groupPermissions->map(function ($permission) use ($role) {
@@ -326,9 +326,9 @@ class RoleController extends Controller
                     'granted' => $role->hasPermissionTo($permission->name),
                 ];
             });
-            $group['granted_count'] = $groupPermissions->filter(fn($p) => $role->hasPermissionTo($p->name))->count();
+            $group['granted_count'] = $groupPermissions->filter(fn ($p) => $role->hasPermissionTo($p->name))->count();
         }
-        
+
         return $groups;
     }
 
@@ -340,8 +340,8 @@ class RoleController extends Controller
                 return [
                     'role' => $role->display_name ?? $role->name,
                     'permission_count' => $role->permissions_count,
-                    'percentage' => Permission::count() > 0 
-                        ? round(($role->permissions_count / Permission::count()) * 100, 2) 
+                    'percentage' => Permission::count() > 0
+                        ? round(($role->permissions_count / Permission::count()) * 100, 2)
                         : 0,
                 ];
             })
@@ -356,8 +356,8 @@ class RoleController extends Controller
                 return [
                     'role' => $role->display_name ?? $role->name,
                     'user_count' => $role->users_count,
-                    'percentage' => app(config('auth.providers.users.model'))->count() > 0 
-                        ? round(($role->users_count / app(config('auth.providers.users.model'))->count()) * 100, 2) 
+                    'percentage' => app(config('auth.providers.users.model'))->count() > 0
+                        ? round(($role->users_count / app(config('auth.providers.users.model'))->count()) * 100, 2)
                         : 0,
                 ];
             })

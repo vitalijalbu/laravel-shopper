@@ -265,7 +265,7 @@ class Navigation
                 'user_id' => $user->id ?? null,
                 'key' => $key,
             ]);
-            
+
             // Default to true to avoid blocking access
             return true;
         }
@@ -347,7 +347,7 @@ class Navigation
             \Illuminate\Support\Facades\Log::error('Navigation tree error', [
                 'error' => $e->getMessage(),
             ]);
-            
+
             return [
                 'sections' => [],
                 'items' => static::getSimpleNavigation(),

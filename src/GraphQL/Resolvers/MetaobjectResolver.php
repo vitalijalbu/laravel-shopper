@@ -3,9 +3,9 @@
 namespace Shopper\GraphQL\Resolvers;
 
 use GraphQL\Type\Definition\ResolveInfo;
+use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 use Shopper\Models\Metaobject;
 use Shopper\Models\MetaobjectDefinition;
-use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
 class MetaobjectResolver
 {

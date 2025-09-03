@@ -13,20 +13,20 @@ abstract class ApiController extends Controller
      * Return a successful response with data
      */
     protected function success(
-        $data = null, 
-        string $message = '', 
+        $data = null,
+        string $message = '',
         int $status = 200
     ): JsonResponse {
         $response = ['success' => true];
-        
+
         if ($message) {
             $response['message'] = $message;
         }
-        
+
         if ($data !== null) {
             $response['data'] = $data;
         }
-        
+
         return response()->json($response, $status);
     }
 
@@ -58,19 +58,19 @@ abstract class ApiController extends Controller
      * Return an error response
      */
     protected function error(
-        string $message = 'An error occurred', 
-        int $status = 400, 
+        string $message = 'An error occurred',
+        int $status = 400,
         array $errors = []
     ): JsonResponse {
         $response = [
             'success' => false,
-            'message' => $message
+            'message' => $message,
         ];
-        
-        if (!empty($errors)) {
+
+        if (! empty($errors)) {
             $response['errors'] = $errors;
         }
-        
+
         return response()->json($response, $status);
     }
 

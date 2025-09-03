@@ -13,7 +13,7 @@ class ShippingMethodRepository extends BaseRepository
 
     protected function makeModel(): Model
     {
-        return new ShippingMethod();
+        return new ShippingMethod;
     }
 
     /**
@@ -24,12 +24,12 @@ class ShippingMethodRepository extends BaseRepository
         $query = $this->model->newQuery()->with(['zones']);
 
         // Search filter
-        if (!empty($filters['search'])) {
+        if (! empty($filters['search'])) {
             $search = $filters['search'];
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('description', 'like', "%{$search}%")
-                  ->orWhere('carrier', 'like', "%{$search}%");
+                    ->orWhere('description', 'like', "%{$search}%")
+                    ->orWhere('carrier', 'like', "%{$search}%");
             });
         }
 
@@ -39,19 +39,19 @@ class ShippingMethodRepository extends BaseRepository
         }
 
         // Carrier filter
-        if (!empty($filters['carrier'])) {
+        if (! empty($filters['carrier'])) {
             $query->where('carrier', $filters['carrier']);
         }
 
         // Calculation type filter
-        if (!empty($filters['calculation_type'])) {
+        if (! empty($filters['calculation_type'])) {
             $query->where('calculation_type', $filters['calculation_type']);
         }
 
         // Sorting
         $sortField = $filters['sort'] ?? 'sort_order';
         $sortDirection = $filters['direction'] ?? 'asc';
-        
+
         $query->orderBy($sortField, $sortDirection);
 
         return $query->paginate($perPage);
@@ -66,9 +66,9 @@ class ShippingMethodRepository extends BaseRepository
 
         return \Illuminate\Support\Facades\Cache::remember($cacheKey, $this->cacheTtl, function () {
             return $this->model->with(['zones'])
-                              ->where('is_enabled', true)
-                              ->orderBy('sort_order')
-                              ->get();
+                ->where('is_enabled', true)
+                ->orderBy('sort_order')
+                ->get();
         });
     }
 
@@ -77,19 +77,19 @@ class ShippingMethodRepository extends BaseRepository
      */
     public function getAvailableForLocation(string $country, ?string $state = null): Collection
     {
-        $cacheKey = $this->getCacheKey('location', $country . '_' . $state);
+        $cacheKey = $this->getCacheKey('location', $country.'_'.$state);
 
         return \Illuminate\Support\Facades\Cache::remember($cacheKey, $this->cacheTtl, function () use ($country, $state) {
             return $this->model->with(['zones'])
-                              ->where('is_enabled', true)
-                              ->whereHas('zones', function ($query) use ($country, $state) {
-                                  $query->where('countries', 'like', "%{$country}%");
-                                  if ($state) {
-                                      $query->orWhere('states', 'like', "%{$state}%");
-                                  }
-                              })
-                              ->orderBy('sort_order')
-                              ->get();
+                ->where('is_enabled', true)
+                ->whereHas('zones', function ($query) use ($country, $state) {
+                    $query->where('countries', 'like', "%{$country}%");
+                    if ($state) {
+                        $query->orWhere('states', 'like', "%{$state}%");
+                    }
+                })
+                ->orderBy('sort_order')
+                ->get();
         });
     }
 
@@ -99,8 +99,8 @@ class ShippingMethodRepository extends BaseRepository
     public function calculateShippingCost(int $methodId, array $cartData): float
     {
         $method = $this->find($methodId);
-        
-        if (!$method || !$method->is_enabled) {
+
+        if (! $method || ! $method->is_enabled) {
             return 0;
         }
 
@@ -115,21 +115,25 @@ class ShippingMethodRepository extends BaseRepository
             case 'weight_based':
                 $config = $method->config ?? [];
                 $costPerKg = $config['cost_per_kg'] ?? 0;
+
                 return $method->base_cost + ($weight * $costPerKg);
 
             case 'order_total':
                 $config = $method->config ?? [];
                 $percentage = $config['percentage'] ?? 0;
+
                 return $method->base_cost + ($subtotal * $percentage / 100);
 
             case 'item_count':
                 $config = $method->config ?? [];
                 $costPerItem = $config['cost_per_item'] ?? 0;
+
                 return $method->base_cost + ($itemCount * $costPerItem);
 
             case 'free_over_amount':
                 $config = $method->config ?? [];
                 $freeOverAmount = $config['free_over_amount'] ?? 0;
+
                 return $subtotal >= $freeOverAmount ? 0 : $method->base_cost;
 
             default:
@@ -143,10 +147,10 @@ class ShippingMethodRepository extends BaseRepository
     public function getCarriers(): Collection
     {
         return $this->model->select('carrier')
-                          ->distinct()
-                          ->whereNotNull('carrier')
-                          ->orderBy('carrier')
-                          ->pluck('carrier');
+            ->distinct()
+            ->whereNotNull('carrier')
+            ->orderBy('carrier')
+            ->pluck('carrier');
     }
 
     /**
@@ -169,13 +173,13 @@ class ShippingMethodRepository extends BaseRepository
     public function toggleStatus(int $id): ?ShippingMethod
     {
         $shippingMethod = $this->model->find($id);
-        
-        if (!$shippingMethod) {
+
+        if (! $shippingMethod) {
             return null;
         }
 
         $shippingMethod->update([
-            'is_enabled' => !$shippingMethod->is_enabled
+            'is_enabled' => ! $shippingMethod->is_enabled,
         ]);
 
         $this->clearCache();
@@ -210,9 +214,9 @@ class ShippingMethodRepository extends BaseRepository
         $method = $this->find($id);
         $currentConfig = $method->config ?? [];
         $method->update(['config' => array_merge($currentConfig, $config)]);
-        
+
         $this->clearCache();
-        
+
         return $method;
     }
 
@@ -231,7 +235,7 @@ class ShippingMethodRepository extends BaseRepository
     public function getShippingZones(): \Illuminate\Support\Collection
     {
         $cacheKey = $this->getCacheKey('shipping_zones', 'all');
-        
+
         return \Illuminate\Support\Facades\Cache::remember($cacheKey, $this->cacheTtl, function () {
             return collect([
                 ['code' => 'IT', 'name' => 'Italia', 'region' => 'Europa'],
@@ -256,28 +260,28 @@ class ShippingMethodRepository extends BaseRepository
             [
                 'value' => 'flat_rate',
                 'label' => 'Tariffa Fissa',
-                'description' => 'Costo fisso per tutte le spedizioni'
+                'description' => 'Costo fisso per tutte le spedizioni',
             ],
             [
                 'value' => 'free',
                 'label' => 'Spedizione Gratuita',
-                'description' => 'Nessun costo di spedizione'
+                'description' => 'Nessun costo di spedizione',
             ],
             [
                 'value' => 'local_pickup',
                 'label' => 'Ritiro in Negozio',
-                'description' => 'Cliente ritira in negozio'
+                'description' => 'Cliente ritira in negozio',
             ],
             [
                 'value' => 'weight_based',
                 'label' => 'Basato sul Peso',
-                'description' => 'Costo basato sul peso del pacco'
+                'description' => 'Costo basato sul peso del pacco',
             ],
             [
                 'value' => 'zone_based',
                 'label' => 'Basato su Zone',
-                'description' => 'Costo basato sulla zona di destinazione'
-            ]
+                'description' => 'Costo basato sulla zona di destinazione',
+            ],
         ]);
     }
 
@@ -287,15 +291,15 @@ class ShippingMethodRepository extends BaseRepository
     public function duplicate(int $id): ?ShippingMethod
     {
         $originalMethod = $this->model->find($id);
-        
-        if (!$originalMethod) {
+
+        if (! $originalMethod) {
             return null;
         }
 
         $duplicatedData = $originalMethod->toArray();
         unset($duplicatedData['id'], $duplicatedData['created_at'], $duplicatedData['updated_at']);
-        $duplicatedData['name'] = $duplicatedData['name'] . ' (Copia)';
-        $duplicatedData['slug'] = $duplicatedData['slug'] . '-copy-' . time();
+        $duplicatedData['name'] = $duplicatedData['name'].' (Copia)';
+        $duplicatedData['slug'] = $duplicatedData['slug'].'-copy-'.time();
 
         return $this->create($duplicatedData);
     }
@@ -305,6 +309,6 @@ class ShippingMethodRepository extends BaseRepository
      */
     protected function getCacheKey(string $method, mixed $identifier): string
     {
-        return $this->cachePrefix . '_' . $method . ($identifier ? '_' . $identifier : '');
+        return $this->cachePrefix.'_'.$method.($identifier ? '_'.$identifier : '');
     }
 }

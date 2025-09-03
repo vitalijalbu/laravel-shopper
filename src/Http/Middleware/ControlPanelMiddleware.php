@@ -67,7 +67,7 @@ class ControlPanelMiddleware
                 'error' => $e->getMessage(),
                 'user_id' => $user->id ?? null,
             ]);
-            
+
             // Default to true to avoid blocking access
             return true;
         }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Shopper\Http\Traits;
+namespace Shopper\Traits;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -10,7 +10,7 @@ trait ApiResponseTrait
     /**
      * Return a paginated API response
      */
-    protected function paginatedResponse(LengthAwarePaginator $paginator, string $message = null): JsonResponse
+    protected function paginatedResponse(LengthAwarePaginator $paginator, ?string $message = null): JsonResponse
     {
         return response()->json([
             'data' => $paginator->items(),
@@ -27,7 +27,7 @@ trait ApiResponseTrait
                 'last' => $paginator->url($paginator->lastPage()),
                 'prev' => $paginator->previousPageUrl(),
                 'next' => $paginator->nextPageUrl(),
-            ]
+            ],
         ] + ($message ? ['message' => $message] : []));
     }
 
@@ -37,7 +37,7 @@ trait ApiResponseTrait
     protected function successResponse($data = null, string $message = 'Operazione completata con successo', int $status = 200): JsonResponse
     {
         $response = ['success' => true, 'message' => $message];
-        
+
         if ($data !== null) {
             $response['data'] = $data;
         }
@@ -92,15 +92,16 @@ trait ApiResponseTrait
     protected function bulkActionResponse(string $action, int $count, array $errors = []): JsonResponse
     {
         $message = "Azione '{$action}' eseguita su {$count} elementi";
-        
+
         $data = [
             'count' => $count,
             'action' => $action,
         ];
 
-        if (!empty($errors)) {
+        if (! empty($errors)) {
             $data['errors'] = $errors;
             $message .= ' con alcuni errori';
+
             return response()->json([
                 'success' => true,
                 'message' => $message,

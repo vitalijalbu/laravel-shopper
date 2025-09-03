@@ -14,7 +14,7 @@ class CategoryRepository extends BaseRepository
 
     protected function makeModel(): Model
     {
-        return new Category();
+        return new Category;
     }
 
     /**
@@ -25,10 +25,10 @@ class CategoryRepository extends BaseRepository
         $query = $this->model->newQuery();
 
         // Apply filters
-        if (!empty($filters['search'])) {
+        if (! empty($filters['search'])) {
             $query->where(function ($q) use ($filters) {
-                $q->where('name', 'like', '%' . $filters['search'] . '%')
-                  ->orWhere('description', 'like', '%' . $filters['search'] . '%');
+                $q->where('name', 'like', '%'.$filters['search'].'%')
+                    ->orWhere('description', 'like', '%'.$filters['search'].'%');
             });
         }
 
@@ -36,13 +36,13 @@ class CategoryRepository extends BaseRepository
             $query->where('is_active', $filters['status']);
         }
 
-        if (!empty($filters['parent_id'])) {
+        if (! empty($filters['parent_id'])) {
             $query->where('parent_id', $filters['parent_id']);
         }
 
         // Default ordering
         $query->orderBy('sort_order', 'asc')
-              ->orderBy('name', 'asc');
+            ->orderBy('name', 'asc');
 
         return $query->with(['parent', 'children'])->paginate($perPage);
     }
@@ -52,7 +52,7 @@ class CategoryRepository extends BaseRepository
      */
     public function findWithRelations(int $id, array $relations = []): ?Category
     {
-        $cacheKey = $this->getCacheKey('find_with_relations', $id . '_' . md5(serialize($relations)));
+        $cacheKey = $this->getCacheKey('find_with_relations', $id.'_'.md5(serialize($relations)));
 
         return Cache::remember($cacheKey, $this->cacheTtl, function () use ($id, $relations) {
             return $this->model->with($relations)->find($id);
@@ -116,7 +116,7 @@ class CategoryRepository extends BaseRepository
             $this->model->where('id', $item['id'])
                 ->update([
                     'sort_order' => $item['sort_order'],
-                    'parent_id' => $item['parent_id'] ?? null
+                    'parent_id' => $item['parent_id'] ?? null,
                 ]);
         }
 
@@ -162,8 +162,8 @@ class CategoryRepository extends BaseRepository
      */
     public function search(string $term, int $limit = 10): Collection
     {
-        return $this->model->where('name', 'like', '%' . $term . '%')
-            ->orWhere('description', 'like', '%' . $term . '%')
+        return $this->model->where('name', 'like', '%'.$term.'%')
+            ->orWhere('description', 'like', '%'.$term.'%')
             ->where('is_active', true)
             ->orderBy('name', 'asc')
             ->limit($limit)

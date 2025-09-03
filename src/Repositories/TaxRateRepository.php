@@ -12,7 +12,7 @@ class TaxRateRepository extends BaseRepository
 
     protected function makeModel(): Model
     {
-        return new TaxRate();
+        return new TaxRate;
     }
 
     /**
@@ -23,17 +23,17 @@ class TaxRateRepository extends BaseRepository
         $query = $this->model->newQuery();
 
         // Search filter
-        if (!empty($filters['search'])) {
+        if (! empty($filters['search'])) {
             $search = $filters['search'];
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('code', 'like', "%{$search}%")
-                  ->orWhere('description', 'like', "%{$search}%");
+                    ->orWhere('code', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%");
             });
         }
 
         // Status filter
-        if (!empty($filters['status'])) {
+        if (! empty($filters['status'])) {
             if ($filters['status'] === 'active') {
                 $query->active();
             } elseif ($filters['status'] === 'enabled') {
@@ -44,12 +44,12 @@ class TaxRateRepository extends BaseRepository
         }
 
         // Type filter
-        if (!empty($filters['type'])) {
+        if (! empty($filters['type'])) {
             $query->where('type', $filters['type']);
         }
 
         // Country filter
-        if (!empty($filters['country'])) {
+        if (! empty($filters['country'])) {
             $query->whereJsonContains('countries', strtoupper($filters['country']));
         }
 
@@ -64,9 +64,9 @@ class TaxRateRepository extends BaseRepository
     /**
      * Get active tax rates for a location
      */
-    public function getActiveForLocation(string $countryCode, string $stateCode = null, string $postcode = null): \Illuminate\Database\Eloquent\Collection
+    public function getActiveForLocation(string $countryCode, ?string $stateCode = null, ?string $postcode = null): \Illuminate\Database\Eloquent\Collection
     {
-        $cacheKey = $this->getCacheKey('location', md5($countryCode . '_' . $stateCode . '_' . $postcode));
+        $cacheKey = $this->getCacheKey('location', md5($countryCode.'_'.$stateCode.'_'.$postcode));
 
         return \Illuminate\Support\Facades\Cache::remember($cacheKey, $this->cacheTtl, function () use ($countryCode, $stateCode, $postcode) {
             $query = $this->model->active();
@@ -74,15 +74,15 @@ class TaxRateRepository extends BaseRepository
             // Filter by country
             $query->where(function ($q) use ($countryCode) {
                 $q->whereJsonContains('countries', strtoupper($countryCode))
-                  ->orWhereNull('countries');
+                    ->orWhereNull('countries');
             });
 
             // Filter by state if provided
             if ($stateCode) {
                 $query->where(function ($q) use ($countryCode, $stateCode) {
-                    $stateKey = strtoupper($countryCode . '_' . $stateCode);
+                    $stateKey = strtoupper($countryCode.'_'.$stateCode);
                     $q->whereJsonContains('states', $stateKey)
-                      ->orWhereNull('states');
+                        ->orWhereNull('states');
                 });
             }
 
@@ -90,11 +90,11 @@ class TaxRateRepository extends BaseRepository
             if ($postcode) {
                 $query->where(function ($q) use ($postcode) {
                     $q->whereNull('postcodes');
-                    
+
                     // Check postcode patterns
                     $taxRates = $this->model->active()->whereNotNull('postcodes')->get();
                     $matchingIds = [];
-                    
+
                     foreach ($taxRates as $rate) {
                         foreach ($rate->postcodes as $pattern) {
                             if (fnmatch($pattern, $postcode)) {
@@ -103,8 +103,8 @@ class TaxRateRepository extends BaseRepository
                             }
                         }
                     }
-                    
-                    if (!empty($matchingIds)) {
+
+                    if (! empty($matchingIds)) {
                         $q->orWhereIn('id', $matchingIds);
                     }
                 });
@@ -117,19 +117,19 @@ class TaxRateRepository extends BaseRepository
     /**
      * Calculate tax for an amount
      */
-    public function calculateTax(float $amount, string $countryCode, string $stateCode = null, string $postcode = null, array $productCategories = []): array
+    public function calculateTax(float $amount, string $countryCode, ?string $stateCode = null, ?string $postcode = null, array $productCategories = []): array
     {
         $taxRates = $this->getActiveForLocation($countryCode, $stateCode, $postcode);
-        
+
         $totalTax = 0;
         $appliedRates = [];
         $currentAmount = $amount;
 
         foreach ($taxRates as $rate) {
             // Check if tax applies to product categories
-            if (!empty($rate->product_categories) && !empty($productCategories)) {
-                $hasMatchingCategory = !empty(array_intersect($rate->product_categories, $productCategories));
-                if (!$hasMatchingCategory) {
+            if (! empty($rate->product_categories) && ! empty($productCategories)) {
+                $hasMatchingCategory = ! empty(array_intersect($rate->product_categories, $productCategories));
+                if (! $hasMatchingCategory) {
                     continue;
                 }
             }
@@ -138,13 +138,13 @@ class TaxRateRepository extends BaseRepository
             if ($rate->min_amount && $amount < $rate->min_amount) {
                 continue;
             }
-            
+
             if ($rate->max_amount && $amount > $rate->max_amount) {
                 continue;
             }
 
             $taxAmount = 0;
-            
+
             if ($rate->type === 'percentage') {
                 $baseAmount = $rate->is_compound ? $currentAmount : $amount;
                 $taxAmount = $baseAmount * $rate->rate;
@@ -153,7 +153,7 @@ class TaxRateRepository extends BaseRepository
             }
 
             $totalTax += $taxAmount;
-            
+
             if ($rate->is_compound) {
                 $currentAmount += $taxAmount;
             }
@@ -183,6 +183,7 @@ class TaxRateRepository extends BaseRepository
     public function create(array $data): TaxRate
     {
         $this->clearCache();
+
         return $this->model->create($data);
     }
 
@@ -192,10 +193,10 @@ class TaxRateRepository extends BaseRepository
     public function update(int $id, array $attributes): Model
     {
         $this->clearCache();
-        
+
         $taxRate = $this->model->find($id);
         $taxRate->update($attributes);
-        
+
         return $taxRate;
     }
 
@@ -205,6 +206,7 @@ class TaxRateRepository extends BaseRepository
     public function delete(int $id): bool
     {
         $this->clearCache();
+
         return $this->model->find($id)->delete();
     }
 
@@ -223,11 +225,11 @@ class TaxRateRepository extends BaseRepository
     public function getCountries(): \Illuminate\Support\Collection
     {
         $cacheKey = $this->getCacheKey('countries', 'all');
-        
+
         return \Illuminate\Support\Facades\Cache::remember($cacheKey, $this->cacheTtl, function () {
             return collect([
                 'IT' => 'Italia',
-                'FR' => 'Francia', 
+                'FR' => 'Francia',
                 'DE' => 'Germania',
                 'ES' => 'Spagna',
                 'US' => 'Stati Uniti',
@@ -245,7 +247,7 @@ class TaxRateRepository extends BaseRepository
     public function getTaxZones(): \Illuminate\Support\Collection
     {
         $cacheKey = $this->getCacheKey('tax_zones', 'all');
-        
+
         return \Illuminate\Support\Facades\Cache::remember($cacheKey, $this->cacheTtl, function () {
             return collect([
                 ['id' => 1, 'name' => 'Europa', 'countries' => ['IT', 'FR', 'DE', 'ES']],
@@ -261,13 +263,13 @@ class TaxRateRepository extends BaseRepository
     public function toggleStatus(int $id): ?TaxRate
     {
         $taxRate = $this->model->find($id);
-        
-        if (!$taxRate) {
+
+        if (! $taxRate) {
             return null;
         }
 
         $taxRate->update([
-            'is_active' => !$taxRate->is_active
+            'is_active' => ! $taxRate->is_active,
         ]);
 
         $this->clearCache();
@@ -300,14 +302,14 @@ class TaxRateRepository extends BaseRepository
     public function duplicate(int $id): ?TaxRate
     {
         $originalTaxRate = $this->model->find($id);
-        
-        if (!$originalTaxRate) {
+
+        if (! $originalTaxRate) {
             return null;
         }
 
         $duplicatedData = $originalTaxRate->toArray();
         unset($duplicatedData['id'], $duplicatedData['created_at'], $duplicatedData['updated_at']);
-        $duplicatedData['name'] = $duplicatedData['name'] . ' (Copia)';
+        $duplicatedData['name'] = $duplicatedData['name'].' (Copia)';
 
         return $this->create($duplicatedData);
     }

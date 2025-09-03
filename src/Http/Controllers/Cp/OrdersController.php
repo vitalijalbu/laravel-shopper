@@ -2,8 +2,8 @@
 
 namespace Shopper\Http\Controllers\Cp;
 
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 use Shopper\CP\Navigation;
@@ -31,16 +31,16 @@ class OrdersController extends Controller
             ->breadcrumb('Ordini');
 
         $filters = $request->only([
-            'search', 
-            'status', 
-            'payment_status', 
-            'date_from', 
-            'date_to', 
-            'sort', 
-            'direction', 
-            'page'
+            'search',
+            'status',
+            'payment_status',
+            'date_from',
+            'date_to',
+            'sort',
+            'direction',
+            'page',
         ]);
-        
+
         $orders = $this->orderRepository->getPaginatedWithFilters($filters, 25);
         $customers = $this->orderRepository->getCustomersForSelect();
         $products = $this->orderRepository->getProductsForSelect();
@@ -101,13 +101,13 @@ class OrdersController extends Controller
         $page = Page::make('Dettagli Ordine')
             ->breadcrumb('Home', '/cp')
             ->breadcrumb('Ordini', '/cp/orders')
-            ->breadcrumb('#' . $order->order_number);
+            ->breadcrumb('#'.$order->order_number);
 
         $order->load([
-            'customer', 
-            'items.product', 
-            'shippingAddress', 
-            'billingAddress'
+            'customer',
+            'items.product',
+            'shippingAddress',
+            'billingAddress',
         ]);
 
         return Inertia::render('order-show', [

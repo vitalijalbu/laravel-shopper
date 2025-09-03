@@ -21,13 +21,13 @@ class UpdateCollectionRequest extends FormRequest
     public function rules(): array
     {
         $collectionId = $this->route('collection');
-        
+
         return [
             'name' => [
                 'sometimes',
                 'string',
                 'max:255',
-                Rule::unique('collections', 'name')->ignore($collectionId)
+                Rule::unique('collections', 'name')->ignore($collectionId),
             ],
             'description' => 'nullable|string',
             'type' => 'sometimes|in:manual,automatic',

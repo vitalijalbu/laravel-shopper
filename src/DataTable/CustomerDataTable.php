@@ -156,7 +156,7 @@ class CustomerDataTable extends BaseDataTable
                     'icon' => 'check',
                     'action' => 'enable',
                     'condition' => function ($customer) {
-                        return !$customer->is_enabled;
+                        return ! $customer->is_enabled;
                     },
                 ],
                 [
@@ -212,7 +212,10 @@ class CustomerDataTable extends BaseDataTable
      * Override default settings.
      */
     protected string $defaultSort = 'created_at';
+
     protected string $defaultDirection = 'desc';
+
     protected int $perPage = 25;
+
     protected array $searchableColumns = ['first_name', 'last_name', 'email', 'phone'];
 }

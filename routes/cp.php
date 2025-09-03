@@ -9,6 +9,8 @@ use Shopper\Http\Controllers\Cp\CollectionsController;
 use Shopper\Http\Controllers\Cp\CustomersController;
 use Shopper\Http\Controllers\Cp\DashboardController;
 use Shopper\Http\Controllers\Cp\EntriesController;
+use Shopper\Http\Controllers\Cp\NavigationController;
+use Shopper\Http\Controllers\Cp\NavigationItemController;
 use Shopper\Http\Controllers\Cp\OrdersController;
 use Shopper\Http\Controllers\Cp\PaymentGatewaysController;
 use Shopper\Http\Controllers\Cp\SettingsController;
@@ -76,6 +78,27 @@ Route::prefix($cpPrefix)->name('cp.')->middleware(['web', 'shopper.inertia'])->g
             Route::get('/entries/{entry}/edit', [EntriesController::class, 'edit'])->name('entries.edit');
         });
 
+        // Navigation Management
+        Route::prefix('navigations')->name('navigations.')->group(function () {
+            Route::get('/', [NavigationController::class, 'index'])->name('index');
+            Route::get('/create', [NavigationController::class, 'create'])->name('create');
+            Route::post('/', [NavigationController::class, 'store'])->name('store');
+            Route::get('/{navigation}', [NavigationController::class, 'show'])->name('show');
+            Route::get('/{navigation}/edit', [NavigationController::class, 'edit'])->name('edit');
+            Route::put('/{navigation}', [NavigationController::class, 'update'])->name('update');
+            Route::delete('/{navigation}', [NavigationController::class, 'destroy'])->name('destroy');
+            Route::post('/{navigation}/duplicate', [NavigationController::class, 'duplicate'])->name('duplicate');
+
+            // Navigation Items Management
+            Route::prefix('{navigation}')->name('items.')->group(function () {
+                Route::post('/items', [NavigationItemController::class, 'store'])->name('store');
+                Route::put('/items/{item}', [NavigationItemController::class, 'update'])->name('update');
+                Route::delete('/items/{item}', [NavigationItemController::class, 'destroy'])->name('destroy');
+                Route::post('/items/reorder', [NavigationItemController::class, 'reorder'])->name('reorder');
+                Route::post('/items/{item}/move', [NavigationItemController::class, 'move'])->name('move');
+            });
+        });
+
         // Utilities
         Route::get('/utilities', function () {
             return inertia('Utilities/Index');
@@ -113,6 +136,63 @@ Route::prefix($cpPrefix)->name('cp.')->middleware(['web', 'shopper.inertia'])->g
             Route::get('/{customer}', [CustomersController::class, 'show'])->name('show');
             Route::put('/{customer}', [CustomersController::class, 'update'])->name('update');
             Route::delete('/{customer}', [CustomersController::class, 'destroy'])->name('destroy');
+
+            // Customer Addresses
+            Route::prefix('{customer}/addresses')->name('addresses.')->group(function () {
+                Route::get('/', [CustomerAddressController::class, 'index'])->name('index');
+                Route::get('/create', [CustomerAddressController::class, 'create'])->name('create');
+                Route::post('/', [CustomerAddressController::class, 'store'])->name('store');
+                Route::get('/{address}', [CustomerAddressController::class, 'show'])->name('show');
+                Route::get('/{address}/edit', [CustomerAddressController::class, 'edit'])->name('edit');
+                Route::put('/{address}', [CustomerAddressController::class, 'update'])->name('update');
+                Route::delete('/{address}', [CustomerAddressController::class, 'destroy'])->name('destroy');
+                Route::post('/{address}/set-default', [CustomerAddressController::class, 'setDefault'])->name('set-default');
+            });
+
+            // Customer Wishlists
+            Route::prefix('{customer}/wishlists')->name('wishlists.')->group(function () {
+                Route::get('/', [WishlistController::class, 'index'])->name('index');
+                Route::post('/', [WishlistController::class, 'store'])->name('store');
+                Route::get('/{wishlist}', [WishlistController::class, 'show'])->name('show');
+                Route::put('/{wishlist}', [WishlistController::class, 'update'])->name('update');
+                Route::delete('/{wishlist}', [WishlistController::class, 'destroy'])->name('destroy');
+                Route::post('/{wishlist}/items', [WishlistController::class, 'addItem'])->name('items.store');
+                Route::delete('/{wishlist}/items/{item}', [WishlistController::class, 'removeItem'])->name('items.destroy');
+            });
+
+            // Customer Favorites
+            Route::prefix('{customer}/favorites')->name('favorites.')->group(function () {
+                Route::get('/', [FavoriteController::class, 'index'])->name('index');
+                Route::post('/toggle', [FavoriteController::class, 'toggle'])->name('toggle');
+                Route::delete('/{favorite}', [FavoriteController::class, 'destroy'])->name('destroy');
+            });
+        });
+
+        // Abandoned Carts Management
+        Route::prefix('abandoned-carts')->name('abandoned-carts.')->group(function () {
+            Route::get('/', [AbandonedCartController::class, 'index'])->name('index');
+            Route::get('/{abandonedCart}', [AbandonedCartController::class, 'show'])->name('show');
+            Route::post('/{abandonedCart}/send-recovery-email', [AbandonedCartController::class, 'sendRecoveryEmail'])->name('send-recovery-email');
+            Route::post('/bulk-send-recovery-emails', [AbandonedCartController::class, 'bulkSendRecoveryEmails'])->name('bulk-send-recovery-emails');
+            Route::post('/{abandonedCart}/mark-recovered', [AbandonedCartController::class, 'markAsRecovered'])->name('mark-recovered');
+            Route::delete('/{abandonedCart}', [AbandonedCartController::class, 'destroy'])->name('destroy');
+            Route::delete('/bulk-delete', [AbandonedCartController::class, 'bulkDelete'])->name('bulk-delete');
+        });
+
+        // Stock Notifications Management
+        Route::prefix('stock-notifications')->name('stock-notifications.')->group(function () {
+            Route::get('/', [StockNotificationController::class, 'index'])->name('index');
+            Route::get('/{stockNotification}', [StockNotificationController::class, 'show'])->name('show');
+            Route::post('/notify-for-product', [StockNotificationController::class, 'notifyForProduct'])->name('notify-for-product');
+            Route::post('/{stockNotification}/send-notification', [StockNotificationController::class, 'sendNotification'])->name('send-notification');
+            Route::delete('/{stockNotification}', [StockNotificationController::class, 'destroy'])->name('destroy');
+            Route::post('/bulk-notify', [StockNotificationController::class, 'bulkNotify'])->name('bulk-notify');
+        });
+
+        // Bulk Product Edit
+        Route::prefix('products')->name('products.')->group(function () {
+            Route::get('/bulk-edit', [ProductBulkEditController::class, 'index'])->name('bulk-edit');
+            Route::post('/bulk-update', [ProductBulkEditController::class, 'bulkUpdate'])->name('bulk-update');
         });
 
         // Orders Management

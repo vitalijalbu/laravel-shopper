@@ -49,9 +49,9 @@ class TaxRate extends Model
     public function getFormattedRateAttribute(): string
     {
         if ($this->type === 'percentage') {
-            return number_format($this->rate * 100, 2) . '%';
+            return number_format($this->rate * 100, 2).'%';
         }
-        
+
         return number_format($this->rate, 2);
     }
 
@@ -60,20 +60,20 @@ class TaxRate extends Model
      */
     public function getIsActiveAttribute(): bool
     {
-        if (!$this->is_enabled) {
+        if (! $this->is_enabled) {
             return false;
         }
 
         $now = now()->toDateString();
-        
+
         if ($this->effective_from && $this->effective_from > $now) {
             return false;
         }
-        
+
         if ($this->effective_until && $this->effective_until < $now) {
             return false;
         }
-        
+
         return true;
     }
 
@@ -91,15 +91,15 @@ class TaxRate extends Model
     public function scopeActive($query)
     {
         $now = now()->toDateString();
-        
+
         return $query->where('is_enabled', true)
-                    ->where(function ($q) use ($now) {
-                        $q->whereNull('effective_from')
-                          ->orWhere('effective_from', '<=', $now);
-                    })
-                    ->where(function ($q) use ($now) {
-                        $q->whereNull('effective_until')
-                          ->orWhere('effective_until', '>=', $now);
-                    });
+            ->where(function ($q) use ($now) {
+                $q->whereNull('effective_from')
+                    ->orWhere('effective_from', '<=', $now);
+            })
+            ->where(function ($q) use ($now) {
+                $q->whereNull('effective_until')
+                    ->orWhere('effective_until', '>=', $now);
+            });
     }
 }

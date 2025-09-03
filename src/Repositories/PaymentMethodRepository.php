@@ -12,7 +12,7 @@ class PaymentMethodRepository extends BaseRepository
 
     protected function makeModel(): Model
     {
-        return new PaymentMethod();
+        return new PaymentMethod;
     }
 
     /**
@@ -23,23 +23,23 @@ class PaymentMethodRepository extends BaseRepository
         $query = $this->model->newQuery();
 
         // Search filter
-        if (!empty($filters['search'])) {
+        if (! empty($filters['search'])) {
             $search = $filters['search'];
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('provider', 'like', "%{$search}%")
-                  ->orWhere('description', 'like', "%{$search}%");
+                    ->orWhere('provider', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%");
             });
         }
 
         // Status filter
-        if (!empty($filters['status'])) {
+        if (! empty($filters['status'])) {
             $isEnabled = $filters['status'] === 'enabled';
             $query->where('is_enabled', $isEnabled);
         }
 
         // Provider filter
-        if (!empty($filters['provider'])) {
+        if (! empty($filters['provider'])) {
             $query->where('provider', $filters['provider']);
         }
 
@@ -51,7 +51,7 @@ class PaymentMethodRepository extends BaseRepository
         // Sorting
         $sortField = $filters['sort'] ?? 'sort_order';
         $sortDirection = $filters['direction'] ?? 'asc';
-        
+
         if ($sortField === 'sort_order') {
             $query->orderBy('sort_order')->orderBy('name');
         } else {
@@ -76,9 +76,9 @@ class PaymentMethodRepository extends BaseRepository
     /**
      * Get payment methods for a specific currency and country
      */
-    public function getAvailableFor(string $currency, string $country = null): \Illuminate\Database\Eloquent\Collection
+    public function getAvailableFor(string $currency, ?string $country = null): \Illuminate\Database\Eloquent\Collection
     {
-        $cacheKey = $this->getCacheKey('available', md5($currency . '_' . $country));
+        $cacheKey = $this->getCacheKey('available', md5($currency.'_'.$country));
 
         return \Illuminate\Support\Facades\Cache::remember($cacheKey, $this->cacheTtl, function () use ($currency, $country) {
             $query = $this->model->enabled()->ordered();
@@ -86,14 +86,14 @@ class PaymentMethodRepository extends BaseRepository
             // Filter by currency support
             $query->where(function ($q) use ($currency) {
                 $q->whereJsonContains('supported_currencies', strtoupper($currency))
-                  ->orWhereNull('supported_currencies');
+                    ->orWhereNull('supported_currencies');
             });
 
             // Filter by country support if provided
             if ($country) {
                 $query->where(function ($q) use ($country) {
                     $q->whereJsonContains('supported_countries', strtoupper($country))
-                      ->orWhereNull('supported_countries');
+                        ->orWhereNull('supported_countries');
                 });
             }
 
@@ -110,10 +110,10 @@ class PaymentMethodRepository extends BaseRepository
 
         return \Illuminate\Support\Facades\Cache::remember($cacheKey, $this->cacheTtl, function () {
             return $this->model->select('provider')
-                              ->distinct()
-                              ->orderBy('provider')
-                              ->pluck('provider')
-                              ->toArray();
+                ->distinct()
+                ->orderBy('provider')
+                ->pluck('provider')
+                ->toArray();
         });
     }
 
@@ -137,8 +137,8 @@ class PaymentMethodRepository extends BaseRepository
         $this->clearCache();
 
         $paymentMethod = $this->model->find($id);
-        $paymentMethod->update(['is_enabled' => !$paymentMethod->is_enabled]);
-        
+        $paymentMethod->update(['is_enabled' => ! $paymentMethod->is_enabled]);
+
         return $paymentMethod;
     }
 
@@ -148,8 +148,8 @@ class PaymentMethodRepository extends BaseRepository
     public function testConfiguration(int $id): array
     {
         $paymentMethod = $this->model->find($id);
-        
-        if (!$paymentMethod) {
+
+        if (! $paymentMethod) {
             return ['success' => false, 'message' => 'Payment method not found'];
         }
 
@@ -179,7 +179,7 @@ class PaymentMethodRepository extends BaseRepository
         }
 
         // Set default sort order
-        if (!isset($data['sort_order'])) {
+        if (! isset($data['sort_order'])) {
             $data['sort_order'] = $this->model->max('sort_order') + 1;
         }
 
@@ -192,10 +192,10 @@ class PaymentMethodRepository extends BaseRepository
     public function update(int $id, array $attributes): Model
     {
         $this->clearCache();
-        
+
         $paymentMethod = $this->model->find($id);
         $paymentMethod->update($attributes);
-        
+
         return $paymentMethod;
     }
 
@@ -205,6 +205,7 @@ class PaymentMethodRepository extends BaseRepository
     public function delete(int $id): bool
     {
         $this->clearCache();
+
         return $this->model->find($id)->delete();
     }
 
@@ -214,7 +215,7 @@ class PaymentMethodRepository extends BaseRepository
     protected function testStripeConfiguration(PaymentMethod $paymentMethod): array
     {
         $config = $paymentMethod->configuration;
-        
+
         if (empty($config['secret_key'])) {
             return ['success' => false, 'message' => 'Secret key is required'];
         }
@@ -222,10 +223,10 @@ class PaymentMethodRepository extends BaseRepository
         // Here you would make an actual API call to Stripe
         // For now, just validate the key format
         $isValidFormat = str_starts_with($config['secret_key'], 'sk_');
-        
+
         return [
             'success' => $isValidFormat,
-            'message' => $isValidFormat ? 'Stripe configuration is valid' : 'Invalid Stripe secret key format'
+            'message' => $isValidFormat ? 'Stripe configuration is valid' : 'Invalid Stripe secret key format',
         ];
     }
 
@@ -235,7 +236,7 @@ class PaymentMethodRepository extends BaseRepository
     protected function testPayPalConfiguration(PaymentMethod $paymentMethod): array
     {
         $config = $paymentMethod->configuration;
-        
+
         if (empty($config['client_id']) || empty($config['client_secret'])) {
             return ['success' => false, 'message' => 'Client ID and Secret are required'];
         }
@@ -250,7 +251,7 @@ class PaymentMethodRepository extends BaseRepository
     protected function testSquareConfiguration(PaymentMethod $paymentMethod): array
     {
         $config = $paymentMethod->configuration;
-        
+
         if (empty($config['access_token']) || empty($config['application_id'])) {
             return ['success' => false, 'message' => 'Access token and Application ID are required'];
         }

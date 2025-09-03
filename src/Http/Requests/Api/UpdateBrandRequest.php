@@ -21,19 +21,19 @@ class UpdateBrandRequest extends FormRequest
     public function rules(): array
     {
         $brandId = $this->route('brand');
-        
+
         return [
             'name' => [
                 'sometimes',
                 'string',
                 'max:255',
-                Rule::unique('brands', 'name')->ignore($brandId)
+                Rule::unique('brands', 'name')->ignore($brandId),
             ],
             'slug' => [
                 'nullable',
                 'string',
                 'max:255',
-                Rule::unique('brands', 'slug')->ignore($brandId)
+                Rule::unique('brands', 'slug')->ignore($brandId),
             ],
             'description' => 'nullable|string',
             'logo' => 'nullable|string',

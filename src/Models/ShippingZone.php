@@ -55,7 +55,7 @@ class ShippingZone extends Model
      */
     public function coversState(string $countryCode, string $stateCode): bool
     {
-        if (!$this->coversCountry($countryCode)) {
+        if (! $this->coversCountry($countryCode)) {
             return false;
         }
 
@@ -64,7 +64,8 @@ class ShippingZone extends Model
             return true;
         }
 
-        $stateKey = strtoupper($countryCode . '_' . $stateCode);
+        $stateKey = strtoupper($countryCode.'_'.$stateCode);
+
         return in_array($stateKey, $this->states);
     }
 

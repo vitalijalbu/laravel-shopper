@@ -12,7 +12,7 @@ class SettingsRepository extends BaseRepository
 
     protected function makeModel(): Model
     {
-        return new Setting();
+        return new Setting;
     }
 
     /**
@@ -50,7 +50,7 @@ class SettingsRepository extends BaseRepository
             return $this->model->where('key', $key)->first();
         });
 
-        if (!$setting) {
+        if (! $setting) {
             return $default;
         }
 
@@ -60,7 +60,7 @@ class SettingsRepository extends BaseRepository
     /**
      * Set setting value
      */
-    public function setValue(string $key, $value, string $type = 'string', string $group = null, string $description = null): Setting
+    public function setValue(string $key, $value, string $type = 'string', ?string $group = null, ?string $description = null): Setting
     {
         $this->clearCache();
 
@@ -103,6 +103,7 @@ class SettingsRepository extends BaseRepository
     public function deleteByKey(string $key): bool
     {
         $this->clearCache();
+
         return $this->model->where('key', $key)->delete() > 0;
     }
 
@@ -121,7 +122,7 @@ class SettingsRepository extends BaseRepository
         ];
 
         $groups = $groupMappings[$page] ?? [$page];
-        
+
         return $this->model->whereIn('group', $groups)->orderBy('group')->orderBy('key')->get();
     }
 
@@ -130,7 +131,7 @@ class SettingsRepository extends BaseRepository
      */
     protected function prepareValue($value, string $type): string
     {
-        return match($type) {
+        return match ($type) {
             'boolean' => $value ? '1' : '0',
             'array', 'json' => json_encode($value),
             'integer' => (string) (int) $value,
@@ -144,7 +145,7 @@ class SettingsRepository extends BaseRepository
      */
     protected function castValue(string $value, string $type)
     {
-        return match($type) {
+        return match ($type) {
             'boolean' => $value === '1',
             'array', 'json' => json_decode($value, true),
             'integer' => (int) $value,

@@ -38,7 +38,7 @@ class ShippingMethodController extends Controller
                 'last' => $shippingMethods->url($shippingMethods->lastPage()),
                 'prev' => $shippingMethods->previousPageUrl(),
                 'next' => $shippingMethods->nextPageUrl(),
-            ]
+            ],
         ]);
     }
 
@@ -231,7 +231,7 @@ class ShippingMethodController extends Controller
                 'data' => [
                     'cost' => $cost,
                     'method_id' => $validated['method_id'],
-                    'formatted_cost' => '€' . number_format($cost, 2),
+                    'formatted_cost' => '€'.number_format($cost, 2),
                 ],
             ]);
         } catch (\Exception $e) {

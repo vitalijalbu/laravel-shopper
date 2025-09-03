@@ -57,10 +57,10 @@ Route::group([
     */
 
     Route::middleware('auth:sanctum')->group(function () {
-        
+
         // Authentication
         Route::post('/logout', [AuthController::class, 'logout'])->name('api.logout');
-        
+
         // User Profile
         Route::get('/user', function (Request $request) {
             return $request->user();
@@ -82,7 +82,7 @@ Route::group([
         */
 
         Route::prefix('admin')->name('api.admin.')->group(function () {
-            
+
             // Permission Management
             Route::prefix('permissions')->name('permissions.')->group(function () {
                 Route::get('/', [\Shopper\Http\Controllers\Api\PermissionController::class, 'index'])->name('index');
@@ -125,7 +125,7 @@ Route::group([
     */
 
     Route::prefix('sites/{site}')->middleware([HandleSiteContext::class])->name('api.sites.')->group(function () {
-        
+
         // Site-specific Products
         Route::prefix('products')->name('products.')->group(function () {
             Route::get('/', [ProductController::class, 'index'])->name('index');

@@ -21,14 +21,14 @@ class UpdateCustomerRequest extends FormRequest
     public function rules(): array
     {
         $customerId = $this->route('customer');
-        
+
         return [
             'first_name' => 'sometimes|string|max:255',
             'last_name' => 'sometimes|string|max:255',
             'email' => [
                 'sometimes',
                 'email',
-                Rule::unique('customers', 'email')->ignore($customerId)
+                Rule::unique('customers', 'email')->ignore($customerId),
             ],
             'phone' => 'nullable|string|max:20',
             'date_of_birth' => 'nullable|date|before:today',

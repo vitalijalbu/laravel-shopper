@@ -20,8 +20,8 @@ class CountryController extends Controller
         if ($search = $request->get('search')) {
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('code', 'like', "%{$search}%")
-                  ->orWhere('iso3', 'like', "%{$search}%");
+                    ->orWhere('code', 'like', "%{$search}%")
+                    ->orWhere('iso3', 'like', "%{$search}%");
             });
         }
 
@@ -53,7 +53,7 @@ class CountryController extends Controller
                 'last' => $countries->url($countries->lastPage()),
                 'prev' => $countries->previousPageUrl(),
                 'next' => $countries->nextPageUrl(),
-            ]
+            ],
         ]);
     }
 
@@ -83,8 +83,8 @@ class CountryController extends Controller
     {
         try {
             $countries = Country::where('is_enabled', true)
-                               ->orderBy('name')
-                               ->get();
+                ->orderBy('name')
+                ->get();
 
             return response()->json([
                 'data' => $countries,
@@ -104,10 +104,10 @@ class CountryController extends Controller
     {
         try {
             $countries = Country::where('is_enabled', true)
-                               ->orderBy('region')
-                               ->orderBy('name')
-                               ->get()
-                               ->groupBy('region');
+                ->orderBy('region')
+                ->orderBy('name')
+                ->get()
+                ->groupBy('region');
 
             return response()->json([
                 'data' => $countries,
@@ -127,10 +127,10 @@ class CountryController extends Controller
     {
         try {
             $regions = Country::select('region')
-                             ->distinct()
-                             ->whereNotNull('region')
-                             ->orderBy('region')
-                             ->pluck('region');
+                ->distinct()
+                ->whereNotNull('region')
+                ->orderBy('region')
+                ->pluck('region');
 
             return response()->json([
                 'data' => $regions,
@@ -158,13 +158,13 @@ class CountryController extends Controller
             $limit = $validated['limit'] ?? 10;
 
             $countries = Country::where('is_enabled', true)
-                               ->where(function ($q) use ($query) {
-                                   $q->where('name', 'like', "%{$query}%")
-                                     ->orWhere('code', 'like', "%{$query}%");
-                               })
-                               ->orderBy('name')
-                               ->limit($limit)
-                               ->get(['code', 'name', 'flag_emoji']);
+                ->where(function ($q) use ($query) {
+                    $q->where('name', 'like', "%{$query}%")
+                        ->orWhere('code', 'like', "%{$query}%");
+                })
+                ->orderBy('name')
+                ->limit($limit)
+                ->get(['code', 'name', 'flag_emoji']);
 
             return response()->json([
                 'data' => $countries,

@@ -5,15 +5,13 @@ namespace Shopper\Http\Controllers\Api;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Shopper\Http\Controllers\Controller;
-use Shopper\Http\Requests\Api\BulkActionRequest;
-use Shopper\Http\Requests\Api\StoreCategoryRequest;
-use Shopper\Http\Requests\Api\UpdateCategoryRequest;
-use Shopper\Http\Traits\ApiResponseTrait;
 use Shopper\Repositories\CategoryRepository;
+use Shopper\Traits\ApiResponseTrait;
 
 class CategoryController extends Controller
 {
     use ApiResponseTrait;
+
     public function __construct(
         protected CategoryRepository $categoryRepository
     ) {}
@@ -53,12 +51,12 @@ class CategoryController extends Controller
 
             return response()->json([
                 'message' => 'Category created successfully',
-                'data' => $category
+                'data' => $category,
             ], 201);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Failed to create category',
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
@@ -71,19 +69,19 @@ class CategoryController extends Controller
         try {
             $category = $this->categoryRepository->findWithRelations($id, ['children', 'products']);
 
-            if (!$category) {
+            if (! $category) {
                 return response()->json([
-                    'message' => 'Category not found'
+                    'message' => 'Category not found',
                 ], 404);
             }
 
             return response()->json([
-                'data' => $category
+                'data' => $category,
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Failed to fetch category',
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
@@ -95,7 +93,7 @@ class CategoryController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'slug' => 'nullable|string|unique:categories,slug,' . $id,
+            'slug' => 'nullable|string|unique:categories,slug,'.$id,
             'description' => 'nullable|string',
             'parent_id' => 'nullable|exists:categories,id',
             'image' => 'nullable|string',
@@ -108,20 +106,20 @@ class CategoryController extends Controller
         try {
             $category = $this->categoryRepository->update($id, $validated);
 
-            if (!$category) {
+            if (! $category) {
                 return response()->json([
-                    'message' => 'Category not found'
+                    'message' => 'Category not found',
                 ], 404);
             }
 
             return response()->json([
                 'message' => 'Category updated successfully',
-                'data' => $category
+                'data' => $category,
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Failed to update category',
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
@@ -134,19 +132,19 @@ class CategoryController extends Controller
         try {
             $deleted = $this->categoryRepository->delete($id);
 
-            if (!$deleted) {
+            if (! $deleted) {
                 return response()->json([
-                    'message' => 'Category not found'
+                    'message' => 'Category not found',
                 ], 404);
             }
 
             return response()->json([
-                'message' => 'Category deleted successfully'
+                'message' => 'Category deleted successfully',
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Failed to delete category',
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
@@ -160,12 +158,12 @@ class CategoryController extends Controller
             $tree = $this->categoryRepository->getTree();
 
             return response()->json([
-                'data' => $tree
+                'data' => $tree,
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Failed to fetch category tree',
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
@@ -186,12 +184,12 @@ class CategoryController extends Controller
 
             return response()->json([
                 'message' => "Categories {$validated['action']}d successfully",
-                'affected' => $result
+                'affected' => $result,
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Failed to perform bulk update',
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         }
     }

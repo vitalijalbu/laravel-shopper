@@ -1,26 +1,26 @@
 {
-  "_ui-CelgmUti.js": {
-    "file": "assets/ui-CelgmUti.js",
+  "_ui-IVSXqRWP.js": {
+    "file": "assets/ui-IVSXqRWP.js",
     "name": "ui",
     "imports": [
-      "_vendor-B2ExBNFi.js"
+      "_vendor-CWDlk42K.js"
     ]
   },
-  "_vendor-B2ExBNFi.js": {
-    "file": "assets/vendor-B2ExBNFi.js",
+  "_vendor-CWDlk42K.js": {
+    "file": "assets/vendor-CWDlk42K.js",
     "name": "vendor"
   },
   "resources/js/app.js": {
-    "file": "assets/app-_C0ftH5o.js",
+    "file": "assets/app-RIGtzeih.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
     "imports": [
-      "_vendor-B2ExBNFi.js",
-      "_ui-CelgmUti.js"
+      "_vendor-CWDlk42K.js",
+      "_ui-IVSXqRWP.js"
     ],
     "css": [
-      "assets/app-CUXtbfUd.css"
+      "assets/app-CMFErTdK.css"
     ]
   }
 }

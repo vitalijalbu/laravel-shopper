@@ -4,8 +4,8 @@ namespace Shopper\Tests;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
-use Shopper\ShopperServiceProvider;
 use Orchestra\Testbench\Concerns\WithWorkbench;
+use Shopper\ShopperServiceProvider;
 
 abstract class TestCase extends BaseTestCase
 {

@@ -27,7 +27,7 @@ class CategoryResource extends JsonResource
             'meta_description' => $this->meta_description,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-            
+
             // Relationships
             'parent' => new CategoryResource($this->whenLoaded('parent')),
             'children' => CategoryResource::collection($this->whenLoaded('children')),

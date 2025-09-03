@@ -6,18 +6,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Shopper\Http\Controllers\Controller;
 use Shopper\Models\Channel;
-
-class ChannelController extends Controller
-{
-<?php
-
-namespace Shopper\Http\Controllers\Api;
-
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Shopper\Http\Controllers\Controller;
-use Shopper\Http\Traits\ApiResponseTrait;
-use Shopper\Models\Channel;
+use Shopper\Traits\ApiResponseTrait;
 
 class ChannelController extends Controller
 {
@@ -34,8 +23,8 @@ class ChannelController extends Controller
         if ($search = $request->get('search')) {
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('slug', 'like', "%{$search}%")
-                  ->orWhere('description', 'like', "%{$search}%");
+                    ->orWhere('slug', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%");
             });
         }
 
@@ -51,8 +40,8 @@ class ChannelController extends Controller
 
         $perPage = $request->get('per_page', 25);
         $channels = $query->orderBy('is_default', 'desc')
-                         ->orderBy('name')
-                         ->paginate($perPage);
+            ->orderBy('name')
+            ->paginate($perPage);
 
         return $this->paginatedResponse($channels);
     }
@@ -84,6 +73,7 @@ class ChannelController extends Controller
 
         try {
             $channel = Channel::create($validated);
+
             return $this->createdResponse($channel, 'Canale creato con successo');
         } catch (\Exception $e) {
             return $this->errorResponse('Errore durante la creazione del canale');
@@ -97,6 +87,7 @@ class ChannelController extends Controller
     {
         try {
             $channel = Channel::findOrFail($id);
+
             return $this->successResponse($channel);
         } catch (\Exception $e) {
             return $this->notFoundResponse('Canale non trovato');
@@ -110,7 +101,7 @@ class ChannelController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'slug' => 'nullable|string|max:255|unique:channels,slug,' . $id,
+            'slug' => 'nullable|string|max:255|unique:channels,slug,'.$id,
             'description' => 'nullable|string',
             'url' => 'nullable|url',
             'is_default' => 'boolean',
@@ -124,11 +115,12 @@ class ChannelController extends Controller
             // Ensure only one default channel
             if ($validated['is_default'] ?? false) {
                 Channel::where('id', '!=', $id)
-                       ->where('is_default', true)
-                       ->update(['is_default' => false]);
+                    ->where('is_default', true)
+                    ->update(['is_default' => false]);
             }
 
             $channel->update($validated);
+
             return $this->successResponse($channel->fresh(), 'Canale aggiornato con successo');
         } catch (\Exception $e) {
             return $this->errorResponse('Errore durante l\'aggiornamento del canale');
@@ -149,6 +141,7 @@ class ChannelController extends Controller
             }
 
             $channel->delete();
+
             return $this->successResponse(null, 'Canale eliminato con successo');
         } catch (\Exception $e) {
             return $this->errorResponse('Errore durante l\'eliminazione del canale');

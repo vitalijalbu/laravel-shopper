@@ -2,8 +2,8 @@
 
 namespace Shopper\Http\Controllers\Cp;
 
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 use Shopper\CP\Navigation;
@@ -32,7 +32,7 @@ class TaxRatesController extends Controller
             ->breadcrumb('Aliquote Fiscali');
 
         $filters = $request->only(['search', 'country', 'state', 'is_active', 'sort', 'direction', 'page']);
-        
+
         $taxRates = $this->taxRateRepository->getPaginatedWithFilters($filters, 25);
         $countries = $this->taxRateRepository->getCountries();
         $taxZones = $this->taxRateRepository->getTaxZones();

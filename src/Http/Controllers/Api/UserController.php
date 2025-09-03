@@ -4,16 +4,14 @@ namespace Shopper\Http\Controllers\Api;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Shopper\Http\Controllers\Controller;
 use Shopper\Http\Requests\Api\AssignPermissionRequest;
 use Shopper\Http\Requests\Api\AssignRoleRequest;
-use Shopper\Http\Requests\Api\StoreUserRequest;
-use Shopper\Http\Requests\Api\UpdateUserRequest;
-use Shopper\Http\Traits\ApiResponseTrait;
 use Shopper\Models\User;
-use Spatie\Permission\Models\Role;
+use Shopper\Traits\ApiResponseTrait;
 use Spatie\Permission\Models\Permission;
-use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
@@ -23,6 +21,7 @@ class UserController extends Controller
     {
         $this->middleware(['auth:api', 'permission:manage-users']);
     }
+
     /**
      * Display a listing of users
      */
@@ -34,7 +33,7 @@ class UserController extends Controller
         if ($search = $request->get('search')) {
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%");
+                    ->orWhere('email', 'like', "%{$search}%");
             });
         }
 
@@ -52,8 +51,8 @@ class UserController extends Controller
 
         $perPage = $request->get('per_page', 25);
         $users = $query->with(['roles', 'permissions'])
-                      ->orderBy('created_at', 'desc')
-                      ->paginate($perPage);
+            ->orderBy('created_at', 'desc')
+            ->paginate($perPage);
 
         return response()->json([
             'data' => $users->items(),
@@ -70,7 +69,7 @@ class UserController extends Controller
                 'last' => $users->url($users->lastPage()),
                 'prev' => $users->previousPageUrl(),
                 'next' => $users->nextPageUrl(),
-            ]
+            ],
         ]);
     }
 
@@ -96,16 +95,16 @@ class UserController extends Controller
 
         try {
             $validated['password'] = Hash::make($validated['password']);
-            
+
             $user = User::create($validated);
 
             // Assign roles if provided
-            if (!empty($validated['roles'])) {
+            if (! empty($validated['roles'])) {
                 $user->assignRole($validated['roles']);
             }
 
             // Assign permissions if provided
-            if (!empty($validated['permissions'])) {
+            if (! empty($validated['permissions'])) {
                 $user->givePermissionTo($validated['permissions']);
             }
 
@@ -147,7 +146,7 @@ class UserController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $id,
+            'email' => 'required|email|unique:users,email,'.$id,
             'password' => 'nullable|string|min:8|confirmed',
             'avatar' => 'nullable|string',
             'phone' => 'nullable|string|max:20',
@@ -164,7 +163,7 @@ class UserController extends Controller
             $user = User::findOrFail($id);
 
             // Hash password if provided
-            if (!empty($validated['password'])) {
+            if (! empty($validated['password'])) {
                 $validated['password'] = Hash::make($validated['password']);
             } else {
                 unset($validated['password']);
@@ -228,7 +227,7 @@ class UserController extends Controller
     public function updatePassword(Request $request, string $id): JsonResponse
     {
         $validated = $request->validate([
-            'current_password' => 'required_if:id,' . auth()->id(),
+            'current_password' => 'required_if:id,'.auth()->id(),
             'password' => 'required|string|min:8|confirmed',
         ]);
 
@@ -237,7 +236,7 @@ class UserController extends Controller
 
             // If user is updating their own password, verify current password
             if (auth()->id() == $id) {
-                if (!Hash::check($validated['current_password'], $user->password)) {
+                if (! Hash::check($validated['current_password'], $user->password)) {
                     return response()->json([
                         'message' => 'Password attuale non corretta',
                     ], 422);
@@ -275,7 +274,7 @@ class UserController extends Controller
             }
 
             $user->update([
-                'is_active' => !$user->is_active
+                'is_active' => ! $user->is_active,
             ]);
 
             return response()->json([
@@ -336,7 +335,8 @@ class UserController extends Controller
                 case 'delete':
                     $users->get()->each(function ($user) use (&$count, &$errors, $currentUserId) {
                         if ($user->id == $currentUserId) {
-                            $errors[] = "Non puoi eliminare il tuo account";
+                            $errors[] = 'Non puoi eliminare il tuo account';
+
                             return;
                         }
                         $user->delete();
@@ -351,7 +351,8 @@ class UserController extends Controller
                 case 'deactivate':
                     $users->get()->each(function ($user) use (&$count, &$errors, $currentUserId) {
                         if ($user->id == $currentUserId) {
-                            $errors[] = "Non puoi disattivare il tuo account";
+                            $errors[] = 'Non puoi disattivare il tuo account';
+
                             return;
                         }
                         $user->update(['is_active' => false]);
@@ -365,7 +366,7 @@ class UserController extends Controller
                 'errors' => $errors,
             ];
 
-            if (!empty($errors)) {
+            if (! empty($errors)) {
                 return response()->json([
                     'message' => "Azione eseguita su {$count} utenti con alcuni errori",
                     'data' => $result,
@@ -449,7 +450,7 @@ class UserController extends Controller
     {
         try {
             $user = User::with(['roles.permissions', 'permissions'])->findOrFail($id);
-            
+
             $allPermissions = $user->getAllPermissions();
             $directPermissions = $user->getDirectPermissions();
             $rolePermissions = $user->getPermissionsViaRoles();

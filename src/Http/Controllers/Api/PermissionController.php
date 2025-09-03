@@ -5,7 +5,7 @@ namespace Shopper\Http\Controllers\Api;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Shopper\Http\Controllers\Controller;
-use Shopper\Http\Traits\ApiResponseTrait;
+use Shopper\Traits\ApiResponseTrait;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
@@ -25,7 +25,7 @@ class PermissionController extends Controller
     {
         try {
             $permissionGroups = $this->getPermissionStructure();
-            
+
             return $this->successResponse([
                 'permission_groups' => $permissionGroups,
                 'available_roles' => Role::all(['id', 'name', 'display_name']),
@@ -43,14 +43,14 @@ class PermissionController extends Controller
         try {
             $role = Role::with('permissions')->findOrFail($roleId);
             $permissionGroups = $this->getPermissionStructure();
-            
+
             // Aggiungi informazioni sui permessi del ruolo
             foreach ($permissionGroups as &$group) {
                 foreach ($group['permissions'] as &$permission) {
                     $permission['granted'] = $role->hasPermissionTo($permission['handle']);
                 }
             }
-            
+
             return $this->successResponse([
                 'role' => [
                     'id' => $role->id,
@@ -62,7 +62,7 @@ class PermissionController extends Controller
                 'permission_groups' => $permissionGroups,
                 'inherited_from' => $this->getInheritedRoles($role),
             ]);
-            
+
         } catch (\Exception $e) {
             return $this->notFoundResponse('Ruolo non trovato');
         }
@@ -82,25 +82,25 @@ class PermissionController extends Controller
 
         try {
             $role = Role::findOrFail($roleId);
-            
+
             // Verifica permessi esistenti
             $existingPermissions = Permission::whereIn('name', $validated['permissions'])->pluck('name')->toArray();
             $invalidPermissions = array_diff($validated['permissions'], $existingPermissions);
-            
-            if (!empty($invalidPermissions)) {
-                return $this->validationErrorResponse('Permessi non validi: ' . implode(', ', $invalidPermissions));
+
+            if (! empty($invalidPermissions)) {
+                return $this->validationErrorResponse('Permessi non validi: '.implode(', ', $invalidPermissions));
             }
-            
+
             // Sincronizza permessi
             $role->syncPermissions($validated['permissions']);
-            
+
             // Gestisci ereditarietà (se implementata)
             if (isset($validated['inherit_from'])) {
                 $this->setRoleInheritance($role, $validated['inherit_from']);
             }
-            
+
             return $this->successResponse(
-                $role->load('permissions'), 
+                $role->load('permissions'),
                 'Permessi del ruolo aggiornati con successo'
             );
         } catch (\Exception $e) {
@@ -116,7 +116,7 @@ class PermissionController extends Controller
         try {
             $permissionStructure = $this->getPermissionStructure();
             $createdPermissions = [];
-            
+
             foreach ($permissionStructure as $group) {
                 foreach ($group['permissions'] as $permission) {
                     $perm = Permission::firstOrCreate(
@@ -127,19 +127,19 @@ class PermissionController extends Controller
                             'group' => $group['handle'],
                         ]
                     );
-                    
+
                     if ($perm->wasRecentlyCreated) {
                         $createdPermissions[] = $perm;
                     }
                 }
             }
-            
+
             return $this->successResponse([
                 'created_permissions' => $createdPermissions,
                 'count' => count($createdPermissions),
                 'structure' => $permissionStructure,
-            ], count($createdPermissions) . ' permessi creati con successo');
-            
+            ], count($createdPermissions).' permessi creati con successo');
+
         } catch (\Exception $e) {
             return $this->errorResponse('Errore durante la generazione dei permessi');
         }
@@ -158,16 +158,16 @@ class PermissionController extends Controller
                     'description' => 'Accesso completo a tutte le funzionalità del sistema',
                 ]
             );
-            
+
             // Assegna tutti i permessi
             $allPermissions = Permission::all();
             $superRole->syncPermissions($allPermissions);
-            
+
             return $this->successResponse(
                 $superRole->load('permissions'),
-                'Ruolo Super User ' . ($superRole->wasRecentlyCreated ? 'creato' : 'aggiornato') . ' con successo'
+                'Ruolo Super User '.($superRole->wasRecentlyCreated ? 'creato' : 'aggiornato').' con successo'
             );
-            
+
         } catch (\Exception $e) {
             return $this->errorResponse('Errore durante la creazione del ruolo Super User');
         }
@@ -180,13 +180,13 @@ class PermissionController extends Controller
     {
         try {
             $tree = $this->buildPermissionTree();
-            
+
             return $this->successResponse([
                 'tree' => $tree,
                 'total_groups' => count($tree),
-                'total_permissions' => collect($tree)->sum(fn($group) => count($group['permissions'])),
+                'total_permissions' => collect($tree)->sum(fn ($group) => count($group['permissions'])),
             ]);
-            
+
         } catch (\Exception $e) {
             return $this->errorResponse('Errore durante la generazione dell\'albero dei permessi');
         }
@@ -210,7 +210,7 @@ class PermissionController extends Controller
                     ['handle' => 'delete content', 'label' => 'Delete Content', 'description' => 'Eliminare contenuti'],
                     ['handle' => 'publish content', 'label' => 'Publish Content', 'description' => 'Pubblicare contenuti'],
                     ['handle' => 'edit other authors content', 'label' => 'Edit Other Authors Content', 'description' => 'Modificare contenuti di altri autori'],
-                ]
+                ],
             ],
             [
                 'handle' => 'collections',
@@ -223,7 +223,7 @@ class PermissionController extends Controller
                     ['handle' => 'edit collections', 'label' => 'Edit Collections'],
                     ['handle' => 'delete collections', 'label' => 'Delete Collections'],
                     ['handle' => 'configure collections', 'label' => 'Configure Collections'],
-                ]
+                ],
             ],
             [
                 'handle' => 'commerce',
@@ -241,7 +241,7 @@ class PermissionController extends Controller
                     ['handle' => 'edit products', 'label' => 'Edit Products'],
                     ['handle' => 'delete products', 'label' => 'Delete Products'],
                     ['handle' => 'manage inventory', 'label' => 'Manage Inventory'],
-                ]
+                ],
             ],
             [
                 'handle' => 'customers',
@@ -254,7 +254,7 @@ class PermissionController extends Controller
                     ['handle' => 'edit customers', 'label' => 'Edit Customers'],
                     ['handle' => 'delete customers', 'label' => 'Delete Customers'],
                     ['handle' => 'manage customer groups', 'label' => 'Manage Customer Groups'],
-                ]
+                ],
             ],
             [
                 'handle' => 'users',
@@ -268,7 +268,7 @@ class PermissionController extends Controller
                     ['handle' => 'delete users', 'label' => 'Delete Users'],
                     ['handle' => 'edit user roles', 'label' => 'Edit User Roles'],
                     ['handle' => 'edit user groups', 'label' => 'Edit User Groups'],
-                ]
+                ],
             ],
             [
                 'handle' => 'assets',
@@ -281,7 +281,7 @@ class PermissionController extends Controller
                     ['handle' => 'edit assets', 'label' => 'Edit Assets'],
                     ['handle' => 'move assets', 'label' => 'Move Assets'],
                     ['handle' => 'delete assets', 'label' => 'Delete Assets'],
-                ]
+                ],
             ],
             [
                 'handle' => 'forms',
@@ -295,7 +295,7 @@ class PermissionController extends Controller
                     ['handle' => 'delete forms', 'label' => 'Delete Forms'],
                     ['handle' => 'view form submissions', 'label' => 'View Form Submissions'],
                     ['handle' => 'delete form submissions', 'label' => 'Delete Form Submissions'],
-                ]
+                ],
             ],
             [
                 'handle' => 'settings',
@@ -308,7 +308,7 @@ class PermissionController extends Controller
                     ['handle' => 'configure fields', 'label' => 'Configure Fields'],
                     ['handle' => 'configure collections', 'label' => 'Configure Collections'],
                     ['handle' => 'configure sites', 'label' => 'Configure Sites'],
-                ]
+                ],
             ],
             [
                 'handle' => 'roles',
@@ -322,7 +322,7 @@ class PermissionController extends Controller
                     ['handle' => 'delete roles', 'label' => 'Delete Roles'],
                     ['handle' => 'assign roles', 'label' => 'Assign Roles'],
                     ['handle' => 'super', 'label' => 'Super User', 'description' => 'Accesso completo senza restrizioni'],
-                ]
+                ],
             ],
             [
                 'handle' => 'reports',
@@ -334,7 +334,7 @@ class PermissionController extends Controller
                     ['handle' => 'create reports', 'label' => 'Create Reports'],
                     ['handle' => 'export reports', 'label' => 'Export Reports'],
                     ['handle' => 'view analytics', 'label' => 'View Analytics'],
-                ]
+                ],
             ],
         ];
     }
@@ -343,7 +343,7 @@ class PermissionController extends Controller
     {
         $structure = $this->getPermissionStructure();
         $existingPermissions = Permission::all()->keyBy('name');
-        
+
         $tree = [];
         foreach ($structure as $group) {
             $groupData = [
@@ -354,7 +354,7 @@ class PermissionController extends Controller
                 'permissions' => [],
                 'permission_count' => 0,
             ];
-            
+
             foreach ($group['permissions'] as $permission) {
                 $existing = $existingPermissions->get($permission['handle']);
                 $groupData['permissions'][] = [
@@ -366,10 +366,10 @@ class PermissionController extends Controller
                 ];
                 $groupData['permission_count']++;
             }
-            
+
             $tree[] = $groupData;
         }
-        
+
         return $tree;
     }
 

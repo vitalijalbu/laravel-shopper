@@ -2,8 +2,6 @@
 
 namespace Shopper\Http\Controllers\Auth;
 
-use App\Models\SocialAccount;
-use App\Models\User;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -14,6 +12,8 @@ use Inertia\Inertia;
 use Inertia\Response;
 use Laravel\Socialite\Facades\Socialite;
 use Shopper\Http\Controllers\Controller;
+use Shopper\Models\SocialAccount;
+use Shopper\Models\User;
 
 class SocialAuthController extends Controller
 {

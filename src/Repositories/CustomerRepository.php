@@ -15,7 +15,7 @@ class CustomerRepository extends BaseRepository
 
     protected function makeModel(): Model
     {
-        return new Customer();
+        return new Customer;
     }
 
     /**
@@ -29,31 +29,31 @@ class CustomerRepository extends BaseRepository
             ->withSum('orders', 'total_amount');
 
         // Search filter
-        if (!empty($filters['search'])) {
+        if (! empty($filters['search'])) {
             $search = $filters['search'];
             $query->where(function ($q) use ($search) {
                 $q->where('first_name', 'like', "%{$search}%")
-                  ->orWhere('last_name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%")
-                  ->orWhere('phone_number', 'like', "%{$search}%");
+                    ->orWhere('last_name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('phone_number', 'like', "%{$search}%");
             });
         }
 
         // Status filter
-        if (!empty($filters['status'])) {
+        if (! empty($filters['status'])) {
             $isActive = $filters['status'] === 'active';
             $query->where('is_active', $isActive);
         }
 
         // Customer group filter
-        if (!empty($filters['customer_group_id'])) {
+        if (! empty($filters['customer_group_id'])) {
             $query->where('customer_group_id', $filters['customer_group_id']);
         }
 
         // Sorting
         $sortField = $filters['sort'] ?? 'created_at';
         $sortDirection = $filters['direction'] ?? 'desc';
-        
+
         // Handle special sort fields
         if ($sortField === 'total_spent') {
             $query->orderBy('orders_sum_total_amount', $sortDirection);
@@ -87,7 +87,7 @@ class CustomerRepository extends BaseRepository
 
         $customer = $this->model->find($id);
         $customer->update($attributes);
-        
+
         return $customer;
     }
 

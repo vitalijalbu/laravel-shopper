@@ -2,8 +2,6 @@
 
 namespace Shopper\Http\Controllers\Api\Auth;
 
-use App\Models\SocialAccount;
-use App\Models\User;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -11,6 +9,8 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Socialite\Facades\Socialite;
 use Shopper\Http\Controllers\Controller;
+use Shopper\Models\SocialAccount;
+use Shopper\Models\User;
 
 class SocialAuthApiController extends Controller
 {

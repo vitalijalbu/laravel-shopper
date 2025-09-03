@@ -4,8 +4,8 @@ namespace Shopper\Repositories;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Shopper\Models\Order;
 use Shopper\Models\Customer;
+use Shopper\Models\Order;
 use Shopper\Models\Product;
 
 class OrderRepository extends BaseRepository
@@ -16,7 +16,7 @@ class OrderRepository extends BaseRepository
 
     protected function makeModel(): Model
     {
-        return new Order();
+        return new Order;
     }
 
     /**
@@ -28,41 +28,41 @@ class OrderRepository extends BaseRepository
             ->with(['customer', 'items.product']);
 
         // Search filter
-        if (!empty($filters['search'])) {
+        if (! empty($filters['search'])) {
             $search = $filters['search'];
             $query->where(function ($q) use ($search) {
                 $q->where('order_number', 'like', "%{$search}%")
-                  ->orWhereHas('customer', function ($customerQuery) use ($search) {
-                      $customerQuery->where('first_name', 'like', "%{$search}%")
-                                  ->orWhere('last_name', 'like', "%{$search}%")
-                                  ->orWhere('email', 'like', "%{$search}%");
-                  });
+                    ->orWhereHas('customer', function ($customerQuery) use ($search) {
+                        $customerQuery->where('first_name', 'like', "%{$search}%")
+                            ->orWhere('last_name', 'like', "%{$search}%")
+                            ->orWhere('email', 'like', "%{$search}%");
+                    });
             });
         }
 
         // Status filter
-        if (!empty($filters['status'])) {
+        if (! empty($filters['status'])) {
             $query->where('status', $filters['status']);
         }
 
         // Payment status filter
-        if (!empty($filters['payment_status'])) {
+        if (! empty($filters['payment_status'])) {
             $query->where('payment_status', $filters['payment_status']);
         }
 
         // Date range filters
-        if (!empty($filters['date_from'])) {
+        if (! empty($filters['date_from'])) {
             $query->whereDate('created_at', '>=', $filters['date_from']);
         }
 
-        if (!empty($filters['date_to'])) {
+        if (! empty($filters['date_to'])) {
             $query->whereDate('created_at', '<=', $filters['date_to']);
         }
 
         // Sorting
         $sortField = $filters['sort'] ?? 'created_at';
         $sortDirection = $filters['direction'] ?? 'desc';
-        
+
         $query->orderBy($sortField, $sortDirection);
 
         return $query->paginate($perPage);
@@ -82,7 +82,7 @@ class OrderRepository extends BaseRepository
         }
 
         // Calculate totals
-        $subtotal = collect($items)->sum(fn($item) => $item['quantity'] * $item['unit_price']);
+        $subtotal = collect($items)->sum(fn ($item) => $item['quantity'] * $item['unit_price']);
         $shippingAmount = $orderData['shipping_amount'] ?? 0;
         $orderData['total_amount'] = $subtotal + $shippingAmount;
 
@@ -113,7 +113,7 @@ class OrderRepository extends BaseRepository
         $order = $this->model->find($id);
 
         // Calculate totals
-        $subtotal = collect($items)->sum(fn($item) => $item['quantity'] * $item['unit_price']);
+        $subtotal = collect($items)->sum(fn ($item) => $item['quantity'] * $item['unit_price']);
         $shippingAmount = $orderData['shipping_amount'] ?? 0;
         $orderData['total_amount'] = $subtotal + $shippingAmount;
 
@@ -122,7 +122,7 @@ class OrderRepository extends BaseRepository
 
         // Update order items - delete old ones and create new ones
         $order->items()->delete();
-        
+
         foreach ($items as $item) {
             $order->items()->create([
                 'product_id' => $item['product_id'],
@@ -145,7 +145,7 @@ class OrderRepository extends BaseRepository
 
         $order = $this->model->find($id);
         $order->update($attributes);
-        
+
         return $order;
     }
 
@@ -158,10 +158,10 @@ class OrderRepository extends BaseRepository
         $this->clearCache();
 
         $order = $this->model->find($id);
-        
+
         // Delete order items first
         $order->items()->delete();
-        
+
         return $order->delete();
     }
 
@@ -171,9 +171,9 @@ class OrderRepository extends BaseRepository
     public function getCustomersForSelect(): \Illuminate\Database\Eloquent\Collection
     {
         return Customer::select('id', 'first_name', 'last_name', 'email')
-                      ->where('is_active', true)
-                      ->orderBy('first_name')
-                      ->get();
+            ->where('is_active', true)
+            ->orderBy('first_name')
+            ->get();
     }
 
     /**
@@ -182,9 +182,9 @@ class OrderRepository extends BaseRepository
     public function getProductsForSelect(): \Illuminate\Database\Eloquent\Collection
     {
         return Product::select('id', 'name', 'price')
-                     ->where('is_active', true)
-                     ->orderBy('name')
-                     ->get();
+            ->where('is_active', true)
+            ->orderBy('name')
+            ->get();
     }
 
     /**
@@ -193,7 +193,7 @@ class OrderRepository extends BaseRepository
     protected function generateOrderNumber(): string
     {
         do {
-            $orderNumber = 'ORD-' . date('Y') . '-' . str_pad(mt_rand(1, 999999), 6, '0', STR_PAD_LEFT);
+            $orderNumber = 'ORD-'.date('Y').'-'.str_pad(mt_rand(1, 999999), 6, '0', STR_PAD_LEFT);
         } while ($this->model->where('order_number', $orderNumber)->exists());
 
         return $orderNumber;

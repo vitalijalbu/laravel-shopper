@@ -50,28 +50,29 @@ class ShippingMethod extends Model
      */
     public function getDeliveryTimeAttribute(): ?string
     {
-        if (!$this->min_delivery_days && !$this->max_delivery_days) {
+        if (! $this->min_delivery_days && ! $this->max_delivery_days) {
             return null;
         }
 
         if ($this->min_delivery_days && $this->max_delivery_days) {
             if ($this->min_delivery_days === $this->max_delivery_days) {
-                return $this->min_delivery_days . ' giorni';
+                return $this->min_delivery_days.' giorni';
             }
-            return $this->min_delivery_days . '-' . $this->max_delivery_days . ' giorni';
+
+            return $this->min_delivery_days.'-'.$this->max_delivery_days.' giorni';
         }
 
         if ($this->min_delivery_days) {
-            return 'Minimo ' . $this->min_delivery_days . ' giorni';
+            return 'Minimo '.$this->min_delivery_days.' giorni';
         }
 
-        return 'Massimo ' . $this->max_delivery_days . ' giorni';
+        return 'Massimo '.$this->max_delivery_days.' giorni';
     }
 
     /**
      * Calculate shipping cost for an order
      */
-    public function calculateCost(float $orderTotal, float $totalWeight = null): float
+    public function calculateCost(float $orderTotal, ?float $totalWeight = null): float
     {
         switch ($this->type) {
             case 'free':
@@ -82,6 +83,7 @@ class ShippingMethod extends Model
                 if ($this->free_shipping_threshold && $orderTotal >= $this->free_shipping_threshold) {
                     return 0;
                 }
+
                 return $this->cost;
 
             case 'calculated':
@@ -100,7 +102,7 @@ class ShippingMethod extends Model
     /**
      * Check if method can handle the weight/size
      */
-    public function canHandle(float $weight = null, float $size = null): bool
+    public function canHandle(?float $weight = null, ?float $size = null): bool
     {
         if ($this->weight_limit && $weight && $weight > $this->weight_limit) {
             return false;
@@ -118,7 +120,7 @@ class ShippingMethod extends Model
      */
     public function getTypeLabelAttribute(): string
     {
-        return match($this->type) {
+        return match ($this->type) {
             'flat_rate' => 'Tariffa fissa',
             'free' => 'Gratuita',
             'calculated' => 'Calcolata',

@@ -13,7 +13,7 @@ class PaymentGatewayRepository extends BaseRepository
 
     protected function makeModel(): Model
     {
-        return new PaymentGateway();
+        return new PaymentGateway;
     }
 
     /**
@@ -24,12 +24,12 @@ class PaymentGatewayRepository extends BaseRepository
         $query = $this->model->newQuery();
 
         // Search filter
-        if (!empty($filters['search'])) {
+        if (! empty($filters['search'])) {
             $search = $filters['search'];
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('provider', 'like', "%{$search}%")
-                  ->orWhere('description', 'like', "%{$search}%");
+                    ->orWhere('provider', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%");
             });
         }
 
@@ -39,7 +39,7 @@ class PaymentGatewayRepository extends BaseRepository
         }
 
         // Provider filter
-        if (!empty($filters['provider'])) {
+        if (! empty($filters['provider'])) {
             $query->where('provider', $filters['provider']);
         }
 
@@ -51,7 +51,7 @@ class PaymentGatewayRepository extends BaseRepository
         // Sorting
         $sortField = $filters['sort'] ?? 'sort_order';
         $sortDirection = $filters['direction'] ?? 'asc';
-        
+
         $query->orderBy($sortField, $sortDirection);
 
         return $query->paginate($perPage);
@@ -88,14 +88,14 @@ class PaymentGatewayRepository extends BaseRepository
     {
         // Remove default from all gateways
         $this->model->where('is_default', true)->update(['is_default' => false]);
-        
+
         // Set new default
         $gateway = $this->model->find($id);
         if ($gateway) {
             $gateway->update(['is_default' => true, 'is_enabled' => true]);
             $this->clearCache();
         }
-        
+
         return $gateway;
     }
 
@@ -105,16 +105,16 @@ class PaymentGatewayRepository extends BaseRepository
     public function updateConfig(int $id, array $config): ?PaymentGateway
     {
         $gateway = $this->model->find($id);
-        
-        if (!$gateway) {
+
+        if (! $gateway) {
             return null;
         }
 
         $currentConfig = $gateway->config ?? [];
         $gateway->update(['config' => array_merge($currentConfig, $config)]);
-        
+
         $this->clearCache();
-        
+
         return $gateway->fresh();
     }
 
@@ -124,10 +124,10 @@ class PaymentGatewayRepository extends BaseRepository
     public function toggleStatus(int $id): Model
     {
         $gateway = $this->find($id);
-        $gateway->update(['is_enabled' => !$gateway->is_enabled]);
-        
+        $gateway->update(['is_enabled' => ! $gateway->is_enabled]);
+
         $this->clearCache();
-        
+
         return $gateway;
     }
 
@@ -138,9 +138,9 @@ class PaymentGatewayRepository extends BaseRepository
     {
         foreach ($sortData as $item) {
             $this->model->where('id', $item['id'])
-                       ->update(['sort_order' => $item['sort_order']]);
+                ->update(['sort_order' => $item['sort_order']]);
         }
-        
+
         $this->clearCache();
     }
 
@@ -176,6 +176,6 @@ class PaymentGatewayRepository extends BaseRepository
      */
     protected function getCacheKey(string $method, mixed $identifier): string
     {
-        return $this->cachePrefix . '_' . $method . ($identifier ? '_' . $identifier : '');
+        return $this->cachePrefix.'_'.$method.($identifier ? '_'.$identifier : '');
     }
 }

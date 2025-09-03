@@ -13,7 +13,7 @@ class SettingRepository extends BaseRepository
 
     protected function makeModel(): Model
     {
-        return new Setting();
+        return new Setting;
     }
 
     /**
@@ -25,6 +25,7 @@ class SettingRepository extends BaseRepository
 
         return Cache::remember($cacheKey, $this->cacheTtl, function () use ($key, $default) {
             $setting = $this->model->where('key', $key)->first();
+
             return $setting ? $setting->value : $default;
         });
     }
@@ -93,11 +94,11 @@ class SettingRepository extends BaseRepository
             foreach ($settings as $setting) {
                 $parts = explode('.', $setting->key);
                 $category = $parts[0] ?? 'general';
-                
-                if (!isset($grouped[$category])) {
+
+                if (! isset($grouped[$category])) {
                     $grouped[$category] = [];
                 }
-                
+
                 $grouped[$category][$setting->key] = $setting->value;
             }
 
@@ -113,7 +114,7 @@ class SettingRepository extends BaseRepository
         $cacheKey = $this->getCacheKey('category', $category);
 
         return Cache::remember($cacheKey, $this->cacheTtl, function () use ($category) {
-            return $this->model->where('key', 'like', $category . '.%')->get();
+            return $this->model->where('key', 'like', $category.'.%')->get();
         });
     }
 
@@ -124,6 +125,7 @@ class SettingRepository extends BaseRepository
     {
         $result = $this->model->where('key', $key)->delete();
         $this->clearCache();
+
         return $result > 0;
     }
 
@@ -209,6 +211,6 @@ class SettingRepository extends BaseRepository
      */
     protected function getCacheKey(string $method, mixed $identifier): string
     {
-        return $this->cachePrefix . '_' . $method . ($identifier ? '_' . $identifier : '');
+        return $this->cachePrefix.'_'.$method.($identifier ? '_'.$identifier : '');
     }
 }

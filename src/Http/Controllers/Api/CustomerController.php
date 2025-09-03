@@ -38,7 +38,7 @@ class CustomerController extends Controller
                 'last' => $customers->url($customers->lastPage()),
                 'prev' => $customers->previousPageUrl(),
                 'next' => $customers->nextPageUrl(),
-            ]
+            ],
         ]);
     }
 
@@ -109,7 +109,7 @@ class CustomerController extends Controller
         $validated = $request->validate([
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
-            'email' => 'required|email|unique:customers,email,' . $id,
+            'email' => 'required|email|unique:customers,email,'.$id,
             'phone' => 'nullable|string|max:20',
             'date_of_birth' => 'nullable|date',
             'gender' => 'nullable|in:male,female,other',
@@ -168,7 +168,7 @@ class CustomerController extends Controller
         try {
             $filters = $request->only(['status', 'date_from', 'date_to']);
             $perPage = $request->get('per_page', 25);
-            
+
             $orders = $this->customerRepository->getOrders($id, $filters, $perPage);
 
             return response()->json([
@@ -178,7 +178,7 @@ class CustomerController extends Controller
                     'last_page' => $orders->lastPage(),
                     'per_page' => $orders->perPage(),
                     'total' => $orders->total(),
-                ]
+                ],
             ]);
         } catch (\Exception $e) {
             return response()->json([

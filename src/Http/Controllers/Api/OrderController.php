@@ -9,8 +9,8 @@ use Shopper\Http\Requests\Api\BulkOrderActionRequest;
 use Shopper\Http\Requests\Api\MarkOrderAsShippedRequest;
 use Shopper\Http\Requests\Api\StoreOrderRequest;
 use Shopper\Http\Requests\Api\UpdateOrderRequest;
-use Shopper\Http\Traits\ApiResponseTrait;
 use Shopper\Repositories\OrderRepository;
+use Shopper\Traits\ApiResponseTrait;
 
 class OrderController extends Controller
 {
@@ -54,6 +54,7 @@ class OrderController extends Controller
     {
         try {
             $order = $this->orderRepository->find($id);
+
             return $this->successResponse($order);
         } catch (\Exception $e) {
             return $this->notFoundResponse('Ordine non trovato');

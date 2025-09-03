@@ -9,7 +9,7 @@ class RoleRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return match($this->route()->getActionMethod()) {
+        return match ($this->route()->getActionMethod()) {
             'store' => $this->user()->can('create roles'),
             'update' => $this->user()->can('edit roles'),
             default => false
@@ -19,8 +19,8 @@ class RoleRequest extends FormRequest
     public function rules(): array
     {
         $roleId = $this->route('id');
-        
-        return match($this->route()->getActionMethod()) {
+
+        return match ($this->route()->getActionMethod()) {
             'store' => [
                 'name' => [
                     'required',
@@ -63,14 +63,14 @@ class RoleRequest extends FormRequest
         // Converte il nome in lowercase e rimuove spazi
         if ($this->has('name')) {
             $this->merge([
-                'name' => strtolower(str_replace(' ', '_', trim($this->name)))
+                'name' => strtolower(str_replace(' ', '_', trim($this->name))),
             ]);
         }
 
         // Pulisce i permessi da duplicati
         if ($this->has('permissions')) {
             $this->merge([
-                'permissions' => array_unique(array_filter($this->permissions ?? []))
+                'permissions' => array_unique(array_filter($this->permissions ?? [])),
             ]);
         }
     }
@@ -82,15 +82,15 @@ class RoleRequest extends FormRequest
             if ($this->route()->getActionMethod() === 'update') {
                 $roleId = $this->route('id');
                 $role = \Spatie\Permission\Models\Role::find($roleId);
-                
-                if ($role && $role->name === 'super' && !$this->user()->hasRole('super')) {
+
+                if ($role && $role->name === 'super' && ! $this->user()->hasRole('super')) {
                     $validator->errors()->add('role', 'Non puoi modificare il ruolo Super User');
                 }
             }
-            
+
             // Verifica che non si stia assegnando il permesso 'super' a ruoli non autorizzati
             if ($this->has('permissions') && in_array('super', $this->permissions ?? [])) {
-                if (!$this->user()->hasRole('super')) {
+                if (! $this->user()->hasRole('super')) {
                     $validator->errors()->add('permissions', 'Solo i Super User possono assegnare il permesso super');
                 }
             }

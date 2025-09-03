@@ -2,23 +2,26 @@
 
 namespace Shopper\Http\Controllers\Cp;
 
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 use Shopper\CP\Navigation;
 use Shopper\CP\Page;
 use Shopper\Http\Controllers\Controller;
-use Shopper\Repositories\SettingRepository;
 use Shopper\Repositories\PaymentGatewayRepository;
-use Shopper\Repositories\TaxRateRepository;
+use Shopper\Repositories\SettingRepository;
 use Shopper\Repositories\ShippingMethodRepository;
+use Shopper\Repositories\TaxRateRepository;
 
 class SettingsController extends Controller
 {
     protected SettingRepository $settingRepository;
+
     protected PaymentGatewayRepository $paymentGatewayRepository;
+
     protected TaxRateRepository $taxRateRepository;
+
     protected ShippingMethodRepository $shippingMethodRepository;
 
     public function __construct(
@@ -58,16 +61,16 @@ class SettingsController extends Controller
     private function getSettingsStats(): array
     {
         $paymentGateways = $this->paymentGatewayRepository->all();
-        $taxRates = $this->taxRateRepository->all(); 
+        $taxRates = $this->taxRateRepository->all();
         $shippingMethods = $this->shippingMethodRepository->all();
-        
-        $activeGateways = $paymentGateways->filter(fn($gateway) => $gateway->is_enabled)->count();
+
+        $activeGateways = $paymentGateways->filter(fn ($gateway) => $gateway->is_enabled)->count();
         $totalGateways = $paymentGateways->count();
-        
-        $activeTaxRates = $taxRates->filter(fn($rate) => $rate->is_active)->count();
-        
-        $activeShippingMethods = $shippingMethods->filter(fn($method) => $method->is_enabled)->count();
-        
+
+        $activeTaxRates = $taxRates->filter(fn ($rate) => $rate->is_active)->count();
+
+        $activeShippingMethods = $shippingMethods->filter(fn ($method) => $method->is_enabled)->count();
+
         // Check email configuration
         $emailConfigured = $this->isEmailConfigured();
 
@@ -75,20 +78,20 @@ class SettingsController extends Controller
             'payment_gateways' => [
                 'active' => $activeGateways,
                 'total' => $totalGateways,
-                'status' => $activeGateways > 0 ? 'success' : 'warning'
+                'status' => $activeGateways > 0 ? 'success' : 'warning',
             ],
             'tax_rates' => [
                 'active' => $activeTaxRates,
-                'status' => $activeTaxRates > 0 ? 'success' : 'warning'
+                'status' => $activeTaxRates > 0 ? 'success' : 'warning',
             ],
             'shipping_methods' => [
                 'active' => $activeShippingMethods,
-                'status' => $activeShippingMethods > 0 ? 'success' : 'warning'
+                'status' => $activeShippingMethods > 0 ? 'success' : 'warning',
             ],
             'email' => [
                 'configured' => $emailConfigured,
-                'status' => $emailConfigured ? 'success' : 'error'
-            ]
+                'status' => $emailConfigured ? 'success' : 'error',
+            ],
         ];
     }
 
@@ -100,8 +103,8 @@ class SettingsController extends Controller
         $smtpHost = $this->settingRepository->get('email_smtp_host');
         $smtpUsername = $this->settingRepository->get('email_smtp_username');
         $fromEmail = $this->settingRepository->get('email_from_address');
-        
-        return !empty($smtpHost) && !empty($smtpUsername) && !empty($fromEmail);
+
+        return ! empty($smtpHost) && ! empty($smtpUsername) && ! empty($fromEmail);
     }
 
     /**

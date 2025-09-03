@@ -4,8 +4,8 @@ namespace Shopper\GraphQL\Resolvers;
 
 use Carbon\Carbon;
 use GraphQL\Type\Definition\ResolveInfo;
-use Shopper\Models\AnalyticsEvent;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
+use Shopper\Models\AnalyticsEvent;
 
 class AnalyticsResolver
 {

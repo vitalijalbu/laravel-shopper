@@ -38,7 +38,7 @@ class CollectionController extends Controller
                 'last' => $collections->url($collections->lastPage()),
                 'prev' => $collections->previousPageUrl(),
                 'next' => $collections->nextPageUrl(),
-            ]
+            ],
         ]);
     }
 
@@ -102,7 +102,7 @@ class CollectionController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'slug' => 'nullable|string|max:255|unique:collections,slug,' . $id,
+            'slug' => 'nullable|string|max:255|unique:collections,slug,'.$id,
             'description' => 'nullable|string',
             'type' => 'required|in:manual,automatic',
             'conditions' => 'nullable|array',
@@ -164,7 +164,7 @@ class CollectionController extends Controller
                     'last_page' => $products->lastPage(),
                     'per_page' => $products->perPage(),
                     'total' => $products->total(),
-                ]
+                ],
             ]);
         } catch (\Exception $e) {
             return response()->json([

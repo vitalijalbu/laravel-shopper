@@ -19,7 +19,7 @@ class CartController extends Controller
         try {
             $cart = $this->getCurrentCart($request);
 
-            if (!$cart) {
+            if (! $cart) {
                 return response()->json([
                     'data' => null,
                     'message' => 'Carrello vuoto',
@@ -52,7 +52,7 @@ class CartController extends Controller
         try {
             $cart = $this->getOrCreateCart($request);
             $product = Product::findOrFail($validated['product_id']);
-            $variant = $validated['product_variant_id'] 
+            $variant = $validated['product_variant_id']
                 ? ProductVariant::findOrFail($validated['product_variant_id'])
                 : null;
 
@@ -89,8 +89,8 @@ class CartController extends Controller
 
         try {
             $cart = $this->getCurrentCart($request);
-            
-            if (!$cart) {
+
+            if (! $cart) {
                 return response()->json([
                     'message' => 'Carrello non trovato',
                 ], 404);
@@ -102,15 +102,15 @@ class CartController extends Controller
                 $cart->removeItem($line);
                 $message = 'Prodotto rimosso dal carrello';
             } else {
-                $unitPrice = $line->product_variant_id 
-                    ? $line->productVariant->price 
+                $unitPrice = $line->product_variant_id
+                    ? $line->productVariant->price
                     : $line->product->price;
-                
+
                 $line->update([
                     'quantity' => $validated['quantity'],
                     'line_total' => $unitPrice * $validated['quantity'],
                 ]);
-                
+
                 $cart->calculateTotals();
                 $message = 'Quantità aggiornata';
             }
@@ -134,8 +134,8 @@ class CartController extends Controller
     {
         try {
             $cart = $this->getCurrentCart($request);
-            
-            if (!$cart) {
+
+            if (! $cart) {
                 return response()->json([
                     'message' => 'Carrello non trovato',
                 ], 404);
@@ -163,8 +163,8 @@ class CartController extends Controller
     {
         try {
             $cart = $this->getCurrentCart($request);
-            
-            if (!$cart) {
+
+            if (! $cart) {
                 return response()->json([
                     'message' => 'Carrello già vuoto',
                 ]);
@@ -196,8 +196,8 @@ class CartController extends Controller
 
         try {
             $cart = $this->getCurrentCart($request);
-            
-            if (!$cart) {
+
+            if (! $cart) {
                 return response()->json([
                     'message' => 'Carrello non trovato',
                 ], 404);
@@ -238,7 +238,7 @@ class CartController extends Controller
 
         try {
             $cart = $this->getOrCreateCart($request);
-            
+
             $cart->update([
                 'shipping_address' => $validated,
             ]);
@@ -262,14 +262,15 @@ class CartController extends Controller
     {
         if ($customerId = $request->user('customers')?->id) {
             return Cart::where('customer_id', $customerId)
-                      ->where('status', 'active')
-                      ->first();
+                ->where('status', 'active')
+                ->first();
         }
 
         $sessionId = $request->session()->getId();
+
         return Cart::where('session_id', $sessionId)
-                   ->where('status', 'active')
-                   ->first();
+            ->where('status', 'active')
+            ->first();
     }
 
     /**
@@ -279,7 +280,7 @@ class CartController extends Controller
     {
         $cart = $this->getCurrentCart($request);
 
-        if (!$cart) {
+        if (! $cart) {
             $cart = Cart::create([
                 'session_id' => $request->session()->getId(),
                 'customer_id' => $request->user('customers')?->id,

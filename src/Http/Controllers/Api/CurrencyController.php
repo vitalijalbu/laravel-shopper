@@ -20,8 +20,8 @@ class CurrencyController extends Controller
         if ($search = $request->get('search')) {
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('code', 'like', "%{$search}%")
-                  ->orWhere('symbol', 'like', "%{$search}%");
+                    ->orWhere('code', 'like', "%{$search}%")
+                    ->orWhere('symbol', 'like', "%{$search}%");
             });
         }
 
@@ -37,8 +37,8 @@ class CurrencyController extends Controller
 
         $perPage = $request->get('per_page', 25);
         $currencies = $query->orderBy('is_default', 'desc')
-                           ->orderBy('code')
-                           ->paginate($perPage);
+            ->orderBy('code')
+            ->paginate($perPage);
 
         return response()->json([
             'data' => $currencies->items(),
@@ -55,7 +55,7 @@ class CurrencyController extends Controller
                 'last' => $currencies->url($currencies->lastPage()),
                 'prev' => $currencies->previousPageUrl(),
                 'next' => $currencies->nextPageUrl(),
-            ]
+            ],
         ]);
     }
 
@@ -120,7 +120,7 @@ class CurrencyController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'code' => 'required|string|size:3|unique:currencies,code,' . $id,
+            'code' => 'required|string|size:3|unique:currencies,code,'.$id,
             'symbol' => 'required|string|max:10',
             'rate' => 'required|numeric|min:0',
             'precision' => 'required|integer|min:0|max:8',
@@ -134,8 +134,8 @@ class CurrencyController extends Controller
             // Ensure only one default currency
             if ($validated['is_default'] ?? false) {
                 Currency::where('id', '!=', $id)
-                        ->where('is_default', true)
-                        ->update(['is_default' => false]);
+                    ->where('is_default', true)
+                    ->update(['is_default' => false]);
             }
 
             $currency->update($validated);
@@ -194,9 +194,9 @@ class CurrencyController extends Controller
     {
         try {
             $currencies = Currency::where('is_enabled', true)
-                                 ->orderBy('is_default', 'desc')
-                                 ->orderBy('code')
-                                 ->get();
+                ->orderBy('is_default', 'desc')
+                ->orderBy('code')
+                ->get();
 
             return response()->json([
                 'data' => $currencies,
@@ -217,7 +217,7 @@ class CurrencyController extends Controller
         try {
             $currency = Currency::where('is_default', true)->first();
 
-            if (!$currency) {
+            if (! $currency) {
                 return response()->json([
                     'message' => 'Nessuna valuta predefinita trovata',
                 ], 404);
@@ -303,9 +303,9 @@ class CurrencyController extends Controller
     {
         try {
             $currencies = Currency::where('is_enabled', true)
-                                 ->select('code', 'rate', 'symbol')
-                                 ->orderBy('code')
-                                 ->get();
+                ->select('code', 'rate', 'symbol')
+                ->orderBy('code')
+                ->get();
 
             return response()->json([
                 'data' => $currencies,

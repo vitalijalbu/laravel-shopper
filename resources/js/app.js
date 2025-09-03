@@ -2,7 +2,7 @@ import { createApp, h } from "vue";
 import { createInertiaApp } from "@inertiajs/vue3";
 import { createPinia } from "pinia";
 import { ZiggyVue } from "ziggy-js";
-import "@/components/Icons";
+import "@/components/icons";
 import CpLayout from "@/components/cp-layout.vue";
 
 // Import global styles

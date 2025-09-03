@@ -10,16 +10,15 @@ return new class extends Migration
     {
         Schema::create('wishlists', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->text('description')->nullable();
             $table->foreignId('customer_id')->constrained()->cascadeOnDelete();
+            $table->string('name')->default('My Wishlist');
+            $table->text('description')->nullable();
             $table->boolean('is_public')->default(false);
-            $table->boolean('is_default')->default(false);
-            $table->string('share_token')->unique()->nullable();
-            $table->json('meta')->nullable();
+            $table->string('share_token')->nullable()->unique();
+            $table->json('metadata')->nullable();
             $table->timestamps();
 
-            $table->index(['customer_id', 'is_default']);
+            $table->index(['customer_id', 'is_public']);
             $table->index('share_token');
         });
     }

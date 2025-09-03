@@ -13,7 +13,7 @@ class PermissionRequest extends FormRequest
 
     public function rules(): array
     {
-        return match($this->route()->getActionMethod()) {
+        return match ($this->route()->getActionMethod()) {
             'updateRolePermissions' => [
                 'permissions' => 'required|array',
                 'permissions.*' => 'string|max:255',
@@ -46,7 +46,7 @@ class PermissionRequest extends FormRequest
         // Pulisci i permessi da spazi extra
         if ($this->has('permissions')) {
             $this->merge([
-                'permissions' => array_map('trim', $this->permissions ?? [])
+                'permissions' => array_map('trim', $this->permissions ?? []),
             ]);
         }
     }

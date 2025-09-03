@@ -3,8 +3,8 @@
 namespace Shopper\GraphQL\Resolvers;
 
 use GraphQL\Type\Definition\ResolveInfo;
-use Shopper\Models\Product;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
+use Shopper\Models\Product;
 
 class ProductResolver
 {

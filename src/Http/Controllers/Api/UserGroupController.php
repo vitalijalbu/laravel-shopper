@@ -6,11 +6,10 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Shopper\Http\Controllers\Controller;
 use Shopper\Http\Requests\Api\AssignPermissionRequest;
-use Shopper\Http\Requests\Api\BulkActionRequest;
 use Shopper\Http\Requests\Api\StoreUserGroupRequest;
 use Shopper\Http\Requests\Api\UpdateUserGroupRequest;
-use Shopper\Http\Traits\ApiResponseTrait;
 use Shopper\Models\UserGroup;
+use Shopper\Traits\ApiResponseTrait;
 
 class UserGroupController extends Controller
 {
@@ -34,7 +33,7 @@ class UserGroupController extends Controller
         if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'LIKE', "%{$search}%")
-                  ->orWhere('description', 'LIKE', "%{$search}%");
+                    ->orWhere('description', 'LIKE', "%{$search}%");
             });
         }
 
@@ -55,7 +54,7 @@ class UserGroupController extends Controller
     {
         try {
             $validated = $request->validated();
-            
+
             // Se questo gruppo deve essere default, rimuovi il flag dagli altri
             if ($validated['is_default'] ?? false) {
                 UserGroup::where('is_default', true)->update(['is_default' => false]);
@@ -64,7 +63,7 @@ class UserGroupController extends Controller
             $userGroup = UserGroup::create($validated);
 
             // Assegna permessi se forniti
-            if (!empty($validated['permissions'])) {
+            if (! empty($validated['permissions'])) {
                 $userGroup->syncPermissions($validated['permissions']);
             }
 
@@ -81,6 +80,7 @@ class UserGroupController extends Controller
     {
         try {
             $userGroup = UserGroup::with(['users', 'permissions'])->withCount('users')->findOrFail($id);
+
             return $this->successResponse($userGroup);
         } catch (\Exception $e) {
             return $this->notFoundResponse('Gruppo utenti non trovato');
@@ -97,7 +97,7 @@ class UserGroupController extends Controller
             $userGroup = UserGroup::findOrFail($id);
 
             // Se questo gruppo deve essere default, rimuovi il flag dagli altri
-            if (($validated['is_default'] ?? false) && !$userGroup->is_default) {
+            if (($validated['is_default'] ?? false) && ! $userGroup->is_default) {
                 UserGroup::where('is_default', true)->update(['is_default' => false]);
             }
 
@@ -133,6 +133,7 @@ class UserGroupController extends Controller
             }
 
             $userGroup->delete();
+
             return $this->successResponse(null, 'Gruppo utenti eliminato con successo');
         } catch (\Exception $e) {
             return $this->errorResponse('Errore durante l\'eliminazione del gruppo utenti');
@@ -146,7 +147,7 @@ class UserGroupController extends Controller
     {
         try {
             $userGroup = UserGroup::with('users')->findOrFail($id);
-            
+
             return $this->successResponse([
                 'group' => $userGroup,
                 'users' => $userGroup->users,
@@ -173,7 +174,7 @@ class UserGroupController extends Controller
 
             return $this->successResponse(
                 $userGroup->load('users'),
-                count($validated['user_ids']) . ' utenti assegnati al gruppo'
+                count($validated['user_ids']).' utenti assegnati al gruppo'
             );
         } catch (\Exception $e) {
             return $this->errorResponse('Errore durante l\'assegnazione degli utenti');
@@ -196,7 +197,7 @@ class UserGroupController extends Controller
 
             return $this->successResponse(
                 $userGroup->load('users'),
-                count($validated['user_ids']) . ' utenti rimossi dal gruppo'
+                count($validated['user_ids']).' utenti rimossi dal gruppo'
             );
         } catch (\Exception $e) {
             return $this->errorResponse('Errore durante la rimozione degli utenti');
@@ -229,18 +230,18 @@ class UserGroupController extends Controller
     {
         try {
             $userGroup = UserGroup::with('permissions')->findOrFail($id);
-            
+
             // Ottieni tutte le risorse disponibili
-            $resourceController = new ResourcePermissionController();
+            $resourceController = new ResourcePermissionController;
             $resources = $resourceController->getResourcesMatrix();
-            
+
             // Aggiungi informazioni sui permessi del gruppo
             foreach ($resources as &$resource) {
                 foreach ($resource['permissions'] as &$permission) {
                     $permission['granted'] = $userGroup->hasPermissionTo($permission['name']);
                 }
             }
-            
+
             return $this->successResponse([
                 'group' => $userGroup,
                 'resources' => $resources,
@@ -270,7 +271,7 @@ class UserGroupController extends Controller
             foreach ($userGroups as $userGroup) {
                 switch ($validated['action']) {
                     case 'delete':
-                        if (!$userGroup->users()->exists() && !$userGroup->is_default) {
+                        if (! $userGroup->users()->exists() && ! $userGroup->is_default) {
                             $userGroup->delete();
                             $count++;
                         }
@@ -282,7 +283,7 @@ class UserGroupController extends Controller
                         break;
 
                     case 'deactivate':
-                        if (!$userGroup->is_default) {
+                        if (! $userGroup->is_default) {
                             $userGroup->update(['is_active' => false]);
                             $count++;
                         }
@@ -297,7 +298,7 @@ class UserGroupController extends Controller
 
             return $this->bulkActionResponse($count, "Azione '{$validated['action']}' eseguita", [
                 'processed' => $count,
-                'total' => count($validated['ids'])
+                'total' => count($validated['ids']),
             ]);
         } catch (\Exception $e) {
             return $this->errorResponse('Errore durante l\'esecuzione dell\'azione bulk');
@@ -311,11 +312,11 @@ class UserGroupController extends Controller
     {
         try {
             $defaultGroup = UserGroup::where('is_default', true)->first();
-            
-            if (!$defaultGroup) {
+
+            if (! $defaultGroup) {
                 return $this->notFoundResponse('Nessun gruppo predefinito configurato');
             }
-            
+
             return $this->successResponse($defaultGroup->load('permissions'));
         } catch (\Exception $e) {
             return $this->errorResponse('Errore durante il recupero del gruppo predefinito');
@@ -329,13 +330,13 @@ class UserGroupController extends Controller
     {
         try {
             $userGroup = UserGroup::findOrFail($id);
-            
+
             // Rimuovi il flag default da tutti gli altri gruppi
             UserGroup::where('is_default', true)->update(['is_default' => false]);
-            
+
             // Imposta questo gruppo come default
             $userGroup->update(['is_default' => true, 'is_active' => true]);
-            
+
             return $this->successResponse($userGroup, 'Gruppo impostato come predefinito');
         } catch (\Exception $e) {
             return $this->errorResponse('Errore durante l\'impostazione del gruppo predefinito');

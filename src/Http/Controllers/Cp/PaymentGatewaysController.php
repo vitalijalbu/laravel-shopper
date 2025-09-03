@@ -2,8 +2,8 @@
 
 namespace Shopper\Http\Controllers\Cp;
 
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 use Shopper\CP\Navigation;
@@ -32,7 +32,7 @@ class PaymentGatewaysController extends Controller
             ->breadcrumb('Gateway di Pagamento');
 
         $filters = $request->only(['search', 'is_enabled', 'provider', 'test_mode', 'sort', 'direction', 'page']);
-        
+
         $gateways = $this->paymentGatewayRepository->getPaginatedWithFilters($filters, 25);
         $providers = $this->paymentGatewayRepository->getProviders();
 
@@ -111,7 +111,7 @@ class PaymentGatewaysController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:payment_gateways,slug,' . $paymentGateway->id,
+            'slug' => 'required|string|max:255|unique:payment_gateways,slug,'.$paymentGateway->id,
             'description' => 'nullable|string',
             'provider' => 'required|string|max:100',
             'config' => 'nullable|array',
@@ -200,7 +200,7 @@ class PaymentGatewaysController extends Controller
 
         try {
             $updatedGateway = $this->paymentGatewayRepository->updateConfig(
-                $paymentGateway->id, 
+                $paymentGateway->id,
                 $validated['config']
             );
 

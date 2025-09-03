@@ -21,13 +21,13 @@ class UpdateUserGroupRequest extends FormRequest
     public function rules(): array
     {
         $groupId = $this->route('userGroup');
-        
+
         return [
             'name' => [
                 'sometimes',
                 'string',
                 'max:255',
-                Rule::unique('user_groups', 'name')->ignore($groupId)
+                Rule::unique('user_groups', 'name')->ignore($groupId),
             ],
             'description' => 'nullable|string',
             'is_active' => 'boolean',

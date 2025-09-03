@@ -10,14 +10,15 @@ return new class extends Migration
     {
         Schema::create('favorites', function (Blueprint $table) {
             $table->id();
-            $table->morphs('favoriteable'); // products, brands, categories, etc.
             $table->foreignId('customer_id')->constrained()->cascadeOnDelete();
-            $table->string('type')->default('product'); // product, brand, category, collection
-            $table->json('meta')->nullable();
+            $table->string('favoritable_type'); // entries, collections, brands, etc.
+            $table->unsignedBigInteger('favoritable_id');
+            $table->json('metadata')->nullable();
             $table->timestamps();
 
-            $table->unique(['favoriteable_type', 'favoriteable_id', 'customer_id']);
-            $table->index(['customer_id', 'type']);
+            $table->index(['customer_id', 'favoritable_type']);
+            $table->index(['favoritable_type', 'favoritable_id']);
+            $table->unique(['customer_id', 'favoritable_type', 'favoritable_id'], 'unique_customer_favorite');
         });
     }
 

@@ -2,8 +2,8 @@
 
 namespace Shopper\Http\Controllers\Cp;
 
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 use Shopper\CP\Navigation;
@@ -32,7 +32,7 @@ class ShippingMethodsController extends Controller
             ->breadcrumb('Metodi di Spedizione');
 
         $filters = $request->only(['search', 'is_enabled', 'type', 'zone', 'sort', 'direction', 'page']);
-        
+
         $shippingMethods = $this->shippingMethodRepository->getPaginatedWithFilters($filters, 25);
         $zones = $this->shippingMethodRepository->getShippingZones();
         $types = $this->shippingMethodRepository->getShippingTypes();
@@ -111,7 +111,7 @@ class ShippingMethodsController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:shipping_methods,slug,' . $shippingMethod->id,
+            'slug' => 'required|string|max:255|unique:shipping_methods,slug,'.$shippingMethod->id,
             'description' => 'nullable|string',
             'type' => 'required|in:flat_rate,free,local_pickup,weight_based,zone_based',
             'cost' => 'required|numeric|min:0',

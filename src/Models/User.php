@@ -86,7 +86,7 @@ class User extends Authenticatable implements MustVerifyEmail
     public function userGroups(): BelongsToMany
     {
         return $this->belongsToMany(UserGroup::class, 'user_group_user', 'user_id', 'user_group_id')
-                    ->withTimestamps();
+            ->withTimestamps();
     }
 
     /**
@@ -102,7 +102,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function getDefaultGroup(): ?UserGroup
     {
-        return $this->userGroups()->where('is_default', true)->first() 
+        return $this->userGroups()->where('is_default', true)->first()
                ?? UserGroup::where('is_default', true)->first();
     }
 

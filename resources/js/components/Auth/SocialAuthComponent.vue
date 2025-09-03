@@ -176,14 +176,14 @@ import { usePage, router } from "@inertiajs/vue3";
 import { useTranslations } from "@/composables/useTranslations";
 
 // Icons - you might want to use a proper icon library
-import GoogleIcon from "@/components/Icons/GoogleIcon.vue";
-import FacebookIcon from "@/components/Icons/FacebookIcon.vue";
-import TwitterIcon from "@/components/Icons/TwitterIcon.vue";
-import GitHubIcon from "@/components/Icons/GitHubIcon.vue";
-import LinkedInIcon from "@/components/Icons/LinkedInIcon.vue";
-import AppleIcon from "@/components/Icons/AppleIcon.vue";
-import DiscordIcon from "@/components/Icons/DiscordIcon.vue";
-import MicrosoftIcon from "@/components/Icons/MicrosoftIcon.vue";
+import GoogleIcon from "@/components/icons/GoogleIcon.vue";
+import FacebookIcon from "@/components/icons/FacebookIcon.vue";
+import TwitterIcon from "@/components/icons/TwitterIcon.vue";
+import GitHubIcon from "@/components/icons/GitHubIcon.vue";
+import LinkedInIcon from "@/components/icons/LinkedInIcon.vue";
+import AppleIcon from "@/components/icons/AppleIcon.vue";
+import DiscordIcon from "@/components/icons/DiscordIcon.vue";
+import MicrosoftIcon from "@/components/icons/MicrosoftIcon.vue";
 
 const props = defineProps({
   authMode: {

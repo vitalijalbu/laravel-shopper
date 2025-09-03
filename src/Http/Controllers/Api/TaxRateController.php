@@ -38,7 +38,7 @@ class TaxRateController extends Controller
                 'last' => $taxRates->url($taxRates->lastPage()),
                 'prev' => $taxRates->previousPageUrl(),
                 'next' => $taxRates->nextPageUrl(),
-            ]
+            ],
         ]);
     }
 
@@ -111,7 +111,7 @@ class TaxRateController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'code' => 'required|string|max:10|unique:tax_rates,code,' . $id,
+            'code' => 'required|string|max:10|unique:tax_rates,code,'.$id,
             'rate' => 'required|numeric|min:0|max:100',
             'type' => 'required|in:percentage,fixed',
             'is_compound' => 'boolean',

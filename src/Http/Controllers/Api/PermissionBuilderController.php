@@ -5,7 +5,7 @@ namespace Shopper\Http\Controllers\Api;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Shopper\Http\Controllers\Controller;
-use Shopper\Http\Traits\ApiResponseTrait;
+use Shopper\Traits\ApiResponseTrait;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
@@ -26,10 +26,10 @@ class PermissionBuilderController extends Controller
         try {
             $structure = $this->getBuilderStructure();
             $roles = Role::with('permissions')->get();
-            
+
             return $this->successResponse([
                 'structure' => $structure,
-                'roles' => $roles->map(fn($role) => $this->formatRoleForBuilder($role)),
+                'roles' => $roles->map(fn ($role) => $this->formatRoleForBuilder($role)),
                 'matrix' => $this->buildPermissionMatrix($structure, $roles),
                 'templates' => $this->getPermissionTemplates(),
             ]);
@@ -52,24 +52,24 @@ class PermissionBuilderController extends Controller
 
         try {
             $updatedRoles = [];
-            
+
             foreach ($validated['matrix'] as $roleData) {
                 $role = Role::findOrFail($roleData['role_id']);
-                
+
                 // Verifica permessi super
-                if (in_array('super', $roleData['permissions']) && !$request->user()->hasRole('super')) {
+                if (in_array('super', $roleData['permissions']) && ! $request->user()->hasRole('super')) {
                     continue; // Salta ruoli che tentano di assegnare super senza autorizzazione
                 }
-                
+
                 $role->syncPermissions($roleData['permissions']);
                 $updatedRoles[] = $this->formatRoleForBuilder($role->fresh('permissions'));
             }
-            
+
             return $this->successResponse([
                 'updated_roles' => $updatedRoles,
                 'count' => count($updatedRoles),
             ], 'Matrice permessi aggiornata con successo');
-            
+
         } catch (\Exception $e) {
             return $this->errorResponse('Errore durante l\'aggiornamento della matrice');
         }
@@ -89,7 +89,7 @@ class PermissionBuilderController extends Controller
         try {
             $role = Role::findOrFail($validated['role_id']);
             $template = $this->getPermissionTemplates()[$validated['template']];
-            
+
             if ($validated['merge'] ?? false) {
                 // Merge con permessi esistenti
                 $existingPermissions = $role->permissions->pluck('name')->toArray();
@@ -99,12 +99,12 @@ class PermissionBuilderController extends Controller
                 // Sostituisci completamente
                 $role->syncPermissions($template['permissions']);
             }
-            
+
             return $this->successResponse(
                 $this->formatRoleForBuilder($role->fresh('permissions')),
                 "Template '{$template['label']}' applicato al ruolo {$role->name}"
             );
-            
+
         } catch (\Exception $e) {
             return $this->errorResponse('Errore durante l\'applicazione del template');
         }
@@ -125,37 +125,37 @@ class PermissionBuilderController extends Controller
         try {
             $resource = $validated['resource'];
             $actions = $validated['actions'] ?? ['view', 'create', 'edit', 'delete'];
-            
+
             if ($validated['generate_all'] ?? false) {
                 $actions = ['view', 'create', 'edit', 'delete', 'publish', 'configure', 'manage'];
             }
-            
+
             $createdPermissions = [];
-            
+
             foreach ($actions as $action) {
                 $permissionName = "{$action} {$resource}";
-                
+
                 $permission = Permission::firstOrCreate(
                     ['name' => $permissionName, 'guard_name' => 'api'],
                     [
-                        'display_name' => ucfirst($action) . ' ' . ucfirst(str_replace('_', ' ', $resource)),
+                        'display_name' => ucfirst($action).' '.ucfirst(str_replace('_', ' ', $resource)),
                         'description' => "Permesso per {$action} su {$resource}",
                         'group' => $this->determineGroupFromResource($resource),
                     ]
                 );
-                
+
                 if ($permission->wasRecentlyCreated) {
                     $createdPermissions[] = $permission;
                 }
             }
-            
+
             return $this->successResponse([
                 'resource' => $resource,
                 'created_permissions' => $createdPermissions,
                 'count' => count($createdPermissions),
                 'all_permissions' => Permission::where('name', 'like', "%{$resource}%")->get(),
-            ], count($createdPermissions) . " permessi creati per la risorsa '{$resource}'");
-            
+            ], count($createdPermissions)." permessi creati per la risorsa '{$resource}'");
+
         } catch (\Exception $e) {
             return $this->errorResponse('Errore durante la generazione dei permessi');
         }
@@ -181,7 +181,7 @@ class PermissionBuilderController extends Controller
                 }),
                 'templates' => $this->getPermissionTemplates(),
             ];
-            
+
             return $this->successResponse($config, 'Configurazione permessi esportata');
         } catch (\Exception $e) {
             return $this->errorResponse('Errore durante l\'esportazione');
@@ -203,13 +203,13 @@ class PermissionBuilderController extends Controller
             $config = $validated['config'];
             $mergeRoles = $validated['merge_roles'] ?? false;
             $createMissingPermissions = $validated['create_missing_permissions'] ?? true;
-            
+
             $imported = [
                 'roles' => 0,
                 'permissions' => 0,
                 'errors' => [],
             ];
-            
+
             // Crea permessi mancanti se richiesto
             if ($createMissingPermissions && isset($config['structure'])) {
                 foreach ($config['structure'] as $group) {
@@ -226,7 +226,7 @@ class PermissionBuilderController extends Controller
                     }
                 }
             }
-            
+
             // Importa ruoli
             if (isset($config['roles'])) {
                 foreach ($config['roles'] as $roleData) {
@@ -248,20 +248,20 @@ class PermissionBuilderController extends Controller
                                 ]
                             );
                         }
-                        
+
                         $role->syncPermissions($roleData['permissions']);
                         $imported['roles']++;
-                        
+
                     } catch (\Exception $e) {
                         $imported['errors'][] = "Errore importando ruolo {$roleData['name']}: {$e->getMessage()}";
                     }
                 }
             }
-            
+
             return $this->successResponse($imported, 'Configurazione importata con successo');
-            
+
         } catch (\Exception $e) {
-            return $this->errorResponse('Errore durante l\'importazione: ' . $e->getMessage());
+            return $this->errorResponse('Errore durante l\'importazione: '.$e->getMessage());
         }
     }
 
@@ -286,7 +286,7 @@ class PermissionBuilderController extends Controller
                     ['handle' => 'delete content', 'label' => 'Delete', 'description' => 'Eliminare contenuti'],
                     ['handle' => 'publish content', 'label' => 'Publish', 'description' => 'Pubblicare contenuti'],
                     ['handle' => 'configure content', 'label' => 'Configure', 'description' => 'Configurare tipi di contenuto'],
-                ]
+                ],
             ],
             [
                 'handle' => 'commerce',
@@ -305,7 +305,7 @@ class PermissionBuilderController extends Controller
                     ['handle' => 'edit orders', 'label' => 'Edit Orders'],
                     ['handle' => 'process orders', 'label' => 'Process Orders'],
                     ['handle' => 'configure commerce', 'label' => 'Configure Commerce'],
-                ]
+                ],
             ],
             [
                 'handle' => 'customers',
@@ -319,7 +319,7 @@ class PermissionBuilderController extends Controller
                     ['handle' => 'edit customers', 'label' => 'Edit Customers'],
                     ['handle' => 'delete customers', 'label' => 'Delete Customers'],
                     ['handle' => 'manage customer groups', 'label' => 'Manage Groups'],
-                ]
+                ],
             ],
             [
                 'handle' => 'users',
@@ -333,7 +333,7 @@ class PermissionBuilderController extends Controller
                     ['handle' => 'edit users', 'label' => 'Edit Users'],
                     ['handle' => 'delete users', 'label' => 'Delete Users'],
                     ['handle' => 'edit user roles', 'label' => 'Edit Roles'],
-                ]
+                ],
             ],
             [
                 'handle' => 'system',
@@ -346,7 +346,7 @@ class PermissionBuilderController extends Controller
                     ['handle' => 'edit settings', 'label' => 'Edit Settings'],
                     ['handle' => 'manage permissions', 'label' => 'Manage Permissions'],
                     ['handle' => 'super', 'label' => 'Super User', 'description' => 'Accesso completo senza restrizioni'],
-                ]
+                ],
             ],
         ];
     }
@@ -368,14 +368,14 @@ class PermissionBuilderController extends Controller
     private function buildPermissionMatrix(array $structure, $roles): array
     {
         $matrix = [];
-        
+
         foreach ($roles as $role) {
             $rolePermissions = $role->permissions->pluck('name')->toArray();
             $roleMatrix = [
                 'role' => $this->formatRoleForBuilder($role),
                 'groups' => [],
             ];
-            
+
             foreach ($structure as $group) {
                 $groupData = [
                     'handle' => $group['handle'],
@@ -384,7 +384,7 @@ class PermissionBuilderController extends Controller
                     'all_granted' => true,
                     'none_granted' => true,
                 ];
-                
+
                 foreach ($group['permissions'] as $permission) {
                     $granted = in_array($permission['handle'], $rolePermissions);
                     $groupData['permissions'][] = [
@@ -392,20 +392,20 @@ class PermissionBuilderController extends Controller
                         'label' => $permission['label'],
                         'granted' => $granted,
                     ];
-                    
+
                     if ($granted) {
                         $groupData['none_granted'] = false;
                     } else {
                         $groupData['all_granted'] = false;
                     }
                 }
-                
+
                 $roleMatrix['groups'][] = $groupData;
             }
-            
+
             $matrix[] = $roleMatrix;
         }
-        
+
         return $matrix;
     }
 
@@ -417,7 +417,7 @@ class PermissionBuilderController extends Controller
                 'description' => 'Gestisce contenuti e pubblicazioni',
                 'permissions' => [
                     'view content', 'create content', 'edit content', 'delete content', 'publish content',
-                    'view customers', 'view users'
+                    'view customers', 'view users',
                 ],
             ],
             'shop_manager' => [
@@ -426,7 +426,7 @@ class PermissionBuilderController extends Controller
                 'permissions' => [
                     'view products', 'create products', 'edit products', 'delete products', 'manage inventory',
                     'view orders', 'create orders', 'edit orders', 'process orders',
-                    'view customers', 'create customers', 'edit customers'
+                    'view customers', 'create customers', 'edit customers',
                 ],
             ],
             'customer_service' => [
@@ -435,14 +435,14 @@ class PermissionBuilderController extends Controller
                 'permissions' => [
                     'view orders', 'edit orders', 'process orders',
                     'view customers', 'edit customers',
-                    'view products'
+                    'view products',
                 ],
             ],
             'read_only' => [
                 'label' => 'Read Only',
                 'description' => 'Solo visualizzazione',
                 'permissions' => [
-                    'view content', 'view products', 'view orders', 'view customers'
+                    'view content', 'view products', 'view orders', 'view customers',
                 ],
             ],
             'super_admin' => [
@@ -462,13 +462,13 @@ class PermissionBuilderController extends Controller
             'users' => ['users', 'staff'],
             'system' => ['settings', 'configurations', 'permissions'],
         ];
-        
+
         foreach ($resourceGroups as $group => $resources) {
             if (in_array($resource, $resources)) {
                 return $group;
             }
         }
-        
+
         return 'content'; // Default group
     }
 }

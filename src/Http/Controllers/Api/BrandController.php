@@ -5,11 +5,10 @@ namespace Shopper\Http\Controllers\Api;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Shopper\Http\Controllers\Controller;
-use Shopper\Http\Requests\Api\BulkActionRequest;
 use Shopper\Http\Requests\Api\StoreBrandRequest;
 use Shopper\Http\Requests\Api\UpdateBrandRequest;
-use Shopper\Http\Traits\ApiResponseTrait;
 use Shopper\Models\Brand;
+use Shopper\Traits\ApiResponseTrait;
 
 class BrandController extends Controller
 {
@@ -26,8 +25,8 @@ class BrandController extends Controller
         if ($search = $request->get('search')) {
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('slug', 'like', "%{$search}%")
-                  ->orWhere('description', 'like', "%{$search}%");
+                    ->orWhere('slug', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%");
             });
         }
 
@@ -61,6 +60,7 @@ class BrandController extends Controller
 
         try {
             $brand = Brand::create($validated);
+
             return $this->createdResponse($brand, 'Brand creato con successo');
         } catch (\Exception $e) {
             return $this->errorResponse('Errore durante la creazione del brand');
@@ -74,6 +74,7 @@ class BrandController extends Controller
     {
         try {
             $brand = Brand::with('products')->findOrFail($id);
+
             return $this->successResponse($brand);
         } catch (\Exception $e) {
             return $this->notFoundResponse('Brand non trovato');
@@ -88,6 +89,7 @@ class BrandController extends Controller
         try {
             $brand = Brand::findOrFail($id);
             $brand->update($request->validated());
+
             return $this->successResponse($brand->fresh(), 'Brand aggiornato con successo');
         } catch (\Exception $e) {
             return $this->errorResponse('Errore durante l\'aggiornamento del brand');
@@ -101,13 +103,14 @@ class BrandController extends Controller
     {
         try {
             $brand = Brand::findOrFail($id);
-            
+
             // Check if brand has products
             if ($brand->products()->exists()) {
                 return $this->validationErrorResponse('Impossibile eliminare il brand con prodotti associati');
             }
 
             $brand->delete();
+
             return $this->successResponse(null, 'Brand eliminato con successo');
         } catch (\Exception $e) {
             return $this->errorResponse('Errore durante l\'eliminazione del brand');
