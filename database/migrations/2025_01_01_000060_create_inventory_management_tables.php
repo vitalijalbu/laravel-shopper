@@ -11,15 +11,15 @@ return new class extends Migration
         // Inventory locations per multi-location stock management
         Schema::create('inventory_locations', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('site_id')->nullable()->index();
+            $table->unsignedBigInteger('site_id')->nullable();
             $table->string('name');
-            $table->string('code', 50)->index();
+            $table->string('code', 50);
             $table->jsonb('address')->nullable(); // Full address object
             $table->string('contact_email')->nullable();
             $table->string('contact_phone', 20)->nullable();
-            $table->boolean('is_active')->default(true)->index();
-            $table->integer('priority')->default(0)->index(); // For allocation priority
-            $table->enum('type', ['warehouse', 'store', 'dropship', 'vendor'])->default('warehouse')->index();
+            $table->boolean('is_active')->default(true);
+            $table->integer('priority')->default(0); // For allocation priority
+            $table->enum('type', ['warehouse', 'store', 'dropship', 'vendor'])->default('warehouse');
             $table->jsonb('settings')->nullable(); // Custom settings per location
             $table->timestamps();
 
@@ -35,27 +35,26 @@ return new class extends Migration
             $table->foreignId('location_id')->constrained('inventory_locations')->cascadeOnDelete();
             $table->foreignId('product_id')->constrained()->cascadeOnDelete();
             $table->foreignId('variant_id')->nullable()->constrained('product_variants')->cascadeOnDelete();
-            $table->integer('available')->default(0)->index(); // Available for sale
+            $table->integer('available')->default(0); // Available for sale
             $table->integer('committed')->default(0); // Reserved for orders
-            $table->integer('on_hand')->default(0)->index(); // Physical inventory
+            $table->integer('on_hand')->default(0); // Physical inventory
             $table->integer('reserved')->default(0); // Hold/QC/damaged
             $table->integer('incoming')->default(0); // Expected from suppliers
             $table->decimal('cost_price', 15, 2)->nullable(); // Location-specific cost
-            $table->timestamp('last_counted_at')->nullable()->index(); // Last physical count
+            $table->timestamp('last_counted_at')->nullable(); // Last physical count
             $table->jsonb('metadata')->nullable(); // Bin location, notes, etc.
             $table->timestamps();
 
             $table->unique(['location_id', 'product_id', 'variant_id']);
             $table->index(['product_id', 'available']);
             $table->index(['location_id', 'available']);
-            $table->index(['last_counted_at']);
         });
 
         // Inventory movements log for audit trail
         Schema::create('inventory_movements', function (Blueprint $table) {
             $table->id();
             $table->foreignId('inventory_item_id')->constrained()->cascadeOnDelete();
-            $table->string('type')->index(); // adjustment, sale, restock, transfer, damage, etc.
+            $table->string('type'); // adjustment, sale, restock, transfer, damage, etc.
             $table->integer('quantity_delta'); // Positive or negative change
             $table->integer('quantity_before');
             $table->integer('quantity_after');
@@ -67,7 +66,6 @@ return new class extends Migration
 
             $table->index(['inventory_item_id', 'created_at']);
             $table->index(['type', 'created_at']);
-            $table->index(['reference']);
         });
     }
 

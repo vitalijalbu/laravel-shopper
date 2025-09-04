@@ -63,38 +63,6 @@ return new class extends Migration
             $table->index(['review_id', 'is_helpful']);
         });
 
-        // ====== ADVANCED ANALYTICS SYSTEM ======
-        Schema::create('analytics_events', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('site_id')->nullable()->index();
-            $table->string('session_id', 100)->index();
-            $table->foreignId('customer_id')->nullable()->constrained()->nullOnDelete();
-            $table->string('event_type', 100)->index(); // page_view, product_view, add_to_cart, etc.
-            $table->string('event_category', 100)->nullable()->index();
-            $table->jsonb('event_data'); // Flexible event properties
-            $table->string('page_url', 500)->nullable();
-            $table->string('page_title')->nullable();
-            $table->string('referrer', 500)->nullable();
-            $table->string('utm_source', 100)->nullable()->index();
-            $table->string('utm_medium', 100)->nullable()->index();
-            $table->string('utm_campaign', 100)->nullable()->index();
-            $table->string('utm_term', 100)->nullable();
-            $table->string('utm_content', 100)->nullable();
-            $table->string('device_type', 50)->nullable()->index(); // desktop, mobile, tablet
-            $table->string('browser', 100)->nullable();
-            $table->string('os', 100)->nullable();
-            $table->string('country_code', 2)->nullable()->index();
-            $table->string('city', 100)->nullable();
-            $table->string('ip_address', 45)->nullable();
-            $table->timestamp('created_at')->index();
-
-            $table->index(['site_id', 'event_type', 'created_at']);
-            $table->index(['session_id', 'created_at']);
-            $table->index(['customer_id', 'created_at']);
-            $table->index(['utm_source', 'utm_medium', 'created_at']);
-            $table->foreign('site_id')->references('id')->on('sites')->onDelete('cascade');
-        });
-
         // Product performance analytics
         Schema::create('product_analytics', function (Blueprint $table) {
             $table->id();
@@ -210,7 +178,6 @@ return new class extends Migration
         Schema::dropIfExists('gift_cards');
         Schema::dropIfExists('campaigns');
         Schema::dropIfExists('product_analytics');
-        Schema::dropIfExists('analytics_events');
         Schema::dropIfExists('review_votes');
         Schema::dropIfExists('review_media');
         Schema::dropIfExists('product_reviews');

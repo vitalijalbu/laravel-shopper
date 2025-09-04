@@ -89,7 +89,7 @@ return new class extends Migration
             
             $table->timestamps();
             
-            $table->unique(['from_currency_code', 'to_currency_code', 'valid_from']);
+            $table->unique(['from_currency_code', 'to_currency_code', 'valid_from'], 'global_exchange_rates_unique');
             $table->index(['from_currency_code', 'to_currency_code', 'valid_until']);
             $table->index(['source', 'fetched_at']);
             $table->index(['ai_confidence_score', 'predicted_trend']);
@@ -175,7 +175,7 @@ return new class extends Migration
             $table->timestamps();
             
             $table->index(['status', 'business_priority']);
-            $table->index(['supports_ai_translation', 'translation_quality_score']);
+            $table->index(['supports_ai_translation', 'translation_quality_score'], 'gl_ai_trans_quality_idx');
             $table->index(['primary_country', 'status']);
         });
 
@@ -230,9 +230,9 @@ return new class extends Migration
             
             $table->timestamps();
             
-            $table->unique(['tenant_id', 'namespace', 'group', 'key', 'language_code', 'version']);
+            $table->unique(['tenant_id', 'namespace', 'group', 'key', 'language_code', 'version'], 'tenant_translations_unique');
             $table->index(['tenant_id', 'language_code', 'is_active']);
-            $table->index(['namespace', 'is_ai_generated', 'requires_review']);
+            $table->index(['namespace', 'is_ai_generated', 'requires_review'], 'trans_ns_ai_review_idx');
             $table->index(['quality_grade', 'conversion_impact']);
             $table->index(['usage_frequency', 'language_code']);
         });
@@ -268,7 +268,7 @@ return new class extends Migration
             
             $table->timestamps();
             
-            $table->unique(['tenant_id', 'language_code', 'namespace', 'period_start', 'period_type']);
+            $table->unique(['tenant_id', 'language_code', 'namespace', 'period_start', 'period_type'], 'translation_analytics_unique');
             $table->index(['period_start', 'conversion_rate']);
             $table->index(['language_code', 'revenue']);
         });
@@ -314,7 +314,7 @@ return new class extends Migration
             
             $table->timestamps();
             
-            $table->unique(['tenant_id', 'product_id', 'product_type', 'currency_code']);
+            $table->unique(['tenant_id', 'product_id', 'product_type', 'currency_code'], 'multi_currency_pricing_unique');
             $table->index(['currency_code', 'pricing_method']);
             $table->index(['auto_update', 'price_updated_at']);
             $table->index(['conversion_rate', 'currency_code']);

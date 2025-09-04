@@ -31,7 +31,6 @@ return new class extends Migration
             $table->index(['order_id', 'status']);
             $table->index(['location_id', 'status']);
             $table->index(['shipped_at', 'status']);
-            $table->index(['tracking_number']);
         });
 
         // Line items per fulfillment
@@ -85,52 +84,10 @@ return new class extends Migration
             $table->unique(['return_id', 'order_line_id']);
             $table->index(['order_line_id']);
         });
-
-        // Shipping zones
-        Schema::create('shipping_zones', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('site_id')->nullable()->index();
-            $table->string('name');
-            $table->jsonb('countries'); // Array of country codes
-            $table->jsonb('states')->nullable(); // Array of state codes
-            $table->jsonb('postal_codes')->nullable(); // Specific postal codes
-            $table->boolean('is_active')->default(true)->index();
-            $table->timestamps();
-
-            $table->index(['site_id', 'is_active']);
-            $table->foreign('site_id')->references('id')->on('sites')->onDelete('cascade');
-        });
-
-        // Enhanced shipping methods
-        Schema::create('shipping_methods', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('shipping_zone_id')->constrained()->cascadeOnDelete();
-            $table->string('name');
-            $table->text('description')->nullable();
-            $table->enum('calculation_type', ['flat_rate', 'weight_based', 'price_based', 'item_count', 'calculated'])->default('flat_rate');
-            $table->decimal('base_cost', 15, 2)->default(0);
-            $table->jsonb('rates'); // Rate structure based on calculation type
-            $table->decimal('min_order_amount', 15, 2)->nullable();
-            $table->decimal('max_order_amount', 15, 2)->nullable();
-            $table->decimal('max_weight', 8, 2)->nullable();
-            $table->string('carrier')->nullable(); // UPS, FedEx, DHL, etc.
-            $table->string('service_code')->nullable(); // Carrier service code
-            $table->integer('min_delivery_days')->nullable();
-            $table->integer('max_delivery_days')->nullable();
-            $table->boolean('requires_signature')->default(false);
-            $table->boolean('is_active')->default(true)->index();
-            $table->integer('sort_order')->default(0);
-            $table->timestamps();
-
-            $table->index(['shipping_zone_id', 'is_active']);
-            $table->index(['carrier', 'service_code']);
-        });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('shipping_methods');
-        Schema::dropIfExists('shipping_zones');
         Schema::dropIfExists('return_line_items');
         Schema::dropIfExists('returns');
         Schema::dropIfExists('fulfillment_line_items');

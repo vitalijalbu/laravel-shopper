@@ -155,7 +155,7 @@ return new class extends Migration
             
             $table->timestamps();
             
-            $table->unique(['tenant_id', 'metric_type', 'period_type', 'period_start']);
+            $table->unique(['tenant_id', 'metric_type', 'period_type', 'period_start'], 'tenant_usage_unique');
             $table->index(['period_start', 'metric_type', 'is_billable']);
             $table->index(['tenant_id', 'period_start', 'billable_amount']);
         });

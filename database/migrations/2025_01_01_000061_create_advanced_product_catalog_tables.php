@@ -40,7 +40,7 @@ return new class extends Migration
             $table->integer('sort_order')->default(0);
             $table->timestamps();
 
-            $table->unique(['parent_product_id', 'child_product_id', 'child_variant_id']);
+            $table->unique(['parent_product_id', 'child_product_id', 'child_variant_id'], 'product_bundles_unique');
             $table->index(['parent_product_id', 'sort_order']);
             $table->index(['child_product_id']);
         });
@@ -56,7 +56,7 @@ return new class extends Migration
             $table->boolean('is_automatic')->default(false); // AI-generated vs manual
             $table->timestamps();
 
-            $table->unique(['product_id', 'related_product_id', 'relation_type']);
+            $table->unique(['product_id', 'related_product_id', 'relation_type'], 'product_relations_unique');
             $table->index(['product_id', 'relation_type', 'relevance_score']);
             $table->index(['related_product_id']);
         });
@@ -83,12 +83,12 @@ return new class extends Migration
             $table->id();
             $table->foreignId('product_id')->constrained()->cascadeOnDelete();
             $table->foreignId('attribute_id')->constrained('product_attributes')->cascadeOnDelete();
-            $table->text('value'); // The actual value
+            $table->string('value', 500); // The actual value
             $table->jsonb('metadata')->nullable(); // Color codes, image URLs, etc.
             $table->timestamps();
 
             $table->unique(['product_id', 'attribute_id']);
-            $table->index(['attribute_id', 'value(100)']);
+            $table->index(['attribute_id', 'value']);
         });
     }
 

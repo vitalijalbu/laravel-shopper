@@ -71,7 +71,7 @@ return new class extends Migration
             $table->foreignId('customer_group_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
 
-            $table->unique(['pricing_rule_id', 'customer_group_id']);
+            $table->unique(['pricing_rule_id', 'customer_group_id'], 'pricing_rule_groups_unique');
             $table->index(['customer_group_id']);
         });
 
@@ -92,25 +92,10 @@ return new class extends Migration
             $table->index(['customer_id', 'applied_at']);
             $table->index(['order_id']);
         });
-
-        // Exchange rates for multi-currency
-        Schema::create('exchange_rates', function (Blueprint $table) {
-            $table->id();
-            $table->char('from_currency', 3)->index();
-            $table->char('to_currency', 3)->index();
-            $table->decimal('rate', 20, 10);
-            $table->string('provider', 50)->default('manual'); // ecb, fixer, manual
-            $table->timestamp('fetched_at')->nullable();
-            $table->timestamps();
-
-            $table->unique(['from_currency', 'to_currency']);
-            $table->index(['provider', 'updated_at']);
-        });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('exchange_rates');
         Schema::dropIfExists('pricing_rule_applications');
         Schema::dropIfExists('pricing_rule_customer_groups');
         Schema::dropIfExists('pricing_rule_products');

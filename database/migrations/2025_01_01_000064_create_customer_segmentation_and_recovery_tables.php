@@ -141,7 +141,7 @@ return new class extends Migration
 
             $table->unique(['product_id', 'search_term', 'date']);
             $table->index(['search_term', 'date']);
-            $table->index(['click_through_rate', 'conversion_rate']);
+            $table->index(['click_through_rate', 'conversion_rate'], 'psp_ctr_cr_idx');
         });
     }
 
