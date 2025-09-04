@@ -1,26 +1,26 @@
 {
-  "_ui-IVSXqRWP.js": {
-    "file": "assets/ui-IVSXqRWP.js",
+  "_ui-B9ciafDr.js": {
+    "file": "assets/ui-B9ciafDr.js",
     "name": "ui",
     "imports": [
-      "_vendor-CWDlk42K.js"
+      "_vendor-Cwil971f.js"
     ]
   },
-  "_vendor-CWDlk42K.js": {
-    "file": "assets/vendor-CWDlk42K.js",
+  "_vendor-Cwil971f.js": {
+    "file": "assets/vendor-Cwil971f.js",
     "name": "vendor"
   },
   "resources/js/app.js": {
-    "file": "assets/app-RIGtzeih.js",
+    "file": "assets/app-CBYhrtbc.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
     "imports": [
-      "_vendor-CWDlk42K.js",
-      "_ui-IVSXqRWP.js"
+      "_vendor-Cwil971f.js",
+      "_ui-B9ciafDr.js"
     ],
     "css": [
-      "assets/app-CMFErTdK.css"
+      "assets/app-MpQisIAg.css"
     ]
   }
 }
