@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Shopper\Http\Controllers\Api\AuthController;
 use Shopper\Http\Controllers\Api\BrandController;
@@ -15,10 +14,7 @@ use Shopper\Http\Controllers\Api\CustomerController;
 use Shopper\Http\Controllers\Api\DiscountController;
 use Shopper\Http\Controllers\Api\FidelityController;
 use Shopper\Http\Controllers\Api\OrderController;
-use Shopper\Http\Controllers\Api\PermissionBuilderController;
-use Shopper\Http\Controllers\Api\PermissionController;
 use Shopper\Http\Controllers\Api\ProductController;
-use Shopper\Http\Controllers\Api\RoleController;
 use Shopper\Http\Controllers\Api\ShippingMethodController;
 use Shopper\Http\Controllers\Api\TaxRateController;
 use Shopper\Http\Controllers\Api\UserController;
@@ -176,7 +172,7 @@ Route::group([
             Route::get('/configuration', [FidelityController::class, 'configuration'])->name('configuration');
             Route::post('/calculate-points', [FidelityController::class, 'calculatePoints'])->name('calculate-points');
             Route::post('/find-card', [FidelityController::class, 'findByCardNumber'])->name('find-card');
-            
+
             // Customer authenticated endpoints
             Route::middleware(['auth:customer'])->group(function () {
                 Route::get('/card', [FidelityController::class, 'card'])->name('card');
@@ -358,7 +354,7 @@ Route::group([
                 Route::post('/bulk', [CountryController::class, 'bulk'])->name('bulk');
             });
 
-            // Currency Management  
+            // Currency Management
             Route::prefix('currencies')->name('currencies.')->group(function () {
                 Route::get('/', [CurrencyController::class, 'adminIndex'])->name('index');
                 Route::post('/', [CurrencyController::class, 'store'])->name('store');
@@ -390,7 +386,7 @@ Route::group([
                 Route::post('/{rate}/toggle-status', [TaxRateController::class, 'toggleStatus'])->name('toggle.status');
                 Route::post('/bulk', [TaxRateController::class, 'bulk'])->name('bulk');
 
-                        });
+            });
 
             // Discount Management (Admin)
             Route::prefix('discounts')->name('discounts.')->group(function () {

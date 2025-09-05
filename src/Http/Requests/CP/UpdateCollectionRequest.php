@@ -60,7 +60,7 @@ class UpdateCollectionRequest extends FormRequest
 
     public function prepareForValidation(): void
     {
-        if (!$this->filled('slug') && $this->filled('title')) {
+        if (! $this->filled('slug') && $this->filled('title')) {
             $this->merge([
                 'slug' => str($this->title)->slug()->toString(),
             ]);

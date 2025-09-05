@@ -7,7 +7,6 @@ namespace Shopper\Http\Controllers\CP;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Inertia\Response;
-use Shopper\CP\Navigation;
 use Shopper\CP\Page;
 use Shopper\Http\Requests\CP\StoreCustomerRequest;
 use Shopper\Http\Resources\CP\CustomerResource;
@@ -34,7 +33,7 @@ class CustomerController extends BaseController
             ->addBreadcrumb('Customers');
 
         $filters = $this->getFilters(['search', 'status', 'customer_group_id', 'created_at']);
-        
+
         $customers = $this->customerRepository->getPaginatedWithFilters(
             $filters,
             request('per_page', 15)
@@ -50,7 +49,7 @@ class CustomerController extends BaseController
 
         return $this->inertiaResponse('customers/Index', [
             'page' => $page->compile(),
-            'navigation' => Navigation::tree(),
+
             'customers' => $customers->through(fn ($customer) => new CustomerResource($customer)),
             'filters' => $filters,
         ]);
@@ -74,7 +73,7 @@ class CustomerController extends BaseController
 
         return $this->inertiaResponse('customers/Create', [
             'page' => $page->compile(),
-            'navigation' => Navigation::tree(),
+
         ]);
     }
 
@@ -105,7 +104,7 @@ class CustomerController extends BaseController
     public function show(Customer $customer): Response
     {
         $customer = $this->customerRepository->findWithRelations($customer->id, [
-            'addresses', 'orders', 'customerGroup'
+            'addresses', 'orders', 'customerGroup',
         ]);
 
         $this->addDashboardBreadcrumb()
@@ -123,7 +122,7 @@ class CustomerController extends BaseController
 
         return $this->inertiaResponse('customers/Show', [
             'page' => $page->compile(),
-            'navigation' => Navigation::tree(),
+
             'customer' => new CustomerResource($customer),
         ]);
     }
@@ -134,7 +133,7 @@ class CustomerController extends BaseController
     public function edit(Customer $customer): Response
     {
         $customer = $this->customerRepository->findWithRelations($customer->id, [
-            'addresses', 'customerGroup'
+            'addresses', 'customerGroup',
         ]);
 
         $this->addDashboardBreadcrumb()
@@ -159,7 +158,7 @@ class CustomerController extends BaseController
 
         return $this->inertiaResponse('customers/Edit', [
             'page' => $page->compile(),
-            'navigation' => Navigation::tree(),
+
             'customer' => new CustomerResource($customer),
         ]);
     }
@@ -181,7 +180,7 @@ class CustomerController extends BaseController
      */
     public function destroy(Customer $customer): JsonResponse
     {
-        if (!$this->customerRepository->canDelete($customer->id)) {
+        if (! $this->customerRepository->canDelete($customer->id)) {
             return $this->errorResponse('Cannot delete customer with orders');
         }
 

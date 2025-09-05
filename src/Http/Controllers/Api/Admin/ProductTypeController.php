@@ -304,7 +304,6 @@ class ProductTypeController extends Controller
     {
         $query = ProductType::select('id', 'name', 'slug');
 
-
         $productTypes = $query->orderBy('name')->get();
 
         return $this->successResponse([

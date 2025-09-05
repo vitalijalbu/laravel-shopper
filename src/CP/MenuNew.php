@@ -80,7 +80,7 @@ class Navigation
     {
         // Dashboard
         static::item('dashboard')
-            ->label('Dashboard')
+            ->label('Home')
             ->icon('home')
             ->url('/cp')
             ->order(1);
@@ -94,54 +94,56 @@ class Navigation
             ->icon('shopping-bag')
             ->url('/cp/orders')
             ->section('orders')
-            ->badge(fn () => \Shopper\Models\Order::pending()->count())
             ->order(1);
 
         static::item('orders.drafts')
-            ->label('Draft orders')
+            ->label('Drafts')
             ->url('/cp/orders/drafts')
             ->section('orders')
             ->order(2);
 
         static::item('orders.abandoned')
             ->label('Abandoned checkouts')
-            ->url('/cp/orders/abandoned')
+            ->url('/cp/abandoned-carts')
             ->section('orders')
             ->order(3);
 
         // Products Section
-        static::section('catalog', 'Products')
+        static::section('products', 'Products')
             ->order(20);
 
         static::item('products.index')
-            ->label('Products')
+            ->label('All products')
             ->icon('package')
             ->url('/cp/products')
-            ->section('catalog')
+            ->section('products')
             ->order(1);
-
-        static::item('collections.index')
-            ->label('Collections')
-            ->icon('folder')
-            ->url('/cp/collections')
-            ->section('catalog')
-            ->order(2);
 
         static::item('inventory')
             ->label('Inventory')
-            ->icon('archive')
             ->url('/cp/inventory')
-            ->section('catalog')
+            ->section('products')
+            ->order(2);
+
+        static::item('collections.index')
+            ->label('Collections')
+            ->url('/cp/collections')
+            ->section('products')
             ->order(3);
+
+        static::item('product-types')
+            ->label('Product types')
+            ->url('/cp/product-types')
+            ->section('products')
+            ->order(4);
 
         static::item('gift-cards')
             ->label('Gift cards')
-            ->icon('gift')
             ->url('/cp/gift-cards')
-            ->section('catalog')
-            ->order(4);
+            ->section('products')
+            ->order(5);
 
-        // Customers Section
+        // Customer Section
         static::section('customers', 'Customers')
             ->order(30);
 
@@ -152,34 +154,26 @@ class Navigation
             ->section('customers')
             ->order(1);
 
-        static::item('customers.segments')
-            ->label('Segments')
-            ->url('/cp/customers/segments')
-            ->section('customers')
-            ->order(2);
-
         // Content Section
         static::section('content', 'Content')
             ->order(40);
 
-        static::item('pages.index')
-            ->label('Pages')
-            ->icon('file-text')
-            ->url('/cp/pages')
+        static::item('navigations')
+            ->label('Navigation')
+            ->icon('menu')
+            ->url('/cp/navigations')
             ->section('content')
             ->order(1);
 
         static::item('blog.posts')
             ->label('Blog posts')
-            ->icon('edit-3')
             ->url('/cp/blog/posts')
             ->section('content')
             ->order(2);
 
-        static::item('navigation')
-            ->label('Navigation')
-            ->icon('menu')
-            ->url('/cp/navigation')
+        static::item('reviews')
+            ->label('Product reviews')
+            ->url('/cp/reviews')
             ->section('content')
             ->order(3);
 
@@ -195,8 +189,8 @@ class Navigation
             ->order(1);
 
         static::item('analytics.reports')
-            ->label('Reports')
-            ->url('/cp/analytics/reports')
+            ->label('Live view')
+            ->url('/cp/analytics/live-view')
             ->section('analytics')
             ->order(2);
 
@@ -213,55 +207,95 @@ class Navigation
 
         static::item('marketing.campaigns')
             ->label('Marketing')
-            ->icon('megaphone')
             ->url('/cp/marketing')
             ->section('marketing')
             ->order(2);
 
-        // Settings Section
-        static::section('settings', 'Settings')
-            ->order(100);
+        // Sales Channels Section
+        static::section('sales-channels', 'Sales channels')
+            ->order(70);
 
-        static::item('settings.general')
-            ->label('General')
-            ->icon('settings')
-            ->url('/cp/settings')
-            ->section('settings')
+        static::item('online-store')
+            ->label('Online Store')
+            ->icon('globe')
+            ->url('/cp/online-store')
+            ->section('sales-channels')
             ->order(1);
 
-        static::item('settings.payments')
-            ->label('Payments')
-            ->url('/cp/settings/payments')
-            ->section('settings')
+        static::item('point-of-sale')
+            ->label('Point of Sale')
+            ->url('/cp/pos')
+            ->section('sales-channels')
             ->order(2);
-
-        static::item('settings.shipping')
-            ->label('Shipping and delivery')
-            ->url('/cp/settings/shipping')
-            ->section('settings')
-            ->order(3);
-
-        static::item('settings.taxes')
-            ->label('Taxes')
-            ->url('/cp/settings/taxes')
-            ->section('settings')
-            ->order(4);
-
-        static::item('settings.notifications')
-            ->label('Notifications')
-            ->url('/cp/settings/notifications')
-            ->section('settings')
-            ->order(5);
 
         // Apps Section
         static::section('apps', 'Apps')
-            ->order(90);
+            ->order(80);
 
-        static::item('apps')
-            ->label('Apps')
+        static::item('apps.store')
+            ->label('App store')
             ->icon('grid')
             ->url('/cp/apps')
             ->section('apps')
             ->order(1);
+
+        static::item('apps.installed')
+            ->label('Installed apps')
+            ->url('/cp/apps/installed')
+            ->section('apps')
+            ->order(2);
+
+        // Settings Section
+        static::section('settings', 'Settings')
+            ->order(90);
+
+        static::item('settings.general')
+            ->label('General')
+            ->icon('settings')
+            ->url('/cp/settings/general')
+            ->section('settings')
+            ->order(1);
+
+        static::item('settings.checkout')
+            ->label('Checkout')
+            ->url('/cp/settings/checkout')
+            ->section('settings')
+            ->order(2);
+
+        static::item('settings.payment-gateways')
+            ->label('Payments')
+            ->url('/cp/settings/payment-gateways')
+            ->section('settings')
+            ->order(3);
+
+        static::item('settings.shipping-methods')
+            ->label('Shipping and delivery')
+            ->url('/cp/settings/shipping-methods')
+            ->section('settings')
+            ->order(4);
+
+        static::item('settings.tax-rates')
+            ->label('Taxes')
+            ->url('/cp/settings/tax-rates')
+            ->section('settings')
+            ->order(5);
+
+        static::item('settings.email')
+            ->label('Email')
+            ->url('/cp/settings/email')
+            ->section('settings')
+            ->order(6);
+
+        static::item('brands')
+            ->label('Brands')
+            ->url('/cp/brands')
+            ->section('settings')
+            ->order(7);
+
+        static::item('utilities')
+            ->label('Utilities')
+            ->url('/cp/utilities')
+            ->section('settings')
+            ->order(8);
     }
 }

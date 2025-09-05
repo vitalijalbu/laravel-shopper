@@ -7,13 +7,12 @@ namespace Shopper\Http\Controllers\CP;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Inertia\Response;
-use Shopper\CP\Navigation;
 use Shopper\CP\Page;
 use Shopper\Http\Requests\CP\StoreProductRequest;
 use Shopper\Http\Resources\CP\ProductResource;
-use Shopper\Models\Product;
 use Shopper\Models\Brand;
 use Shopper\Models\Collection;
+use Shopper\Models\Product;
 use Shopper\Repositories\ProductRepository;
 
 class ProductController extends BaseController
@@ -36,17 +35,17 @@ class ProductController extends BaseController
             ->addBreadcrumb('Products');
 
         $filters = $this->getFilters([
-            'search', 
-            'status', 
-            'brand_id', 
-            'collection_id', 
-            'type', 
-            'price_min', 
+            'search',
+            'status',
+            'brand_id',
+            'collection_id',
+            'type',
+            'price_min',
             'price_max',
             'stock_status',
-            'created_at'
+            'created_at',
         ]);
-        
+
         $products = $this->productRepository->searchPaginated(
             $filters,
             request('per_page', 15)
@@ -63,11 +62,8 @@ class ProductController extends BaseController
 
         return $this->inertiaResponse('products/Index', [
             'page' => $page->compile(),
-            'navigation' => Navigation::tree(),
-            'products' => $products->through(fn ($product) => new ProductResource($product)),
-            'filters' => $filters,
-            'brands' => Brand::select('id', 'name')->get(),
-            'collections' => Collection::select('id', 'name')->get(),
+            'products' => $products,
+            'filters' => $this->getFilterOptions(),
         ]);
     }
 
@@ -99,7 +95,6 @@ class ProductController extends BaseController
 
         return $this->inertiaResponse('products/Create', [
             'page' => $page->compile(),
-            'navigation' => Navigation::tree(),
             'brands' => Brand::select('id', 'name')->where('status', 'active')->orderBy('name')->get(),
             'collections' => Collection::select('id', 'name')->where('status', 'active')->orderBy('name')->get(),
         ]);
@@ -143,7 +138,7 @@ class ProductController extends BaseController
     public function show(Product $product): Response
     {
         $product = $this->productRepository->findWithRelations($product->id, [
-            'brand', 'collections', 'variants.media', 'media', 'orders'
+            'brand', 'collections', 'variants.media', 'media', 'orders',
         ]);
 
         $this->addDashboardBreadcrumb()
@@ -167,7 +162,6 @@ class ProductController extends BaseController
 
         return $this->inertiaResponse('products/Show', [
             'page' => $page->compile(),
-            'navigation' => Navigation::tree(),
             'product' => new ProductResource($product),
         ]);
     }
@@ -178,7 +172,7 @@ class ProductController extends BaseController
     public function edit(Product $product): Response
     {
         $product = $this->productRepository->findWithRelations($product->id, [
-            'brand', 'collections', 'variants', 'media'
+            'brand', 'collections', 'variants', 'media',
         ]);
 
         $this->addDashboardBreadcrumb()
@@ -206,10 +200,9 @@ class ProductController extends BaseController
 
         return $this->inertiaResponse('products/Edit', [
             'page' => $page->compile(),
-            'navigation' => Navigation::tree(),
             'product' => new ProductResource($product),
-            'brands' => Brand::select('id', 'name')->orderBy('name')->get(),
-            'collections' => Collection::select('id', 'name')->orderBy('name')->get(),
+            'brands' => Brand::select('id', 'name')->where('status', 'active')->orderBy('name')->get(),
+            'collections' => Collection::select('id', 'name')->where('status', 'active')->orderBy('name')->get(),
         ]);
     }
 
@@ -240,7 +233,7 @@ class ProductController extends BaseController
      */
     public function destroy(Product $product): JsonResponse
     {
-        if (!$this->productRepository->canDelete($product->id)) {
+        if (! $this->productRepository->canDelete($product->id)) {
             return $this->errorResponse('Cannot delete product with existing orders or variants');
         }
 
@@ -280,12 +273,12 @@ class ProductController extends BaseController
     public function duplicate(Product $product): JsonResponse
     {
         $originalProduct = $this->productRepository->findWithRelations($product->id, ['collections']);
-        
+
         $duplicateData = $originalProduct->toArray();
         unset($duplicateData['id'], $duplicateData['created_at'], $duplicateData['updated_at']);
-        
-        $duplicateData['name'] = $originalProduct->name . ' (Copy)';
-        $duplicateData['slug'] = $originalProduct->slug . '-copy';
+
+        $duplicateData['name'] = $originalProduct->name.' (Copy)';
+        $duplicateData['slug'] = $originalProduct->slug.'-copy';
         $duplicateData['status'] = 'draft';
 
         $duplicate = $this->productRepository->create($duplicateData);
@@ -356,16 +349,16 @@ class ProductController extends BaseController
     private function handleBulkDuplicate(array $ids): int
     {
         $count = 0;
-        
+
         foreach ($ids as $id) {
             $product = $this->productRepository->findWithRelations($id, ['collections']);
-            
+
             if ($product) {
                 $duplicateData = $product->toArray();
                 unset($duplicateData['id'], $duplicateData['created_at'], $duplicateData['updated_at']);
-                
-                $duplicateData['name'] = $product->name . ' (Copy)';
-                $duplicateData['slug'] = $product->slug . '-copy-' . time() . '-' . $count;
+
+                $duplicateData['name'] = $product->name.' (Copy)';
+                $duplicateData['slug'] = $product->slug.'-copy-'.time().'-'.$count;
                 $duplicateData['status'] = 'draft';
 
                 $duplicate = $this->productRepository->create($duplicateData);

@@ -6,7 +6,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
-use Shopper\CP\Navigation;
 use Shopper\CP\Page;
 use Shopper\Http\Controllers\Controller;
 use Shopper\Models\ShippingMethod;
@@ -39,7 +38,7 @@ class ShippingMethodsController extends Controller
 
         return Inertia::render('settings-shipping-methods', [
             'page' => $page->compile(),
-            'navigation' => Navigation::tree(),
+
             'shippingMethods' => $shippingMethods,
             'zones' => $zones,
             'types' => $types,
@@ -98,7 +97,7 @@ class ShippingMethodsController extends Controller
 
         return Inertia::render('shipping-method-show', [
             'page' => $page->compile(),
-            'navigation' => Navigation::tree(),
+
             'shippingMethod' => $shippingMethod,
         ]);
     }

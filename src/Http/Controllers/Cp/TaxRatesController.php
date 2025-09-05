@@ -6,7 +6,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
-use Shopper\CP\Navigation;
 use Shopper\CP\Page;
 use Shopper\Http\Controllers\Controller;
 use Shopper\Models\TaxRate;
@@ -39,7 +38,7 @@ class TaxRatesController extends Controller
 
         return Inertia::render('settings-tax-rates', [
             'page' => $page->compile(),
-            'navigation' => Navigation::tree(),
+
             'taxRates' => $taxRates,
             'countries' => $countries,
             'taxZones' => $taxZones,
@@ -99,7 +98,7 @@ class TaxRatesController extends Controller
 
         return Inertia::render('tax-rate-show', [
             'page' => $page->compile(),
-            'navigation' => Navigation::tree(),
+
             'taxRate' => $taxRate->load('taxZone'),
         ]);
     }

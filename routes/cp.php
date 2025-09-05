@@ -236,8 +236,7 @@ Route::prefix($cpPrefix)->name('cp.')->middleware(['web', 'shopper.inertia'])->g
             Route::put('/{order}', [OrdersController::class, 'update'])->name('update');
             Route::patch('/{order}/status', [OrdersController::class, 'updateStatus'])->name('update-status');
             Route::delete('/{order}', [OrdersController::class, 'destroy'])->name('destroy');
-        });        
-        
+        });
 
         Route::prefix('brands')->name('brands.')->group(function () {
             Route::get('/', [BrandController::class, 'index'])->name('index');
@@ -246,8 +245,6 @@ Route::prefix($cpPrefix)->name('cp.')->middleware(['web', 'shopper.inertia'])->g
             Route::put('/{brand}', [BrandController::class, 'update'])->name('update');
             Route::delete('/{brand}', [BrandController::class, 'destroy'])->name('destroy');
         });
-
-
 
         // Discounts Management
         Route::prefix('discounts')->name('discounts.')->group(function () {

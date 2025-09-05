@@ -7,7 +7,6 @@ namespace Shopper\Http\Controllers\CP;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Inertia\Response;
-use Shopper\CP\Navigation;
 use Shopper\CP\Page;
 use Shopper\Http\Requests\CP\StoreBrandRequest;
 use Shopper\Http\Requests\CP\UpdateBrandRequest;
@@ -35,7 +34,7 @@ class BrandController extends BaseController
             ->addBreadcrumb('Brands');
 
         $filters = $this->getFilters(['search', 'status', 'created_at']);
-        
+
         $brands = Brand::query()
             ->withCount('products')
             ->when($filters, fn ($query) => $this->applyFilters($query, $filters))
@@ -51,7 +50,7 @@ class BrandController extends BaseController
 
         return $this->inertiaResponse('brands/Index', [
             'page' => $page->compile(),
-            'navigation' => Navigation::tree(),
+
             'brands' => new BrandCollection($brands),
             'filters' => $filters,
         ]);
@@ -76,7 +75,7 @@ class BrandController extends BaseController
 
         return $this->inertiaResponse('brands/Create', [
             'page' => $page->compile(),
-            'navigation' => Navigation::tree(),
+
         ]);
     }
 
@@ -117,14 +116,14 @@ class BrandController extends BaseController
             ->primaryAction('Edit brand', route('shopper.brands.edit', $brand))
             ->secondaryActions([
                 ['label' => 'View in store', 'url' => "/brands/{$brand->slug}", 'target' => '_blank'],
-                ['label' => 'Visit website', 'url' => $brand->website, 'target' => '_blank', 'disabled' => !$brand->website],
+                ['label' => 'Visit website', 'url' => $brand->website, 'target' => '_blank', 'disabled' => ! $brand->website],
                 ['label' => 'Duplicate', 'action' => 'duplicate'],
                 ['label' => 'Delete', 'action' => 'delete', 'destructive' => true],
             ]);
 
         return $this->inertiaResponse('brands/Show', [
             'page' => $page->compile(),
-            'navigation' => Navigation::tree(),
+
             'brand' => new BrandResource($brand),
         ]);
     }
@@ -145,7 +144,7 @@ class BrandController extends BaseController
             ->secondaryActions([
                 ['label' => 'View brand', 'url' => route('shopper.brands.show', $brand)],
                 ['label' => 'View in store', 'url' => "/brands/{$brand->slug}", 'target' => '_blank'],
-                ['label' => 'Visit website', 'url' => $brand->website, 'target' => '_blank', 'disabled' => !$brand->website],
+                ['label' => 'Visit website', 'url' => $brand->website, 'target' => '_blank', 'disabled' => ! $brand->website],
                 ['label' => 'Duplicate', 'action' => 'duplicate'],
                 ['label' => 'Delete', 'action' => 'delete', 'destructive' => true],
             ])
@@ -157,7 +156,7 @@ class BrandController extends BaseController
 
         return $this->inertiaResponse('brands/Edit', [
             'page' => $page->compile(),
-            'navigation' => Navigation::tree(),
+
             'brand' => new BrandResource($brand),
         ]);
     }
@@ -233,7 +232,7 @@ class BrandController extends BaseController
     {
         $count = 0;
         $brands->get()->each(function ($brand) use (&$count) {
-            if (!$brand->products()->exists()) {
+            if (! $brand->products()->exists()) {
                 $brand->delete();
                 $count++;
             }
@@ -248,6 +247,7 @@ class BrandController extends BaseController
     private function handleBulkExport($brands): int
     {
         $count = $brands->count();
+
         // TODO: Implement actual export logic
         return $count;
     }

@@ -150,7 +150,7 @@ class Collection extends Model
      */
     public function getSmartProducts()
     {
-        if (!$this->isSmart() || empty($this->rules)) {
+        if (! $this->isSmart() || empty($this->rules)) {
             return collect();
         }
 
@@ -161,7 +161,7 @@ class Collection extends Model
             $operator = $rule['operator'] ?? 'equals';
             $value = $rule['value'] ?? null;
 
-            if (!$field || !$value) {
+            if (! $field || ! $value) {
                 continue;
             }
 

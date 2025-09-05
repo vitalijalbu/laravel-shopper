@@ -22,8 +22,6 @@ class DiscountController extends Controller
         $query = Discount::with(['applications'])
             ->orderBy('created_at', 'desc');
 
-
-
         // Filter by type
         if ($request->has('type')) {
             $query->where('type', $request->type);

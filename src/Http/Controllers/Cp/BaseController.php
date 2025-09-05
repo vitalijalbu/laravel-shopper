@@ -15,7 +15,7 @@ use Shopper\Traits\HasBreadcrumbs;
 
 abstract class BaseController extends Controller
 {
-    use AuthorizesRequests, ValidatesRequests, HasBreadcrumbs;
+    use AuthorizesRequests, HasBreadcrumbs, ValidatesRequests;
 
     /**
      * Return success JSON response.
@@ -104,14 +104,14 @@ abstract class BaseController extends Controller
     {
         try {
             $result = $callback($action, $ids);
-            
+
             return $this->successResponse(
                 "Bulk {$action} completed successfully",
                 ['affected_count' => $result]
             );
         } catch (\Exception $e) {
             return $this->errorResponse(
-                "Bulk {$action} failed: " . $e->getMessage(),
+                "Bulk {$action} failed: ".$e->getMessage(),
                 [],
                 500
             );
@@ -132,9 +132,9 @@ abstract class BaseController extends Controller
     protected function getFilters(array $allowed = []): array
     {
         $filters = request()->only($allowed);
-        
+
         return array_filter($filters, function ($value) {
-            return !is_null($value) && $value !== '';
+            return ! is_null($value) && $value !== '';
         });
     }
 

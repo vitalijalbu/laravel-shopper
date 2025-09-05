@@ -6,7 +6,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
-use Shopper\CP\Navigation;
 use Shopper\CP\Page;
 use Shopper\Http\Controllers\Controller;
 use Shopper\Models\Order;
@@ -47,7 +46,7 @@ class OrdersController extends Controller
 
         return Inertia::render('orders-index', [
             'page' => $page->compile(),
-            'navigation' => Navigation::tree(),
+
             'orders' => $orders,
             'customers' => $customers,
             'products' => $products,
@@ -112,7 +111,7 @@ class OrdersController extends Controller
 
         return Inertia::render('order-show', [
             'page' => $page->compile(),
-            'navigation' => Navigation::tree(),
+
             'order' => $order,
         ]);
     }

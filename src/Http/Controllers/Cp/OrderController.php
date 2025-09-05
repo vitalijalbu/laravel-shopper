@@ -7,7 +7,6 @@ namespace Shopper\Http\Controllers\CP;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Inertia\Response;
-use Shopper\CP\Navigation;
 use Shopper\CP\Page;
 use Shopper\Http\Requests\CP\StoreOrderRequest;
 use Shopper\Http\Resources\CP\OrderResource;
@@ -60,7 +59,7 @@ class OrderController extends BaseController
 
         return $this->inertiaResponse('orders/Index', [
             'page' => $page->compile(),
-            'navigation' => Navigation::tree(),
+            
             'orders' => $orders->through(fn ($order) => new OrderResource($order)),
             'filters' => $filters,
             'stats' => $this->getOrderStats(),
@@ -97,7 +96,7 @@ class OrderController extends BaseController
 
         return $this->inertiaResponse('orders/Create', [
             'page' => $page->compile(),
-            'navigation' => Navigation::tree(),
+            
             'customer' => $customer ? new \Shopper\Http\Resources\CP\CustomerResource($customer) : null,
         ]);
     }
@@ -181,7 +180,7 @@ class OrderController extends BaseController
 
         return $this->inertiaResponse('orders/Show', [
             'page' => $page->compile(),
-            'navigation' => Navigation::tree(),
+            
             'order' => new OrderResource($order),
         ]);
     }
@@ -220,7 +219,7 @@ class OrderController extends BaseController
 
         return $this->inertiaResponse('orders/Edit', [
             'page' => $page->compile(),
-            'navigation' => Navigation::tree(),
+            
             'order' => new OrderResource($order),
         ]);
     }

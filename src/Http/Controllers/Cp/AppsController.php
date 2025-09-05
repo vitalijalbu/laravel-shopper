@@ -4,7 +4,6 @@ namespace Shopper\Http\Controllers\Cp;
 
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Shopper\CP\Navigation;
 use Shopper\CP\Page;
 use Shopper\Http\Controllers\Controller;
 use Shopper\Models\App;
@@ -103,7 +102,7 @@ class AppsController extends Controller
 
         return Inertia::render('Apps/Store', [
             'page' => $page->compile(),
-            'navigation' => Navigation::tree(),
+
             'apps' => $apps,
             'categories' => $categories,
             'stats' => $stats,
@@ -142,7 +141,7 @@ class AppsController extends Controller
 
         return Inertia::render('Apps/Installed', [
             'page' => $page->compile(),
-            'navigation' => Navigation::tree(),
+
             'apps' => $apps,
             'filters' => $request->only(['status', 'search']),
         ]);
@@ -188,7 +187,7 @@ class AppsController extends Controller
 
         return Inertia::render('Apps/Show', [
             'page' => $page->compile(),
-            'navigation' => Navigation::tree(),
+
             'app' => $app,
             'relatedApps' => $relatedApps,
             'canInstall' => $app->is_compatible && ! $app->is_installed,
@@ -295,7 +294,7 @@ class AppsController extends Controller
 
         return Inertia::render('Apps/Configure', [
             'page' => $page->compile(),
-            'navigation' => Navigation::tree(),
+
             'app' => $app,
             'installation' => $installation,
             'settings' => $installation->settings ?? [],
@@ -354,7 +353,7 @@ class AppsController extends Controller
 
         return Inertia::render('Apps/Reviews', [
             'page' => $page->compile(),
-            'navigation' => Navigation::tree(),
+
             'app' => $app,
             'reviews' => $reviews,
             'stats' => $stats,

@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
-use Shopper\CP\Navigation;
 use Shopper\CP\Page;
 use Shopper\Http\Controllers\Controller;
 use Shopper\Models\Product;
@@ -40,7 +39,7 @@ class ReviewsController extends Controller
 
         return Inertia::render('products/Reviews', [
             'page' => $page->compile(),
-            'navigation' => Navigation::tree(),
+
         ]);
     }
 

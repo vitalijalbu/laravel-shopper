@@ -24,14 +24,14 @@ class ProductResource extends JsonResource
             'type' => $this->type,
             'status' => $this->status,
             'featured' => $this->featured,
-            
+
             // Pricing
             'price' => $this->price,
             'compare_price' => $this->compare_price,
             'cost_price' => $this->cost_price,
             'formatted_price' => $this->formatted_price,
             'formatted_compare_price' => $this->formatted_compare_price,
-            
+
             // Inventory
             'track_inventory' => $this->track_inventory,
             'stock_quantity' => $this->stock_quantity,
@@ -39,28 +39,28 @@ class ProductResource extends JsonResource
             'allow_backorder' => $this->allow_backorder,
             'stock_status' => $this->stock_status,
             'in_stock' => $this->in_stock,
-            
+
             // Physical properties
             'weight' => $this->weight,
             'length' => $this->length,
             'width' => $this->width,
             'height' => $this->height,
             'requires_shipping' => $this->requires_shipping,
-            
+
             // SEO
             'seo_title' => $this->seo_title,
             'seo_description' => $this->seo_description,
-            
+
             // Additional fields
             'tags' => $this->tags,
             'vendor' => $this->vendor,
             'product_type' => $this->product_type,
-            
+
             // Timestamps
             'created_at' => $this->created_at?->format('Y-m-d H:i:s'),
             'updated_at' => $this->updated_at?->format('Y-m-d H:i:s'),
             'published_at' => $this->published_at?->format('Y-m-d H:i:s'),
-            
+
             // Relationships
             'brand' => $this->whenLoaded('brand', function () {
                 return [
@@ -69,7 +69,7 @@ class ProductResource extends JsonResource
                     'slug' => $this->brand->slug,
                 ];
             }),
-            
+
             'collections' => $this->whenLoaded('collections', function () {
                 return $this->collections->map(function ($collection) {
                     return [
@@ -79,7 +79,7 @@ class ProductResource extends JsonResource
                     ];
                 });
             }),
-            
+
             'variants' => $this->whenLoaded('variants', function () {
                 return $this->variants->map(function ($variant) {
                     return [
@@ -94,7 +94,7 @@ class ProductResource extends JsonResource
                     ];
                 });
             }),
-            
+
             'media' => $this->whenLoaded('media', function () {
                 return $this->media->map(function ($media) {
                     return [
@@ -110,7 +110,7 @@ class ProductResource extends JsonResource
                     ];
                 });
             }),
-            
+
             'orders' => $this->whenLoaded('orders', function () {
                 return $this->orders->map(function ($order) {
                     return [
@@ -124,12 +124,12 @@ class ProductResource extends JsonResource
                     ];
                 });
             }),
-            
+
             // Counts
             'variants_count' => $this->whenCounted('variants'),
             'orders_count' => $this->whenCounted('orders'),
             'collections_count' => $this->whenCounted('collections'),
-            
+
             // Computed values
             'image_url' => $this->image_url,
             'thumb_url' => $this->thumb_url,
@@ -139,7 +139,7 @@ class ProductResource extends JsonResource
             'has_variants' => $this->type === 'variable',
             'is_published' => $this->status === 'published',
             'is_featured' => $this->featured,
-            
+
             // Stats (when available)
             'total_sales' => $this->when(isset($this->total_sales), $this->total_sales),
             'revenue' => $this->when(isset($this->revenue), $this->revenue),

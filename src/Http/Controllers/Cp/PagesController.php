@@ -4,7 +4,6 @@ namespace Shopper\Http\Controllers\Cp;
 
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Shopper\CP\Navigation;
 use Shopper\CP\Page;
 use Shopper\Data\PageDto;
 use Shopper\Http\Controllers\Controller;
@@ -38,7 +37,7 @@ class PagesController extends Controller
 
         return Inertia::render('Pages/index', [
             'page' => $page->compile(),
-            'navigation' => Navigation::tree(),
+
             'pages' => $pages,
         ]);
     }
@@ -62,7 +61,7 @@ class PagesController extends Controller
 
         return Inertia::render('Pages/Create', [
             'page' => $page->compile(),
-            'navigation' => Navigation::tree(),
+
             'templates' => $this->getAvailableTemplates(),
         ]);
     }
@@ -143,7 +142,7 @@ class PagesController extends Controller
 
         return Inertia::render('Pages/Edit', [
             'page' => $pageBuilder->compile(),
-            'navigation' => Navigation::tree(),
+
             'pageData' => $page,
             'templates' => $this->getAvailableTemplates(),
         ]);
@@ -214,7 +213,7 @@ class PagesController extends Controller
 
         return Inertia::render('Pages/Builder', [
             'page' => $pageBuilder->compile(),
-            'navigation' => Navigation::tree(),
+
             'pageData' => $page,
             'sections' => $this->getAvailableSections(),
         ]);

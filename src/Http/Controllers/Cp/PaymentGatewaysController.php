@@ -6,7 +6,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
-use Shopper\CP\Navigation;
 use Shopper\CP\Page;
 use Shopper\Http\Controllers\Controller;
 use Shopper\Models\PaymentGateway;
@@ -38,7 +37,7 @@ class PaymentGatewaysController extends Controller
 
         return Inertia::render('settings-payment-gateways', [
             'page' => $page->compile(),
-            'navigation' => Navigation::tree(),
+
             'gateways' => $gateways,
             'providers' => $providers,
             'filters' => $filters,
@@ -98,7 +97,7 @@ class PaymentGatewaysController extends Controller
 
         return Inertia::render('payment-gateway-show', [
             'page' => $page->compile(),
-            'navigation' => Navigation::tree(),
+
             'gateway' => $paymentGateway,
         ]);
     }

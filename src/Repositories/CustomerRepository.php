@@ -234,6 +234,7 @@ class CustomerRepository extends BaseRepository
     public function findWithRelations(int $id, array $relations = []): ?Customer
     {
         $query = $this->model->with($relations);
+
         return $query->find($id);
     }
 
@@ -243,7 +244,8 @@ class CustomerRepository extends BaseRepository
     public function canDelete(int $id): bool
     {
         $customer = $this->model->find($id);
-        return $customer && !$customer->orders()->exists();
+
+        return $customer && ! $customer->orders()->exists();
     }
 
     /**
@@ -252,6 +254,7 @@ class CustomerRepository extends BaseRepository
     public function bulkUpdate(array $ids, array $data): int
     {
         $this->clearCache();
+
         return $this->model->whereIn('id', $ids)->update($data);
     }
 
@@ -262,14 +265,14 @@ class CustomerRepository extends BaseRepository
     {
         $this->clearCache();
         $count = 0;
-        
+
         foreach ($ids as $id) {
             if ($this->canDelete($id)) {
                 $this->model->find($id)->delete();
                 $count++;
             }
         }
-        
+
         return $count;
     }
 

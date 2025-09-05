@@ -235,8 +235,8 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
     public function canDelete(int $id): bool
     {
         $product = $this->find($id);
-        
-        if (!$product) {
+
+        if (! $product) {
             return false;
         }
 
@@ -261,7 +261,7 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
     public function bulkDelete(array $ids): int
     {
         $count = 0;
-        
+
         foreach ($ids as $id) {
             if ($this->canDelete($id)) {
                 $this->delete($id);

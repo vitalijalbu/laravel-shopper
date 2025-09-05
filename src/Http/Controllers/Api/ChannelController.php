@@ -28,7 +28,6 @@ class ChannelController extends Controller
             });
         }
 
-
         // Default filter
         if ($request->has('is_default')) {
             $query->where('is_default', $request->boolean('is_default'));

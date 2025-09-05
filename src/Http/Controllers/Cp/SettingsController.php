@@ -6,7 +6,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
-use Shopper\CP\Navigation;
 use Shopper\CP\Page;
 use Shopper\Http\Controllers\Controller;
 use Shopper\Repositories\PaymentGatewayRepository;
@@ -50,7 +49,7 @@ class SettingsController extends Controller
 
         return Inertia::render('settings-index', [
             'page' => $page->compile(),
-            'navigation' => Navigation::tree(),
+
             'stats' => $stats,
         ]);
     }
@@ -121,7 +120,7 @@ class SettingsController extends Controller
 
         return Inertia::render('settings-general', [
             'page' => $page->compile(),
-            'navigation' => Navigation::tree(),
+
             'settings' => $settings,
         ]);
     }
@@ -177,7 +176,7 @@ class SettingsController extends Controller
 
         return Inertia::render('settings-checkout', [
             'page' => $page->compile(),
-            'navigation' => Navigation::tree(),
+
             'settings' => $settings,
         ]);
     }
@@ -227,7 +226,7 @@ class SettingsController extends Controller
 
         return Inertia::render('settings-email', [
             'page' => $page->compile(),
-            'navigation' => Navigation::tree(),
+
             'settings' => $settings,
         ]);
     }

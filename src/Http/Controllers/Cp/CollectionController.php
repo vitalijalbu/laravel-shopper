@@ -7,7 +7,6 @@ namespace Shopper\Http\Controllers\CP;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Inertia\Response;
-use Shopper\CP\Navigation;
 use Shopper\CP\Page;
 use Shopper\Http\Requests\CP\StoreCollectionRequest;
 use Shopper\Http\Requests\CP\UpdateCollectionRequest;
@@ -50,7 +49,7 @@ class CollectionController extends BaseController
 
         return $this->inertiaResponse('collections/Index', [
             'page' => $page->compile(),
-            'navigation' => Navigation::tree(),
+            
             'collections' => $collections->through(fn ($collection) => new CollectionResource($collection)),
             'filters' => $filters,
         ]);
@@ -75,7 +74,7 @@ class CollectionController extends BaseController
 
         return $this->inertiaResponse('collections/Create', [
             'page' => $page->compile(),
-            'navigation' => Navigation::tree(),
+            
         ]);
     }
 
@@ -122,7 +121,7 @@ class CollectionController extends BaseController
 
         return $this->inertiaResponse('collections/Show', [
             'page' => $page->compile(),
-            'navigation' => Navigation::tree(),
+            
             'collection' => new CollectionResource($collection),
         ]);
     }
@@ -155,7 +154,7 @@ class CollectionController extends BaseController
 
         return $this->inertiaResponse('collections/Edit', [
             'page' => $page->compile(),
-            'navigation' => Navigation::tree(),
+            
             'collection' => new CollectionResource($collection),
         ]);
     }

@@ -10,6 +10,7 @@ class CacheService
 {
     // Cache TTL constants (in seconds)
     const PRODUCT_TTL = 3600;       // 1 hour
+
     const BRAND_TTL = 7200;         // 2 hours
 
     const COLLECTION_TTL = 3600;     // 1 hour

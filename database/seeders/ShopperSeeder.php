@@ -6,7 +6,6 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Shopper\Models\Brand;
-use Shopper\Models\Category;
 use Shopper\Models\Channel;
 use Shopper\Models\Country;
 use Shopper\Models\Currency;
@@ -116,7 +115,6 @@ class ShopperSeeder extends Seeder
         foreach ($customerGroups as $group) {
             CustomerGroup::firstOrCreate(['name' => $group['name']], $group);
         }
-
 
         // Seed basic brands
         $this->command->info('🏷️ Seeding brands...');

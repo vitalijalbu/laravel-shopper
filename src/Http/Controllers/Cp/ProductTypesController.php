@@ -4,7 +4,6 @@ namespace Shopper\Http\Controllers\Cp;
 
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Shopper\CP\Navigation;
 use Shopper\CP\Page;
 use Shopper\Http\Controllers\Controller;
 use Shopper\Http\Requests\StoreProductTypeRequest;
@@ -42,7 +41,6 @@ class ProductTypesController extends Controller
                 });
             }
 
-
             // Sorting
             $sortBy = $request->get('sort_by', 'sort_order');
             $sortDirection = $request->get('sort_direction', 'asc');
@@ -63,7 +61,7 @@ class ProductTypesController extends Controller
 
         return Inertia::render('product-types/Index', [
             'page' => $page->compile(),
-            'navigation' => Navigation::tree(),
+
         ]);
     }
 
@@ -85,7 +83,7 @@ class ProductTypesController extends Controller
 
         return Inertia::render('product-types/Create', [
             'page' => $page->compile(),
-            'navigation' => Navigation::tree(),
+
         ]);
     }
 
@@ -139,7 +137,7 @@ class ProductTypesController extends Controller
 
         return Inertia::render('product-types/Show', [
             'page' => $page->compile(),
-            'navigation' => Navigation::tree(),
+
             'productType' => new ProductTypeResource($productType),
         ]);
     }
@@ -166,7 +164,7 @@ class ProductTypesController extends Controller
 
         return Inertia::render('product-types/Edit', [
             'page' => $page->compile(),
-            'navigation' => Navigation::tree(),
+
             'productType' => new ProductTypeResource($productType),
         ]);
     }

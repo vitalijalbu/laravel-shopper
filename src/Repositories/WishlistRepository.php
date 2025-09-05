@@ -13,7 +13,7 @@ class WishlistRepository extends BaseRepository
 
     protected function makeModel(): \Illuminate\Database\Eloquent\Model
     {
-        return new Wishlist();
+        return new Wishlist;
     }
 
     /**

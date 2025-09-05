@@ -101,6 +101,15 @@ class HandleInertiaRequests
                     'logo_dark' => config('shopper.cp.branding.logo_dark'),
                     'favicon' => config('shopper.cp.branding.favicon'),
                 ],
+                'navigation' => function () {
+                    try {
+                        return \Shopper\CP\Navigation::tree();
+                    } catch (\Exception $e) {
+                        Log::warning('Navigation generation failed', ['error' => $e->getMessage()]);
+
+                        return ['sections' => [], 'items' => []];
+                    }
+                },
             ],
         ]);
 

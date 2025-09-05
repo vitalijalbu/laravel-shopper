@@ -52,7 +52,7 @@ class StoreBrandRequest extends FormRequest
 
     public function prepareForValidation(): void
     {
-        if (!$this->filled('slug') && $this->filled('name')) {
+        if (! $this->filled('slug') && $this->filled('name')) {
             $this->merge([
                 'slug' => str($this->name)->slug()->toString(),
             ]);

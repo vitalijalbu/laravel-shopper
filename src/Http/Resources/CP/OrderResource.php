@@ -24,7 +24,7 @@ class OrderResource extends JsonResource
             'currency' => $this->currency,
             'notes' => $this->notes,
             'tags' => $this->tags,
-            
+
             // Financial fields
             'subtotal' => $this->subtotal,
             'tax_total' => $this->tax_total,
@@ -36,13 +36,13 @@ class OrderResource extends JsonResource
             'formatted_shipping_total' => $this->formatted_shipping_total,
             'formatted_discount_total' => $this->formatted_discount_total,
             'formatted_total' => $this->formatted_total,
-            
+
             // Timestamps
             'created_at' => $this->created_at?->format('Y-m-d H:i:s'),
             'updated_at' => $this->updated_at?->format('Y-m-d H:i:s'),
             'shipped_at' => $this->shipped_at?->format('Y-m-d H:i:s'),
             'delivered_at' => $this->delivered_at?->format('Y-m-d H:i:s'),
-            
+
             // Customer
             'customer' => $this->whenLoaded('customer', function () {
                 return [
@@ -55,7 +55,7 @@ class OrderResource extends JsonResource
                     'avatar_url' => $this->customer->avatar_url,
                 ];
             }),
-            
+
             // Order items
             'items' => $this->whenLoaded('items', function () {
                 return $this->items->map(function ($item) {
@@ -82,7 +82,7 @@ class OrderResource extends JsonResource
                     ];
                 });
             }),
-            
+
             // Addresses
             'shipping_address' => $this->whenLoaded('shippingAddress', function () {
                 return [
@@ -101,7 +101,7 @@ class OrderResource extends JsonResource
                     'formatted_address' => $this->shippingAddress->formatted_address,
                 ];
             }),
-            
+
             'billing_address' => $this->whenLoaded('billingAddress', function () {
                 return [
                     'id' => $this->billingAddress->id,
@@ -119,7 +119,7 @@ class OrderResource extends JsonResource
                     'formatted_address' => $this->billingAddress->formatted_address,
                 ];
             }),
-            
+
             // Payments
             'payments' => $this->whenLoaded('payments', function () {
                 return $this->payments->map(function ($payment) {
@@ -134,7 +134,7 @@ class OrderResource extends JsonResource
                     ];
                 });
             }),
-            
+
             // Fulfillments
             'fulfillments' => $this->whenLoaded('fulfillments', function () {
                 return $this->fulfillments->map(function ($fulfillment) {
@@ -155,7 +155,7 @@ class OrderResource extends JsonResource
                     ];
                 });
             }),
-            
+
             // Refunds
             'refunds' => $this->whenLoaded('refunds', function () {
                 return $this->refunds->map(function ($refund) {
@@ -169,13 +169,13 @@ class OrderResource extends JsonResource
                     ];
                 });
             }),
-            
+
             // Counts
             'items_count' => $this->whenCounted('items'),
             'payments_count' => $this->whenCounted('payments'),
             'fulfillments_count' => $this->whenCounted('fulfillments'),
             'refunds_count' => $this->whenCounted('refunds'),
-            
+
             // Computed values
             'customer_name' => $this->customer_name,
             'is_paid' => $this->is_paid,
@@ -187,12 +187,12 @@ class OrderResource extends JsonResource
             'can_be_cancelled' => $this->can_be_cancelled,
             'can_be_fulfilled' => $this->can_be_fulfilled,
             'can_be_refunded' => $this->can_be_refunded,
-            
+
             // URLs
             'admin_url' => route('shopper.orders.show', $this->id),
             'edit_url' => route('shopper.orders.edit', $this->id),
             'invoice_url' => route('shopper.orders.invoice', $this->id),
-            
+
             // Shipping info
             'shipping_method_name' => $this->shipping_method_name,
             'shipping_method_price' => $this->shipping_method_price,
@@ -200,7 +200,7 @@ class OrderResource extends JsonResource
             'tracking_number' => $this->tracking_number,
             'tracking_company' => $this->tracking_company,
             'tracking_url' => $this->tracking_url,
-            
+
             // Financial summary
             'total_paid' => $this->total_paid,
             'total_refunded' => $this->total_refunded,

@@ -18,7 +18,7 @@ class StoreCustomerRequest extends FormRequest
     public function rules(): array
     {
         $customerId = $this->route('customer')?->id;
-        
+
         return [
             'first_name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],

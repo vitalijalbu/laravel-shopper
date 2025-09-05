@@ -4,7 +4,6 @@ namespace Shopper\Http\Controllers\Cp;
 
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Shopper\CP\Navigation;
 use Shopper\CP\Page;
 use Shopper\Data\ProductDto;
 use Shopper\DataTable\ProductDataTable;
@@ -50,7 +49,7 @@ class ProductsController extends Controller
 
         return Inertia::render('products/index', [
             'page' => $page->compile(),
-            'navigation' => Navigation::tree(),
+
             'dataTable' => $dataTable->getConfig(),
             'bulkActions' => $dataTable->getBulkActions(),
         ]);
@@ -89,7 +88,7 @@ class ProductsController extends Controller
 
         return Inertia::render('products/Create', [
             'page' => $page->compile(),
-            'navigation' => Navigation::tree(),
+
             'schema' => $schema->toArray(),
             'categories' => Category::select('id', 'name')->get(),
             'brands' => Brand::select('id', 'name')->get(),
@@ -162,7 +161,7 @@ class ProductsController extends Controller
 
         return Inertia::render('products/Show', [
             'page' => $page->compile(),
-            'navigation' => Navigation::tree(),
+
             'product' => new ProductResource($product),
         ]);
     }
@@ -205,7 +204,7 @@ class ProductsController extends Controller
 
         return Inertia::render('products/Edit', [
             'page' => $page->compile(),
-            'navigation' => Navigation::tree(),
+
             'schema' => $schema->toArray(),
             'product' => new ProductResource($product),
             'categories' => Category::select('id', 'name')->get(),

@@ -6,12 +6,11 @@ namespace Shopper\Http\Controllers\Cp;
 
 use Illuminate\Http\Request;
 use Inertia\Response;
-use Shopper\CP\Navigation;
 use Shopper\CP\Page;
 use Shopper\Http\Controllers\CP\BaseController;
+use Shopper\Models\Customer;
 use Shopper\Models\Order;
 use Shopper\Models\Product;
-use Shopper\Models\Customer;
 
 class DashboardController extends BaseController
 {
@@ -32,7 +31,7 @@ class DashboardController extends BaseController
 
         return $this->inertiaResponse('dashboard/Index', [
             'page' => $page->compile(),
-            'navigation' => Navigation::tree(),
+
             'stats' => $this->getDashboardStats(),
             'charts' => $this->getChartData(),
             'recent_orders' => $this->getRecentOrders(),
@@ -75,16 +74,16 @@ class DashboardController extends BaseController
                 'value' => $totalOrders,
                 'this_month' => $ordersThisMonth,
                 'last_month' => $ordersLastMonth,
-                'change' => $ordersLastMonth > 0 
+                'change' => $ordersLastMonth > 0
                     ? round((($ordersThisMonth - $ordersLastMonth) / $ordersLastMonth) * 100, 1)
                     : 0,
             ],
             'total_revenue' => [
                 'value' => $totalRevenue,
-                'formatted' => number_format($totalRevenue, 2) . ' €',
+                'formatted' => number_format($totalRevenue, 2).' €',
                 'this_month' => $revenueThisMonth,
                 'last_month' => $revenueLastMonth,
-                'change' => $revenueLastMonth > 0 
+                'change' => $revenueLastMonth > 0
                     ? round((($revenueThisMonth - $revenueLastMonth) / $revenueLastMonth) * 100, 1)
                     : 0,
             ],
@@ -92,7 +91,7 @@ class DashboardController extends BaseController
                 'value' => $totalCustomers,
                 'this_month' => $customersThisMonth,
                 'last_month' => $customersLastMonth,
-                'change' => $customersLastMonth > 0 
+                'change' => $customersLastMonth > 0
                     ? round((($customersThisMonth - $customersLastMonth) / $customersLastMonth) * 100, 1)
                     : 0,
             ],
@@ -104,8 +103,8 @@ class DashboardController extends BaseController
             ],
             'average_order_value' => [
                 'value' => $totalOrders > 0 ? $totalRevenue / $totalOrders : 0,
-                'formatted' => $totalOrders > 0 
-                    ? number_format($totalRevenue / $totalOrders, 2) . ' €'
+                'formatted' => $totalOrders > 0
+                    ? number_format($totalRevenue / $totalOrders, 2).' €'
                     : '0 €',
             ],
         ];
@@ -118,6 +117,7 @@ class DashboardController extends BaseController
     {
         $days = collect(range(0, 29))->map(function ($day) {
             $date = now()->subDays($day);
+
             return [
                 'date' => $date->format('Y-m-d'),
                 'orders' => Order::whereDate('created_at', $date)->count(),
@@ -154,7 +154,7 @@ class DashboardController extends BaseController
                     'number' => $order->number,
                     'customer_name' => $order->customer?->full_name ?? 'Guest',
                     'total' => $order->total,
-                    'formatted_total' => number_format($order->total, 2) . ' €',
+                    'formatted_total' => number_format($order->total, 2).' €',
                     'status' => $order->status,
                     'created_at' => $order->created_at->format('Y-m-d H:i'),
                     'url' => route('shopper.orders.show', $order),
@@ -202,7 +202,7 @@ class DashboardController extends BaseController
                     'id' => $product->id,
                     'name' => $product->name,
                     'price' => $product->price,
-                    'formatted_price' => number_format($product->price, 2) . ' €',
+                    'formatted_price' => number_format($product->price, 2).' €',
                     'image_url' => $product->image_url,
                     'sales' => rand(10, 100), // TODO: Calculate real sales
                     'url' => route('shopper.products.show', $product),
@@ -222,11 +222,11 @@ class DashboardController extends BaseController
         $recentOrders = Order::with('customer')->latest()->limit(3)->get();
         foreach ($recentOrders as $order) {
             $activities[] = [
-                'id' => 'order_' . $order->id,
+                'id' => 'order_'.$order->id,
                 'type' => 'order',
                 'icon' => 'shopping-bag',
                 'title' => 'New order received',
-                'description' => "Order #{$order->number} from " . 
+                'description' => "Order #{$order->number} from ".
                     ($order->customer?->full_name ?? 'Guest'),
                 'time' => $order->created_at->diffForHumans(),
                 'url' => route('shopper.orders.show', $order),
@@ -237,11 +237,11 @@ class DashboardController extends BaseController
         $recentCustomers = Customer::latest()->limit(2)->get();
         foreach ($recentCustomers as $customer) {
             $activities[] = [
-                'id' => 'customer_' . $customer->id,
+                'id' => 'customer_'.$customer->id,
                 'type' => 'customer',
                 'icon' => 'user-plus',
                 'title' => 'New customer registered',
-                'description' => $customer->full_name . ' (' . $customer->email . ')',
+                'description' => $customer->full_name.' ('.$customer->email.')',
                 'time' => $customer->created_at->diffForHumans(),
                 'url' => route('shopper.customers.show', $customer),
             ];
@@ -251,7 +251,7 @@ class DashboardController extends BaseController
         $recentProducts = Product::latest()->limit(2)->get();
         foreach ($recentProducts as $product) {
             $activities[] = [
-                'id' => 'product_' . $product->id,
+                'id' => 'product_'.$product->id,
                 'type' => 'product',
                 'icon' => 'package',
                 'title' => 'Product updated',
