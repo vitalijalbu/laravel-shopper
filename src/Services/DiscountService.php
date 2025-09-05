@@ -37,7 +37,7 @@ class DiscountService
         // Soft delete or hard delete based on applications
         if ($discount->applications()->count() > 0) {
             // If discount has been used, just disable it
-            $discount->update(['is_enabled' => false]);
+            $discount->update(['status' => 'inactive']);
 
             return true;
         }
@@ -213,7 +213,7 @@ class DiscountService
 
     public function getActiveDiscounts(): Collection
     {
-        return Discount::where('is_enabled', true)
+        return Discount::where('status', 'active')
             ->where(function ($query) {
                 $query->whereNull('starts_at')
                     ->orWhere('starts_at', '<=', now());

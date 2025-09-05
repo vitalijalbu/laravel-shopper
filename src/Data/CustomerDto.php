@@ -16,7 +16,7 @@ class CustomerDto extends BaseDto
         public ?string $gender = null,
         public ?DateTime $email_verified_at = null,
         public ?string $password = null,
-        public bool $is_enabled = true,
+        public string $status = 'active',
         public ?DateTime $last_login_at = null,
         public ?string $last_login_ip = null,
         public ?string $avatar = null,
@@ -40,7 +40,7 @@ class CustomerDto extends BaseDto
             gender: $data['gender'] ?? null,
             email_verified_at: isset($data['email_verified_at']) ? new DateTime($data['email_verified_at']) : null,
             password: $data['password'] ?? null,
-            is_enabled: filter_var($data['is_enabled'] ?? true, FILTER_VALIDATE_BOOLEAN),
+            status: $data['status'] ?? 'active',
             last_login_at: isset($data['last_login_at']) ? new DateTime($data['last_login_at']) : null,
             last_login_ip: $data['last_login_ip'] ?? null,
             avatar: $data['avatar'] ?? null,
@@ -65,7 +65,7 @@ class CustomerDto extends BaseDto
             'gender' => $this->gender,
             'email_verified_at' => $this->email_verified_at?->format('Y-m-d H:i:s'),
             'password' => $this->password,
-            'is_enabled' => $this->is_enabled,
+            'status' => $this->status,
             'last_login_at' => $this->last_login_at?->format('Y-m-d H:i:s'),
             'last_login_ip' => $this->last_login_ip,
             'avatar' => $this->avatar,
@@ -148,7 +148,7 @@ class CustomerDto extends BaseDto
      */
     public function isEnabled(): bool
     {
-        return $this->is_enabled;
+        return $this->status === 'active';
     }
 
     /**

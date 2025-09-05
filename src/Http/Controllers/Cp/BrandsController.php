@@ -70,7 +70,7 @@ class BrandController extends Controller
             'slug' => 'nullable|string|max:255|unique:brands',
             'description' => 'nullable|string|max:1000',
             'website' => 'nullable|url|max:255',
-            'is_enabled' => 'boolean',
+            'status' => 'string|in:active,inactive',
             'seo' => 'array',
             'meta' => 'array',
         ]);
@@ -177,7 +177,7 @@ class BrandController extends Controller
             'slug' => "nullable|string|max:255|unique:brands,slug,{$brand->id}",
             'description' => 'nullable|string|max:1000',
             'website' => 'nullable|url|max:255',
-            'is_enabled' => 'boolean',
+            'status' => 'string|in:active,inactive',
             'seo' => 'array',
             'meta' => 'array',
         ]);
@@ -247,7 +247,7 @@ class BrandController extends Controller
      */
     protected function bulkEnable($brands)
     {
-        $count = $brands->update(['is_enabled' => true]);
+        $count = $brands->update(['status' => 'active']);
 
         return response()->json(['message' => "Enabled {$count} brands"]);
     }
@@ -257,7 +257,7 @@ class BrandController extends Controller
      */
     protected function bulkDisable($brands)
     {
-        $count = $brands->update(['is_enabled' => false]);
+        $count = $brands->update(['status' => 'inactive']);
 
         return response()->json(['message' => "Disabled {$count} brands"]);
     }

@@ -17,7 +17,7 @@ class CustomerDataTable extends BaseDataTable
             ->withCount(['orders', 'wishlists'])
             ->select([
                 'id', 'first_name', 'last_name', 'email', 'phone',
-                'is_enabled', 'last_login_at', 'created_at', 'updated_at',
+                'status', 'last_login_at', 'created_at', 'updated_at',
             ]);
     }
 
@@ -27,10 +27,10 @@ class CustomerDataTable extends BaseDataTable
     protected function setupFilters(): void
     {
         $this->addFilter(
-            (new SelectFilter('is_enabled', 'Status'))
+            (new SelectFilter('status', 'Status'))
                 ->options([
-                    ['value' => 1, 'label' => 'Enabled'],
-                    ['value' => 0, 'label' => 'Disabled'],
+                    ['value' => 'active', 'label' => 'Active'],
+                    ['value' => 'inactive', 'label' => 'Inactive'],
                 ])
         );
 
@@ -101,16 +101,16 @@ class CustomerDataTable extends BaseDataTable
             },
         ]);
 
-        $this->addColumn('is_enabled', 'Status', [
+        $this->addColumn('status', 'Status', [
             'sortable' => true,
             'type' => 'badge',
             'variants' => [
-                1 => 'success',
-                0 => 'danger',
+                'active' => 'success',
+                'inactive' => 'danger',
             ],
             'labels' => [
-                1 => 'Enabled',
-                0 => 'Disabled',
+                'active' => 'Active',
+                'inactive' => 'Inactive',
             ],
         ]);
 
@@ -148,7 +148,7 @@ class CustomerDataTable extends BaseDataTable
                     'icon' => 'ban',
                     'action' => 'disable',
                     'condition' => function ($customer) {
-                        return $customer->is_enabled;
+                        return $customer->status === 'active';
                     },
                 ],
                 [
@@ -156,7 +156,7 @@ class CustomerDataTable extends BaseDataTable
                     'icon' => 'check',
                     'action' => 'enable',
                     'condition' => function ($customer) {
-                        return ! $customer->is_enabled;
+                        return $customer->status !== 'active';
                     },
                 ],
                 [

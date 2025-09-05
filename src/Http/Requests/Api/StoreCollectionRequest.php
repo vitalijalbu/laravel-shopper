@@ -25,7 +25,7 @@ class StoreCollectionRequest extends FormRequest
             'type' => 'required|in:manual,automatic',
             'conditions' => 'nullable|array',
             'sort_order' => 'nullable|integer|min:0',
-            'is_enabled' => 'boolean',
+            'status' => 'string|in:active,inactive',
             'published_at' => 'nullable|date',
             'seo_title' => 'nullable|string|max:255',
             'seo_description' => 'nullable|string|max:500',

@@ -11,7 +11,7 @@ class CategoryDto extends BaseDto
         public ?string $description = null,
         public ?int $parent_id = null,
         public int $sort_order = 0,
-        public bool $is_enabled = true,
+        public string $status = 'active',
         public array $seo = [],
         public array $meta = [],
         public ?string $created_at = null,
@@ -30,7 +30,7 @@ class CategoryDto extends BaseDto
             description: $data['description'] ?? null,
             parent_id: isset($data['parent_id']) ? (int) $data['parent_id'] : null,
             sort_order: (int) ($data['sort_order'] ?? 0),
-            is_enabled: filter_var($data['is_enabled'] ?? true, FILTER_VALIDATE_BOOLEAN),
+            status: $data['status'] ?? 'active',
             seo: $data['seo'] ?? [],
             meta: $data['meta'] ?? [],
             created_at: $data['created_at'] ?? null,
@@ -50,7 +50,7 @@ class CategoryDto extends BaseDto
             'description' => $this->description,
             'parent_id' => $this->parent_id,
             'sort_order' => $this->sort_order,
-            'is_enabled' => $this->is_enabled,
+            'status' => $this->status,
             'seo' => $this->seo,
             'meta' => $this->meta,
             'created_at' => $this->created_at,
@@ -93,7 +93,7 @@ class CategoryDto extends BaseDto
      */
     public function isEnabled(): bool
     {
-        return $this->is_enabled;
+        return $this->status === 'active';
     }
 
     /**

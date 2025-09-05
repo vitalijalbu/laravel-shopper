@@ -33,7 +33,7 @@ class UpdateCustomerRequest extends FormRequest
             'phone' => 'nullable|string|max:20',
             'date_of_birth' => 'nullable|date|before:today',
             'gender' => 'nullable|in:male,female,other',
-            'is_enabled' => 'boolean',
+            'status' => 'string|in:active,inactive',
             'accepts_marketing' => 'boolean',
             'customer_group_id' => 'nullable|integer|exists:customer_groups,id',
             'notes' => 'nullable|string',

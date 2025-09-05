@@ -23,7 +23,7 @@ class StoreCategoryRequest extends FormRequest
             'name' => 'required|string|max:255',
             'parent_id' => 'nullable|integer|exists:categories,id',
             'description' => 'nullable|string',
-            'is_enabled' => 'boolean',
+            'status' => 'string|in:active,inactive',
             'sort_order' => 'nullable|integer|min:0',
             'seo_title' => 'nullable|string|max:255',
             'seo_description' => 'nullable|string|max:500',

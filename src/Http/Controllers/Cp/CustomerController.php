@@ -33,9 +33,9 @@ class CustomerController extends Controller
         // Status filter
         if ($status = $request->get('status')) {
             if ($status === 'active') {
-                $query->where('is_enabled', true);
+                $query->where('status', 'active');
             } elseif ($status === 'inactive') {
-                $query->where('is_enabled', false);
+                $query->where('status', 'inactive');
             } elseif ($status === 'verified') {
                 $query->whereNotNull('email_verified_at');
             } elseif ($status === 'unverified') {
@@ -66,7 +66,6 @@ class CustomerController extends Controller
             'filters' => $request->only(['search', 'status', 'date_from', 'date_to', 'sort_by', 'sort_direction']),
             'stats' => [
                 'total' => Customer::count(),
-                'active' => Customer::where('is_enabled', true)->count(),
                 'verified' => Customer::whereNotNull('email_verified_at')->count(),
                 'new_this_month' => Customer::whereMonth('created_at', now()->month)->count(),
             ],
@@ -111,7 +110,7 @@ class CustomerController extends Controller
             'date_of_birth' => ['nullable', 'date'],
             'gender' => ['nullable', 'in:male,female,other'],
             'password' => ['nullable', 'string', 'min:8', 'confirmed'],
-            'is_enabled' => ['boolean'],
+            'status' => ['string', 'in:active,inactive'],
             'meta' => ['nullable', 'array'],
         ]);
 
@@ -192,7 +191,7 @@ class CustomerController extends Controller
             'date_of_birth' => ['nullable', 'date'],
             'gender' => ['nullable', 'in:male,female,other'],
             'password' => ['nullable', 'string', 'min:8', 'confirmed'],
-            'is_enabled' => ['boolean'],
+            'status' => ['string', 'in:active,inactive'],
             'meta' => ['nullable', 'array'],
         ]);
 
@@ -266,11 +265,11 @@ class CustomerController extends Controller
                 $message = 'Selected customers deleted successfully.';
                 break;
             case 'enable':
-                $customers->update(['is_enabled' => true]);
+                $customers->update(['status' => 'active']);
                 $message = 'Selected customers enabled successfully.';
                 break;
             case 'disable':
-                $customers->update(['is_enabled' => false]);
+                $customers->update(['status' => 'inactive']);
                 $message = 'Selected customers disabled successfully.';
                 break;
             case 'verify':

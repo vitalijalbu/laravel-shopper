@@ -74,7 +74,7 @@ class CategoriesController extends Controller
             'description' => 'nullable|string|max:1000',
             'parent_id' => 'nullable|exists:categories,id',
             'sort_order' => 'integer|min:0',
-            'is_enabled' => 'boolean',
+            'status' => 'string|in:active,inactive',
             'seo' => 'array',
             'meta' => 'array',
         ]);
@@ -184,7 +184,7 @@ class CategoriesController extends Controller
             'description' => 'nullable|string|max:1000',
             'parent_id' => "nullable|exists:categories,id|not_in:{$category->id}",
             'sort_order' => 'integer|min:0',
-            'is_enabled' => 'boolean',
+            'status' => 'string|in:active,inactive',
             'seo' => 'array',
             'meta' => 'array',
         ]);
@@ -260,7 +260,7 @@ class CategoriesController extends Controller
      */
     protected function bulkEnable($categories)
     {
-        $count = $categories->update(['is_enabled' => true]);
+        $count = $categories->update(['status' => 'active']);
 
         return response()->json(['message' => "Enabled {$count} categories"]);
     }
@@ -270,7 +270,7 @@ class CategoriesController extends Controller
      */
     protected function bulkDisable($categories)
     {
-        $count = $categories->update(['is_enabled' => false]);
+        $count = $categories->update(['status' => 'inactive']);
 
         return response()->json(['message' => "Disabled {$count} categories"]);
     }

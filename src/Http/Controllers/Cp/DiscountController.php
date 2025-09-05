@@ -26,9 +26,9 @@ class DiscountController extends Controller
         // Apply filters
         if ($request->filled('status')) {
             if ($request->status === 'active') {
-                $query->where('is_enabled', true);
+                $query->where('status', 'active');
             } elseif ($request->status === 'inactive') {
-                $query->where('is_enabled', false);
+                $query->where('status', 'inactive');
             }
         }
 
@@ -129,7 +129,7 @@ class DiscountController extends Controller
     {
         return [
             'total_discounts' => Discount::count(),
-            'active_discounts' => Discount::where('is_enabled', true)->count(),
+            'active_discounts' => Discount::where('status', 'active')->count(),
             'total_applications' => \Shopper\Models\DiscountApplication::count(),
             'total_discount_amount' => \Shopper\Models\DiscountApplication::sum('discount_amount'),
         ];

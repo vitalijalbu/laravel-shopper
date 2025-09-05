@@ -10,7 +10,7 @@ class BrandDto extends BaseDto
         public string $slug = '',
         public ?string $description = null,
         public ?string $website = null,
-        public bool $is_enabled = true,
+        public string $status = 'active',
         public array $seo = [],
         public array $meta = [],
         public ?string $created_at = null,
@@ -28,7 +28,7 @@ class BrandDto extends BaseDto
             slug: $data['slug'] ?? '',
             description: $data['description'] ?? null,
             website: $data['website'] ?? null,
-            is_enabled: filter_var($data['is_enabled'] ?? true, FILTER_VALIDATE_BOOLEAN),
+            status: $data['status'] ?? 'active',
             seo: $data['seo'] ?? [],
             meta: $data['meta'] ?? [],
             created_at: $data['created_at'] ?? null,
@@ -47,7 +47,7 @@ class BrandDto extends BaseDto
             'slug' => $this->slug ?: str($this->name)->slug()->toString(),
             'description' => $this->description,
             'website' => $this->website,
-            'is_enabled' => $this->is_enabled,
+            'status' => $this->status,
             'seo' => $this->seo,
             'meta' => $this->meta,
             'created_at' => $this->created_at,
@@ -86,7 +86,7 @@ class BrandDto extends BaseDto
      */
     public function isEnabled(): bool
     {
-        return $this->is_enabled;
+        return $this->status === 'active';
     }
 
     /**

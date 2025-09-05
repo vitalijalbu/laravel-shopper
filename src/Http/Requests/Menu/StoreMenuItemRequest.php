@@ -21,7 +21,7 @@ class StoreMenuItemRequest extends FormRequest
             'reference_type' => 'nullable|string',
             'reference_id' => 'nullable|integer',
             'data' => 'nullable|array',
-            'is_enabled' => 'boolean',
+            'status' => 'string|in:active,inactive',
             'opens_in_new_window' => 'boolean',
             'css_class' => 'nullable|string|max:255',
         ];

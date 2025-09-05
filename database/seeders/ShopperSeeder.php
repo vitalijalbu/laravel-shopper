@@ -117,18 +117,6 @@ class ShopperSeeder extends Seeder
             CustomerGroup::firstOrCreate(['name' => $group['name']], $group);
         }
 
-        // Seed basic categories
-        $this->command->info('📁 Seeding categories...');
-        $categories = [
-            ['name' => 'Electronics', 'slug' => 'electronics', 'description' => 'Electronic devices and accessories', 'site_id' => $mainSite->id],
-            ['name' => 'Clothing', 'slug' => 'clothing', 'description' => 'Fashion and apparel', 'site_id' => $mainSite->id],
-            ['name' => 'Books', 'slug' => 'books', 'description' => 'Books and literature', 'site_id' => $mainSite->id],
-            ['name' => 'Home & Garden', 'slug' => 'home-garden', 'description' => 'Home and garden products', 'site_id' => $mainSite->id],
-        ];
-
-        foreach ($categories as $category) {
-            Category::firstOrCreate(['slug' => $category['slug'], 'site_id' => $category['site_id']], $category);
-        }
 
         // Seed basic brands
         $this->command->info('🏷️ Seeding brands...');

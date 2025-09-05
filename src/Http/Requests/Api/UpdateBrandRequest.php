@@ -38,7 +38,7 @@ class UpdateBrandRequest extends FormRequest
             'description' => 'nullable|string',
             'logo' => 'nullable|string',
             'website' => 'nullable|url',
-            'is_enabled' => 'boolean',
+            'status' => 'string|in:active,inactive',
             'is_featured' => 'boolean',
             'seo_title' => 'nullable|string|max:255',
             'seo_description' => 'nullable|string|max:500',

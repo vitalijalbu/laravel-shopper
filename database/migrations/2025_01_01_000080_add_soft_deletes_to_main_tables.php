@@ -24,15 +24,6 @@ return new class extends Migration
             }
         });
 
-        // Categories
-        if (Schema::hasTable('categories')) {
-            Schema::table('categories', function (Blueprint $table) {
-                if (! Schema::hasColumn('categories', 'deleted_at')) {
-                    $table->softDeletes();
-                }
-            });
-        }
-
         // Product Types
         if (Schema::hasTable('product_types')) {
             Schema::table('product_types', function (Blueprint $table) {
@@ -112,7 +103,7 @@ return new class extends Migration
     public function down(): void
     {
         $tables = [
-            'customers', 'brands', 'categories', 'product_types',
+            'customers', 'brands', 'collections', 'product_types',
             'orders', 'coupons', 'gift_cards', 'wishlists',
             'carts', 'user_groups', 'menus', 'menu_items',
         ];
