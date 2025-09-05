@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Shopper\Contracts;
 
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 use Shopper\Models\Product;
 
@@ -9,7 +12,7 @@ interface ProductRepositoryInterface extends RepositoryInterface
 {
     public function findWithRelations(int $id, array $relations = []): ?Product;
 
-    public function searchPaginated(array $filters, int $perPage = 20): \Illuminate\Pagination\LengthAwarePaginator;
+    public function searchPaginated(array $filters, int $perPage = 20): LengthAwarePaginator;
 
     public function createWithRelations(array $data, array $relations = []): Product;
 

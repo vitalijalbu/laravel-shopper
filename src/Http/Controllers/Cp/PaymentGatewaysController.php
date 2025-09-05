@@ -56,7 +56,6 @@ class PaymentGatewaysController extends Controller
             'description' => 'nullable|string',
             'provider' => 'required|string|max:100',
             'config' => 'nullable|array',
-            'is_enabled' => 'boolean',
             'is_default' => 'boolean',
             'supported_currencies' => 'nullable|array',
             'webhook_url' => 'nullable|url',

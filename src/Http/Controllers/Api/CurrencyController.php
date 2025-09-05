@@ -25,11 +25,6 @@ class CurrencyController extends Controller
             });
         }
 
-        // Status filter
-        if ($request->has('is_enabled')) {
-            $query->where('is_enabled', $request->boolean('is_enabled'));
-        }
-
         // Default filter
         if ($request->has('is_default')) {
             $query->where('is_default', $request->boolean('is_default'));
@@ -71,7 +66,6 @@ class CurrencyController extends Controller
             'rate' => 'required|numeric|min:0',
             'precision' => 'required|integer|min:0|max:8',
             'is_default' => 'boolean',
-            'is_enabled' => 'boolean',
         ]);
 
         // Ensure only one default currency
@@ -125,7 +119,6 @@ class CurrencyController extends Controller
             'rate' => 'required|numeric|min:0',
             'precision' => 'required|integer|min:0|max:8',
             'is_default' => 'boolean',
-            'is_enabled' => 'boolean',
         ]);
 
         try {

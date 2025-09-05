@@ -78,7 +78,6 @@ class ProductTypeController extends Controller
             'name' => 'required|string|max:255|unique:product_types,name',
             'slug' => 'nullable|string|max:255|unique:product_types,slug',
             'description' => 'nullable|string|max:1000',
-            'is_enabled' => 'boolean',
         ]);
 
         if ($validator->fails()) {
@@ -92,7 +91,6 @@ class ProductTypeController extends Controller
                 'name' => $request->name,
                 'slug' => $request->slug ?: Str::slug($request->name),
                 'description' => $request->description,
-                'is_enabled' => $request->boolean('is_enabled', true),
             ];
 
             // Ensure unique slug
@@ -306,10 +304,6 @@ class ProductTypeController extends Controller
     {
         $query = ProductType::select('id', 'name', 'slug');
 
-        // Only enabled by default
-        if (! $request->has('include_disabled')) {
-            $query->where('is_enabled', true);
-        }
 
         $productTypes = $query->orderBy('name')->get();
 

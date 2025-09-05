@@ -3,10 +3,13 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\Route;
+use Shopper\Http\Controllers\Api\CartController;
+use Shopper\Http\Controllers\CP\AddressController;
 use Shopper\Http\Controllers\Cp\AppsController;
 use Shopper\Http\Controllers\Cp\Auth\AuthenticatedSessionController;
 use Shopper\Http\Controllers\Cp\Auth\NewPasswordController;
 use Shopper\Http\Controllers\Cp\Auth\PasswordResetLinkController;
+use Shopper\Http\Controllers\Cp\BrandController;
 use Shopper\Http\Controllers\Cp\CollectionsController;
 use Shopper\Http\Controllers\Cp\CustomerController;
 use Shopper\Http\Controllers\Cp\DashboardController;
@@ -18,6 +21,7 @@ use Shopper\Http\Controllers\Cp\PaymentGatewaysController;
 use Shopper\Http\Controllers\Cp\SettingsController;
 use Shopper\Http\Controllers\Cp\ShippingMethodsController;
 use Shopper\Http\Controllers\Cp\TaxRatesController;
+use Shopper\Http\Controllers\CP\WishlistController;
 
 /*
 |--------------------------------------------------------------------------
@@ -189,40 +193,40 @@ Route::prefix($cpPrefix)->name('cp.')->middleware(['web', 'shopper.inertia'])->g
                 Route::delete('/{wishlist}/items/{item}', [WishlistController::class, 'removeItem'])->name('items.destroy');
             });
 
-            // Customer Favorites
-            Route::prefix('{customer}/favorites')->name('favorites.')->group(function () {
-                Route::get('/', [FavoriteController::class, 'index'])->name('index');
-                Route::post('/toggle', [FavoriteController::class, 'toggle'])->name('toggle');
-                Route::delete('/{favorite}', [FavoriteController::class, 'destroy'])->name('destroy');
-            });
+            // // Customer Favorites
+            // Route::prefix('{customer}/favorites')->name('favorites.')->group(function () {
+            //     Route::get('/', [FavoriteController::class, 'index'])->name('index');
+            //     Route::post('/toggle', [FavoriteController::class, 'toggle'])->name('toggle');
+            //     Route::delete('/{favorite}', [FavoriteController::class, 'destroy'])->name('destroy');
+            // });
         });
 
         // Abandoned Carts Management
         Route::prefix('abandoned-carts')->name('abandoned-carts.')->group(function () {
-            Route::get('/', [AbandonedCartController::class, 'index'])->name('index');
-            Route::get('/{abandonedCart}', [AbandonedCartController::class, 'show'])->name('show');
-            Route::post('/{abandonedCart}/send-recovery-email', [AbandonedCartController::class, 'sendRecoveryEmail'])->name('send-recovery-email');
-            Route::post('/bulk-send-recovery-emails', [AbandonedCartController::class, 'bulkSendRecoveryEmails'])->name('bulk-send-recovery-emails');
-            Route::post('/{abandonedCart}/mark-recovered', [AbandonedCartController::class, 'markAsRecovered'])->name('mark-recovered');
-            Route::delete('/{abandonedCart}', [AbandonedCartController::class, 'destroy'])->name('destroy');
-            Route::delete('/bulk-delete', [AbandonedCartController::class, 'bulkDelete'])->name('bulk-delete');
+            Route::get('/', [CartController::class, 'index'])->name('index');
+            Route::get('/{abandonedCart}', [CartController::class, 'show'])->name('show');
+            Route::post('/{abandonedCart}/send-recovery-email', [CartController::class, 'sendRecoveryEmail'])->name('send-recovery-email');
+            Route::post('/bulk-send-recovery-emails', [CartController::class, 'bulkSendRecoveryEmails'])->name('bulk-send-recovery-emails');
+            Route::post('/{abandonedCart}/mark-recovered', [CartController::class, 'markAsRecovered'])->name('mark-recovered');
+            Route::delete('/{abandonedCart}', [CartController::class, 'destroy'])->name('destroy');
+            Route::delete('/bulk-delete', [CartController::class, 'bulkDelete'])->name('bulk-delete');
         });
 
-        // Stock Notifications Management
-        Route::prefix('stock-notifications')->name('stock-notifications.')->group(function () {
-            Route::get('/', [StockNotificationController::class, 'index'])->name('index');
-            Route::get('/{stockNotification}', [StockNotificationController::class, 'show'])->name('show');
-            Route::post('/notify-for-product', [StockNotificationController::class, 'notifyForProduct'])->name('notify-for-product');
-            Route::post('/{stockNotification}/send-notification', [StockNotificationController::class, 'sendNotification'])->name('send-notification');
-            Route::delete('/{stockNotification}', [StockNotificationController::class, 'destroy'])->name('destroy');
-            Route::post('/bulk-notify', [StockNotificationController::class, 'bulkNotify'])->name('bulk-notify');
-        });
+        // // Stock Notifications Management
+        // Route::prefix('stock-notifications')->name('stock-notifications.')->group(function () {
+        //     Route::get('/', [StockNotificationController::class, 'index'])->name('index');
+        //     Route::get('/{stockNotification}', [StockNotificationController::class, 'show'])->name('show');
+        //     Route::post('/notify-for-product', [StockNotificationController::class, 'notifyForProduct'])->name('notify-for-product');
+        //     Route::post('/{stockNotification}/send-notification', [StockNotificationController::class, 'sendNotification'])->name('send-notification');
+        //     Route::delete('/{stockNotification}', [StockNotificationController::class, 'destroy'])->name('destroy');
+        //     Route::post('/bulk-notify', [StockNotificationController::class, 'bulkNotify'])->name('bulk-notify');
+        // });
 
-        // Bulk Product Edit
-        Route::prefix('products')->name('products.')->group(function () {
-            Route::get('/bulk-edit', [ProductBulkEditController::class, 'index'])->name('bulk-edit');
-            Route::post('/bulk-update', [ProductBulkEditController::class, 'bulkUpdate'])->name('bulk-update');
-        });
+        // // Bulk Product Edit
+        // Route::prefix('products')->name('products.')->group(function () {
+        //     Route::get('/bulk-edit', [ProductBulkEditController::class, 'index'])->name('bulk-edit');
+        //     Route::post('/bulk-update', [ProductBulkEditController::class, 'bulkUpdate'])->name('bulk-update');
+        // });
 
         // Orders Management
         Route::prefix('orders')->name('orders.')->group(function () {
@@ -232,7 +236,18 @@ Route::prefix($cpPrefix)->name('cp.')->middleware(['web', 'shopper.inertia'])->g
             Route::put('/{order}', [OrdersController::class, 'update'])->name('update');
             Route::patch('/{order}/status', [OrdersController::class, 'updateStatus'])->name('update-status');
             Route::delete('/{order}', [OrdersController::class, 'destroy'])->name('destroy');
+        });        
+        
+
+        Route::prefix('brands')->name('brands.')->group(function () {
+            Route::get('/', [BrandController::class, 'index'])->name('index');
+            Route::post('/', [BrandController::class, 'store'])->name('store');
+            Route::get('/{brand}', [BrandController::class, 'show'])->name('show');
+            Route::put('/{brand}', [BrandController::class, 'update'])->name('update');
+            Route::delete('/{brand}', [BrandController::class, 'destroy'])->name('destroy');
         });
+
+
 
         // Discounts Management
         Route::prefix('discounts')->name('discounts.')->group(function () {
@@ -297,51 +312,51 @@ Route::prefix($cpPrefix)->name('cp.')->middleware(['web', 'shopper.inertia'])->g
     });
 });
 
-// Control Panel API Routes
-Route::prefix('cp/api')->name('cp.api.')->middleware(['web', 'shopper.auth'])->group(function () {
+// // Control Panel API Routes
+// Route::prefix('cp/api')->name('cp.api.')->middleware(['web', 'shopper.auth'])->group(function () {
 
-    // Dashboard API
-    Route::get('/dashboard/stats', [DashboardController::class, 'stats'])->name('dashboard.stats');
+//     // Dashboard API
+//     Route::get('/dashboard/stats', [DashboardController::class, 'stats'])->name('dashboard.stats');
 
-    // Collections API
-    // Route::apiResource('collections', CollectionsController::class);
+//     // Collections API
+//     // Route::apiResource('collections', CollectionsController::class);
 
-    // Entries API
-    Route::prefix('collections/{collection}')->group(function () {
-        Route::get('/entries', [EntriesController::class, 'index'])->name('entries.index');
-        Route::post('/entries', [EntriesController::class, 'store'])->name('entries.store');
-        Route::get('/entries/{entry}', [EntriesController::class, 'show'])->name('entries.show');
-        Route::put('/entries/{entry}', [EntriesController::class, 'update'])->name('entries.update');
-        Route::delete('/entries/{entry}', [EntriesController::class, 'destroy'])->name('entries.destroy');
-        Route::post('/entries/bulk', [EntriesController::class, 'bulk'])->name('entries.bulk');
-    });
+//     // Entries API
+//     Route::prefix('collections/{collection}')->group(function () {
+//         Route::get('/entries', [EntriesController::class, 'index'])->name('entries.index');
+//         Route::post('/entries', [EntriesController::class, 'store'])->name('entries.store');
+//         Route::get('/entries/{entry}', [EntriesController::class, 'show'])->name('entries.show');
+//         Route::put('/entries/{entry}', [EntriesController::class, 'update'])->name('entries.update');
+//         Route::delete('/entries/{entry}', [EntriesController::class, 'destroy'])->name('entries.destroy');
+//         Route::post('/entries/bulk', [EntriesController::class, 'bulk'])->name('entries.bulk');
+//     });
 
-    // Import/Export API
-    Route::post('/import', function () {
-        return response()->json(['message' => 'Import started']);
-    })->name('import');
+//     // Import/Export API
+//     Route::post('/import', function () {
+//         return response()->json(['message' => 'Import started']);
+//     })->name('import');
 
-    Route::post('/export', function () {
-        return response()->json(['download_url' => '/cp/api/download/export.csv']);
-    })->name('export');
+//     Route::post('/export', function () {
+//         return response()->json(['download_url' => '/cp/api/download/export.csv']);
+//     })->name('export');
 
-    // Global Search API
-    Route::get('/search', function () {
-        $query = request('q');
+//     // Global Search API
+//     Route::get('/search', function () {
+//         $query = request('q');
 
-        return response()->json([
-            'results' => [
-                [
-                    'type' => 'collection',
-                    'title' => 'Products',
-                    'url' => '/cp/collections/products',
-                ],
-                [
-                    'type' => 'entry',
-                    'title' => 'Premium Headphones',
-                    'url' => '/cp/collections/products/entries/1',
-                ],
-            ],
-        ]);
-    })->name('search');
-});
+//         return response()->json([
+//             'results' => [
+//                 [
+//                     'type' => 'collection',
+//                     'title' => 'Products',
+//                     'url' => '/cp/collections/products',
+//                 ],
+//                 [
+//                     'type' => 'entry',
+//                     'title' => 'Premium Headphones',
+//                     'url' => '/cp/collections/products/entries/1',
+//                 ],
+//             ],
+//         ]);
+//     })->name('search');
+// });

@@ -28,10 +28,6 @@ class ChannelController extends Controller
             });
         }
 
-        // Status filter
-        if ($request->has('is_enabled')) {
-            $query->where('is_enabled', $request->boolean('is_enabled'));
-        }
 
         // Default filter
         if ($request->has('is_default')) {
@@ -57,7 +53,6 @@ class ChannelController extends Controller
             'description' => 'nullable|string',
             'url' => 'nullable|url',
             'is_default' => 'boolean',
-            'is_enabled' => 'boolean',
             'settings' => 'nullable|array',
         ]);
 
@@ -105,7 +100,6 @@ class ChannelController extends Controller
             'description' => 'nullable|string',
             'url' => 'nullable|url',
             'is_default' => 'boolean',
-            'is_enabled' => 'boolean',
             'settings' => 'nullable|array',
         ]);
 

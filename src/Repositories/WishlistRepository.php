@@ -11,9 +11,9 @@ class WishlistRepository extends BaseRepository
 
     protected int $cacheTtl = 3600; // 1 hour
 
-    public function model(): string
+    protected function makeModel(): \Illuminate\Database\Eloquent\Model
     {
-        return Wishlist::class;
+        return new Wishlist();
     }
 
     /**
@@ -156,7 +156,7 @@ class WishlistRepository extends BaseRepository
      */
     public function getStatistics(): array
     {
-        $cacheKey = $this->getCacheKey('statistics');
+        $cacheKey = $this->getCacheKey('statistics', 'all');
 
         return Cache::remember($cacheKey, $this->cacheTtl, function () {
             $total = $this->model->count();

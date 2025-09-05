@@ -22,14 +22,7 @@ class DiscountController extends Controller
         $query = Discount::with(['applications'])
             ->orderBy('created_at', 'desc');
 
-        // Filter by status
-        if ($request->has('status')) {
-            if ($request->status === 'active') {
-                $query->where('is_enabled', true);
-            } elseif ($request->status === 'inactive') {
-                $query->where('is_enabled', false);
-            }
-        }
+
 
         // Filter by type
         if ($request->has('type')) {
@@ -125,7 +118,6 @@ class DiscountController extends Controller
 
     public function toggle(Discount $discount): JsonResponse
     {
-        $discount->update(['is_enabled' => ! $discount->is_enabled]);
 
         $status = $discount->is_enabled ? 'enabled' : 'disabled';
 
@@ -143,7 +135,6 @@ class DiscountController extends Controller
         // Remove unique fields and modify name
         unset($data['id'], $data['code'], $data['created_at'], $data['updated_at']);
         $data['name'] = $data['name'].' (Copy)';
-        $data['is_enabled'] = false; // New discount starts disabled
         $data['usage_count'] = 0;
 
         $newDiscount = $this->discountService->createDiscount($data);

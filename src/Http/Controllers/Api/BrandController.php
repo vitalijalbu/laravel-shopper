@@ -32,11 +32,6 @@ class BrandController extends Controller
             });
         }
 
-        // Status filter
-        if ($request->has('is_enabled')) {
-            $query->where('is_enabled', $request->boolean('is_enabled'));
-        }
-
         // Featured filter
         if ($request->has('is_featured')) {
             $query->where('is_featured', $request->boolean('is_featured'));

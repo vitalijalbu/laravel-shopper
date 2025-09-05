@@ -42,10 +42,6 @@ class ProductTypesController extends Controller
                 });
             }
 
-            // Status filter
-            if ($request->has('is_enabled')) {
-                $query->where('is_enabled', $request->boolean('is_enabled'));
-            }
 
             // Sorting
             $sortBy = $request->get('sort_by', 'sort_order');
@@ -312,7 +308,6 @@ class ProductTypesController extends Controller
                     $type->name,
                     $type->slug,
                     $type->description,
-                    $type->is_enabled ? 'Yes' : 'No',
                     $type->sort_order,
                     $type->products_count,
                     $type->created_at->format('Y-m-d H:i:s'),

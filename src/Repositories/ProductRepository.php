@@ -231,4 +231,50 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
 
         return $this;
     }
+
+    public function canDelete(int $id): bool
+    {
+        $product = $this->find($id);
+        
+        if (!$product) {
+            return false;
+        }
+
+        // Check if product has orders
+        if ($product->orders()->exists()) {
+            return false;
+        }
+
+        // Check if product has variants
+        if ($product->variants()->exists()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function bulkUpdate(array $ids, array $data): int
+    {
+        return $this->model->whereIn('id', $ids)->update($data);
+    }
+
+    public function bulkDelete(array $ids): int
+    {
+        $count = 0;
+        
+        foreach ($ids as $id) {
+            if ($this->canDelete($id)) {
+                $this->delete($id);
+                $count++;
+            }
+        }
+
+        return $count;
+    }
+
+    public function bulkExport(array $ids): int
+    {
+        // TODO: Implement actual export logic
+        return count($ids);
+    }
 }
