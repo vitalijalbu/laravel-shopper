@@ -8,11 +8,11 @@ use Shopper\Http\Controllers\Cp\Auth\AuthenticatedSessionController;
 use Shopper\Http\Controllers\Cp\Auth\NewPasswordController;
 use Shopper\Http\Controllers\Cp\Auth\PasswordResetLinkController;
 use Shopper\Http\Controllers\Cp\CollectionsController;
-use Shopper\Http\Controllers\Cp\CustomersController;
+use Shopper\Http\Controllers\Cp\CustomerController;
 use Shopper\Http\Controllers\Cp\DashboardController;
 use Shopper\Http\Controllers\Cp\DiscountController;
 use Shopper\Http\Controllers\Cp\EntriesController;
-use Shopper\Http\Controllers\Cp\NavigationController;
+use Shopper\Http\Controllers\Cp\MenuController;
 use Shopper\Http\Controllers\Cp\NavigationItemController;
 use Shopper\Http\Controllers\Cp\OrdersController;
 use Shopper\Http\Controllers\Cp\PaymentGatewaysController;
@@ -83,23 +83,14 @@ Route::prefix($cpPrefix)->name('cp.')->middleware(['web', 'shopper.inertia'])->g
 
         // Navigation Management
         Route::prefix('navigations')->name('navigations.')->group(function () {
-            Route::get('/', [NavigationController::class, 'index'])->name('index');
-            Route::get('/create', [NavigationController::class, 'create'])->name('create');
-            Route::post('/', [NavigationController::class, 'store'])->name('store');
-            Route::get('/{navigation}', [NavigationController::class, 'show'])->name('show');
-            Route::get('/{navigation}/edit', [NavigationController::class, 'edit'])->name('edit');
-            Route::put('/{navigation}', [NavigationController::class, 'update'])->name('update');
-            Route::delete('/{navigation}', [NavigationController::class, 'destroy'])->name('destroy');
-            Route::post('/{navigation}/duplicate', [NavigationController::class, 'duplicate'])->name('duplicate');
-
-            // Navigation Items Management
-            Route::prefix('{navigation}')->name('items.')->group(function () {
-                Route::post('/items', [NavigationItemController::class, 'store'])->name('store');
-                Route::put('/items/{item}', [NavigationItemController::class, 'update'])->name('update');
-                Route::delete('/items/{item}', [NavigationItemController::class, 'destroy'])->name('destroy');
-                Route::post('/items/reorder', [NavigationItemController::class, 'reorder'])->name('reorder');
-                Route::post('/items/{item}/move', [NavigationItemController::class, 'move'])->name('move');
-            });
+            Route::get('/', [MenuController::class, 'index'])->name('index');
+            Route::get('/create', [MenuController::class, 'create'])->name('create');
+            Route::post('/', [MenuController::class, 'store'])->name('store');
+            Route::get('/{menu}', [MenuController::class, 'show'])->name('show');
+            Route::get('/{menu}/edit', [MenuController::class, 'edit'])->name('edit');
+            Route::put('/{menu}', [MenuController::class, 'update'])->name('update');
+            Route::delete('/{menu}', [MenuController::class, 'destroy'])->name('destroy');
+            Route::post('/{menu}/duplicate', [MenuController::class, 'duplicate'])->name('duplicate');
         });
 
         // Product Types Management
@@ -163,22 +154,29 @@ Route::prefix($cpPrefix)->name('cp.')->middleware(['web', 'shopper.inertia'])->g
 
         // Customers Management
         Route::prefix('customers')->name('customers.')->group(function () {
-            Route::get('/', [CustomersController::class, 'index'])->name('index');
-            Route::post('/', [CustomersController::class, 'store'])->name('store');
-            Route::get('/{customer}', [CustomersController::class, 'show'])->name('show');
-            Route::put('/{customer}', [CustomersController::class, 'update'])->name('update');
-            Route::delete('/{customer}', [CustomersController::class, 'destroy'])->name('destroy');
+            Route::get('/', [CustomerController::class, 'index'])->name('index');
+            Route::get('/create', [CustomerController::class, 'create'])->name('create');
+            Route::post('/', [CustomerController::class, 'store'])->name('store');
+            Route::get('/{customer}', [CustomerController::class, 'show'])->name('show');
+            Route::get('/{customer}/edit', [CustomerController::class, 'edit'])->name('edit');
+            Route::put('/{customer}', [CustomerController::class, 'update'])->name('update');
+            Route::delete('/{customer}', [CustomerController::class, 'destroy'])->name('destroy');
+            
+            // Additional customer actions
+            Route::post('/bulk-action', [CustomerController::class, 'bulkAction'])->name('bulk-action');
+            Route::post('/{id}/restore', [CustomerController::class, 'restore'])->name('restore');
+            Route::delete('/{id}/force-delete', [CustomerController::class, 'forceDelete'])->name('force-delete');
 
             // Customer Addresses
             Route::prefix('{customer}/addresses')->name('addresses.')->group(function () {
-                Route::get('/', [CustomerAddressController::class, 'index'])->name('index');
-                Route::get('/create', [CustomerAddressController::class, 'create'])->name('create');
-                Route::post('/', [CustomerAddressController::class, 'store'])->name('store');
-                Route::get('/{address}', [CustomerAddressController::class, 'show'])->name('show');
-                Route::get('/{address}/edit', [CustomerAddressController::class, 'edit'])->name('edit');
-                Route::put('/{address}', [CustomerAddressController::class, 'update'])->name('update');
-                Route::delete('/{address}', [CustomerAddressController::class, 'destroy'])->name('destroy');
-                Route::post('/{address}/set-default', [CustomerAddressController::class, 'setDefault'])->name('set-default');
+                Route::get('/', [AddressController::class, 'index'])->name('index');
+                Route::get('/create', [AddressController::class, 'create'])->name('create');
+                Route::post('/', [AddressController::class, 'store'])->name('store');
+                Route::get('/{address}', [AddressController::class, 'show'])->name('show');
+                Route::get('/{address}/edit', [AddressController::class, 'edit'])->name('edit');
+                Route::put('/{address}', [AddressController::class, 'update'])->name('update');
+                Route::delete('/{address}', [AddressController::class, 'destroy'])->name('destroy');
+                Route::post('/{address}/set-default', [AddressController::class, 'setDefault'])->name('set-default');
             });
 
             // Customer Wishlists
@@ -307,7 +305,7 @@ Route::prefix('cp/api')->name('cp.api.')->middleware(['web', 'shopper.auth'])->g
     Route::get('/dashboard/stats', [DashboardController::class, 'stats'])->name('dashboard.stats');
 
     // Collections API
-    Route::apiResource('collections', CollectionsController::class);
+    // Route::apiResource('collections', CollectionsController::class);
 
     // Entries API
     Route::prefix('collections/{collection}')->group(function () {

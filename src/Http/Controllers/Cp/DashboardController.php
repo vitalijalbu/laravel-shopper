@@ -48,6 +48,11 @@ class DashboardController extends Controller
                     'roles' => [],
                     'permissions' => [],
                 ],
+                'navigation' => $nav,
+                'sites' => $this->getSites(),
+                'breadcrumbs' => [
+                    ['title' => 'Dashboard', 'url' => null]
+                ],
                 'stats' => $stats,
                 'recentActivities' => $recentActivities,
                 'notifications' => $notifications,
@@ -55,7 +60,6 @@ class DashboardController extends Controller
                 'cp_name' => config('shopper.cp.name', 'Control Panel'),
                 'locale' => app()->getLocale(),
                 'locales' => config('shopper.locales', ['en', 'it']),
-                'nav' => $nav,
                 'branding' => [
                     'logo' => config('shopper.cp.branding.logo'),
                     'logo_dark' => config('shopper.cp.branding.logo_dark'),
@@ -240,6 +244,23 @@ class DashboardController extends Controller
                 'icon' => 'settings',
                 'children' => [],
             ],
+        ];
+    }
+
+    /**
+     * Get available sites for multisite support.
+     */
+    protected function getSites(): array
+    {
+        // For now, return a default site
+        // This can be expanded for multisite functionality
+        return [
+            [
+                'id' => 'default',
+                'name' => config('app.name', 'Laravel Shopper'),
+                'url' => config('app.url'),
+                'is_current' => true,
+            ]
         ];
     }
 }

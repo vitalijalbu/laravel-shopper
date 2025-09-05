@@ -162,7 +162,6 @@ const props = defineProps({
 
 const emit = defineEmits(['customer-updated'])
 
-const { t } = useI18n()
 const fidelityStore = useFidelityStore()
 
 const initialLoading = ref(true)
@@ -248,31 +247,3 @@ onMounted(() => {
   loadFidelityData()
 })
 </script>
-
-<style scoped>
-.animate-pulse {
-  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-.animate-spin {
-  animation: spin 1s linear infinite;
-}
-
-@keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: .5;
-  }
-}
-
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-</style>

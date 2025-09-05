@@ -471,3 +471,26 @@ enum ProductStatus: string
         return $this === self::ACTIVE;
     }
 }
+
+enum CustomerStatus: string
+{
+    case ACTIVE = 'active';
+    case INACTIVE = 'inactive';
+    case PENDING = 'pending';
+    case SUSPENDED = 'suspended';
+
+    public function label(): string
+    {
+        return match($this) {
+            self::ACTIVE => 'Active',
+            self::INACTIVE => 'Inactive',
+            self::PENDING => 'Pending',
+            self::SUSPENDED => 'Suspended',
+        };
+    }
+
+    public function isActive(): bool
+    {
+        return $this === self::ACTIVE;
+    }
+}

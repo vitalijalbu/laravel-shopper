@@ -5,11 +5,14 @@ namespace Shopper\Http\Controllers\Cp;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
+use Inertia\Response;
 use Shopper\Http\Controllers\Controller;
 
 class CollectionsController extends Controller
 {
-    public function index(Request $request): JsonResponse
+    public function index(Request $request): Response
     {
         $collections = collect([
             // E-commerce Collections
@@ -177,7 +180,7 @@ class CollectionsController extends Controller
         // Group by section for display
         $grouped = $collections->groupBy('section');
 
-        return response()->json([
+        return Inertia::render('collections/index', [
             'collections' => $collections->values(),
             'grouped' => $grouped,
             'sections' => [
@@ -196,6 +199,13 @@ class CollectionsController extends Controller
                     'description' => 'Custom content types',
                     'count' => $grouped->get('custom', collect())->count(),
                 ],
+            ],
+            // Props per il layout
+            'user' => Auth::user(),
+            'navigation' => $this->getNavigationItems(),
+            'sites' => $this->getSites(),
+            'breadcrumbs' => [
+                ['title' => 'Collections', 'url' => null]
             ],
         ]);
     }
@@ -321,5 +331,59 @@ class CollectionsController extends Controller
         return response()->json([
             'message' => 'Collection deleted successfully',
         ]);
+    }
+
+    /**
+     * Get navigation items for the CP.
+     */
+    protected function getNavigationItems(): array
+    {
+        return [
+            'dashboard' => [
+                'display' => 'Dashboard',
+                'url' => '/cp',
+                'icon' => 'dashboard',
+                'children' => [],
+            ],
+            'collections' => [
+                'display' => 'Collections',
+                'url' => '/cp/collections',
+                'icon' => 'collection',
+                'children' => [],
+            ],
+            'products' => [
+                'display' => 'Products',
+                'url' => '/cp/products',
+                'icon' => 'box',
+                'children' => [],
+            ],
+            'customers' => [
+                'display' => 'Customers',
+                'url' => '/cp/customers',
+                'icon' => 'users',
+                'children' => [],
+            ],
+            'orders' => [
+                'display' => 'Orders',
+                'url' => '/cp/orders',
+                'icon' => 'shopping-cart',
+                'children' => [],
+            ],
+        ];
+    }
+
+    /**
+     * Get available sites for multisite support.
+     */
+    protected function getSites(): array
+    {
+        return [
+            [
+                'id' => 'default',
+                'name' => config('app.name', 'Laravel Shopper'),
+                'url' => config('app.url'),
+                'is_current' => true,
+            ]
+        ];
     }
 }

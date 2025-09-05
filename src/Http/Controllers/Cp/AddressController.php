@@ -10,7 +10,7 @@ use Shopper\Http\Controllers\Controller;
 use Shopper\Models\Customer;
 use Shopper\Models\CustomerAddress;
 
-class CustomerAddressController extends Controller
+class AddressController extends Controller
 {
     public function index(Customer $customer): Response
     {

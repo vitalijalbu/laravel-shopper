@@ -115,6 +115,17 @@ import Page from "../../components/page.vue";
 import CollectionCard from "../../components/collection-card.vue";
 import Modal from "../../components/modal.vue";
 
+// Props from Inertia controller
+const props = defineProps({
+  collections: Array,
+  grouped: Object,
+  sections: Object,
+  user: Object,
+  navigation: Object,
+  sites: Array,
+  breadcrumbs: Array,
+});
+
 const shopperStore = useShopperStore();
 
 // State
@@ -123,22 +134,13 @@ const showEditModal = ref(false);
 const showDeleteModal = ref(false);
 const editingCollection = ref(null);
 const deletingCollection = ref(null);
-const loading = ref(true);
+const loading = ref(false); // Set to false since data comes from props
 
-// Props from route or parent
-const sites = ref([
-  { handle: "default", name: "Main Site" },
-  { handle: "blog", name: "Blog" },
-  { handle: "shop", name: "Shop" },
-]);
-
-// Computed
-const collections = computed(() => shopperStore.collections);
+// Computed - use props instead of store
+const collections = computed(() => props.collections);
 
 const ecommerceCollections = computed(() => {
-  return collections.value.filter((c) =>
-    ["products", "orders", "customers", "categories"].includes(c.handle),
-  );
+  return props.grouped?.ecommerce || [];
 });
 
 const contentCollections = computed(() => {

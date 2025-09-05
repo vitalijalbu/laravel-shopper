@@ -25,9 +25,7 @@ createInertiaApp({
     const page = pages[`./pages/${name}.vue`];
     
     // Set default layout if not specified
-    if (page && page.default && !page.default.layout) {
-      page.default.layout = CpLayout;
-    }
+    page.default.layout = CpLayout;
     
     return page;
   },

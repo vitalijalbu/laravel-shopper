@@ -10,7 +10,7 @@ use Shopper\Data\BrandDto;
 use Shopper\Http\Controllers\Controller;
 use Shopper\Models\Brand;
 
-class BrandsController extends Controller
+class BrandController extends Controller
 {
     /**
      * Brands index
