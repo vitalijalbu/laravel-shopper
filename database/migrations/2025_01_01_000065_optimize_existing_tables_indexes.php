@@ -30,8 +30,8 @@ return new class extends Migration
             }
         });
 
-        // Add fulltext search index for products
-        DB::statement('ALTER TABLE products ADD FULLTEXT ft_products_search (name, description, short_description)');
+        // Add fulltext search index for products (using correct column names)
+        DB::statement('ALTER TABLE products ADD FULLTEXT ft_products_search (title, description, excerpt)');
 
         // ====== ORDERS TABLE OPTIMIZATIONS ======
         Schema::table('orders', function (Blueprint $table) {

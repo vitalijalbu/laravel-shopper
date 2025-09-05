@@ -15,7 +15,6 @@ return new class extends Migration
             $table->string('handle')->index();
             $table->longText('content');
             $table->enum('status', ['published', 'draft', 'private'])->default('draft');
-            $table->foreignId('template_id')->nullable()->constrained('templates')->nullOnDelete();
             $table->boolean('show_title')->default(true);
             $table->string('seo_title')->nullable();
             $table->text('seo_description')->nullable();

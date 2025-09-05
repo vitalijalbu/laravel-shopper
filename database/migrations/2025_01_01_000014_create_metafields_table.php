@@ -56,67 +56,10 @@ return new class extends Migration
 
             $table->unique(['product_id', 'product_tag_id']);
         });
-
-        // Gift Cards (Shopify feature)
-        Schema::create('gift_cards', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('site_id')->nullable()->index();
-
-            // Gift Card Details
-            $table->string('code')->unique(); // XXXX-XXXX-XXXX-XXXX
-            $table->decimal('initial_value', 15, 2);
-            $table->decimal('balance', 15, 2);
-            $table->string('currency', 3);
-
-            // Customer Information
-            $table->foreignId('customer_id')->nullable()->constrained('customers')->nullOnDelete();
-            $table->string('recipient_email')->nullable();
-
-            // Status and Dates
-            $table->string('status')->default('active'); // active, disabled, expired, used
-            $table->date('expires_at')->nullable();
-            $table->timestamp('last_used_at')->nullable();
-
-            // Creation Information
-            $table->foreignId('order_id')->nullable()->constrained('orders')->nullOnDelete(); // If purchased
-            $table->foreignId('created_by_user_id')->nullable()->constrained('users')->nullOnDelete();
-
-            // Additional Information
-            $table->text('note')->nullable();
-            $table->json('metadata')->nullable();
-
-            $table->timestamps();
-
-            // Indexes
-            $table->index(['site_id', 'status']);
-            $table->index(['customer_id', 'status']);
-            $table->index(['expires_at', 'status']);
-            $table->index('balance');
-            $table->foreign('site_id')->references('id')->on('sites')->onDelete('cascade');
-        });
-
-        // Gift Card Transactions
-        Schema::create('gift_card_transactions', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('gift_card_id')->constrained('gift_cards')->cascadeOnDelete();
-            $table->foreignId('order_id')->nullable()->constrained('orders')->nullOnDelete();
-
-            $table->string('type'); // debit, credit
-            $table->decimal('amount', 15, 2);
-            $table->decimal('balance_after', 15, 2);
-            $table->text('note')->nullable();
-
-            $table->timestamps();
-
-            $table->index(['gift_card_id', 'created_at']);
-            $table->index('type');
-        });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('gift_card_transactions');
-        Schema::dropIfExists('gift_cards');
         Schema::dropIfExists('product_tag');
         Schema::dropIfExists('product_tags');
         Schema::dropIfExists('metafields');
