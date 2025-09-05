@@ -19,7 +19,7 @@ return new class extends Migration
             $table->json('countries')->nullable(); // Array of country codes
             $table->json('states')->nullable(); // Array of state codes
             $table->json('postcodes')->nullable(); // Array of postcode patterns
-            $table->json('product_categories')->nullable(); // Categories this applies to
+            $table->json('product_collections')->nullable(); // Collections this applies to
             $table->decimal('min_amount', 10, 2)->nullable(); // Minimum order amount
             $table->decimal('max_amount', 10, 2)->nullable(); // Maximum order amount
             $table->string('status')->default('active')->index(); // active, inactive, draft
