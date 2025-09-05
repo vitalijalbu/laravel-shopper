@@ -3,6 +3,9 @@ import vue from "@vitejs/plugin-vue";
 import tailwindcss from "@tailwindcss/vite";
 import { resolve } from "path";
 
+const isDev = process.env.NODE_ENV === 'development';
+const isPackageDev = process.env.SHOPPER_DEV === 'true';
+
 export default defineConfig({
   plugins: [vue(), tailwindcss()],
   resolve: {
@@ -16,8 +19,9 @@ export default defineConfig({
     __VUE_PROD_DEVTOOLS__: false,
     __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: false,
   },
+  publicDir: false, // Disable public directory copying to avoid recursive issues
   build: {
-    outDir: "public/build",
+    outDir: isPackageDev ? "public/build" : "public/vendor/shopper",
     emptyOutDir: true,
     manifest: true,
     rollupOptions: {
@@ -27,8 +31,11 @@ export default defineConfig({
       output: {
         manualChunks: {
           vendor: ["vue", "pinia", "@inertiajs/vue3"],
-          ui: ["@headlessui/vue", "@heroicons/vue", "reka-ui"],
+          ui: ["@heroicons/vue", "reka-ui"],
         },
+        assetFileNames: 'assets/[name]-[hash][extname]',
+        chunkFileNames: 'assets/[name]-[hash].js',
+        entryFileNames: 'assets/[name]-[hash].js',
       },
     },
     chunkSizeWarningLimit: 1000,
@@ -37,7 +44,7 @@ export default defineConfig({
     host: "0.0.0.0",
     port: 5173,
     https:
-      process.env.NODE_ENV === "development"
+      isDev || isPackageDev
         ? {
             // Per Laravel Herd, usiamo certificati self-signed
             // Puoi configurare certificati SSL personalizzati qui se necessario
@@ -51,7 +58,6 @@ export default defineConfig({
     include: [
       "vue",
       "pinia",
-      "@headlessui/vue",
       "@heroicons/vue",
       "axios",
       "lodash-es",

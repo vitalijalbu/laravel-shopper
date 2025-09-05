@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('favorites', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('customer_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('customer_id')->constrained('customers')->cascadeOnDelete();
             $table->string('favoritable_type'); // entries, collections, brands, etc.
             $table->unsignedBigInteger('favoritable_id');
             $table->json('metadata')->nullable();

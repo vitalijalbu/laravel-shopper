@@ -17,11 +17,11 @@ return new class extends Migration
             $table->string('lang', 5)->index();
             $table->jsonb('attributes')->nullable();
             $table->integer('order')->default(0)->index();
-            $table->boolean('is_enabled')->default(true)->index();
+            $table->string('status')->default('active')->index();
             $table->timestamps();
 
-            $table->index(['handle', 'is_enabled']);
-            $table->index(['locale', 'is_enabled']);
+            $table->index(['handle', 'status']);
+            $table->index(['locale', 'status']);
         });
     }
 

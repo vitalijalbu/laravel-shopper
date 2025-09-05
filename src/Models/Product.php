@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Shopper\Support\HasHandle;
 use Shopper\Support\HasSite;
 use Spatie\MediaLibrary\HasMedia;
@@ -22,6 +23,7 @@ class Product extends Model implements HasMedia
     use HasHandle;
     use HasSite;
     use InteractsWithMedia;
+    use SoftDeletes;
 
     protected $fillable = [
         'site_id',
@@ -42,7 +44,6 @@ class Product extends Model implements HasMedia
         'is_physical',
         'is_digital',
         'requires_shipping',
-        'is_enabled',
         'is_featured',
         'status',
         'brand_id',
@@ -66,7 +67,6 @@ class Product extends Model implements HasMedia
         'is_physical' => 'boolean',
         'is_digital' => 'boolean',
         'requires_shipping' => 'boolean',
-        'is_enabled' => 'boolean',
         'is_featured' => 'boolean',
         'seo' => 'array',
         'meta' => 'array',

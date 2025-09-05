@@ -15,7 +15,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->unsignedBigInteger('parent_id')->nullable();
             $table->integer('sort_order')->default(0);
-            $table->boolean('is_enabled')->default(true);
+            $table->string('status')->default('active')->index();
             $table->json('seo')->nullable();
             $table->timestamps();
 

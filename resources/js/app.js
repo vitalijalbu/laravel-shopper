@@ -5,6 +5,9 @@ import { ZiggyVue } from "ziggy-js";
 import "@/components/icons";
 import CpLayout from "@/components/cp-layout.vue";
 
+// Import Shopper configuration fallbacks
+import "@/config/shopper-config.js";
+
 // Import global styles
 import "../css/app.css";
 

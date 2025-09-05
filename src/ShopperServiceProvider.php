@@ -58,8 +58,6 @@ class ShopperServiceProvider extends ServiceProvider
         // Register console commands
         if ($this->app->runningInConsole()) {
             $this->commands([
-                OptimizeCommand::class,
-                CreateAdminUserCommand::class,
                 ExpireFidelityPoints::class,
             ]);
         }
@@ -99,6 +97,11 @@ class ShopperServiceProvider extends ServiceProvider
                 __DIR__.'/../resources/js' => resource_path('js/vendor/shopper'),
             ], 'shopper-assets');
 
+            // Publish built assets to public/vendor/shopper
+            $this->publishes([
+                __DIR__.'/../public/vendor/shopper' => public_path('vendor/shopper'),
+            ], 'shopper-assets-built');
+
             // Publish Vue components
             $this->publishes([
                 __DIR__.'/../resources/js/Components' => resource_path('js/Components/Shopper'),
@@ -126,6 +129,8 @@ class ShopperServiceProvider extends ServiceProvider
             // Register commands
             $this->commands([
                 \Shopper\Console\Commands\InstallShopperCommand::class,
+                \Shopper\Console\Commands\BuildAssetsCommand::class,
+                CreateAdminUserCommand::class,
                 ShowAdminUsersCommand::class,
                 OptimizeCommand::class,
             ]);

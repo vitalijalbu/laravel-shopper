@@ -15,7 +15,7 @@ return new class extends Migration
             $table->json('countries'); // Array of country ISO codes
             $table->json('states')->nullable(); // Array of state codes for specific countries
             $table->json('postcodes')->nullable(); // Array of postcode patterns
-            $table->boolean('is_enabled')->default(true);
+            $table->string('status')->default('active')->index(); // active, inactive, draft
             $table->timestamps();
         });
     }

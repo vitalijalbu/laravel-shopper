@@ -14,7 +14,7 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->text('description')->nullable();
             $table->boolean('is_default')->default(false);
-            $table->boolean('is_enabled')->default(true);
+            $table->string('status')->default('active')->index();
             $table->timestamps();
         });
     }

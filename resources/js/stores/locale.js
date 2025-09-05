@@ -1,8 +1,15 @@
 import { defineStore } from "pinia";
 import { computed, ref, watch } from "vue";
-import { Translator } from "../Utils/translator";
+import { Translator } from "../utils/translator";
 
 export const useLocaleStore = defineStore("locale", () => {
+  // Debug ShopperConfig
+  if (typeof window !== 'undefined' && window.ShopperConfig) {
+    console.log('ShopperConfig loaded:', window.ShopperConfig);
+  } else {
+    console.warn('ShopperConfig not found, using defaults');
+  }
+
   // State
   const currentLocale = ref(window.ShopperConfig?.locale || "it");
   const availableLocales = ref(

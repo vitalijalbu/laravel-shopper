@@ -12,8 +12,8 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('site_id')->nullable();
             $table->string('reference'); // TXN-XXXXXX
-            $table->foreignId('order_id')->nullable()->constrained()->nullOnDelete();
-            $table->foreignId('customer_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('order_id')->nullable()->constrained('orders')->nullOnDelete();
+            $table->foreignId('customer_id')->nullable()->constrained('customers')->nullOnDelete();
             $table->string('type'); // payment, refund, capture, void
             $table->string('status'); // pending, completed, failed, cancelled
             $table->string('gateway'); // stripe, paypal, manual, etc

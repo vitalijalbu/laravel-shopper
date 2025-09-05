@@ -15,7 +15,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->string('provider'); // stripe, paypal, square, etc.
             $table->json('config')->nullable(); // gateway-specific configuration
-            $table->boolean('is_enabled')->default(false);
+            $table->enum('status', ['active', 'inactive', 'maintenance', 'deprecated'])->default('inactive')->index();
             $table->boolean('is_default')->default(false);
             $table->json('supported_currencies')->nullable(); // ['USD', 'EUR', 'GBP']
             $table->string('webhook_url')->nullable();
@@ -24,7 +24,7 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
 
-            $table->index(['is_enabled', 'sort_order']);
+            $table->index(['status', 'sort_order']);
         });
     }
 

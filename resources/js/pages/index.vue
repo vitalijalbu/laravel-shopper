@@ -1,5 +1,5 @@
 <template>
   <div>
-    admin here
+dashboard
   </div>
 </template>

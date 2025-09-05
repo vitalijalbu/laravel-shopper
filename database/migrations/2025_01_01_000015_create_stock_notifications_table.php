@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->string('email');
             $table->string('phone')->nullable();
-            $table->foreignId('customer_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('customer_id')->nullable()->constrained('customers')->nullOnDelete();
             $table->string('product_type'); // entry, variant
             $table->unsignedBigInteger('product_id');
             $table->string('product_handle')->nullable();

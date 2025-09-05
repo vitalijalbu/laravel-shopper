@@ -192,7 +192,7 @@ return new class extends Migration
             
             // Feature management
             $table->string('feature_key', 100)->index(); // multi_currency, ai_recommendations, etc.
-            $table->boolean('is_enabled')->default(false)->index();
+            $table->string('status')->default('inactive')->index(); // active, inactive, beta, disabled
             $table->jsonb('feature_config')->nullable(); // Feature-specific configuration
             $table->string('rollout_stage', 20)->default('stable');
             $table->decimal('rollout_percentage', 5, 2)->default(100); // Gradual rollout
@@ -210,7 +210,7 @@ return new class extends Migration
             $table->timestamps();
             
             $table->unique(['tenant_id', 'feature_key']);
-            $table->index(['feature_key', 'is_enabled']);
+            $table->index(['feature_key', 'status']);
             $table->index(['is_plan_feature', 'addon_price']);
         });
     }

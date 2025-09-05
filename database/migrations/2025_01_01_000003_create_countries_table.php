@@ -13,10 +13,10 @@ return new class extends Migration
             $table->string('name')->index();
             $table->char('code', 2)->unique();
             $table->string('phone_code', 10)->nullable()->index();
-            $table->boolean('is_enabled')->default(true)->index();
+            $table->string('status')->default('active')->index();
             $table->timestamps();
 
-            $table->index(['code', 'is_enabled']);
+            $table->index(['code', 'status']);
         });
     }
 

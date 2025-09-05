@@ -1,0 +1,93 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        // Collections (Shopify-style product groupings)
+        Schema::create('collections', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('site_id')->nullable()->index();
+            
+            // Basic Information
+            $table->string('title')->index();
+            $table->string('slug')->index();
+            $table->string('handle')->nullable()->index(); // Shopify handle
+            $table->text('description')->nullable();
+            $table->text('body_html')->nullable();
+            
+            // Collection Settings
+            $table->string('collection_type')->default('manual')->index(); // manual, smart
+            $table->jsonb('rules')->nullable(); // Smart collection rules
+            $table->string('sort_order')->default('manual')->index(); // manual, best_selling, created, price_asc, price_desc
+            $table->boolean('disjunctive')->default(false); // AND vs OR for smart collections
+            
+            // SEO
+            $table->string('meta_title')->nullable();
+            $table->text('meta_description')->nullable();
+            $table->jsonb('seo')->nullable();
+            
+            // Publishing
+            $table->string('status')->default('draft')->index();
+            $table->timestamp('published_at')->nullable()->index();
+            $table->string('published_scope')->default('web')->index(); // web, global
+            
+            // Shopify Template
+            $table->string('template_suffix')->nullable();
+            
+            $table->timestamps();
+            $table->softDeletes();
+
+            // Indexes
+            $table->unique(['slug', 'site_id']);
+            $table->unique(['handle', 'site_id']);
+            $table->index(['site_id', 'status']);
+            $table->index(['collection_type', 'status']);
+            $table->index(['published_at', 'status']);
+            $table->foreign('site_id')->references('id')->on('sites')->onDelete('cascade');
+        });
+
+        // Product Options (Color, Size, Material variants)
+        Schema::create('product_options', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('product_id')->constrained('products')->cascadeOnDelete();
+            
+            // Option Definition
+            $table->string('name')->index(); // Color, Size, Material
+            $table->integer('position')->default(1)->index(); // 1, 2, 3 (max 3 options in Shopify)
+            $table->jsonb('values'); // ["Red", "Blue", "Green"] or ["Small", "Medium", "Large"]
+            
+            $table->timestamps();
+
+            // Indexes
+            $table->unique(['product_id', 'name']);
+            $table->index(['product_id', 'position']);
+        });
+
+        // Many-to-many relationship between collections and products
+        Schema::create('collection_products', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('collection_id')->constrained('collections')->cascadeOnDelete();
+            $table->foreignId('product_id')->constrained('products')->cascadeOnDelete();
+            $table->integer('position')->default(0)->index(); // Manual sorting within collection
+            $table->boolean('featured')->default(false)->index(); // Featured in this collection
+            $table->timestamps();
+
+            $table->unique(['collection_id', 'product_id']);
+            $table->index(['product_id', 'collection_id']);
+            $table->index(['collection_id', 'position']);
+            $table->index(['collection_id', 'featured', 'position']);
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('collection_products');
+        Schema::dropIfExists('product_options');
+        Schema::dropIfExists('collections');
+    }
+};

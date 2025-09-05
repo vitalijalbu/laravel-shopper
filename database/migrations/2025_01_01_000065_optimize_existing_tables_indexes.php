@@ -11,22 +11,22 @@ return new class extends Migration
     {
         // ====== PRODUCTS TABLE OPTIMIZATIONS ======
         Schema::table('products', function (Blueprint $table) {
-            // Search optimization
-            $table->index(['site_id', 'is_enabled', 'status', 'name'], 'idx_products_search');
+            // Search optimization (usando i campi che esistono ora)
+            $table->index(['site_id', 'status', 'title'], 'idx_products_search');
             
-            // Featured products optimization
-            $table->index(['site_id', 'is_featured', 'is_enabled', 'published_at'], 'idx_products_featured');
+            // Publishing optimization 
+            $table->index(['site_id', 'published_at', 'status'], 'idx_products_published');
             
-            // Price range filtering
-            $table->index(['site_id', 'price', 'is_enabled', 'status'], 'idx_products_price_range');
+            // Type filtering
+            $table->index(['site_id', 'product_type', 'status'], 'idx_products_type');
             
-            // Stock status filtering
-            $table->index(['site_id', 'stock_status', 'track_quantity'], 'idx_products_stock');
+            // Price range filtering (dai variants)
+            $table->index(['price_min', 'price_max', 'status'], 'idx_products_price_range');
             
             // Category filtering optimization (if not exists)
             if (!Schema::hasColumn('products', 'primary_category_id')) {
                 $table->foreignId('primary_category_id')->nullable()->after('product_type_id')->constrained('categories')->nullOnDelete();
-                $table->index(['primary_category_id', 'is_enabled', 'status'], 'idx_products_category');
+                $table->index(['primary_category_id', 'status'], 'idx_products_category');
             }
         });
 
@@ -61,8 +61,8 @@ return new class extends Migration
             // Customer value analysis
             $table->index(['site_id', 'lifetime_value', 'orders_count'], 'idx_customers_value');
             
-            // Activity tracking
-            $table->index(['last_login_at', 'is_enabled'], 'idx_customers_activity');
+            // Activity tracking (rimuovendo is_enabled che non esiste più)
+            $table->index(['last_login_at', 'created_at'], 'idx_customers_activity');
             
             // Registration tracking
             $table->index(['created_at', 'email_verified_at'], 'idx_customers_registration');
@@ -70,12 +70,12 @@ return new class extends Migration
 
         // ====== PRODUCT VARIANTS OPTIMIZATIONS ======
         Schema::table('product_variants', function (Blueprint $table) {
-            // Variant search optimization
-            $table->index(['product_id', 'is_enabled', 'stock_status', 'price'], 'idx_variants_search');
+            // Variant search optimization (usando i campi che esistono ora)
+            $table->index(['product_id', 'status', 'available', 'price'], 'idx_variants_search');
             
             // SKU uniqueness (if not exists)
-            if (!$table->hasIndex(['sku', 'product_id'])) {
-                $table->unique(['sku'], 'idx_variants_sku_unique');
+            if (!$table->hasIndex(['sku', 'site_id'])) {
+                $table->unique(['sku', 'site_id'], 'idx_variants_sku_unique');
             }
         });
 
@@ -111,8 +111,8 @@ return new class extends Migration
                     $table->string('path', 500)->nullable()->after('level'); // /parent/child/grandchild
                 }
                 
-                // Category navigation optimization
-                $table->index(['parent_id', 'is_enabled', 'sort_order'], 'idx_categories_navigation');
+                // Category navigation optimization (rimuovendo is_enabled)
+                $table->index(['parent_id', 'status', 'sort_order'], 'idx_categories_navigation');
                 
                 // Nested set optimization
                 $table->index(['level', 'path'], 'idx_categories_hierarchy');

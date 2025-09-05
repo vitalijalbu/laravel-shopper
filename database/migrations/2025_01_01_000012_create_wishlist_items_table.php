@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('wishlist_items', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('wishlist_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('wishlist_id')->constrained('wishlists')->cascadeOnDelete();
             $table->string('product_type'); // entry, collection, external
             $table->unsignedBigInteger('product_id')->nullable();
             $table->string('product_handle')->nullable();

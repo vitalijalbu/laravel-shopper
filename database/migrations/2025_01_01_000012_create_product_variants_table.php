@@ -10,24 +10,67 @@ return new class extends Migration
     {
         Schema::create('product_variants', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('product_id')->constrained()->cascadeOnDelete();
-            $table->string('name');
-            $table->string('sku')->unique();
-            $table->decimal('price', 15, 2);
-            $table->decimal('compare_price', 15, 2)->nullable();
-            $table->decimal('cost_price', 15, 2)->nullable();
-            $table->integer('stock_quantity')->default(0);
-            $table->boolean('track_quantity')->default(true);
-            $table->enum('stock_status', ['in_stock', 'out_of_stock', 'on_backorder'])->default('in_stock');
+            $table->foreignId('product_id')->constrained('products')->cascadeOnDelete();
+            $table->unsignedBigInteger('site_id')->nullable()->index();
+            
+            // Variant Identity
+            $table->string('title')->index(); // Default Title, Red / Large, etc.
+            $table->string('sku')->index();
+            $table->string('barcode')->nullable()->index(); // UPC, EAN, etc.
+            
+            // Option Values (Shopify style) - null per varianti di default
+            $table->string('option1')->nullable()->index(); // e.g., "Red"
+            $table->string('option2')->nullable()->index(); // e.g., "Large"  
+            $table->string('option3')->nullable()->index(); // e.g., "Cotton"
+            
+            // PRICING - I dati principali stanno qui nelle varianti
+            $table->decimal('price', 15, 2)->index();
+            $table->decimal('compare_at_price', 15, 2)->nullable(); // Compare price
+            $table->decimal('cost', 15, 2)->nullable(); // Cost price
+            
+            // INVENTORY - I dati principali stanno qui nelle varianti
+            $table->integer('inventory_quantity')->default(0)->index();
+            $table->boolean('track_quantity')->default(true)->index();
+            $table->string('inventory_management')->default('shopify')->index(); // shopify, not_managed, fulfillment_service
+            $table->string('inventory_policy')->default('deny')->index(); // deny, continue
+            $table->string('fulfillment_service')->default('manual');
+            $table->integer('inventory_quantity_adjustment')->default(0);
+            $table->boolean('allow_out_of_stock_purchases')->default(false);
+            
+            // PHYSICAL PROPERTIES - I dati principali stanno qui nelle varianti
             $table->decimal('weight', 8, 2)->nullable();
-            $table->json('dimensions')->nullable();
-            $table->json('option_values')->nullable(); // Store variant option values
-            $table->boolean('is_enabled')->default(true);
-            $table->integer('sort_order')->default(0);
+            $table->string('weight_unit', 10)->default('kg'); // kg, g, lb, oz
+            $table->jsonb('dimensions')->nullable(); // length, width, height
+            
+            // SHIPPING & TAX - I dati principali stanno qui nelle varianti
+            $table->boolean('requires_shipping')->default(true);
+            $table->boolean('taxable')->default(true);
+            $table->string('tax_code')->nullable();
+            
+            // Display and Ordering
+            $table->integer('position')->default(1)->index(); // Display order
+            
+            // Status della variante specifica
+            $table->string('status')->default('active')->index();
+            $table->boolean('available')->default(true)->index(); // Available for sale
+            
+            // Metafields (Custom data per variante)
+            $table->jsonb('metafields')->nullable();
+            
+            // Timestamps
             $table->timestamps();
+            $table->softDeletes();
 
-            $table->index(['product_id', 'is_enabled']);
-            $table->index('stock_status');
+            // Indexes
+            $table->unique(['sku', 'site_id']);
+            $table->index(['product_id', 'position']);
+            $table->index(['site_id', 'status']);
+            $table->index(['option1', 'option2', 'option3']);
+            $table->index(['inventory_quantity', 'inventory_policy']);
+            $table->index(['price', 'compare_at_price']);
+            $table->index(['track_quantity', 'available']);
+            $table->index(['weight_unit', 'requires_shipping']);
+            $table->foreign('site_id')->references('id')->on('sites')->onDelete('cascade');
         });
     }
 

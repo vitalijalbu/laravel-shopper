@@ -22,14 +22,14 @@ return new class extends Migration
             $table->json('product_categories')->nullable(); // Categories this applies to
             $table->decimal('min_amount', 10, 2)->nullable(); // Minimum order amount
             $table->decimal('max_amount', 10, 2)->nullable(); // Maximum order amount
-            $table->boolean('is_enabled')->default(true);
+            $table->string('status')->default('active')->index(); // active, inactive, draft
             $table->date('effective_from')->nullable();
             $table->date('effective_until')->nullable();
             $table->text('description')->nullable();
             $table->timestamps();
 
-            $table->index(['is_enabled', 'effective_from', 'effective_until']);
-            $table->index(['code', 'is_enabled']);
+            $table->index(['status', 'effective_from', 'effective_until']);
+            $table->index(['code', 'status']);
         });
     }
 

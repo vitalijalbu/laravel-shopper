@@ -16,12 +16,12 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->string('url')->nullable()->index();
             $table->boolean('is_default')->default(false)->index();
-            $table->boolean('is_enabled')->default(true)->index();
+            $table->string('status')->default('active')->index();
             $table->jsonb('locales')->nullable();
             $table->jsonb('currencies')->nullable();
             $table->timestamps();
 
-            $table->index(['site_id', 'is_enabled']);
+            $table->index(['site_id', 'status']);
             $table->index(['slug', 'site_id']);
             $table->foreign('site_id')->references('id')->on('sites')->onDelete('cascade');
         });

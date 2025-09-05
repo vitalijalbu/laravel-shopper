@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('customer_addresses', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('customer_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('customer_id')->constrained('customers')->cascadeOnDelete();
             $table->string('type')->default('shipping'); // shipping, billing, both
             $table->string('first_name');
             $table->string('last_name');
@@ -25,6 +25,7 @@ return new class extends Migration
             $table->boolean('is_default')->default(false);
             $table->json('metadata')->nullable();
             $table->timestamps();
+            $table->softDeletes();
 
             $table->index(['customer_id', 'type']);
             $table->index(['customer_id', 'is_default']);

@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('wishlists', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('customer_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('customer_id')->constrained('customers')->cascadeOnDelete();
             $table->string('name')->default('My Wishlist');
             $table->text('description')->nullable();
             $table->boolean('is_public')->default(false);

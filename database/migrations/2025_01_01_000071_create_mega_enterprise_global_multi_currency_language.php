@@ -103,7 +103,7 @@ return new class extends Migration
             
             // Tenant currency settings
             $table->boolean('is_default')->default(false)->index();
-            $table->boolean('is_enabled')->default(true)->index();
+            $table->string('status')->default('active')->index(); // active, inactive, restricted
             $table->integer('display_order')->default(0)->index();
             $table->string('display_format', 50)->nullable(); // Custom format override
             
@@ -128,8 +128,8 @@ return new class extends Migration
             $table->timestamps();
             
             $table->unique(['tenant_id', 'currency_code']);
-            $table->index(['tenant_id', 'is_default', 'is_enabled']);
-            $table->index(['currency_code', 'is_enabled']);
+            $table->index(['tenant_id', 'is_default', 'status']);
+            $table->index(['currency_code', 'status']);
         });
 
         // Global language system with AI translation support

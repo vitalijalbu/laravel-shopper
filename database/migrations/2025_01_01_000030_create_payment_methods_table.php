@@ -15,7 +15,7 @@ return new class extends Migration
             $table->string('provider'); // stripe, paypal, square, etc.
             $table->text('description')->nullable();
             $table->json('configuration'); // API keys, settings, etc.
-            $table->boolean('is_enabled')->default(true);
+            $table->string('status')->default('active')->index(); // active, inactive, maintenance
             $table->boolean('is_test_mode')->default(false);
             $table->decimal('fixed_fee', 8, 2)->default(0);
             $table->decimal('percentage_fee', 5, 4)->default(0); // 2.9% = 0.0290
@@ -24,7 +24,7 @@ return new class extends Migration
             $table->integer('sort_order')->default(0);
             $table->timestamps();
 
-            $table->index(['is_enabled', 'sort_order']);
+            $table->index(['status', 'sort_order']);
         });
     }
 

@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('menu_items', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('menu_id')->constrained()->onDelete('cascade');
+            $table->foreignId('menu_id')->constrained('menus')->onDelete('cascade');
             $table->foreignId('parent_id')->nullable()->constrained('menu_items')->onDelete('cascade');
             $table->string('title');
             $table->string('url')->nullable();
@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('reference_type')->nullable(); // App\Models\Product, etc.
             $table->unsignedBigInteger('reference_id')->nullable();
             $table->json('data')->nullable(); // custom fields, attributes
-            $table->boolean('is_enabled')->default(true);
+            $table->string('status')->default('active')->index(); // active, inactive, draft
             $table->boolean('opens_in_new_window')->default(false);
             $table->string('css_class')->nullable();
             $table->integer('sort_order')->default(0);

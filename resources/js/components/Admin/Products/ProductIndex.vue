@@ -248,7 +248,7 @@
 
 <script>
 import { ref, reactive, computed, onMounted } from "vue";
-import { useTranslator } from "@/Utils/translator";
+import { useTranslator } from "@/utils/translator";
 import {
   PencilIcon,
   DocumentDuplicateIcon,

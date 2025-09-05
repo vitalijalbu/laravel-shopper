@@ -188,10 +188,19 @@ class InstallShopperCommand extends Command
             $params['--force'] = true;
         }
 
+        // Publish source assets
         Artisan::call('vendor:publish', array_merge($params, ['--tag' => 'shopper-assets']));
         Artisan::call('vendor:publish', array_merge($params, ['--tag' => 'shopper-views']));
 
-        $this->info('✅ Assets published successfully.');
+        // Build and publish compiled assets
+        $this->info('🔨 Building frontend assets...');
+        $result = Artisan::call('shopper:build');
+        
+        if ($result === 0) {
+            $this->info('✅ Assets built and published successfully.');
+        } else {
+            $this->warn('⚠️  Asset build completed with warnings. Assets published anyway.');
+        }
     }
 
     /**

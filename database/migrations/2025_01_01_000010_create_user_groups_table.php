@@ -26,8 +26,8 @@ return new class extends Migration
         // Tabella pivot per user-group relationship
         Schema::create('user_group_user', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('user_group_id')->constrained()->onDelete('cascade');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('user_group_id')->constrained('user_groups')->onDelete('cascade');
             $table->timestamps();
 
             $table->unique(['user_id', 'user_group_id']);

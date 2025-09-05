@@ -11,40 +11,46 @@ return new class extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('site_id')->nullable()->index();
-            $table->string('name')->index();
+            $table->string('title')->index(); 
             $table->string('slug');
-            $table->text('description')->nullable();
-            $table->text('short_description')->nullable();
-            $table->string('sku')->index();
-            $table->decimal('price', 15, 2)->index();
-            $table->decimal('compare_price', 15, 2)->nullable();
-            $table->decimal('cost_price', 15, 2)->nullable();
-            $table->integer('stock_quantity')->default(0)->index();
-            $table->boolean('track_quantity')->default(true)->index();
-            $table->boolean('allow_out_of_stock_purchases')->default(false);
-            $table->enum('stock_status', ['in_stock', 'out_of_stock', 'on_backorder'])->default('in_stock')->index();
-            $table->decimal('weight', 8, 2)->nullable();
-            $table->jsonb('dimensions')->nullable(); // length, width, height
-            $table->boolean('is_physical')->default(true)->index();
-            $table->boolean('is_digital')->default(false)->index();
-            $table->boolean('requires_shipping')->default(true);
-            $table->boolean('is_enabled')->default(true)->index();
-            $table->boolean('is_featured')->default(false)->index();
-            $table->enum('status', ['active', 'draft', 'archived'])->default('draft')->index();
-            $table->foreignId('brand_id')->nullable()->constrained()->nullOnDelete();
-            $table->foreignId('product_type_id')->nullable()->constrained()->nullOnDelete();
+            $table->string('handle')->nullable()->index(); 
+            $table->text('excerpt')->nullable();
+            $table->text('description')->nullable(); 
+            
+            // Product Classification (applies to all variants)
+            $table->string('product_type')->default('physical')->index();
+            $table->foreignId('brand_id')->nullable()->constrained('brands')->nullOnDelete();
+            $table->foreignId('product_type_id')->nullable()->constrained('product_types')->nullOnDelete();
+            
+            // Product Options (Color, Size, Material, etc.)
+            $table->jsonb('options')->nullable(); // [{"name": "Color", "values": ["Red", "Blue"]}, ...]
+            $table->jsonb('tags')->nullable(); // Product tags
+            
+            // SEO and Meta (Product-level)
+            $table->string('meta_title')->nullable();
+            $table->text('meta_description')->nullable();
             $table->jsonb('seo')->nullable();
-            $table->jsonb('meta')->nullable();
+            
+            // Shopify-specific Fields (Product-level)
+            $table->string('template_suffix')->nullable();
+            $table->boolean('requires_selling_plan')->default(false);
+            
+            // Status and Publishing (Product-level)
+            $table->string('status')->default('draft')->index();
             $table->timestamp('published_at')->nullable()->index();
+            $table->string('published_scope')->default('web')->index(); // web, global
+            
+            // Timestamps
             $table->timestamps();
+            $table->softDeletes();
 
+            // Indexes
             $table->unique(['slug', 'site_id']);
-            $table->unique(['sku', 'site_id']);
-            $table->index(['site_id', 'status', 'is_enabled']);
+            $table->unique(['handle', 'site_id']);
+            $table->index(['site_id', 'status']);
             $table->index(['brand_id', 'product_type_id']);
-            $table->index(['stock_status', 'track_quantity']);
-            $table->index(['is_featured', 'is_enabled']);
             $table->index(['published_at', 'status']);
+            $table->index(['product_type', 'status']);
             $table->foreign('site_id')->references('id')->on('sites')->onDelete('cascade');
         });
     }
