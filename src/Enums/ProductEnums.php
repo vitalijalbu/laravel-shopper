@@ -11,7 +11,7 @@ enum InventoryLocationType: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::WAREHOUSE => 'Warehouse',
             self::STORE => 'Store',
             self::DROPSHIP => 'Dropship',
@@ -33,7 +33,7 @@ enum MetafieldValueType: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::STRING => 'String',
             self::INTEGER => 'Integer',
             self::DECIMAL => 'Decimal',
@@ -47,7 +47,7 @@ enum MetafieldValueType: string
 
     public function cast($value): mixed
     {
-        return match($this) {
+        return match ($this) {
             self::STRING => (string) $value,
             self::INTEGER => (int) $value,
             self::DECIMAL => (float) $value,
@@ -69,7 +69,7 @@ enum ProductRelationType: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::UPSELL => 'Upsell',
             self::CROSS_SELL => 'Cross-sell',
             self::RELATED => 'Related',
@@ -91,7 +91,7 @@ enum AttributeType: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::TEXT => 'Text',
             self::NUMBER => 'Number',
             self::BOOLEAN => 'Boolean',
@@ -114,7 +114,7 @@ enum PricingRuleType: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::PERCENTAGE => 'Percentage Discount',
             self::FIXED => 'Fixed Amount',
             self::BULK => 'Bulk Discount',
@@ -136,7 +136,7 @@ enum FulfillmentStatus: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::PENDING => 'Pending',
             self::IN_PROGRESS => 'In Progress',
             self::SHIPPED => 'Shipped',
@@ -164,7 +164,7 @@ enum ReturnStatus: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::REQUESTED => 'Requested',
             self::APPROVED => 'Approved',
             self::REJECTED => 'Rejected',
@@ -192,7 +192,7 @@ enum ReturnReason: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::DEFECTIVE => 'Defective',
             self::WRONG_ITEM => 'Wrong Item',
             self::NOT_AS_DESCRIBED => 'Not as Described',
@@ -217,7 +217,7 @@ enum ProductCondition: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::NEW => 'New',
             self::OPENED => 'Opened',
             self::DAMAGED => 'Damaged',
@@ -227,7 +227,7 @@ enum ProductCondition: string
 
     public function refundPercentage(): int
     {
-        return match($this) {
+        return match ($this) {
             self::NEW => 100,
             self::OPENED => 90,
             self::DAMAGED => 50,
@@ -246,7 +246,7 @@ enum ShippingCalculationType: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::FLAT_RATE => 'Flat Rate',
             self::WEIGHT_BASED => 'Weight Based',
             self::PRICE_BASED => 'Price Based',
@@ -264,7 +264,7 @@ enum CustomerSegmentType: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::STATIC => 'Static',
             self::DYNAMIC => 'Dynamic',
             self::SMART => 'Smart (AI)',
@@ -279,7 +279,7 @@ enum ReviewMediaType: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::IMAGE => 'Image',
             self::VIDEO => 'Video',
         };
@@ -297,7 +297,7 @@ enum CampaignType: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::SALE => 'Sale',
             self::FLASH_SALE => 'Flash Sale',
             self::CLEARANCE => 'Clearance',
@@ -319,7 +319,7 @@ enum CampaignStatus: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::DRAFT => 'Draft',
             self::SCHEDULED => 'Scheduled',
             self::ACTIVE => 'Active',
@@ -345,7 +345,7 @@ enum GiftCardTransactionType: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::PURCHASE => 'Purchase',
             self::REDEEM => 'Redeem',
             self::REFUND => 'Refund',
@@ -370,7 +370,7 @@ enum CartStatus: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::ACTIVE => 'Active',
             self::ABANDONED => 'Abandoned',
             self::CONVERTED => 'Converted',
@@ -386,7 +386,7 @@ enum TaxType: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::PERCENTAGE => 'Percentage',
             self::FIXED => 'Fixed Amount',
         };
@@ -401,7 +401,7 @@ enum EntryStatus: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::DRAFT => 'Draft',
             self::PUBLISHED => 'Published',
             self::ARCHIVED => 'Archived',
@@ -422,7 +422,7 @@ enum Gender: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::MALE => 'Male',
             self::FEMALE => 'Female',
             self::OTHER => 'Other',
@@ -438,7 +438,7 @@ enum StockStatus: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::IN_STOCK => 'In Stock',
             self::OUT_OF_STOCK => 'Out of Stock',
             self::ON_BACKORDER => 'On Backorder',
@@ -459,7 +459,7 @@ enum ProductStatus: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::ACTIVE => 'Active',
             self::DRAFT => 'Draft',
             self::ARCHIVED => 'Archived',
@@ -481,7 +481,7 @@ enum CustomerStatus: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::ACTIVE => 'Active',
             self::INACTIVE => 'Inactive',
             self::PENDING => 'Pending',

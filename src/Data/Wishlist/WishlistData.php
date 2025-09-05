@@ -41,8 +41,8 @@ class WishlistData extends Data
                 'last_name' => $wishlist->customer->last_name,
                 'email' => $wishlist->customer->email,
             ] : null,
-            items: $wishlist->relationLoaded('items') ? 
-                $wishlist->items->map(fn($item) => [
+            items: $wishlist->relationLoaded('items') ?
+                $wishlist->items->map(fn ($item) => [
                     'id' => $item->id,
                     'product_id' => $item->product_id,
                     'quantity' => $item->quantity,

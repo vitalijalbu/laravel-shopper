@@ -6,9 +6,7 @@ namespace Shopper\Http\Controllers\Api;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Validation\ValidationException;
 use Shopper\Http\Controllers\Controller;
-use Shopper\Models\FidelityCard;
 use Shopper\Services\FidelityService;
 
 class FidelityController extends Controller
@@ -23,14 +21,14 @@ class FidelityController extends Controller
     public function show(Request $request): JsonResponse
     {
         $customer = $request->user();
-        
-        if (!$customer || !$this->fidelityService->isEnabled()) {
+
+        if (! $customer || ! $this->fidelityService->isEnabled()) {
             return response()->json(['message' => 'Fidelity system not available'], 404);
         }
 
         $card = $customer->fidelityCard;
-        
-        if (!$card) {
+
+        if (! $card) {
             return response()->json([
                 'fidelity_card' => null,
                 'can_create' => true,
@@ -56,8 +54,8 @@ class FidelityController extends Controller
     public function store(Request $request): JsonResponse
     {
         $customer = $request->user();
-        
-        if (!$customer || !$this->fidelityService->isEnabled()) {
+
+        if (! $customer || ! $this->fidelityService->isEnabled()) {
             return response()->json(['message' => 'Fidelity system not available'], 404);
         }
 
@@ -80,16 +78,16 @@ class FidelityController extends Controller
     public function transactions(Request $request): JsonResponse
     {
         $customer = $request->user();
-        
-        if (!$customer || !$customer->fidelityCard) {
+
+        if (! $customer || ! $customer->fidelityCard) {
             return response()->json(['message' => 'Fidelity card not found'], 404);
         }
 
         $perPage = min($request->get('per_page', 15), 100);
         $type = $request->get('type'); // earned, redeemed, expired
-        
+
         $query = $customer->fidelityCard->transactions()->orderBy('created_at', 'desc');
-        
+
         if ($type) {
             $query->where('type', $type);
         }
@@ -108,13 +106,13 @@ class FidelityController extends Controller
             'card_number' => 'required|string|max:50',
         ]);
 
-        if (!$this->fidelityService->isEnabled()) {
+        if (! $this->fidelityService->isEnabled()) {
             return response()->json(['message' => 'Fidelity system not available'], 404);
         }
 
         $card = $this->fidelityService->findCardByNumber($request->card_number);
-        
-        if (!$card) {
+
+        if (! $card) {
             return response()->json(['message' => 'Fidelity card not found'], 404);
         }
 
@@ -140,14 +138,14 @@ class FidelityController extends Controller
             'currency' => 'nullable|string|max:3',
         ]);
 
-        if (!$this->fidelityService->arePointsEnabled()) {
+        if (! $this->fidelityService->arePointsEnabled()) {
             return response()->json(['message' => 'Fidelity points system not available'], 404);
         }
 
         $customer = $request->user();
         $amount = $request->amount;
         $currency = $request->currency;
-        
+
         if ($customer && $customer->fidelityCard) {
             $points = $customer->fidelityCard->calculatePointsForAmount($amount, $currency);
             $currentTier = $customer->fidelityCard->getCurrentTier();
@@ -178,17 +176,17 @@ class FidelityController extends Controller
             'reason' => 'nullable|string|max:255',
         ]);
 
-        if (!$this->fidelityService->arePointsEnabled()) {
+        if (! $this->fidelityService->arePointsEnabled()) {
             return response()->json(['message' => 'Fidelity points system not available'], 404);
         }
 
         $card = $this->fidelityService->findCardByNumber($request->card_number);
-        
-        if (!$card) {
+
+        if (! $card) {
             return response()->json(['message' => 'Fidelity card not found'], 404);
         }
 
-        if (!$this->fidelityService->canRedeemPoints($card, $request->points)) {
+        if (! $this->fidelityService->canRedeemPoints($card, $request->points)) {
             return response()->json(['message' => 'Insufficient points or below minimum redemption threshold'], 400);
         }
 
@@ -216,12 +214,12 @@ class FidelityController extends Controller
      */
     public function configuration(): JsonResponse
     {
-        if (!$this->fidelityService->isEnabled()) {
+        if (! $this->fidelityService->isEnabled()) {
             return response()->json(['message' => 'Fidelity system not available'], 404);
         }
 
         $config = $this->fidelityService->getConfiguration();
-        
+
         // Rimuovi informazioni sensibili e restituisci solo quelle pubbliche
         $publicConfig = [
             'enabled' => $config['enabled'] ?? false,

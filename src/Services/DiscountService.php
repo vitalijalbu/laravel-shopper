@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace Shopper\Services;
 
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Str;
+use Shopper\Models\Customer;
 use Shopper\Models\Discount;
 use Shopper\Models\DiscountApplication;
 use Shopper\Models\Order;
-use Shopper\Models\Customer;
-use Shopper\Data\DiscountData;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Str;
 
 class DiscountService
 {
@@ -29,6 +28,7 @@ class DiscountService
     public function updateDiscount(Discount $discount, array $data): Discount
     {
         $discount->update($data);
+
         return $discount->fresh();
     }
 
@@ -38,6 +38,7 @@ class DiscountService
         if ($discount->applications()->count() > 0) {
             // If discount has been used, just disable it
             $discount->update(['is_enabled' => false]);
+
             return true;
         }
 
@@ -48,7 +49,7 @@ class DiscountService
     {
         $discount = Discount::where('code', $code)->first();
 
-        if (!$discount) {
+        if (! $discount) {
             return [
                 'valid' => false,
                 'message' => __('discount.messages.code_not_found'),
@@ -56,7 +57,7 @@ class DiscountService
             ];
         }
 
-        if (!$discount->isActive()) {
+        if (! $discount->isActive()) {
             return [
                 'valid' => false,
                 'message' => __('discount.messages.code_inactive'),
@@ -64,7 +65,7 @@ class DiscountService
             ];
         }
 
-        if (!$this->canCustomerUseDiscount($discount, $customerId)) {
+        if (! $this->canCustomerUseDiscount($discount, $customerId)) {
             return [
                 'valid' => false,
                 'message' => __('discount.messages.usage_limit_exceeded'),
@@ -81,7 +82,7 @@ class DiscountService
 
     public function applyDiscountToOrder(Discount $discount, Order $order): ?DiscountApplication
     {
-        if (!$this->canApplyDiscountToOrder($discount, $order)) {
+        if (! $this->canApplyDiscountToOrder($discount, $order)) {
             return null;
         }
 
@@ -128,7 +129,7 @@ class DiscountService
 
     public function canApplyDiscountToOrder(Discount $discount, Order $order): bool
     {
-        if (!$discount->isActive()) {
+        if (! $discount->isActive()) {
             return false;
         }
 
@@ -138,23 +139,23 @@ class DiscountService
         }
 
         // Check customer usage limit
-        if (!$this->canCustomerUseDiscount($discount, $order->customer_id)) {
+        if (! $this->canCustomerUseDiscount($discount, $order->customer_id)) {
             return false;
         }
 
         // Check eligible customers
-        if (!empty($discount->eligible_customers)) {
-            if (!in_array($order->customer_id, $discount->eligible_customers)) {
+        if (! empty($discount->eligible_customers)) {
+            if (! in_array($order->customer_id, $discount->eligible_customers)) {
                 return false;
             }
         }
 
         // Check eligible products
-        if (!empty($discount->eligible_products)) {
+        if (! empty($discount->eligible_products)) {
             $orderProductIds = $order->items->pluck('product_id')->toArray();
-            $hasEligibleProducts = !empty(array_intersect($discount->eligible_products, $orderProductIds));
-            
-            if (!$hasEligibleProducts) {
+            $hasEligibleProducts = ! empty(array_intersect($discount->eligible_products, $orderProductIds));
+
+            if (! $hasEligibleProducts) {
                 return false;
             }
         }
@@ -167,9 +168,9 @@ class DiscountService
         $baseAmount = $order->subtotal;
 
         // If specific products are eligible, calculate discount only on those
-        if (!empty($discount->eligible_products)) {
+        if (! empty($discount->eligible_products)) {
             $eligibleItems = $order->items->whereIn('product_id', $discount->eligible_products);
-            $baseAmount = $eligibleItems->sum(fn($item) => $item->quantity * $item->price);
+            $baseAmount = $eligibleItems->sum(fn ($item) => $item->quantity * $item->price);
         }
 
         switch ($discount->type) {
@@ -196,7 +197,7 @@ class DiscountService
 
     public function canCustomerUseDiscount(Discount $discount, ?int $customerId): bool
     {
-        if (!$customerId || !$discount->usage_limit_per_customer) {
+        if (! $customerId || ! $discount->usage_limit_per_customer) {
             return true;
         }
 
@@ -215,11 +216,11 @@ class DiscountService
         return Discount::where('is_enabled', true)
             ->where(function ($query) {
                 $query->whereNull('starts_at')
-                      ->orWhere('starts_at', '<=', now());
+                    ->orWhere('starts_at', '<=', now());
             })
             ->where(function ($query) {
                 $query->whereNull('expires_at')
-                      ->orWhere('expires_at', '>=', now());
+                    ->orWhere('expires_at', '>=', now());
             })
             ->orderBy('created_at', 'desc')
             ->get();
@@ -236,12 +237,12 @@ class DiscountService
                 ->where('applicable_type', Order::class)
                 ->join('orders', function ($join) {
                     $join->on('discount_applications.applicable_id', '=', 'orders.id')
-                         ->where('discount_applications.applicable_type', Order::class);
+                        ->where('discount_applications.applicable_type', Order::class);
                 })
                 ->distinct('orders.customer_id')
                 ->count('orders.customer_id'),
-            'usage_percentage' => $discount->usage_limit 
-                ? ($discount->usage_count / $discount->usage_limit) * 100 
+            'usage_percentage' => $discount->usage_limit
+                ? ($discount->usage_count / $discount->usage_limit) * 100
                 : 0,
         ];
     }
@@ -253,7 +254,7 @@ class DiscountService
         $counter = 1;
 
         while (Discount::where('code', $code)->exists()) {
-            $code = $baseCode . $counter;
+            $code = $baseCode.$counter;
             $counter++;
         }
 

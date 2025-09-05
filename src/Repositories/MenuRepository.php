@@ -24,7 +24,7 @@ class MenuRepository extends BaseRepository
         $query = $this->model->newQuery()->withCount('allItems');
 
         // Search filter
-        if (!empty($filters['search'])) {
+        if (! empty($filters['search'])) {
             $search = $filters['search'];
             $query->where(function ($q) use ($search) {
                 $q->where('title', 'like', "%{$search}%")
@@ -78,8 +78,8 @@ class MenuRepository extends BaseRepository
     public function getWithTree(string $handle): ?Menu
     {
         $menu = $this->findByHandle($handle);
-        
-        if (!$menu) {
+
+        if (! $menu) {
             return null;
         }
 
@@ -94,16 +94,16 @@ class MenuRepository extends BaseRepository
     public function duplicate(int $id): ?Menu
     {
         $originalMenu = $this->find($id);
-        
-        if (!$originalMenu) {
+
+        if (! $originalMenu) {
             return null;
         }
 
         $duplicatedData = $originalMenu->toArray();
         unset($duplicatedData['id'], $duplicatedData['created_at'], $duplicatedData['updated_at']);
-        
-        $duplicatedData['title'] = $duplicatedData['title'] . ' (Copy)';
-        $duplicatedData['handle'] = $duplicatedData['handle'] . '_copy_' . time();
+
+        $duplicatedData['title'] = $duplicatedData['title'].' (Copy)';
+        $duplicatedData['handle'] = $duplicatedData['handle'].'_copy_'.time();
         $duplicatedData['is_active'] = false;
 
         $newMenu = $this->create($duplicatedData);
@@ -124,7 +124,7 @@ class MenuRepository extends BaseRepository
         foreach ($items as $item) {
             $itemData = $item->toArray();
             unset($itemData['id'], $itemData['created_at'], $itemData['updated_at']);
-            
+
             $itemData['menu_id'] = $newMenuId;
             $itemData['parent_id'] = $newParentId;
 
@@ -148,6 +148,7 @@ class MenuRepository extends BaseRepository
             }
 
             $this->clearCache();
+
             return true;
         } catch (\Exception $e) {
             return false;
@@ -160,12 +161,12 @@ class MenuRepository extends BaseRepository
     public function toggleStatus(int $id): ?Menu
     {
         $menu = $this->find($id);
-        
-        if (!$menu) {
+
+        if (! $menu) {
             return null;
         }
 
-        $menu->update(['is_active' => !$menu->is_active]);
+        $menu->update(['is_active' => ! $menu->is_active]);
         $this->clearCache();
 
         return $menu->fresh();

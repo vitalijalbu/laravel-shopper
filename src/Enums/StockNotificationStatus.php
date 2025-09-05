@@ -12,7 +12,7 @@ enum StockNotificationStatus: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::PENDING => __('shopper::stock_notification.status.pending'),
             self::SENDING => __('shopper::stock_notification.status.sending'),
             self::SENT => __('shopper::stock_notification.status.sent'),
@@ -23,7 +23,7 @@ enum StockNotificationStatus: string
 
     public function color(): string
     {
-        return match($this) {
+        return match ($this) {
             self::PENDING => 'orange',
             self::SENDING => 'blue',
             self::SENT => 'green',

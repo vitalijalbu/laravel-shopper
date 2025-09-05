@@ -11,15 +11,15 @@ return new class extends Migration
         Schema::table('products', function (Blueprint $table) {
             // Default variant - riferimento semplice senza foreign key per evitare circular dependency
             $table->unsignedBigInteger('default_variant_id')->nullable()->after('id')->index();
-            
+
             // Conteggi per ottimizzazione query
             $table->integer('variants_count')->default(0)->after('published_scope');
             $table->integer('images_count')->default(0)->after('variants_count');
-            
+
             // Price range per display (calcolato dalle varianti)
             $table->decimal('price_min', 15, 2)->nullable()->after('images_count');
             $table->decimal('price_max', 15, 2)->nullable()->after('price_min');
-            
+
             // Indici per performance
             $table->index(['default_variant_id', 'status']);
             $table->index(['price_min', 'price_max']);
@@ -35,7 +35,7 @@ return new class extends Migration
                 'variants_count',
                 'images_count',
                 'price_min',
-                'price_max'
+                'price_max',
             ]);
         });
     }

@@ -11,7 +11,7 @@ enum TenantPlan: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::STARTER => 'Starter',
             self::PRO => 'Professional',
             self::ENTERPRISE => 'Enterprise',
@@ -21,7 +21,7 @@ enum TenantPlan: string
 
     public function monthlyPrice(): float
     {
-        return match($this) {
+        return match ($this) {
             self::STARTER => 29.99,
             self::PRO => 99.99,
             self::ENTERPRISE => 299.99,
@@ -39,7 +39,7 @@ enum TenantStatus: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::ACTIVE => 'Active',
             self::SUSPENDED => 'Suspended',
             self::CANCELLED => 'Cancelled',
@@ -62,7 +62,7 @@ enum SslStatus: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::PENDING => 'Pending',
             self::ACTIVE => 'Active',
             self::FAILED => 'Failed',
@@ -81,7 +81,7 @@ enum ShardStatus: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::ACTIVE => 'Active',
             self::READONLY => 'Read Only',
             self::MAINTENANCE => 'Maintenance',
@@ -104,7 +104,7 @@ enum BackupStatus: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::SUCCESS => 'Success',
             self::FAILED => 'Failed',
             self::IN_PROGRESS => 'In Progress',
@@ -121,7 +121,7 @@ enum MigrationStatus: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::ACTIVE => 'Active',
             self::MIGRATING => 'Migrating',
             self::ROLLBACK => 'Rolling Back',
@@ -144,7 +144,7 @@ enum MetricType: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::ORDERS => 'Orders',
             self::PRODUCTS => 'Products',
             self::CUSTOMERS => 'Customers',
@@ -169,7 +169,7 @@ enum PeriodType: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::HOUR => 'Hour',
             self::DAY => 'Day',
             self::WEEK => 'Week',
@@ -188,7 +188,7 @@ enum HealthStatus: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::HEALTHY => 'Healthy',
             self::WARNING => 'Warning',
             self::CRITICAL => 'Critical',
@@ -197,7 +197,7 @@ enum HealthStatus: string
 
     public function color(): string
     {
-        return match($this) {
+        return match ($this) {
             self::HEALTHY => 'green',
             self::WARNING => 'yellow',
             self::CRITICAL => 'red',
@@ -214,7 +214,7 @@ enum RolloutStage: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::DEV => 'Development',
             self::BETA => 'Beta',
             self::STABLE => 'Stable',

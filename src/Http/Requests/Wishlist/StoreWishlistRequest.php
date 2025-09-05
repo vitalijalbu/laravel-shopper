@@ -3,8 +3,8 @@
 namespace Shopper\Http\Requests\Wishlist;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Shopper\Enums\WishlistStatus;
 use Illuminate\Validation\Rule;
+use Shopper\Enums\WishlistStatus;
 
 class StoreWishlistRequest extends FormRequest
 {

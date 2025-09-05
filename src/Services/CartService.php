@@ -2,13 +2,13 @@
 
 namespace Shopper\Services;
 
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Log;
+use Shopper\Data\Cart\CartData;
+use Shopper\Enums\CartStatus;
+use Shopper\Jobs\SendCartRecoveryEmail;
 use Shopper\Models\Cart;
 use Shopper\Repositories\CartRepository;
-use Shopper\Data\Cart\CartData;
-use Shopper\Jobs\SendCartRecoveryEmail;
-use Shopper\Enums\CartStatus;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Carbon;
 
 class CartService
 {
@@ -22,7 +22,7 @@ class CartService
     public function createCart(array $data): CartData
     {
         $cart = $this->repository->create($data);
-        
+
         return CartData::fromModel($cart);
     }
 
@@ -33,9 +33,9 @@ class CartService
     {
         // Update activity timestamp
         $data['last_activity_at'] = now();
-        
+
         $cart = $this->repository->update($cart->id, $data);
-        
+
         return CartData::fromModel($cart);
     }
 
@@ -45,7 +45,7 @@ class CartService
     public function addItem(Cart $cart, array $itemData): CartData
     {
         $items = $cart->items ?? [];
-        
+
         // Check if product already exists in cart
         $existingIndex = collect($items)->search(function ($item) use ($itemData) {
             return $item['product_id'] == $itemData['product_id'];
@@ -67,7 +67,7 @@ class CartService
 
         // Recalculate cart totals
         $subtotal = collect($items)->sum('total');
-        
+
         return $this->updateCart($cart, [
             'items' => $items,
             'subtotal' => $subtotal,
@@ -139,7 +139,7 @@ class CartService
     public function processAbandonment(int $hoursThreshold = 1): array
     {
         $marked = $this->repository->autoMarkAbandoned($hoursThreshold);
-        
+
         Log::info("Marked {$marked} carts as abandoned");
 
         return [
@@ -165,18 +165,18 @@ class CartService
             // Log the recovery attempt
             $this->repository->update($cart->id, [
                 'recovery_emails_sent' => ($cart->recovery_emails_sent ?? 0) + 1,
-                'last_recovery_email_sent_at' => now()
+                'last_recovery_email_sent_at' => now(),
             ]);
 
             SendCartRecoveryEmail::dispatchNow($cart);
-            
+
             return true;
         } catch (\Exception $e) {
             Log::error('Failed to send cart recovery email', [
                 'cart_id' => $cart->id,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
-            
+
             return false;
         }
     }
@@ -187,8 +187,8 @@ class CartService
     public function getCartsEligibleForRecovery(): array
     {
         $carts = $this->repository->getEligibleForRecovery();
-        
-        return $carts->map(fn($cart) => CartData::fromModel($cart))->toArray();
+
+        return $carts->map(fn ($cart) => CartData::fromModel($cart))->toArray();
     }
 
     /**
@@ -224,7 +224,7 @@ class CartService
     public function getRecoveryRate(?Carbon $startDate = null, ?Carbon $endDate = null): float
     {
         $stats = $this->getRecoveryStatistics($startDate, $endDate);
-        
+
         return $stats['recovery_rate'] ?? 0.0;
     }
 
@@ -257,8 +257,8 @@ class CartService
      */
     public function generateRecoveryLink(Cart $cart): string
     {
-        $token = base64_encode($cart->id . '|' . ($cart->email ?? $cart->customer?->email) . '|' . now()->timestamp);
-        
+        $token = base64_encode($cart->id.'|'.($cart->email ?? $cart->customer?->email).'|'.now()->timestamp);
+
         return route('cart.recover', ['token' => $token]);
     }
 
@@ -270,18 +270,18 @@ class CartService
         try {
             $decoded = base64_decode($token);
             [$cartId, $email, $timestamp] = explode('|', $decoded);
-            
+
             // Token expires after 7 days
             if (now()->timestamp - $timestamp > 604800) {
                 return null;
             }
 
             return Cart::where('id', $cartId)
-                ->where(function($query) use ($email) {
+                ->where(function ($query) use ($email) {
                     $query->where('email', $email)
-                          ->orWhereHas('customer', function($q) use ($email) {
-                              $q->where('email', $email);
-                          });
+                        ->orWhereHas('customer', function ($q) use ($email) {
+                            $q->where('email', $email);
+                        });
                 })
                 ->where('status', CartStatus::ABANDONED)
                 ->first();
@@ -296,8 +296,8 @@ class CartService
     public function getOrCreateForSession(string $sessionId, ?int $customerId = null): CartData
     {
         $cart = $this->repository->getBySession($sessionId);
-        
-        if (!$cart) {
+
+        if (! $cart) {
             $cart = $this->repository->create([
                 'session_id' => $sessionId,
                 'customer_id' => $customerId,
@@ -319,8 +319,8 @@ class CartService
     public function getOrCreateForCustomer(int $customerId): CartData
     {
         $cart = $this->repository->getByCustomer($customerId);
-        
-        if (!$cart) {
+
+        if (! $cart) {
             $cart = $this->repository->create([
                 'customer_id' => $customerId,
                 'status' => CartStatus::ACTIVE,
@@ -342,10 +342,10 @@ class CartService
     {
         $sessionItems = $sessionCart->items ?? [];
         $customerItems = $customerCart->items ?? [];
-        
+
         // Merge items
         $mergedItems = collect($customerItems);
-        
+
         foreach ($sessionItems as $sessionItem) {
             $existingIndex = $mergedItems->search(function ($item) use ($sessionItem) {
                 return $item['product_id'] == $sessionItem['product_id'];

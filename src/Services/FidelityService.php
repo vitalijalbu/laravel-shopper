@@ -62,19 +62,19 @@ class FidelityService
      */
     public function processOrderForPoints(Order $order): ?FidelityTransaction
     {
-        if (!$this->arePointsEnabled() || !$order->customer) {
+        if (! $this->arePointsEnabled() || ! $order->customer) {
             return null;
         }
 
         $customer = $order->customer;
         $card = $customer->getOrCreateFidelityCard();
-        
+
         $points = $this->calculatePointsForOrder($order, $card);
-        
+
         if ($points > 0) {
             // Aggiorna l'importo totale speso
             $card->increment('total_spent_amount', $order->total);
-            
+
             return $card->addPoints(
                 $points,
                 "Points earned from order #{$order->number}",
@@ -90,13 +90,13 @@ class FidelityService
      */
     public function calculatePointsForOrder(Order $order, ?FidelityCard $card = null): int
     {
-        if (!$this->arePointsEnabled()) {
+        if (! $this->arePointsEnabled()) {
             return 0;
         }
 
         $card = $card ?: $order->customer?->fidelityCard;
-        
-        if (!$card) {
+
+        if (! $card) {
             // Se non c'è una card, calcola i punti basandosi sui tier di base
             return $this->calculatePointsForAmount($order->total, $order->currency);
         }
@@ -107,30 +107,30 @@ class FidelityService
     /**
      * Calcola i punti per un importo senza considerare una card specifica
      */
-    public function calculatePointsForAmount(float $amount, string $currency = null): int
+    public function calculatePointsForAmount(float $amount, ?string $currency = null): int
     {
         $config = config('shopper.fidelity.points');
-        
-        if (!$config['enabled']) {
+
+        if (! $config['enabled']) {
             return 0;
         }
 
         $baseCurrency = $config['currency_base'] ?? 'EUR';
         $convertedAmount = $this->convertCurrency($amount, $currency ?? $baseCurrency, $baseCurrency);
-        
+
         // Usa il tier più basso per il calcolo
         $tiers = $config['conversion_rules']['tiers'] ?? [0 => 1];
         $baseRate = $tiers[0] ?? 1;
-        
+
         return (int) floor($convertedAmount * $baseRate);
     }
 
     /**
      * Riscatta punti
      */
-    public function redeemPoints(FidelityCard $card, int $points, string $reason = null, ?int $orderId = null): FidelityTransaction
+    public function redeemPoints(FidelityCard $card, int $points, ?string $reason = null, ?int $orderId = null): FidelityTransaction
     {
-        if (!$this->arePointsEnabled()) {
+        if (! $this->arePointsEnabled()) {
             throw new \InvalidArgumentException('Fidelity points system is disabled.');
         }
 
@@ -143,6 +143,7 @@ class FidelityService
     public function getPointsValue(int $points): float
     {
         $rate = config('shopper.fidelity.points.redemption.points_to_currency_rate', 0.01);
+
         return $points * $rate;
     }
 
@@ -152,6 +153,7 @@ class FidelityService
     public function getPointsForValue(float $value): int
     {
         $rate = config('shopper.fidelity.points.redemption.points_to_currency_rate', 0.01);
+
         return (int) ceil($value / $rate);
     }
 
@@ -160,11 +162,12 @@ class FidelityService
      */
     public function canRedeemPoints(FidelityCard $card, int $points): bool
     {
-        if (!$this->arePointsEnabled() || !$card->is_active) {
+        if (! $this->arePointsEnabled() || ! $card->is_active) {
             return false;
         }
 
         $minPoints = config('shopper.fidelity.points.redemption.min_points', 100);
+
         return $card->available_points >= $points && $points >= $minPoints;
     }
 
@@ -175,7 +178,7 @@ class FidelityService
     {
         $currentTier = $card->getCurrentTier();
         $nextTier = $card->getNextTier();
-        
+
         return [
             'card_number' => $card->card_number,
             'total_points' => $card->total_points,
@@ -208,12 +211,12 @@ class FidelityService
      */
     public function expirePoints(?FidelityCard $card = null): int
     {
-        if (!$this->arePointsEnabled()) {
+        if (! $this->arePointsEnabled()) {
             return 0;
         }
 
         $expiredCount = 0;
-        
+
         if ($card) {
             $card->expirePoints();
             $expiredCount = 1;
@@ -265,7 +268,7 @@ class FidelityService
         if ($fromCurrency === $toCurrency) {
             return $amount;
         }
-        
+
         // Per ora assumiamo che sia tutto nella stessa valuta
         // In futuro si può implementare una logica di conversione più complessa
         return $amount;

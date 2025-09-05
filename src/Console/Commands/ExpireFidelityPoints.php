@@ -30,13 +30,15 @@ class ExpireFidelityPoints extends Command
      */
     public function handle(FidelityService $fidelityService): int
     {
-        if (!$fidelityService->isEnabled()) {
+        if (! $fidelityService->isEnabled()) {
             $this->error('Fidelity system is disabled.');
+
             return 1;
         }
 
-        if (!$fidelityService->arePointsEnabled()) {
+        if (! $fidelityService->arePointsEnabled()) {
             $this->error('Fidelity points system is disabled.');
+
             return 1;
         }
 
@@ -53,19 +55,19 @@ class ExpireFidelityPoints extends Command
         if ($shouldNotify) {
             $this->info('Checking for points expiring in the next 7 days...');
             $expiringCards = $fidelityService->getCardsWithExpiringPoints(7);
-            
+
             if ($expiringCards->count() > 0) {
                 $this->info("Found {$expiringCards->count()} cards with points expiring soon.");
-                
+
                 foreach ($expiringCards as $card) {
                     $customer = $card->customer;
                     $expiringPoints = $card->transactions()
                         ->expiring(7)
                         ->sum('points');
-                    
+
                     $this->line("  - {$customer->full_name} ({$customer->email}): {$expiringPoints} points expiring");
-                    
-                    if (!$isDryRun) {
+
+                    if (! $isDryRun) {
                         // Qui si può implementare l'invio di email di notifica
                         // dispatch(new SendFidelityPointsExpirationNotification($customer, $expiringPoints));
                     }
@@ -77,15 +79,15 @@ class ExpireFidelityPoints extends Command
 
         // Scadenza effettiva dei punti
         $this->info('Processing expired points...');
-        
-        if (!$isDryRun) {
+
+        if (! $isDryRun) {
             $expiredCardsCount = $fidelityService->expirePoints();
             $this->info("Processed {$expiredCardsCount} fidelity cards for expired points.");
         } else {
             // In modalità dry-run, mostra solo cosa verrebbe fatto
             $expiredCards = $fidelityService->getCardsWithExpiringPoints(0); // Punti scaduti oggi
             $this->info("Would process {$expiredCards->count()} cards with expired points.");
-            
+
             foreach ($expiredCards as $card) {
                 $customer = $card->customer;
                 $expiredPoints = $card->transactions()
@@ -94,7 +96,7 @@ class ExpireFidelityPoints extends Command
                     ->whereNotNull('expires_at')
                     ->where('expires_at', '<', now())
                     ->sum('points');
-                
+
                 if ($expiredPoints > 0) {
                     $this->line("  - {$customer->full_name} ({$customer->email}): {$expiredPoints} points would expire");
                 }
@@ -102,7 +104,7 @@ class ExpireFidelityPoints extends Command
         }
 
         $this->info('Fidelity points expiration process completed.');
-        
+
         return 0;
     }
 }

@@ -24,22 +24,22 @@ class CustomerAddressRepository extends BaseRepository
         $query = $this->model->newQuery()->with('customer');
 
         // Customer filter
-        if (!empty($filters['customer_id'])) {
+        if (! empty($filters['customer_id'])) {
             $query->where('customer_id', $filters['customer_id']);
         }
 
         // Type filter
-        if (!empty($filters['type'])) {
+        if (! empty($filters['type'])) {
             $query->where('type', $filters['type']);
         }
 
         // Country filter
-        if (!empty($filters['country_code'])) {
+        if (! empty($filters['country_code'])) {
             $query->where('country_code', $filters['country_code']);
         }
 
         // Search filter
-        if (!empty($filters['search'])) {
+        if (! empty($filters['search'])) {
             $search = $filters['search'];
             $query->where(function ($q) use ($search) {
                 $q->where('first_name', 'like', "%{$search}%")
@@ -69,11 +69,11 @@ class CustomerAddressRepository extends BaseRepository
      */
     public function getByCustomer(int $customerId, ?string $type = null): Collection
     {
-        $cacheKey = $this->getCacheKey('customer', $customerId . '_' . $type);
+        $cacheKey = $this->getCacheKey('customer', $customerId.'_'.$type);
 
         return \Illuminate\Support\Facades\Cache::remember($cacheKey, $this->cacheTtl, function () use ($customerId, $type) {
             $query = $this->model->where('customer_id', $customerId);
-            
+
             if ($type) {
                 $query->where('type', $type);
             }
@@ -89,7 +89,7 @@ class CustomerAddressRepository extends BaseRepository
      */
     public function getDefaultForCustomer(int $customerId, string $type): ?CustomerAddress
     {
-        $cacheKey = $this->getCacheKey('default', $customerId . '_' . $type);
+        $cacheKey = $this->getCacheKey('default', $customerId.'_'.$type);
 
         return \Illuminate\Support\Facades\Cache::remember($cacheKey, $this->cacheTtl, function () use ($customerId, $type) {
             return $this->model->where('customer_id', $customerId)
@@ -105,8 +105,8 @@ class CustomerAddressRepository extends BaseRepository
     public function setAsDefault(int $addressId): bool
     {
         $address = $this->find($addressId);
-        
-        if (!$address) {
+
+        if (! $address) {
             return false;
         }
 
@@ -120,6 +120,7 @@ class CustomerAddressRepository extends BaseRepository
         $address->update(['is_default' => true]);
 
         $this->clearCache();
+
         return true;
     }
 
@@ -181,6 +182,7 @@ class CustomerAddressRepository extends BaseRepository
         try {
             $this->model->whereIn('id', $addressIds)->update($data);
             $this->clearCache();
+
             return true;
         } catch (\Exception $e) {
             return false;

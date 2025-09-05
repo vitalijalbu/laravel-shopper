@@ -22,7 +22,7 @@ class FidelitySystemTest extends BaseTestCase
     {
         parent::setUp();
         $this->fidelityService = app(FidelityService::class);
-        
+
         // Abilita il sistema di fedeltà per i test
         config(['shopper.fidelity.enabled' => true]);
         config(['shopper.fidelity.points.enabled' => true]);
@@ -31,9 +31,9 @@ class FidelitySystemTest extends BaseTestCase
     public function test_can_create_fidelity_card_for_customer()
     {
         $customer = Customer::factory()->create();
-        
+
         $card = $this->fidelityService->createFidelityCard($customer);
-        
+
         $this->assertInstanceOf(FidelityCard::class, $card);
         $this->assertEquals($customer->id, $card->customer_id);
         $this->assertTrue($card->is_active);
@@ -45,10 +45,10 @@ class FidelitySystemTest extends BaseTestCase
     {
         $customer1 = Customer::factory()->create();
         $customer2 = Customer::factory()->create();
-        
+
         $card1 = $this->fidelityService->createFidelityCard($customer1);
         $card2 = $this->fidelityService->createFidelityCard($customer2);
-        
+
         $this->assertNotEquals($card1->card_number, $card2->card_number);
     }
 
@@ -56,17 +56,17 @@ class FidelitySystemTest extends BaseTestCase
     {
         $customer = Customer::factory()->create();
         $card = $this->fidelityService->createFidelityCard($customer);
-        
+
         $points = 100;
         $reason = 'Test points';
-        
+
         $transaction = $card->addPoints($points, $reason);
-        
+
         $this->assertInstanceOf(FidelityTransaction::class, $transaction);
         $this->assertEquals($points, $transaction->points);
         $this->assertEquals($reason, $transaction->description);
         $this->assertEquals('earned', $transaction->type);
-        
+
         $card->refresh();
         $this->assertEquals($points, $card->total_points);
         $this->assertEquals($points, $card->available_points);
@@ -77,20 +77,20 @@ class FidelitySystemTest extends BaseTestCase
     {
         $customer = Customer::factory()->create();
         $card = $this->fidelityService->createFidelityCard($customer);
-        
+
         // Aggiungi prima alcuni punti
         $card->addPoints(200, 'Initial points');
-        
+
         $pointsToRedeem = 100;
         $reason = 'Test redemption';
-        
+
         $transaction = $card->redeemPoints($pointsToRedeem, $reason);
-        
+
         $this->assertInstanceOf(FidelityTransaction::class, $transaction);
         $this->assertEquals(-$pointsToRedeem, $transaction->points);
         $this->assertEquals($reason, $transaction->description);
         $this->assertEquals('redeemed', $transaction->type);
-        
+
         $card->refresh();
         $this->assertEquals(200, $card->total_points); // Non cambia
         $this->assertEquals(100, $card->available_points); // Diminuisce
@@ -101,12 +101,12 @@ class FidelitySystemTest extends BaseTestCase
     {
         $customer = Customer::factory()->create();
         $card = $this->fidelityService->createFidelityCard($customer);
-        
+
         $card->addPoints(50, 'Small amount');
-        
+
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Insufficient points for redemption.');
-        
+
         $card->redeemPoints(100, 'Too many points');
     }
 
@@ -114,17 +114,17 @@ class FidelitySystemTest extends BaseTestCase
     {
         $customer = Customer::factory()->create();
         $card = $this->fidelityService->createFidelityCard($customer);
-        
+
         // Test con tier base (1 punto per euro)
         $amount = 100.00;
         $points = $card->calculatePointsForAmount($amount, 'EUR');
-        
+
         $this->assertEquals(100, $points);
-        
+
         // Simula spesa per raggiungere tier superiore
         $card->update(['total_spent_amount' => 500]);
         $points = $card->calculatePointsForAmount($amount, 'EUR');
-        
+
         // Con tier da 500€+ dovrebbe essere 2 punti per euro
         $this->assertEquals(200, $points);
     }
@@ -137,13 +137,13 @@ class FidelitySystemTest extends BaseTestCase
             'total' => 100.00,
             'currency' => 'EUR',
         ]);
-        
+
         $transaction = $this->fidelityService->processOrderForPoints($order);
-        
+
         $this->assertInstanceOf(FidelityTransaction::class, $transaction);
         $this->assertEquals('earned', $transaction->type);
         $this->assertEquals($order->id, $transaction->order_id);
-        
+
         $customer->refresh();
         $card = $customer->fidelityCard;
         $this->assertNotNull($card);
@@ -155,9 +155,9 @@ class FidelitySystemTest extends BaseTestCase
     {
         $customer = Customer::factory()->create();
         $card = $this->fidelityService->createFidelityCard($customer);
-        
+
         $foundCard = $this->fidelityService->findCardByNumber($card->card_number);
-        
+
         $this->assertNotNull($foundCard);
         $this->assertEquals($card->id, $foundCard->id);
     }
@@ -165,7 +165,7 @@ class FidelitySystemTest extends BaseTestCase
     public function test_returns_null_for_invalid_card_number()
     {
         $foundCard = $this->fidelityService->findCardByNumber('INVALID-123');
-        
+
         $this->assertNull($foundCard);
     }
 
@@ -173,18 +173,18 @@ class FidelitySystemTest extends BaseTestCase
     {
         $customer = Customer::factory()->create();
         $card = $this->fidelityService->createFidelityCard($customer);
-        
+
         // Test tier base
         $tier = $card->getCurrentTier();
         $this->assertEquals(0, $tier['threshold']);
         $this->assertEquals(1, $tier['rate']);
-        
+
         // Simula spesa per tier Silver (100€+)
         $card->update(['total_spent_amount' => 150]);
         $tier = $card->getCurrentTier();
         $this->assertEquals(100, $tier['threshold']);
         $this->assertEquals(1.5, $tier['rate']);
-        
+
         // Test next tier
         $nextTier = $card->getNextTier();
         $this->assertEquals(500, $nextTier['threshold']);
@@ -196,7 +196,7 @@ class FidelitySystemTest extends BaseTestCase
     {
         $customer = Customer::factory()->create();
         $card = $this->fidelityService->createFidelityCard($customer);
-        
+
         // Crea una transazione con punti scaduti
         $expiredTransaction = FidelityTransaction::factory()->create([
             'fidelity_card_id' => $card->id,
@@ -205,27 +205,27 @@ class FidelitySystemTest extends BaseTestCase
             'expires_at' => now()->subDay(),
             'expired' => false,
         ]);
-        
+
         $card->update([
             'total_points' => 100,
             'available_points' => 100,
             'total_earned' => 100,
         ]);
-        
+
         $card->expirePoints();
-        
+
         $expiredTransaction->refresh();
         $this->assertTrue($expiredTransaction->expired);
-        
+
         $card->refresh();
         $this->assertEquals(0, $card->available_points);
-        
+
         // Verifica che sia stata creata una transazione di scadenza
         $expirationTransaction = $card->transactions()
             ->where('type', 'expired')
             ->where('reference_transaction_id', $expiredTransaction->id)
             ->first();
-            
+
         $this->assertNotNull($expirationTransaction);
         $this->assertEquals(-100, $expirationTransaction->points);
     }
@@ -241,9 +241,9 @@ class FidelitySystemTest extends BaseTestCase
             'total_redeemed' => 200,
             'total_spent_amount' => 750.00,
         ]);
-        
+
         $statistics = $this->fidelityService->getCardStatistics($card);
-        
+
         $this->assertEquals($card->card_number, $statistics['card_number']);
         $this->assertEquals(500, $statistics['total_points']);
         $this->assertEquals(300, $statistics['available_points']);

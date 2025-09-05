@@ -2,9 +2,9 @@
 
 namespace Shopper\Services;
 
+use Shopper\Data\CustomerAddress\CustomerAddressData;
 use Shopper\Models\CustomerAddress;
 use Shopper\Repositories\CustomerAddressRepository;
-use Shopper\Data\CustomerAddress\CustomerAddressData;
 
 class CustomerAddressService
 {
@@ -18,8 +18,8 @@ class CustomerAddressService
     public function getCustomerAddresses(int $customerId, ?string $type = null): array
     {
         $addresses = $this->repository->getByCustomer($customerId, $type);
-        
-        return $addresses->map(fn($address) => CustomerAddressData::fromModel($address))->toArray();
+
+        return $addresses->map(fn ($address) => CustomerAddressData::fromModel($address))->toArray();
     }
 
     /**
@@ -36,7 +36,7 @@ class CustomerAddressService
         }
 
         $address = $this->repository->create($data);
-        
+
         return CustomerAddressData::fromModel($address);
     }
 
@@ -55,7 +55,7 @@ class CustomerAddressService
         }
 
         $address = $this->repository->update($address->id, $data);
-        
+
         return CustomerAddressData::fromModel($address);
     }
 
@@ -81,7 +81,7 @@ class CustomerAddressService
     public function getDefaultAddress(int $customerId, string $type): ?CustomerAddressData
     {
         $address = $this->repository->getDefaultForCustomer($customerId, $type);
-        
+
         return $address ? CustomerAddressData::fromModel($address) : null;
     }
 

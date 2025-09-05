@@ -14,7 +14,7 @@ enum StockStatus: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::InStock => 'In Stock',
             self::OutOfStock => 'Out of Stock',
             self::OnBackorder => 'On Backorder',
@@ -25,7 +25,7 @@ enum StockStatus: string
 
     public function color(): string
     {
-        return match($this) {
+        return match ($this) {
             self::InStock => 'green',
             self::OutOfStock => 'red',
             self::OnBackorder => 'yellow',

@@ -134,7 +134,7 @@ class CustomerRepository extends BaseRepository
             ->withSum('orders', 'total_amount');
 
         // Aggiungi filtri per fidelity card
-        if (!empty($filters['has_fidelity_card'])) {
+        if (! empty($filters['has_fidelity_card'])) {
             if ($filters['has_fidelity_card'] === 'yes') {
                 $query->whereHas('fidelityCard');
             } elseif ($filters['has_fidelity_card'] === 'no') {
@@ -142,7 +142,7 @@ class CustomerRepository extends BaseRepository
             }
         }
 
-        if (!empty($filters['fidelity_tier'])) {
+        if (! empty($filters['fidelity_tier'])) {
             $query->whereHas('fidelityCard', function ($q) use ($filters) {
                 $tier = $filters['fidelity_tier'];
                 switch ($tier) {
@@ -162,7 +162,7 @@ class CustomerRepository extends BaseRepository
             });
         }
 
-        if (!empty($filters['search'])) {
+        if (! empty($filters['search'])) {
             $search = $filters['search'];
             $query->where(function ($q) use ($search) {
                 $q->where('first_name', 'like', "%{$search}%")
@@ -183,8 +183,8 @@ class CustomerRepository extends BaseRepository
     public function getFidelityStatistics(int $id): array
     {
         $customer = $this->findWithFidelityCard($id);
-        
-        if (!$customer || !$customer->fidelityCard) {
+
+        if (! $customer || ! $customer->fidelityCard) {
             return [
                 'has_fidelity_card' => false,
                 'card_number' => null,
@@ -195,7 +195,7 @@ class CustomerRepository extends BaseRepository
         }
 
         $card = $customer->fidelityCard;
-        
+
         return [
             'has_fidelity_card' => true,
             'card_number' => $card->card_number,

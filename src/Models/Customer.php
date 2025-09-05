@@ -120,7 +120,7 @@ class Customer extends Authenticatable
 
     public function getFidelityCardStatusAttribute(): ?string
     {
-        if (!$this->fidelityCard) {
+        if (! $this->fidelityCard) {
             return null;
         }
 
@@ -129,7 +129,7 @@ class Customer extends Authenticatable
 
     public function getFidelityTierAttribute(): ?array
     {
-        if (!$this->fidelityCard) {
+        if (! $this->fidelityCard) {
             return null;
         }
 
@@ -154,19 +154,20 @@ class Customer extends Authenticatable
         return $this->fidelity_points;
     }
 
-    public function addFidelityPoints(int $points, string $reason = null, ?int $orderId = null): ?FidelityTransaction
+    public function addFidelityPoints(int $points, ?string $reason = null, ?int $orderId = null): ?FidelityTransaction
     {
-        if (!config('shopper.fidelity.enabled')) {
+        if (! config('shopper.fidelity.enabled')) {
             return null;
         }
 
         $card = $this->getOrCreateFidelityCard();
+
         return $card->addPoints($points, $reason, $orderId);
     }
 
-    public function redeemFidelityPoints(int $points, string $reason = null, ?int $orderId = null): ?FidelityTransaction
+    public function redeemFidelityPoints(int $points, ?string $reason = null, ?int $orderId = null): ?FidelityTransaction
     {
-        if (!config('shopper.fidelity.enabled') || !$this->fidelityCard) {
+        if (! config('shopper.fidelity.enabled') || ! $this->fidelityCard) {
             return null;
         }
 
@@ -180,17 +181,17 @@ class Customer extends Authenticatable
 
     public function processOrderForFidelity(Order $order): ?FidelityTransaction
     {
-        if (!config('shopper.fidelity.points.enabled')) {
+        if (! config('shopper.fidelity.points.enabled')) {
             return null;
         }
 
         $card = $this->getOrCreateFidelityCard();
         $points = $card->calculatePointsForAmount($order->total, $order->currency);
-        
+
         if ($points > 0) {
             // Aggiorna l'importo totale speso
             $card->increment('total_spent_amount', $order->total);
-            
+
             return $card->addPoints($points, "Points earned from order #{$order->number}", $order->id);
         }
 

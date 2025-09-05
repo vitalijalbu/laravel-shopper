@@ -36,7 +36,7 @@ echo "Punti disponibili dopo bonus: {$card->available_points}\n";
 $order = Order::factory()->create([
     'customer_id' => $customer->id,
     'total' => $amount,
-    'currency' => 'EUR'
+    'currency' => 'EUR',
 ]);
 
 $transaction = $fidelityService->processOrderForPoints($order);
@@ -64,7 +64,7 @@ if ($card->canRedeemPoints(150)) {
     $redemption = $card->redeemPoints(150, 'Sconto 10%');
     echo "Riscatto effettuato: {$redemption->points} punti\n";
     // Output: Riscatto effettuato: -150 punti
-    
+
     $card->refresh();
     echo "Punti rimanenti: {$card->available_points}\n";
     // Output: Punti rimanenti: 50
@@ -75,8 +75,8 @@ $stats = $fidelityService->getCardStatistics($card);
 echo "Statistiche carta:\n";
 echo "- Totale guadagnati: {$stats['total_earned']}\n";
 echo "- Totale riscattati: {$stats['total_redeemed']}\n";
-echo "- Valore punti attuali: €" . number_format($stats['points_value'], 2) . "\n";
-echo "- Totale speso: €" . number_format($stats['total_spent'], 2) . "\n";
+echo '- Valore punti attuali: €'.number_format($stats['points_value'], 2)."\n";
+echo '- Totale speso: €'.number_format($stats['total_spent'], 2)."\n";
 
 // 10. Trovare carta per numero
 $foundCard = $fidelityService->findCardByNumber($card->card_number);

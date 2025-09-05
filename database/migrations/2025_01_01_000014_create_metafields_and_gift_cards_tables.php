@@ -11,22 +11,22 @@ return new class extends Migration
         // Metafields (Shopify-style custom fields)
         Schema::create('metafields', function (Blueprint $table) {
             $table->id();
-            
+
             // Owner (polymorphic relationship)
             $table->string('owner_resource'); // product, product_variant, customer, order, etc.
             $table->unsignedBigInteger('owner_id');
-            
+
             // Metafield Definition
             $table->string('namespace')->index(); // e.g., 'custom', 'seo', 'technical'
             $table->string('key')->index(); // e.g., 'material', 'care_instructions'
             $table->text('value'); // The actual value
             $table->string('type')->default('single_line_text_field'); // text, number, date, etc.
-            
+
             // Display and Behavior
             $table->string('description')->nullable();
             $table->boolean('show_in_storefront')->default(false);
             $table->integer('sort_order')->default(0);
-            
+
             $table->timestamps();
 
             // Indexes
@@ -61,30 +61,30 @@ return new class extends Migration
         Schema::create('gift_cards', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('site_id')->nullable()->index();
-            
+
             // Gift Card Details
             $table->string('code')->unique(); // XXXX-XXXX-XXXX-XXXX
             $table->decimal('initial_value', 15, 2);
             $table->decimal('balance', 15, 2);
             $table->string('currency', 3);
-            
+
             // Customer Information
             $table->foreignId('customer_id')->nullable()->constrained('customers')->nullOnDelete();
             $table->string('recipient_email')->nullable();
-            
+
             // Status and Dates
             $table->string('status')->default('active'); // active, disabled, expired, used
             $table->date('expires_at')->nullable();
             $table->timestamp('last_used_at')->nullable();
-            
+
             // Creation Information
             $table->foreignId('order_id')->nullable()->constrained('orders')->nullOnDelete(); // If purchased
             $table->foreignId('created_by_user_id')->nullable()->constrained('users')->nullOnDelete();
-            
+
             // Additional Information
             $table->text('note')->nullable();
             $table->json('metadata')->nullable();
-            
+
             $table->timestamps();
 
             // Indexes
@@ -100,12 +100,12 @@ return new class extends Migration
             $table->id();
             $table->foreignId('gift_card_id')->constrained('gift_cards')->cascadeOnDelete();
             $table->foreignId('order_id')->nullable()->constrained('orders')->nullOnDelete();
-            
+
             $table->string('type'); // debit, credit
             $table->decimal('amount', 15, 2);
             $table->decimal('balance_after', 15, 2);
             $table->text('note')->nullable();
-            
+
             $table->timestamps();
 
             $table->index(['gift_card_id', 'created_at']);

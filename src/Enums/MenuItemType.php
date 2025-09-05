@@ -12,7 +12,7 @@ enum MenuItemType: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::LINK => __('shopper::menu.item_type.link'),
             self::PAGE => __('shopper::menu.item_type.page'),
             self::CATEGORY => __('shopper::menu.item_type.category'),

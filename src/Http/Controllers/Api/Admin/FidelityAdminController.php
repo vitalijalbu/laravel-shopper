@@ -6,11 +6,11 @@ namespace Shopper\Http\Controllers\Api\Admin;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Shopper\Http\Controllers\Controller;
 use Shopper\Models\FidelityCard;
 use Shopper\Models\FidelityTransaction;
 use Shopper\Services\FidelityService;
-use Illuminate\Support\Facades\DB;
 
 class FidelityAdminController extends Controller
 {
@@ -32,11 +32,11 @@ class FidelityAdminController extends Controller
         $query = FidelityCard::with(['customer'])
             ->when($search, function ($q) use ($search) {
                 $q->where('card_number', 'like', "%{$search}%")
-                  ->orWhereHas('customer', function ($customerQuery) use ($search) {
-                      $customerQuery->where('first_name', 'like', "%{$search}%")
-                                   ->orWhere('last_name', 'like', "%{$search}%")
-                                   ->orWhere('email', 'like', "%{$search}%");
-                  });
+                    ->orWhereHas('customer', function ($customerQuery) use ($search) {
+                        $customerQuery->where('first_name', 'like', "%{$search}%")
+                            ->orWhere('last_name', 'like', "%{$search}%")
+                            ->orWhere('email', 'like', "%{$search}%");
+                    });
             })
             ->when($isActive !== null, function ($q) use ($isActive) {
                 $q->where('is_active', (bool) $isActive);
@@ -115,7 +115,7 @@ class FidelityAdminController extends Controller
             if ($card->available_points < abs($points)) {
                 return response()->json(['message' => 'Insufficient points'], 400);
             }
-            
+
             $transaction = $card->transactions()->create([
                 'type' => 'adjusted',
                 'points' => $points,
@@ -134,7 +134,7 @@ class FidelityAdminController extends Controller
 
             $card->increment('total_points', $points);
             $card->increment('available_points', $points);
-            
+
             if ($type === 'earned') {
                 $card->increment('total_earned', $points);
             }
@@ -213,7 +213,7 @@ class FidelityAdminController extends Controller
     public function expirePoints(Request $request): JsonResponse
     {
         $dryRun = $request->boolean('dry_run', false);
-        
+
         if ($dryRun) {
             // Conta quanti punti scadrebbero
             $expiredTransactions = FidelityTransaction::where('type', 'earned')

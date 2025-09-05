@@ -2,8 +2,8 @@
 
 namespace Shopper\Data\Cart;
 
-use Shopper\Models\Cart;
 use Shopper\Enums\CartStatus;
+use Shopper\Models\Cart;
 use Spatie\LaravelData\Data;
 
 class CartData extends Data

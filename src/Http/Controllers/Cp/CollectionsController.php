@@ -205,7 +205,7 @@ class CollectionsController extends Controller
             'navigation' => $this->getNavigationItems(),
             'sites' => $this->getSites(),
             'breadcrumbs' => [
-                ['title' => 'Collections', 'url' => null]
+                ['title' => 'Collections', 'url' => null],
             ],
         ]);
     }
@@ -383,7 +383,7 @@ class CollectionsController extends Controller
                 'name' => config('app.name', 'Laravel Shopper'),
                 'url' => config('app.url'),
                 'is_current' => true,
-            ]
+            ],
         ];
     }
 }

@@ -50,7 +50,7 @@ class ProductTypesController extends Controller
             // Sorting
             $sortBy = $request->get('sort_by', 'sort_order');
             $sortDirection = $request->get('sort_direction', 'asc');
-            
+
             $allowedSorts = ['name', 'slug', 'sort_order', 'created_at', 'products_count'];
             if (in_array($sortBy, $allowedSorts)) {
                 if ($sortBy === 'products_count') {
@@ -196,7 +196,7 @@ class ProductTypesController extends Controller
         // Check if product type has products
         if ($productType->products()->count() > 0) {
             return response()->json([
-                'error' => 'Cannot delete product type that has products assigned. Please reassign or delete the products first.'
+                'error' => 'Cannot delete product type that has products assigned. Please reassign or delete the products first.',
             ], 422);
         }
 
@@ -255,11 +255,11 @@ class ProductTypesController extends Controller
     protected function bulkDelete($productTypes)
     {
         // Check if any product types have products
-        $typesWithProducts = $productTypes->withCount('products')->get()->filter(fn($type) => $type->products_count > 0);
-        
+        $typesWithProducts = $productTypes->withCount('products')->get()->filter(fn ($type) => $type->products_count > 0);
+
         if ($typesWithProducts->count() > 0) {
             return response()->json([
-                'error' => 'Cannot delete product types that have products assigned. Please reassign or delete the products first.'
+                'error' => 'Cannot delete product types that have products assigned. Please reassign or delete the products first.',
             ], 422);
         }
 
@@ -275,8 +275,8 @@ class ProductTypesController extends Controller
     public function duplicate(ProductType $productType)
     {
         $duplicate = $productType->replicate();
-        $duplicate->name = $productType->name . ' Copy';
-        $duplicate->slug = $productType->slug . '-copy';
+        $duplicate->name = $productType->name.' Copy';
+        $duplicate->slug = $productType->slug.'-copy';
         $duplicate->save();
 
         return response()->json([
@@ -294,15 +294,15 @@ class ProductTypesController extends Controller
 
         $headers = [
             'Content-Type' => 'text/csv',
-            'Content-Disposition' => 'attachment; filename="product-types-' . now()->format('Y-m-d') . '.csv"',
+            'Content-Disposition' => 'attachment; filename="product-types-'.now()->format('Y-m-d').'.csv"',
         ];
 
         $callback = function () use ($productTypes) {
             $file = fopen('php://output', 'w');
-            
+
             // CSV headers
             fputcsv($file, [
-                'ID', 'Name', 'Slug', 'Description', 'Enabled', 'Sort Order', 'Products Count', 'Created At'
+                'ID', 'Name', 'Slug', 'Description', 'Enabled', 'Sort Order', 'Products Count', 'Created At',
             ]);
 
             // CSV data

@@ -30,7 +30,7 @@ class FidelityCard extends Model
 
     protected $casts = [
         'total_points' => 'integer',
-        'available_points' => 'integer', 
+        'available_points' => 'integer',
         'total_earned' => 'integer',
         'total_redeemed' => 'integer',
         'total_spent_amount' => 'decimal:2',
@@ -48,7 +48,7 @@ class FidelityCard extends Model
             if (empty($card->card_number)) {
                 $card->card_number = static::generateCardNumber();
             }
-            
+
             if (empty($card->issued_at)) {
                 $card->issued_at = now();
             }
@@ -96,13 +96,13 @@ class FidelityCard extends Model
         $separator = $config['separator'] ?? '-';
 
         do {
-            $number = $prefix . $separator . strtoupper(Str::random($length));
+            $number = $prefix.$separator.strtoupper(Str::random($length));
         } while (static::where('card_number', $number)->exists());
 
         return $number;
     }
 
-    public function addPoints(int $points, string $reason = null, ?int $orderId = null): FidelityTransaction
+    public function addPoints(int $points, ?string $reason = null, ?int $orderId = null): FidelityTransaction
     {
         $transaction = $this->transactions()->create([
             'type' => 'earned',
@@ -120,7 +120,7 @@ class FidelityCard extends Model
         return $transaction;
     }
 
-    public function redeemPoints(int $points, string $reason = null, ?int $orderId = null): FidelityTransaction
+    public function redeemPoints(int $points, ?string $reason = null, ?int $orderId = null): FidelityTransaction
     {
         if ($points > $this->available_points) {
             throw new \InvalidArgumentException('Insufficient points for redemption.');
@@ -140,34 +140,34 @@ class FidelityCard extends Model
         return $transaction;
     }
 
-    public function calculatePointsForAmount(float $amount, string $currency = null): int
+    public function calculatePointsForAmount(float $amount, ?string $currency = null): int
     {
         $config = config('shopper.fidelity.points');
-        
-        if (!$config['enabled']) {
+
+        if (! $config['enabled']) {
             return 0;
         }
 
         $baseCurrency = $config['currency_base'] ?? 'EUR';
         $convertedAmount = $this->convertCurrency($amount, $currency ?? $baseCurrency, $baseCurrency);
-        
+
         $totalSpent = $this->total_spent_amount + $convertedAmount;
         $tier = $this->getTierForAmount($totalSpent);
-        
+
         return (int) floor($convertedAmount * $tier);
     }
 
     public function getTierForAmount(float $totalSpent): float
     {
         $tiers = config('shopper.fidelity.points.conversion_rules.tiers', [0 => 1]);
-        
+
         $applicableTier = 1;
         foreach ($tiers as $threshold => $rate) {
             if ($totalSpent >= $threshold) {
                 $applicableTier = $rate;
             }
         }
-        
+
         return $applicableTier;
     }
 
@@ -175,7 +175,7 @@ class FidelityCard extends Model
     {
         $tiers = config('shopper.fidelity.points.conversion_rules.tiers', [0 => 1]);
         $currentRate = $this->getTierForAmount($this->total_spent_amount);
-        
+
         foreach ($tiers as $threshold => $rate) {
             if ($rate === $currentRate) {
                 return [
@@ -184,7 +184,7 @@ class FidelityCard extends Model
                 ];
             }
         }
-        
+
         return ['threshold' => 0, 'rate' => 1];
     }
 
@@ -192,7 +192,7 @@ class FidelityCard extends Model
     {
         $tiers = config('shopper.fidelity.points.conversion_rules.tiers', [0 => 1]);
         $currentRate = $this->getTierForAmount($this->total_spent_amount);
-        
+
         $nextTier = null;
         foreach ($tiers as $threshold => $rate) {
             if ($rate > $currentRate && $threshold > $this->total_spent_amount) {
@@ -204,31 +204,34 @@ class FidelityCard extends Model
                 break;
             }
         }
-        
+
         return $nextTier;
     }
 
     public function getPointsValue(): float
     {
         $rate = config('shopper.fidelity.points.redemption.points_to_currency_rate', 0.01);
+
         return $this->available_points * $rate;
     }
 
     public function canRedeemPoints(int $points): bool
     {
         $minPoints = config('shopper.fidelity.points.redemption.min_points', 100);
+
         return $this->available_points >= $points && $points >= $minPoints;
     }
 
     protected function calculatePointsExpiration(): ?\DateTime
     {
         $config = config('shopper.fidelity.points.expiration');
-        
-        if (!$config['enabled']) {
+
+        if (! $config['enabled']) {
             return null;
         }
-        
+
         $months = $config['months'] ?? 12;
+
         return now()->addMonths($months);
     }
 
@@ -238,7 +241,7 @@ class FidelityCard extends Model
         if ($fromCurrency === $toCurrency) {
             return $amount;
         }
-        
+
         // Implementare logica di conversione valuta qui se necessario
         // Per ora assumiamo che sia tutto nella stessa valuta
         return $amount;
@@ -255,7 +258,7 @@ class FidelityCard extends Model
 
         foreach ($expiredTransactions as $transaction) {
             $transaction->update(['expired' => true]);
-            
+
             // Crea una transazione di scadenza
             $this->transactions()->create([
                 'type' => 'expired',
@@ -263,10 +266,10 @@ class FidelityCard extends Model
                 'description' => 'Points expired',
                 'reference_transaction_id' => $transaction->id,
             ]);
-            
+
             $this->decrement('available_points', $transaction->points);
         }
-        
+
         if ($expiredTransactions->count() > 0) {
             $this->update(['last_activity_at' => now()]);
         }

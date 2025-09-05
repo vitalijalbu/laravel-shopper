@@ -14,7 +14,7 @@ enum ProductType: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::Physical => 'Physical Product',
             self::Digital => 'Digital Product',
             self::Service => 'Service',

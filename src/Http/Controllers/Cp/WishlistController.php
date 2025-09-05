@@ -2,17 +2,16 @@
 
 namespace Shopper\Http\Controllers\CP;
 
-use Shopper\Http\Controllers\Controller;
-use Shopper\Http\Requests\Wishlist\StoreWishlistRequest;
-use Shopper\Http\Requests\Wishlist\UpdateWishlistRequest;
-use Shopper\Models\Wishlist;
-use Shopper\Policies\WishlistPolicy;
-use Shopper\Repositories\WishlistRepository;
-use Shopper\Data\Wishlist\WishlistData;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
+use Shopper\Data\Wishlist\WishlistData;
+use Shopper\Http\Controllers\Controller;
+use Shopper\Http\Requests\Wishlist\StoreWishlistRequest;
+use Shopper\Http\Requests\Wishlist\UpdateWishlistRequest;
+use Shopper\Models\Wishlist;
+use Shopper\Repositories\WishlistRepository;
 
 class WishlistController extends Controller
 {
@@ -20,7 +19,7 @@ class WishlistController extends Controller
         private WishlistRepository $repository
     ) {
         $this->authorizeResource(Wishlist::class, 'wishlist', [
-            'except' => ['index', 'show']
+            'except' => ['index', 'show'],
         ]);
     }
 
@@ -37,7 +36,7 @@ class WishlistController extends Controller
         return Inertia::render('CP/Wishlists/Index', [
             'wishlists' => $wishlists,
             'filters' => $filters,
-            'statistics' => $this->repository->getStatistics()
+            'statistics' => $this->repository->getStatistics(),
         ]);
     }
 
@@ -58,7 +57,7 @@ class WishlistController extends Controller
 
         return response()->json([
             'message' => __('Wishlist created successfully'),
-            'wishlist' => WishlistData::fromModel($wishlist)
+            'wishlist' => WishlistData::fromModel($wishlist),
         ], 201);
     }
 
@@ -73,13 +72,13 @@ class WishlistController extends Controller
 
         return Inertia::render('CP/Wishlists/Show', [
             'wishlist' => WishlistData::fromModel($wishlist),
-            'items' => $wishlist->items->map(fn($item) => [
+            'items' => $wishlist->items->map(fn ($item) => [
                 'id' => $item->id,
                 'product' => $item->product,
                 'quantity' => $item->quantity,
                 'added_at' => $item->created_at,
-                'notes' => $item->notes
-            ])
+                'notes' => $item->notes,
+            ]),
         ]);
     }
 
@@ -91,7 +90,7 @@ class WishlistController extends Controller
         $wishlist->load(['customer', 'items.product']);
 
         return Inertia::render('CP/Wishlists/Edit', [
-            'wishlist' => WishlistData::fromModel($wishlist)
+            'wishlist' => WishlistData::fromModel($wishlist),
         ]);
     }
 
@@ -104,7 +103,7 @@ class WishlistController extends Controller
 
         return response()->json([
             'message' => __('Wishlist updated successfully'),
-            'wishlist' => WishlistData::fromModel($wishlist)
+            'wishlist' => WishlistData::fromModel($wishlist),
         ]);
     }
 
@@ -116,7 +115,7 @@ class WishlistController extends Controller
         $this->repository->delete($wishlist->id);
 
         return response()->json([
-            'message' => __('Wishlist deleted successfully')
+            'message' => __('Wishlist deleted successfully'),
         ]);
     }
 
@@ -130,14 +129,14 @@ class WishlistController extends Controller
         $request->validate([
             'product_id' => 'required|exists:products,id',
             'quantity' => 'integer|min:1|max:999',
-            'notes' => 'nullable|string|max:500'
+            'notes' => 'nullable|string|max:500',
         ]);
 
         $item = $this->repository->addItem($wishlist->id, $request->only(['product_id', 'quantity', 'notes']));
 
         return response()->json([
             'message' => __('Item added to wishlist'),
-            'item' => $item
+            'item' => $item,
         ]);
     }
 
@@ -151,7 +150,7 @@ class WishlistController extends Controller
         $this->repository->removeItem($wishlist->id, $itemId);
 
         return response()->json([
-            'message' => __('Item removed from wishlist')
+            'message' => __('Item removed from wishlist'),
         ]);
     }
 
@@ -165,7 +164,7 @@ class WishlistController extends Controller
         $this->repository->clearItems($wishlist->id);
 
         return response()->json([
-            'message' => __('Wishlist cleared successfully')
+            'message' => __('Wishlist cleared successfully'),
         ]);
     }
 
@@ -180,7 +179,7 @@ class WishlistController extends Controller
 
         return response()->json([
             'message' => __('Wishlist share link generated'),
-            'share_url' => route('wishlist.shared', ['token' => $shareToken])
+            'share_url' => route('wishlist.shared', ['token' => $shareToken]),
         ]);
     }
 
@@ -192,7 +191,7 @@ class WishlistController extends Controller
         $request->validate([
             'action' => 'required|in:delete,export',
             'wishlist_ids' => 'required|array',
-            'wishlist_ids.*' => 'exists:wishlists,id'
+            'wishlist_ids.*' => 'exists:wishlists,id',
         ]);
 
         $wishlistIds = $request->input('wishlist_ids');
@@ -207,14 +206,15 @@ class WishlistController extends Controller
         switch ($request->input('action')) {
             case 'delete':
                 $deleted = $this->repository->bulkDelete($wishlistIds);
+
                 return response()->json([
-                    'message' => __(':count wishlists deleted successfully', ['count' => $deleted])
+                    'message' => __(':count wishlists deleted successfully', ['count' => $deleted]),
                 ]);
 
             case 'export':
                 // TODO: Implement export functionality
                 return response()->json([
-                    'message' => __('Export functionality not implemented yet')
+                    'message' => __('Export functionality not implemented yet'),
                 ], 501);
 
             default:
@@ -241,7 +241,7 @@ class WishlistController extends Controller
 
         // TODO: Implement conversion to order
         return response()->json([
-            'message' => __('Conversion to order not implemented yet')
+            'message' => __('Conversion to order not implemented yet'),
         ], 501);
     }
 }

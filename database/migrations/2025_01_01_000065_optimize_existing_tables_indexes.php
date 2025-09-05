@@ -2,8 +2,8 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -13,18 +13,18 @@ return new class extends Migration
         Schema::table('products', function (Blueprint $table) {
             // Search optimization (usando i campi che esistono ora)
             $table->index(['site_id', 'status', 'title'], 'idx_products_search');
-            
-            // Publishing optimization 
+
+            // Publishing optimization
             $table->index(['site_id', 'published_at', 'status'], 'idx_products_published');
-            
+
             // Type filtering
             $table->index(['site_id', 'product_type', 'status'], 'idx_products_type');
-            
+
             // Price range filtering (dai variants)
             $table->index(['price_min', 'price_max', 'status'], 'idx_products_price_range');
-            
+
             // Category filtering optimization (if not exists)
-            if (!Schema::hasColumn('products', 'primary_category_id')) {
+            if (! Schema::hasColumn('products', 'primary_category_id')) {
                 $table->foreignId('primary_category_id')->nullable()->after('product_type_id')->constrained('categories')->nullOnDelete();
                 $table->index(['primary_category_id', 'status'], 'idx_products_category');
             }
@@ -37,13 +37,13 @@ return new class extends Migration
         Schema::table('orders', function (Blueprint $table) {
             // Customer order history optimization
             $table->index(['customer_id', 'created_at', 'status'], 'idx_orders_customer_history');
-            
+
             // Revenue analysis optimization
             $table->index(['site_id', 'created_at', 'total', 'status'], 'idx_orders_revenue_analysis');
-            
+
             // Fulfillment optimization
             $table->index(['fulfillment_status', 'created_at'], 'idx_orders_fulfillment');
-            
+
             // Payment tracking
             $table->index(['payment_status', 'payment_method', 'created_at'], 'idx_orders_payment');
         });
@@ -51,19 +51,19 @@ return new class extends Migration
         // ====== CUSTOMERS TABLE OPTIMIZATIONS ======
         Schema::table('customers', function (Blueprint $table) {
             // Customer lifetime value (if column doesn't exist)
-            if (!Schema::hasColumn('customers', 'lifetime_value')) {
+            if (! Schema::hasColumn('customers', 'lifetime_value')) {
                 $table->decimal('lifetime_value', 15, 2)->default(0)->after('last_login_ip');
                 $table->integer('orders_count')->default(0)->after('lifetime_value');
                 $table->timestamp('first_order_at')->nullable()->after('orders_count');
                 $table->timestamp('last_order_at')->nullable()->after('first_order_at');
             }
-            
+
             // Customer value analysis
             $table->index(['site_id', 'lifetime_value', 'orders_count'], 'idx_customers_value');
-            
+
             // Activity tracking (rimuovendo is_enabled che non esiste più)
             $table->index(['last_login_at', 'created_at'], 'idx_customers_activity');
-            
+
             // Registration tracking
             $table->index(['created_at', 'email_verified_at'], 'idx_customers_registration');
         });
@@ -72,9 +72,9 @@ return new class extends Migration
         Schema::table('product_variants', function (Blueprint $table) {
             // Variant search optimization (usando i campi che esistono ora)
             $table->index(['product_id', 'status', 'available', 'price'], 'idx_variants_search');
-            
+
             // SKU uniqueness (if not exists)
-            if (!$table->hasIndex(['sku', 'site_id'])) {
+            if (! $table->hasIndex(['sku', 'site_id'])) {
                 $table->unique(['sku', 'site_id'], 'idx_variants_sku_unique');
             }
         });
@@ -83,7 +83,7 @@ return new class extends Migration
         Schema::table('carts', function (Blueprint $table) {
             // Active carts optimization
             $table->index(['customer_id', 'updated_at', 'session_id'], 'idx_carts_active');
-            
+
             // Cart abandonment tracking
             $table->index(['updated_at', 'customer_id'], 'idx_carts_abandonment');
         });
@@ -93,10 +93,10 @@ return new class extends Migration
             Schema::table('transactions', function (Blueprint $table) {
                 // Financial reporting
                 $table->index(['processed_at', 'status', 'type', 'amount'], 'idx_transactions_reporting');
-                
+
                 // Gateway performance
                 $table->index(['gateway', 'status', 'processed_at'], 'idx_transactions_gateway');
-                
+
                 // Customer transaction history
                 $table->index(['customer_id', 'processed_at', 'status'], 'idx_transactions_customer');
             });
@@ -106,14 +106,14 @@ return new class extends Migration
         if (Schema::hasTable('categories')) {
             Schema::table('categories', function (Blueprint $table) {
                 // Category hierarchy (if not exists)
-                if (!Schema::hasColumn('categories', 'level')) {
+                if (! Schema::hasColumn('categories', 'level')) {
                     $table->integer('level')->default(0)->after('parent_id');
                     $table->string('path', 500)->nullable()->after('level'); // /parent/child/grandchild
                 }
-                
+
                 // Category navigation optimization (rimuovendo is_enabled)
                 $table->index(['parent_id', 'status', 'sort_order'], 'idx_categories_navigation');
-                
+
                 // Nested set optimization
                 $table->index(['level', 'path'], 'idx_categories_hierarchy');
             });
@@ -153,7 +153,7 @@ return new class extends Migration
 
         // Remove added indexes (MySQL doesn't support IF EXISTS for indexes in migrations)
         // These would need to be handled manually or with raw SQL
-        
+
         // Remove added columns
         Schema::table('customers', function (Blueprint $table) {
             if (Schema::hasColumn('customers', 'lifetime_value')) {

@@ -24,9 +24,9 @@ class CustomerController extends Controller
         if ($search = $request->get('search')) {
             $query->where(function ($q) use ($search) {
                 $q->where('first_name', 'like', "%{$search}%")
-                  ->orWhere('last_name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%")
-                  ->orWhere('phone', 'like', "%{$search}%");
+                    ->orWhere('last_name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('phone', 'like', "%{$search}%");
             });
         }
 
@@ -75,7 +75,7 @@ class CustomerController extends Controller
             'navigation' => $this->getNavigationItems(),
             'sites' => $this->getSites(),
             'breadcrumbs' => [
-                ['title' => 'Customers', 'url' => null]
+                ['title' => 'Customers', 'url' => null],
             ],
         ]);
     }
@@ -86,14 +86,14 @@ class CustomerController extends Controller
     public function create(): Response
     {
         return Inertia::render('customers/create', [
-            'customer' => new Customer(),
+            'customer' => new Customer,
             // Layout props
             'user' => Auth::user(),
             'navigation' => $this->getNavigationItems(),
             'sites' => $this->getSites(),
             'breadcrumbs' => [
                 ['title' => 'Customers', 'url' => route('cp.customers.index')],
-                ['title' => 'Create Customer', 'url' => null]
+                ['title' => 'Create Customer', 'url' => null],
             ],
         ]);
     }
@@ -138,7 +138,7 @@ class CustomerController extends Controller
             },
             'fidelityCard.transactions' => function ($query) {
                 $query->latest()->limit(5);
-            }
+            },
         ]);
 
         return Inertia::render('customers/show', [
@@ -155,7 +155,7 @@ class CustomerController extends Controller
             'sites' => $this->getSites(),
             'breadcrumbs' => [
                 ['title' => 'Customers', 'url' => route('cp.customers.index')],
-                ['title' => $customer->full_name, 'url' => null]
+                ['title' => $customer->full_name, 'url' => null],
             ],
         ]);
     }
@@ -174,7 +174,7 @@ class CustomerController extends Controller
             'breadcrumbs' => [
                 ['title' => 'Customers', 'url' => route('cp.customers.index')],
                 ['title' => $customer->full_name, 'url' => route('cp.customers.show', $customer)],
-                ['title' => 'Edit', 'url' => null]
+                ['title' => 'Edit', 'url' => null],
             ],
         ]);
     }
@@ -334,7 +334,7 @@ class CustomerController extends Controller
                 'name' => config('app.name', 'Laravel Shopper'),
                 'url' => config('app.url'),
                 'is_current' => true,
-            ]
+            ],
         ];
     }
 }

@@ -10,7 +10,7 @@ enum WishlistStatus: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::ACTIVE => __('shopper::wishlist.status.active'),
             self::INACTIVE => __('shopper::wishlist.status.inactive'),
             self::ARCHIVED => __('shopper::wishlist.status.archived'),
@@ -19,7 +19,7 @@ enum WishlistStatus: string
 
     public function color(): string
     {
-        return match($this) {
+        return match ($this) {
             self::ACTIVE => 'green',
             self::INACTIVE => 'gray',
             self::ARCHIVED => 'orange',

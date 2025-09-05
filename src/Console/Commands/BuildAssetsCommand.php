@@ -41,15 +41,16 @@ class BuildAssetsCommand extends Command
         if ($result->failed()) {
             $this->error('Asset build failed:');
             $this->error($result->errorOutput());
+
             return Command::FAILURE;
         }
 
         $this->info('Assets built successfully!');
 
         // Only publish built assets if not in watch mode
-        if (!$this->option('watch')) {
+        if (! $this->option('watch')) {
             $this->info('Publishing built assets...');
-            
+
             $this->call('vendor:publish', [
                 '--tag' => 'shopper-assets-built',
                 '--force' => true,
@@ -58,7 +59,7 @@ class BuildAssetsCommand extends Command
             // Test Asset helper
             if (\Shopper\Support\Asset::isBuilt()) {
                 $this->info('✅ Asset helper confirmed build is ready');
-                $this->info('Main app URL: ' . \Shopper\Support\Asset::url('resources/js/app.js'));
+                $this->info('Main app URL: '.\Shopper\Support\Asset::url('resources/js/app.js'));
             } else {
                 $this->warn('⚠️  Asset helper cannot find manifest file');
             }

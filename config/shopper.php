@@ -182,36 +182,36 @@ return [
     */
     'fidelity' => [
         'enabled' => env('SHOPPER_FIDELITY_ENABLED', true),
-        
+
         // Card code configuration
         'card' => [
             'prefix' => env('SHOPPER_FIDELITY_CARD_PREFIX', 'FID'),
             'length' => env('SHOPPER_FIDELITY_CARD_LENGTH', 8), // Lunghezza del numero dopo il prefisso
             'separator' => env('SHOPPER_FIDELITY_CARD_SEPARATOR', '-'),
         ],
-        
+
         // Points calculation system
         'points' => [
             'enabled' => env('SHOPPER_FIDELITY_POINTS_ENABLED', true),
             'currency_base' => env('SHOPPER_FIDELITY_CURRENCY_BASE', 'EUR'), // Valuta di base per il calcolo
-            
+
             // Conversion rates: amount spent -> points earned
             'conversion_rules' => [
                 // Scaglioni di conversione (spesa minima => punti per euro/dollaro)
                 'tiers' => [
                     0 => 1,      // 0€+ = 1 punto per euro
-                    100 => 1.5,  // 100€+ = 1.5 punti per euro  
+                    100 => 1.5,  // 100€+ = 1.5 punti per euro
                     500 => 2,    // 500€+ = 2 punti per euro
                     1000 => 3,   // 1000€+ = 3 punti per euro
                 ],
             ],
-            
+
             // Points expiration
             'expiration' => [
                 'enabled' => env('SHOPPER_FIDELITY_POINTS_EXPIRATION', true),
                 'months' => env('SHOPPER_FIDELITY_POINTS_EXPIRATION_MONTHS', 12), // Scadenza in mesi
             ],
-            
+
             // Redemption rules
             'redemption' => [
                 'min_points' => env('SHOPPER_FIDELITY_MIN_REDEMPTION_POINTS', 100),

@@ -3,8 +3,8 @@
 namespace Shopper\Policies;
 
 use Illuminate\Auth\Access\HandlesAuthorization;
-use Shopper\Models\User;
 use Shopper\Models\Order;
+use Shopper\Models\User;
 
 class OrderPolicy
 {
@@ -32,7 +32,7 @@ class OrderPolicy
 
     public function delete(User $user, Order $order): bool
     {
-        return $user->can('delete-orders') && !$order->isPaid();
+        return $user->can('delete-orders') && ! $order->isPaid();
     }
 
     public function restore(User $user, Order $order): bool
@@ -62,7 +62,7 @@ class OrderPolicy
 
     public function cancel(User $user, Order $order): bool
     {
-        return $user->can('cancel-orders') && !$order->isShipped();
+        return $user->can('cancel-orders') && ! $order->isShipped();
     }
 
     public function export(User $user): bool

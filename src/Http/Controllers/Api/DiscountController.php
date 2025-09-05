@@ -7,9 +7,9 @@ namespace Shopper\Http\Controllers\Api;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Shopper\Http\Controllers\Controller;
+use Shopper\Http\Requests\DiscountRequest;
 use Shopper\Models\Discount;
 use Shopper\Services\DiscountService;
-use Shopper\Http\Requests\DiscountRequest;
 
 class DiscountController extends Controller
 {
@@ -41,7 +41,7 @@ class DiscountController extends Controller
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('code', 'like', "%{$search}%");
+                    ->orWhere('code', 'like', "%{$search}%");
             });
         }
 
@@ -51,6 +51,7 @@ class DiscountController extends Controller
         // Add statistics to each discount
         $discounts->getCollection()->transform(function ($discount) {
             $discount->statistics = $this->discountService->getDiscountStatistics($discount);
+
             return $discount;
         });
 
@@ -124,10 +125,10 @@ class DiscountController extends Controller
 
     public function toggle(Discount $discount): JsonResponse
     {
-        $discount->update(['is_enabled' => !$discount->is_enabled]);
+        $discount->update(['is_enabled' => ! $discount->is_enabled]);
 
         $status = $discount->is_enabled ? 'enabled' : 'disabled';
-        
+
         return response()->json([
             'success' => true,
             'message' => __("discount.messages.{$status}_successfully"),
@@ -138,10 +139,10 @@ class DiscountController extends Controller
     public function duplicate(Discount $discount): JsonResponse
     {
         $data = $discount->toArray();
-        
+
         // Remove unique fields and modify name
         unset($data['id'], $data['code'], $data['created_at'], $data['updated_at']);
-        $data['name'] = $data['name'] . ' (Copy)';
+        $data['name'] = $data['name'].' (Copy)';
         $data['is_enabled'] = false; // New discount starts disabled
         $data['usage_count'] = 0;
 

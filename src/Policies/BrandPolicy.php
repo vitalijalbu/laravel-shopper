@@ -3,8 +3,8 @@
 namespace Shopper\Policies;
 
 use Illuminate\Auth\Access\HandlesAuthorization;
-use Shopper\Models\User;
 use Shopper\Models\Brand;
+use Shopper\Models\User;
 
 class BrandPolicy
 {
@@ -32,7 +32,7 @@ class BrandPolicy
 
     public function delete(User $user, Brand $brand): bool
     {
-        return $user->can('delete-brands') && !$brand->hasProducts();
+        return $user->can('delete-brands') && ! $brand->hasProducts();
     }
 
     public function restore(User $user, Brand $brand): bool

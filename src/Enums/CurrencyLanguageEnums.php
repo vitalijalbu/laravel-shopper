@@ -11,7 +11,7 @@ enum CurrencyType: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::FIAT => 'Fiat Currency',
             self::CRYPTO => 'Cryptocurrency',
             self::COMMODITY => 'Commodity',
@@ -29,7 +29,7 @@ enum RegulatoryStatus: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::APPROVED => 'Approved',
             self::RESTRICTED => 'Restricted',
             self::BANNED => 'Banned',
@@ -47,7 +47,7 @@ enum CurrencyStatus: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::ACTIVE => 'Active',
             self::DEPRECATED => 'Deprecated',
             self::RESTRICTED => 'Restricted',
@@ -73,7 +73,7 @@ enum ExchangeRateSource: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::ECB => 'European Central Bank',
             self::YAHOO => 'Yahoo Finance',
             self::COINBASE => 'Coinbase',
@@ -100,7 +100,7 @@ enum PriceTrend: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::STRONG_UP => 'Strong Upward',
             self::UP => 'Upward',
             self::STABLE => 'Stable',
@@ -111,7 +111,7 @@ enum PriceTrend: string
 
     public function direction(): int
     {
-        return match($this) {
+        return match ($this) {
             self::STRONG_UP => 2,
             self::UP => 1,
             self::STABLE => 0,
@@ -129,7 +129,7 @@ enum PricingStrategy: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::AUTO_CONVERT => 'Auto Convert',
             self::MANUAL_OVERRIDE => 'Manual Override',
             self::REGIONAL_PRICING => 'Regional Pricing',
@@ -144,7 +144,7 @@ enum TextDirection: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::LTR => 'Left to Right',
             self::RTL => 'Right to Left',
         };
@@ -159,7 +159,7 @@ enum LanguageComplexity: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::SIMPLE => 'Simple',
             self::MODERATE => 'Moderate',
             self::COMPLEX => 'Complex',
@@ -168,7 +168,7 @@ enum LanguageComplexity: string
 
     public function translationMultiplier(): float
     {
-        return match($this) {
+        return match ($this) {
             self::SIMPLE => 1.0,
             self::MODERATE => 1.5,
             self::COMPLEX => 2.0,
@@ -184,7 +184,7 @@ enum BusinessPriority: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::HIGH => 'High Priority',
             self::MEDIUM => 'Medium Priority',
             self::LOW => 'Low Priority',
@@ -193,7 +193,7 @@ enum BusinessPriority: string
 
     public function weight(): int
     {
-        return match($this) {
+        return match ($this) {
             self::HIGH => 3,
             self::MEDIUM => 2,
             self::LOW => 1,
@@ -210,7 +210,7 @@ enum LanguageStatus: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::ACTIVE => 'Active',
             self::BETA => 'Beta',
             self::DEPRECATED => 'Deprecated',
@@ -234,7 +234,7 @@ enum TranslationType: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::STRING => 'String',
             self::PLURAL => 'Plural',
             self::RICH_TEXT => 'Rich Text',
@@ -254,7 +254,7 @@ enum QualityGrade: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::A => 'Excellent',
             self::B => 'Good',
             self::C => 'Average',
@@ -265,7 +265,7 @@ enum QualityGrade: string
 
     public function score(): int
     {
-        return match($this) {
+        return match ($this) {
             self::A => 90,
             self::B => 80,
             self::C => 70,
@@ -284,7 +284,7 @@ enum PricingMethod: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::AUTO_CONVERT => 'Auto Convert',
             self::MANUAL => 'Manual',
             self::RULE_BASED => 'Rule Based',
@@ -301,7 +301,7 @@ enum PricePosition: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::BELOW_MARKET => 'Below Market',
             self::AT_MARKET => 'At Market',
             self::ABOVE_MARKET => 'Above Market',

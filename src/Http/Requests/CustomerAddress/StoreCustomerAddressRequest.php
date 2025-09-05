@@ -3,8 +3,8 @@
 namespace Shopper\Http\Requests\CustomerAddress;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Shopper\Enums\AddressType;
 use Illuminate\Validation\Rule;
+use Shopper\Enums\AddressType;
 
 class StoreCustomerAddressRequest extends FormRequest
 {

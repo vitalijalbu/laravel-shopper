@@ -13,7 +13,7 @@ enum BusinessType: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::INDIVIDUAL => 'Individual',
             self::SOLE_PROPRIETORSHIP => 'Sole Proprietorship',
             self::PARTNERSHIP => 'Partnership',
@@ -35,7 +35,7 @@ enum BusinessCategory: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::MANUFACTURER => 'Manufacturer',
             self::WHOLESALER => 'Wholesaler',
             self::RETAILER => 'Retailer',
@@ -56,7 +56,7 @@ enum VerificationStatus: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::UNVERIFIED => 'Unverified',
             self::PENDING => 'Pending',
             self::VERIFIED => 'Verified',
@@ -80,7 +80,7 @@ enum KycStatus: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::NOT_REQUIRED => 'Not Required',
             self::PENDING => 'Pending',
             self::VERIFIED => 'Verified',
@@ -98,7 +98,7 @@ enum CommissionType: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::PERCENTAGE => 'Percentage',
             self::FIXED => 'Fixed Amount',
             self::TIERED => 'Tiered',
@@ -116,7 +116,7 @@ enum PayoutSchedule: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::DAILY => 'Daily',
             self::WEEKLY => 'Weekly',
             self::MONTHLY => 'Monthly',
@@ -126,7 +126,7 @@ enum PayoutSchedule: string
 
     public function daysBetweenPayouts(): int
     {
-        return match($this) {
+        return match ($this) {
             self::DAILY => 1,
             self::WEEKLY => 7,
             self::MONTHLY => 30,
@@ -145,7 +145,7 @@ enum VendorStatus: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::ACTIVE => 'Active',
             self::INACTIVE => 'Inactive',
             self::SUSPENDED => 'Suspended',
@@ -170,7 +170,7 @@ enum ProductApprovalStatus: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::DRAFT => 'Draft',
             self::PENDING => 'Pending',
             self::APPROVED => 'Approved',
@@ -196,7 +196,7 @@ enum CommissionStatus: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::PENDING => 'Pending',
             self::APPROVED => 'Approved',
             self::PAID => 'Paid',
@@ -223,7 +223,7 @@ enum PayoutMethod: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::BANK_TRANSFER => 'Bank Transfer',
             self::PAYPAL => 'PayPal',
             self::STRIPE => 'Stripe',
@@ -249,7 +249,7 @@ enum PayoutStatus: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::PENDING => 'Pending',
             self::PROCESSING => 'Processing',
             self::COMPLETED => 'Completed',
@@ -273,7 +273,7 @@ enum ApiApplicationType: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::INTERNAL => 'Internal',
             self::PARTNER => 'Partner',
             self::PUBLIC => 'Public',
@@ -290,7 +290,7 @@ enum ApiEnvironment: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::DEVELOPMENT => 'Development',
             self::STAGING => 'Staging',
             self::PRODUCTION => 'Production',
@@ -299,7 +299,7 @@ enum ApiEnvironment: string
 
     public function rateLimitMultiplier(): float
     {
-        return match($this) {
+        return match ($this) {
             self::DEVELOPMENT => 10.0,
             self::STAGING => 2.0,
             self::PRODUCTION => 1.0,
@@ -316,7 +316,7 @@ enum ApiStatus: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::ACTIVE => 'Active',
             self::INACTIVE => 'Inactive',
             self::SUSPENDED => 'Suspended',
@@ -338,7 +338,7 @@ enum WebhookFormat: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::JSON => 'JSON',
             self::FORM => 'Form Data',
             self::XML => 'XML',
@@ -347,7 +347,7 @@ enum WebhookFormat: string
 
     public function contentType(): string
     {
-        return match($this) {
+        return match ($this) {
             self::JSON => 'application/json',
             self::FORM => 'application/x-www-form-urlencoded',
             self::XML => 'application/xml',
@@ -364,7 +364,7 @@ enum WebhookStatus: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::ACTIVE => 'Active',
             self::PAUSED => 'Paused',
             self::DISABLED => 'Disabled',
@@ -390,7 +390,7 @@ enum WebhookFailureReason: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::TIMEOUT => 'Timeout',
             self::CONNECTION_ERROR => 'Connection Error',
             self::SSL_ERROR => 'SSL Error',
@@ -407,7 +407,7 @@ enum WebhookFailureReason: string
             self::TIMEOUT,
             self::CONNECTION_ERROR,
             self::RATE_LIMITED,
-            self::SERVER_ERROR
+            self::SERVER_ERROR,
         ]);
     }
 }

@@ -14,7 +14,7 @@ enum OrderStatus: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::PENDING => __('shopper::order.status.pending'),
             self::CONFIRMED => __('shopper::order.status.confirmed'),
             self::PROCESSING => __('shopper::order.status.processing'),
@@ -27,7 +27,7 @@ enum OrderStatus: string
 
     public function color(): string
     {
-        return match($this) {
+        return match ($this) {
             self::PENDING => 'orange',
             self::CONFIRMED => 'blue',
             self::PROCESSING => 'purple',

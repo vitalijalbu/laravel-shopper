@@ -3,8 +3,8 @@
 namespace Shopper\Policies;
 
 use Illuminate\Auth\Access\HandlesAuthorization;
-use Shopper\Models\User;
 use Shopper\Models\Category;
+use Shopper\Models\User;
 
 class CategoryPolicy
 {
@@ -32,7 +32,7 @@ class CategoryPolicy
 
     public function delete(User $user, Category $category): bool
     {
-        return $user->can('delete-categories') && !$category->hasProducts();
+        return $user->can('delete-categories') && ! $category->hasProducts();
     }
 
     public function restore(User $user, Category $category): bool

@@ -17,7 +17,7 @@ class ProductTypeResource extends JsonResource
             'is_enabled' => $this->is_enabled,
             'sort_order' => $this->sort_order,
             'meta' => $this->meta,
-            'products_count' => $this->when($this->relationLoaded('products'), fn() => $this->products_count),
+            'products_count' => $this->when($this->relationLoaded('products'), fn () => $this->products_count),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

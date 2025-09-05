@@ -30,7 +30,7 @@ enum MetafieldType: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::SingleLineTextField => 'Single line text',
             self::MultiLineTextField => 'Multi-line text',
             self::RichTextField => 'Rich text',
@@ -95,7 +95,7 @@ enum GiftCardStatus: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::Active => 'Active',
             self::Disabled => 'Disabled',
             self::Expired => 'Expired',
@@ -105,7 +105,7 @@ enum GiftCardStatus: string
 
     public function color(): string
     {
-        return match($this) {
+        return match ($this) {
             self::Active => 'green',
             self::Disabled => 'gray',
             self::Expired => 'orange',
@@ -131,7 +131,7 @@ enum GiftCardTransactionType: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::Debit => 'Used',
             self::Credit => 'Added',
         };

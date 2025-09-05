@@ -20,7 +20,7 @@ class UpdateProductTypeRequest extends FormRequest
                 'required',
                 'string',
                 'max:255',
-                Rule::unique('product_types')->ignore($this->route('productType'))
+                Rule::unique('product_types')->ignore($this->route('productType')),
             ],
             'description' => 'nullable|string|max:1000',
             'is_enabled' => 'boolean',

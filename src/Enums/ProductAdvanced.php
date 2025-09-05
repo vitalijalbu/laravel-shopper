@@ -13,7 +13,7 @@ enum WeightUnit: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::Kilogram => 'Kilograms',
             self::Gram => 'Grams',
             self::Pound => 'Pounds',
@@ -39,7 +39,7 @@ enum InventoryPolicy: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::Deny => 'Stop selling when out of stock',
             self::Continue => 'Continue selling when out of stock',
         };
@@ -64,7 +64,7 @@ enum InventoryManagement: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::Shopify => 'Track quantity',
             self::NotManaged => 'Don\'t track quantity',
             self::FulfillmentService => 'Fulfillment service',
@@ -90,7 +90,7 @@ enum CollectionType: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::Manual => 'Manual',
             self::Smart => 'Automated',
             self::Custom => 'Custom',
@@ -99,7 +99,7 @@ enum CollectionType: string
 
     public function description(): string
     {
-        return match($this) {
+        return match ($this) {
             self::Manual => 'Add products manually',
             self::Smart => 'Products added automatically based on conditions',
             self::Custom => 'Custom collection logic',
@@ -124,7 +124,7 @@ enum PublishedScope: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::Web => 'Online Store',
             self::Global => 'Online Store and other sales channels',
         };

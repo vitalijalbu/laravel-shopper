@@ -12,33 +12,33 @@ return new class extends Migration
         Schema::create('collections', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('site_id')->nullable()->index();
-            
+
             // Basic Information
             $table->string('title')->index();
             $table->string('slug')->index();
             $table->string('handle')->nullable()->index(); // Shopify handle
             $table->text('description')->nullable();
             $table->text('body_html')->nullable();
-            
+
             // Collection Settings
             $table->string('collection_type')->default('manual')->index(); // manual, smart
             $table->jsonb('rules')->nullable(); // Smart collection rules
             $table->string('sort_order')->default('manual')->index(); // manual, best_selling, created, price_asc, price_desc
             $table->boolean('disjunctive')->default(false); // AND vs OR for smart collections
-            
+
             // SEO
             $table->string('meta_title')->nullable();
             $table->text('meta_description')->nullable();
             $table->jsonb('seo')->nullable();
-            
+
             // Publishing
             $table->string('status')->default('draft')->index();
             $table->timestamp('published_at')->nullable()->index();
             $table->string('published_scope')->default('web')->index(); // web, global
-            
+
             // Shopify Template
             $table->string('template_suffix')->nullable();
-            
+
             $table->timestamps();
             $table->softDeletes();
 
@@ -55,12 +55,12 @@ return new class extends Migration
         Schema::create('product_options', function (Blueprint $table) {
             $table->id();
             $table->foreignId('product_id')->constrained('products')->cascadeOnDelete();
-            
+
             // Option Definition
             $table->string('name')->index(); // Color, Size, Material
             $table->integer('position')->default(1)->index(); // 1, 2, 3 (max 3 options in Shopify)
             $table->jsonb('values'); // ["Red", "Blue", "Green"] or ["Small", "Medium", "Large"]
-            
+
             $table->timestamps();
 
             // Indexes

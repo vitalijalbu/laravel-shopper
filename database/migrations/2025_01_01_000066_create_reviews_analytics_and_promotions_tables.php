@@ -153,7 +153,7 @@ return new class extends Migration
         // ====== WISHLIST ENHANCEMENTS ======
         if (Schema::hasTable('wishlists')) {
             Schema::table('wishlists', function (Blueprint $table) {
-                if (!Schema::hasColumn('wishlists', 'is_public')) {
+                if (! Schema::hasColumn('wishlists', 'is_public')) {
                     $table->boolean('is_public')->default(false)->after('name');
                     $table->string('share_token', 100)->nullable()->unique()->after('is_public');
                     $table->integer('views_count')->default(0)->after('share_token');

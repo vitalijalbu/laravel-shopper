@@ -134,7 +134,7 @@ Route::group([
                 Route::post('/bulk', [\Shopper\Http\Controllers\Api\CustomerController::class, 'bulk'])->name('bulk');
             });
 
-                        // Fidelity System Management
+            // Fidelity System Management
             Route::prefix('fidelity')->name('fidelity.')->group(function () {
                 Route::post('/redeem-points', [FidelityController::class, 'redeemPoints'])->name('redeem-points');
                 Route::get('/cards', [\Shopper\Http\Controllers\Api\Admin\FidelityAdminController::class, 'index'])->name('cards.index');

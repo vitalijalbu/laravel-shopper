@@ -82,10 +82,10 @@ class CustomerResource extends JsonResource
             // Computed values
             'orders_count' => $this->when(isset($this->orders_count), $this->orders_count),
             'orders_sum_total_amount' => $this->when(isset($this->orders_sum_total_amount), $this->orders_sum_total_amount),
-            
+
             // Admin-only fields
             'internal_notes' => $this->when($request->user()?->can('view-customer-internal-notes'), $this->internal_notes),
-            
+
             // Actions
             'can' => [
                 'view' => $request->user()?->can('view', $this->resource) ?? false,

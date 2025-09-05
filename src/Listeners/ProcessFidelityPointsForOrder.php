@@ -22,9 +22,9 @@ class ProcessFidelityPointsForOrder
     public function handle(OrderStatusChanged $event): void
     {
         $order = $event->order();
-        
+
         // Processa i punti solo quando l'ordine è stato pagato/completato
-        if (!in_array($event->newStatus(), ['paid', 'completed', 'delivered'])) {
+        if (! in_array($event->newStatus(), ['paid', 'completed', 'delivered'])) {
             return;
         }
 
@@ -35,7 +35,7 @@ class ProcessFidelityPointsForOrder
                 ->where('order_id', $order->id)
                 ->where('type', 'earned')
                 ->first();
-                
+
             if ($existingTransaction) {
                 return; // Punti già assegnati
             }

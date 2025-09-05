@@ -16,7 +16,7 @@ class FidelityTransactionFactory extends Factory
     public function definition(): array
     {
         $type = $this->faker->randomElement(['earned', 'redeemed', 'expired', 'adjusted']);
-        
+
         return [
             'fidelity_card_id' => FidelityCard::factory(),
             'order_id' => $type === 'earned' ? Order::factory() : null,
@@ -35,7 +35,7 @@ class FidelityTransactionFactory extends Factory
         return $this->state(fn (array $attributes) => [
             'type' => 'earned',
             'points' => $this->faker->numberBetween(1, 1000),
-            'description' => 'Points earned from order #' . $this->faker->numberBetween(1000, 9999),
+            'description' => 'Points earned from order #'.$this->faker->numberBetween(1000, 9999),
             'expires_at' => $this->faker->dateTimeBetween('now', '+1 year'),
             'order_id' => Order::factory(),
         ]);
@@ -87,7 +87,7 @@ class FidelityTransactionFactory extends Factory
     private function getDescriptionForType(string $type): string
     {
         return match ($type) {
-            'earned' => 'Points earned from order #' . $this->faker->numberBetween(1000, 9999),
+            'earned' => 'Points earned from order #'.$this->faker->numberBetween(1000, 9999),
             'redeemed' => 'Points redeemed',
             'expired' => 'Points expired',
             'adjusted' => 'Manual adjustment',

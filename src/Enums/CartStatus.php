@@ -11,7 +11,7 @@ enum CartStatus: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::ACTIVE => __('shopper::cart.status.active'),
             self::ABANDONED => __('shopper::cart.status.abandoned'),
             self::CONVERTED => __('shopper::cart.status.converted'),
@@ -21,7 +21,7 @@ enum CartStatus: string
 
     public function color(): string
     {
-        return match($this) {
+        return match ($this) {
             self::ACTIVE => 'green',
             self::ABANDONED => 'orange',
             self::CONVERTED => 'blue',

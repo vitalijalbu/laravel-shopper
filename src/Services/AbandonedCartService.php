@@ -2,12 +2,11 @@
 
 namespace Shopper\Services;
 
-use Shopper\Models\AbandonedCart;
-use Shopper\Repositories\AbandonedCartRepository;
+use Illuminate\Support\Carbon;
 use Shopper\Data\AbandonedCart\AbandonedCartData;
 use Shopper\Jobs\SendAbandonedCartEmail;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Carbon;
+use Shopper\Models\AbandonedCart;
+use Shopper\Repositories\AbandonedCartRepository;
 
 class AbandonedCartService
 {
@@ -21,7 +20,7 @@ class AbandonedCartService
     public function createAbandonedCart(array $data): AbandonedCartData
     {
         $cart = $this->repository->create($data);
-        
+
         return AbandonedCartData::fromModel($cart);
     }
 
@@ -31,7 +30,7 @@ class AbandonedCartService
     public function updateAbandonedCart(AbandonedCart $cart, array $data): AbandonedCartData
     {
         $cart = $this->repository->update($cart->id, $data);
-        
+
         return AbandonedCartData::fromModel($cart);
     }
 
@@ -61,18 +60,18 @@ class AbandonedCartService
             // Log the recovery attempt
             $this->repository->update($cart->id, [
                 'recovery_emails_sent' => ($cart->recovery_emails_sent ?? 0) + 1,
-                'last_recovery_email_sent_at' => now()
+                'last_recovery_email_sent_at' => now(),
             ]);
 
             SendAbandonedCartEmail::dispatchNow($cart);
-            
+
             return true;
         } catch (\Exception $e) {
             \Illuminate\Support\Facades\Log::error('Failed to send abandoned cart recovery email', [
                 'cart_id' => $cart->id,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
-            
+
             return false;
         }
     }
@@ -83,8 +82,8 @@ class AbandonedCartService
     public function getCartsEligibleForRecovery(int $hoursThreshold = 1): array
     {
         $carts = $this->repository->getEligibleForRecovery($hoursThreshold);
-        
-        return $carts->map(fn($cart) => AbandonedCartData::fromModel($cart))->toArray();
+
+        return $carts->map(fn ($cart) => AbandonedCartData::fromModel($cart))->toArray();
     }
 
     /**
@@ -97,7 +96,7 @@ class AbandonedCartService
 
         foreach ($eligibleCarts as $cartData) {
             $cart = AbandonedCart::find($cartData->id);
-            if ($cart && (!$cart->recovery_emails_sent || $cart->recovery_emails_sent < 3)) {
+            if ($cart && (! $cart->recovery_emails_sent || $cart->recovery_emails_sent < 3)) {
                 $this->scheduleRecoveryEmail($cart);
                 $scheduled++;
             }
@@ -120,7 +119,7 @@ class AbandonedCartService
     public function getRecoveryRate(?Carbon $startDate = null, ?Carbon $endDate = null): float
     {
         $stats = $this->getRecoveryStatistics($startDate, $endDate);
-        
+
         if ($stats['total_abandoned'] === 0) {
             return 0.0;
         }
@@ -170,8 +169,8 @@ class AbandonedCartService
      */
     public function generateRecoveryLink(AbandonedCart $cart): string
     {
-        $token = base64_encode($cart->id . '|' . $cart->email . '|' . now()->timestamp);
-        
+        $token = base64_encode($cart->id.'|'.$cart->email.'|'.now()->timestamp);
+
         return route('cart.recover', ['token' => $token]);
     }
 
@@ -183,7 +182,7 @@ class AbandonedCartService
         try {
             $decoded = base64_decode($token);
             [$cartId, $email, $timestamp] = explode('|', $decoded);
-            
+
             // Token expires after 7 days
             if (now()->timestamp - $timestamp > 604800) {
                 return null;

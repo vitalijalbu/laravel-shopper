@@ -13,7 +13,6 @@ use Shopper\Http\Controllers\Cp\DashboardController;
 use Shopper\Http\Controllers\Cp\DiscountController;
 use Shopper\Http\Controllers\Cp\EntriesController;
 use Shopper\Http\Controllers\Cp\MenuController;
-use Shopper\Http\Controllers\Cp\NavigationItemController;
 use Shopper\Http\Controllers\Cp\OrdersController;
 use Shopper\Http\Controllers\Cp\PaymentGatewaysController;
 use Shopper\Http\Controllers\Cp\SettingsController;
@@ -161,7 +160,7 @@ Route::prefix($cpPrefix)->name('cp.')->middleware(['web', 'shopper.inertia'])->g
             Route::get('/{customer}/edit', [CustomerController::class, 'edit'])->name('edit');
             Route::put('/{customer}', [CustomerController::class, 'update'])->name('update');
             Route::delete('/{customer}', [CustomerController::class, 'destroy'])->name('destroy');
-            
+
             // Additional customer actions
             Route::post('/bulk-action', [CustomerController::class, 'bulkAction'])->name('bulk-action');
             Route::post('/{id}/restore', [CustomerController::class, 'restore'])->name('restore');

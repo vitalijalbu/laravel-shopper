@@ -2,9 +2,9 @@
 
 namespace Tests\Unit;
 
-use Tests\TestCase;
-use Shopper\Support\Asset;
 use Illuminate\Support\Facades\File;
+use Shopper\Support\Asset;
+use Tests\TestCase;
 
 class AssetTest extends TestCase
 {
@@ -15,8 +15,8 @@ class AssetTest extends TestCase
             'resources/js/app.js' => [
                 'file' => 'assets/app-B0iDKKsX.js',
                 'name' => 'app',
-                'css' => ['assets/app-UoZfsuqP.css']
-            ]
+                'css' => ['assets/app-UoZfsuqP.css'],
+            ],
         ];
 
         $manifestPath = public_path('vendor/shopper/.vite/manifest.json');
@@ -24,7 +24,7 @@ class AssetTest extends TestCase
         File::shouldReceive('get')->with($manifestPath)->andReturn(json_encode($manifestContent));
 
         $url = Asset::url('resources/js/app.js');
-        
+
         $this->assertEquals(asset('vendor/shopper/assets/app-B0iDKKsX.js'), $url);
     }
 
@@ -34,7 +34,7 @@ class AssetTest extends TestCase
         File::shouldReceive('exists')->with($manifestPath)->andReturn(false);
 
         $url = Asset::url('resources/js/app.js');
-        
+
         $this->assertEquals(asset('vendor/shopper/resources/js/app.js'), $url);
     }
 
@@ -61,12 +61,12 @@ class AssetTest extends TestCase
                 'file' => 'assets/app-B0iDKKsX.js',
                 'name' => 'app',
                 'imports' => ['_vendor-2Ew9QOZ7.js'],
-                'css' => ['assets/app-UoZfsuqP.css']
+                'css' => ['assets/app-UoZfsuqP.css'],
             ],
             '_vendor-2Ew9QOZ7.js' => [
                 'file' => 'assets/vendor-2Ew9QOZ7.js',
-                'name' => 'vendor'
-            ]
+                'name' => 'vendor',
+            ],
         ];
 
         $manifestPath = public_path('vendor/shopper/.vite/manifest.json');
@@ -74,7 +74,7 @@ class AssetTest extends TestCase
         File::shouldReceive('get')->with($manifestPath)->andReturn(json_encode($manifestContent));
 
         $scripts = Asset::scripts();
-        
+
         $this->assertStringContains('modulepreload', $scripts->toHtml());
         $this->assertStringContains('assets/vendor-2Ew9QOZ7.js', $scripts->toHtml());
         $this->assertStringContains('assets/app-B0iDKKsX.js', $scripts->toHtml());
@@ -86,8 +86,8 @@ class AssetTest extends TestCase
             'resources/js/app.js' => [
                 'file' => 'assets/app-B0iDKKsX.js',
                 'name' => 'app',
-                'css' => ['assets/app-UoZfsuqP.css']
-            ]
+                'css' => ['assets/app-UoZfsuqP.css'],
+            ],
         ];
 
         $manifestPath = public_path('vendor/shopper/.vite/manifest.json');
@@ -95,7 +95,7 @@ class AssetTest extends TestCase
         File::shouldReceive('get')->with($manifestPath)->andReturn(json_encode($manifestContent));
 
         $styles = Asset::styles();
-        
+
         $this->assertStringContains('stylesheet', $styles->toHtml());
         $this->assertStringContains('assets/app-UoZfsuqP.css', $styles->toHtml());
     }

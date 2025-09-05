@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 class ShopifyStyleProductSeeder extends Seeder
 {
@@ -22,7 +21,7 @@ class ShopifyStyleProductSeeder extends Seeder
             'published_at' => now(),
             'published_scope' => 'web',
             'created_at' => now(),
-            'updated_at' => now()
+            'updated_at' => now(),
         ]);
 
         // Default variant per prodotto semplice
@@ -42,7 +41,7 @@ class ShopifyStyleProductSeeder extends Seeder
             'status' => 'active',
             'available' => true,
             'created_at' => now(),
-            'updated_at' => now()
+            'updated_at' => now(),
         ]);
 
         // Aggiorna il prodotto con la default variant
@@ -50,7 +49,7 @@ class ShopifyStyleProductSeeder extends Seeder
             'default_variant_id' => $simpleVariant,
             'variants_count' => 1,
             'price_min' => 29.99,
-            'price_max' => 29.99
+            'price_max' => 29.99,
         ]);
 
         // 2. Prodotto con varianti (es. T-shirt)
@@ -63,14 +62,14 @@ class ShopifyStyleProductSeeder extends Seeder
             'product_type' => 'physical',
             'options' => json_encode([
                 ['name' => 'Color', 'values' => ['Red', 'Blue', 'Black']],
-                ['name' => 'Size', 'values' => ['Small', 'Medium', 'Large']]
+                ['name' => 'Size', 'values' => ['Small', 'Medium', 'Large']],
             ]),
             'tags' => json_encode(['clothing', 'cotton', 'casual']),
             'status' => 'active',
             'published_at' => now(),
             'published_scope' => 'web',
             'created_at' => now(),
-            'updated_at' => now()
+            'updated_at' => now(),
         ]);
 
         // Varianti per T-shirt (Color x Size = 9 varianti)
@@ -82,7 +81,7 @@ class ShopifyStyleProductSeeder extends Seeder
 
         foreach ($colors as $color) {
             foreach ($sizes as $size) {
-                $price = match($size) {
+                $price = match ($size) {
                     'Small' => 19.99,
                     'Medium' => 21.99,
                     'Large' => 23.99
@@ -92,7 +91,7 @@ class ShopifyStyleProductSeeder extends Seeder
                 $variantId = DB::table('product_variants')->insertGetId([
                     'product_id' => $variantProduct,
                     'title' => "{$color} / {$size}",
-                    'sku' => 'TSHIRT-' . strtoupper($color) . '-' . strtoupper($size),
+                    'sku' => 'TSHIRT-'.strtoupper($color).'-'.strtoupper($size),
                     'option1' => $color,
                     'option2' => $size,
                     'price' => $price,
@@ -106,7 +105,7 @@ class ShopifyStyleProductSeeder extends Seeder
                     'dimensions' => json_encode([
                         'length' => 20,
                         'width' => 15,
-                        'height' => 2
+                        'height' => 2,
                     ]),
                     'requires_shipping' => true,
                     'taxable' => true,
@@ -114,7 +113,7 @@ class ShopifyStyleProductSeeder extends Seeder
                     'status' => 'active',
                     'available' => true,
                     'created_at' => now(),
-                    'updated_at' => now()
+                    'updated_at' => now(),
                 ]);
 
                 // Prima variante = default variant
@@ -131,7 +130,7 @@ class ShopifyStyleProductSeeder extends Seeder
             'default_variant_id' => $defaultVariantId,
             'variants_count' => count($colors) * count($sizes),
             'price_min' => min($prices),
-            'price_max' => max($prices)
+            'price_max' => max($prices),
         ]);
 
         // 3. Prodotto con una sola variante ma con gestione stock
@@ -147,7 +146,7 @@ class ShopifyStyleProductSeeder extends Seeder
             'published_at' => now(),
             'published_scope' => 'web',
             'created_at' => now(),
-            'updated_at' => now()
+            'updated_at' => now(),
         ]);
 
         $headphonesVariant = DB::table('product_variants')->insertGetId([
@@ -166,7 +165,7 @@ class ShopifyStyleProductSeeder extends Seeder
             'dimensions' => json_encode([
                 'length' => 18,
                 'width' => 20,
-                'height' => 8
+                'height' => 8,
             ]),
             'requires_shipping' => true,
             'taxable' => true,
@@ -176,17 +175,17 @@ class ShopifyStyleProductSeeder extends Seeder
             'metafields' => json_encode([
                 'warranty' => '2 years',
                 'battery_life' => '30 hours',
-                'connectivity' => 'Bluetooth 5.0'
+                'connectivity' => 'Bluetooth 5.0',
             ]),
             'created_at' => now(),
-            'updated_at' => now()
+            'updated_at' => now(),
         ]);
 
         DB::table('products')->where('id', $singleVariantProduct)->update([
             'default_variant_id' => $headphonesVariant,
             'variants_count' => 1,
             'price_min' => 149.99,
-            'price_max' => 149.99
+            'price_max' => 149.99,
         ]);
 
         echo "✅ Creati 3 prodotti Shopify-style:\n";

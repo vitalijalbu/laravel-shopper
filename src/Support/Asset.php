@@ -15,13 +15,13 @@ class Asset
     public static function url(string $path): string
     {
         $manifest = static::getManifest();
-        
+
         if (isset($manifest[$path])) {
-            return asset('vendor/shopper/' . $manifest[$path]['file']);
+            return asset('vendor/shopper/'.$manifest[$path]['file']);
         }
 
         // Fallback to direct path if manifest not found
-        return asset('vendor/shopper/' . ltrim($path, '/'));
+        return asset('vendor/shopper/'.ltrim($path, '/'));
     }
 
     /**
@@ -34,19 +34,19 @@ class Asset
 
         if (isset($manifest['resources/js/app.js'])) {
             $entry = $manifest['resources/js/app.js'];
-            
+
             // Add preload links for imports
             if (isset($entry['imports'])) {
                 foreach ($entry['imports'] as $import) {
                     if (isset($manifest[$import])) {
                         $importFile = $manifest[$import]['file'];
-                        $scripts .= '<link rel="modulepreload" href="' . asset('vendor/shopper/' . $importFile) . '">' . "\n";
+                        $scripts .= '<link rel="modulepreload" href="'.asset('vendor/shopper/'.$importFile).'">'."\n";
                     }
                 }
             }
 
             // Add main script
-            $scripts .= '<script type="module" src="' . static::url('resources/js/app.js') . '"></script>';
+            $scripts .= '<script type="module" src="'.static::url('resources/js/app.js').'"></script>';
         }
 
         return new HtmlString($scripts);
@@ -62,7 +62,7 @@ class Asset
 
         if (isset($manifest['resources/js/app.js']['css'])) {
             foreach ($manifest['resources/js/app.js']['css'] as $css) {
-                $styles .= '<link rel="stylesheet" href="' . asset('vendor/shopper/' . $css) . '">' . "\n";
+                $styles .= '<link rel="stylesheet" href="'.asset('vendor/shopper/'.$css).'">'."\n";
             }
         }
 
@@ -80,8 +80,9 @@ class Asset
 
         $manifestPath = public_path('vendor/shopper/.vite/manifest.json');
 
-        if (!File::exists($manifestPath)) {
+        if (! File::exists($manifestPath)) {
             static::$manifest = [];
+
             return static::$manifest;
         }
 

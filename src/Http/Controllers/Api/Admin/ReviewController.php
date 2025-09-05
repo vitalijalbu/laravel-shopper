@@ -4,13 +4,12 @@ namespace Shopper\Http\Controllers\Api\Admin;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Auth;
 use Shopper\Http\Controllers\Controller;
-use Shopper\Models\ProductReview;
 use Shopper\Models\Product;
-use Shopper\Models\Customer;
+use Shopper\Models\ProductReview;
 use Shopper\Traits\ApiResponseTrait;
 
 class ReviewController extends Controller
@@ -25,7 +24,7 @@ class ReviewController extends Controller
         $query = ProductReview::with([
             'customer:id,name,email',
             'product:id,name,handle',
-            'reviewMedia'
+            'reviewMedia',
         ]);
 
         // Search filter
@@ -83,7 +82,7 @@ class ReviewController extends Controller
 
         $allowedSorts = [
             'created_at', 'rating', 'helpful_count', 'unhelpful_count',
-            'title', 'is_approved', 'is_featured'
+            'title', 'is_approved', 'is_featured',
         ];
 
         if (in_array($sortBy, $allowedSorts)) {
@@ -163,7 +162,8 @@ class ReviewController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return $this->errorResponse('Failed to create review: ' . $e->getMessage(), 500);
+
+            return $this->errorResponse('Failed to create review: '.$e->getMessage(), 500);
         }
     }
 
@@ -176,7 +176,7 @@ class ReviewController extends Controller
             'customer:id,name,email',
             'product:id,name,handle',
             'reviewMedia',
-            'votes'
+            'votes',
         ]);
 
         return $this->successResponse([
@@ -208,18 +208,18 @@ class ReviewController extends Controller
 
             $originalRating = $review->rating;
             $updateData = $request->only([
-                'rating', 'title', 'content', 'is_approved', 
-                'is_featured', 'is_verified_purchase'
+                'rating', 'title', 'content', 'is_approved',
+                'is_featured', 'is_verified_purchase',
             ]);
 
             // Handle reply
             if ($request->has('reply_content')) {
                 $updateData['reply_content'] = $request->reply_content;
-                
-                if ($request->reply_content && !$review->replied_at) {
+
+                if ($request->reply_content && ! $review->replied_at) {
                     $updateData['replied_at'] = now();
                     $updateData['replied_by'] = Auth::id();
-                } elseif (!$request->reply_content) {
+                } elseif (! $request->reply_content) {
                     $updateData['replied_at'] = null;
                     $updateData['replied_by'] = null;
                 }
@@ -243,7 +243,8 @@ class ReviewController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return $this->errorResponse('Failed to update review: ' . $e->getMessage(), 500);
+
+            return $this->errorResponse('Failed to update review: '.$e->getMessage(), 500);
         }
     }
 
@@ -269,7 +270,8 @@ class ReviewController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return $this->errorResponse('Failed to delete review: ' . $e->getMessage(), 500);
+
+            return $this->errorResponse('Failed to delete review: '.$e->getMessage(), 500);
         }
     }
 
@@ -287,7 +289,7 @@ class ReviewController extends Controller
             ]);
 
         } catch (\Exception $e) {
-            return $this->errorResponse('Failed to approve review: ' . $e->getMessage(), 500);
+            return $this->errorResponse('Failed to approve review: '.$e->getMessage(), 500);
         }
     }
 
@@ -305,7 +307,7 @@ class ReviewController extends Controller
             ]);
 
         } catch (\Exception $e) {
-            return $this->errorResponse('Failed to unapprove review: ' . $e->getMessage(), 500);
+            return $this->errorResponse('Failed to unapprove review: '.$e->getMessage(), 500);
         }
     }
 
@@ -333,7 +335,7 @@ class ReviewController extends Controller
             ]);
 
         } catch (\Exception $e) {
-            return $this->errorResponse('Failed to approve reviews: ' . $e->getMessage(), 500);
+            return $this->errorResponse('Failed to approve reviews: '.$e->getMessage(), 500);
         }
     }
 
@@ -375,7 +377,8 @@ class ReviewController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return $this->errorResponse('Failed to delete reviews: ' . $e->getMessage(), 500);
+
+            return $this->errorResponse('Failed to delete reviews: '.$e->getMessage(), 500);
         }
     }
 
@@ -412,7 +415,7 @@ class ReviewController extends Controller
 
             // Fill missing ratings with 0
             for ($i = 1; $i <= 5; $i++) {
-                if (!isset($ratingDistribution[$i])) {
+                if (! isset($ratingDistribution[$i])) {
                     $ratingDistribution[$i] = 0;
                 }
             }
@@ -430,15 +433,15 @@ class ReviewController extends Controller
 
             // Most reviewed products
             $topProducts = Product::withCount([
-                    'reviews' => function ($query) use ($request) {
-                        if ($from = $request->get('date_from')) {
-                            $query->whereDate('created_at', '>=', $from);
-                        }
-                        if ($to = $request->get('date_to')) {
-                            $query->whereDate('created_at', '<=', $to);
-                        }
+                'reviews' => function ($query) use ($request) {
+                    if ($from = $request->get('date_from')) {
+                        $query->whereDate('created_at', '>=', $from);
                     }
-                ])
+                    if ($to = $request->get('date_to')) {
+                        $query->whereDate('created_at', '<=', $to);
+                    }
+                },
+            ])
                 ->having('reviews_count', '>', 0)
                 ->orderBy('reviews_count', 'desc')
                 ->limit(10)
@@ -465,7 +468,7 @@ class ReviewController extends Controller
             ]);
 
         } catch (\Exception $e) {
-            return $this->errorResponse('Failed to load analytics: ' . $e->getMessage(), 500);
+            return $this->errorResponse('Failed to load analytics: '.$e->getMessage(), 500);
         }
     }
 
@@ -501,17 +504,17 @@ class ReviewController extends Controller
 
             $headers = [
                 'Content-Type' => 'text/csv',
-                'Content-Disposition' => 'attachment; filename="reviews-' . now()->format('Y-m-d') . '.csv"',
+                'Content-Disposition' => 'attachment; filename="reviews-'.now()->format('Y-m-d').'.csv"',
             ];
 
             $callback = function () use ($reviews) {
                 $file = fopen('php://output', 'w');
-                
+
                 // CSV headers
                 fputcsv($file, [
                     'ID', 'Product', 'Customer', 'Rating', 'Title', 'Content',
                     'Approved', 'Featured', 'Verified Purchase', 'Helpful Count',
-                    'Unhelpful Count', 'Created At'
+                    'Unhelpful Count', 'Created At',
                 ]);
 
                 // CSV data
@@ -538,7 +541,7 @@ class ReviewController extends Controller
             return response()->stream($callback, 200, $headers);
 
         } catch (\Exception $e) {
-            return $this->errorResponse('Failed to export reviews: ' . $e->getMessage(), 500);
+            return $this->errorResponse('Failed to export reviews: '.$e->getMessage(), 500);
         }
     }
 
@@ -548,7 +551,9 @@ class ReviewController extends Controller
     private function updateProductRating(int $productId): void
     {
         $product = Product::find($productId);
-        if (!$product) return;
+        if (! $product) {
+            return;
+        }
 
         $reviews = ProductReview::where('product_id', $productId)
             ->where('is_approved', true);

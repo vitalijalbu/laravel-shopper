@@ -3,8 +3,8 @@
 namespace Shopper\Policies;
 
 use Illuminate\Auth\Access\HandlesAuthorization;
-use Shopper\Models\User;
 use Shopper\Models\Customer;
+use Shopper\Models\User;
 
 class CustomerPolicy
 {

@@ -293,8 +293,8 @@ class CustomerController extends Controller
     {
         try {
             $customer = $this->customerRepository->findWithFidelityCard($id);
-            
-            if (!$customer) {
+
+            if (! $customer) {
                 return response()->json([
                     'message' => 'Cliente non trovato',
                 ], 404);
@@ -320,8 +320,8 @@ class CustomerController extends Controller
     {
         try {
             $customer = $this->customerRepository->find($id);
-            
-            if (!$customer) {
+
+            if (! $customer) {
                 return response()->json([
                     'message' => 'Cliente non trovato',
                 ], 404);

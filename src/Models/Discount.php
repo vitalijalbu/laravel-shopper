@@ -6,9 +6,7 @@ namespace Shopper\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Carbon\Carbon;
 
 class Discount extends Model
 {
@@ -55,7 +53,9 @@ class Discount extends Model
     ];
 
     public const TYPE_PERCENTAGE = 'percentage';
+
     public const TYPE_FIXED_AMOUNT = 'fixed_amount';
+
     public const TYPE_FREE_SHIPPING = 'free_shipping';
 
     public const TYPES = [
@@ -201,7 +201,7 @@ class Discount extends Model
      */
     public function canCustomerUse($customerId): bool
     {
-        if (!$this->usage_limit_per_customer) {
+        if (! $this->usage_limit_per_customer) {
             return true;
         }
 
@@ -247,8 +247,8 @@ class Discount extends Model
     public function getFormattedValueAttribute(): string
     {
         return match ($this->type) {
-            self::TYPE_PERCENTAGE => $this->value . '%',
-            self::TYPE_FIXED_AMOUNT => '€' . number_format($this->value, 2),
+            self::TYPE_PERCENTAGE => $this->value.'%',
+            self::TYPE_FIXED_AMOUNT => '€'.number_format($this->value, 2),
             self::TYPE_FREE_SHIPPING => 'Free Shipping',
             default => (string) $this->value,
         };
@@ -259,7 +259,7 @@ class Discount extends Model
      */
     public function getStatusAttribute(): string
     {
-        if (!$this->is_enabled) {
+        if (! $this->is_enabled) {
             return 'disabled';
         }
 

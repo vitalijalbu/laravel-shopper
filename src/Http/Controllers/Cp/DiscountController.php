@@ -8,9 +8,9 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 use Shopper\Http\Controllers\Controller;
+use Shopper\Http\Requests\DiscountRequest;
 use Shopper\Models\Discount;
 use Shopper\Services\DiscountService;
-use Shopper\Http\Requests\DiscountRequest;
 
 class DiscountController extends Controller
 {
@@ -40,7 +40,7 @@ class DiscountController extends Controller
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('code', 'like', "%{$search}%");
+                    ->orWhere('code', 'like', "%{$search}%");
             });
         }
 
@@ -49,6 +49,7 @@ class DiscountController extends Controller
         // Add statistics to each discount
         $discounts->getCollection()->transform(function ($discount) {
             $discount->statistics = $this->discountService->getDiscountStatistics($discount);
+
             return $discount;
         });
 

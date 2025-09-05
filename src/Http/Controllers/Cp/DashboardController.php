@@ -51,7 +51,7 @@ class DashboardController extends Controller
                 'navigation' => $nav,
                 'sites' => $this->getSites(),
                 'breadcrumbs' => [
-                    ['title' => 'Dashboard', 'url' => null]
+                    ['title' => 'Dashboard', 'url' => null],
                 ],
                 'stats' => $stats,
                 'recentActivities' => $recentActivities,
@@ -260,7 +260,7 @@ class DashboardController extends Controller
                 'name' => config('app.name', 'Laravel Shopper'),
                 'url' => config('app.url'),
                 'is_current' => true,
-            ]
+            ],
         ];
     }
 }

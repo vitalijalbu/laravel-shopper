@@ -66,18 +66,18 @@ class FidelityTransaction extends Model
     public function scopeActive($query)
     {
         return $query->where('expired', false)
-                    ->where(function ($q) {
-                        $q->whereNull('expires_at')
-                          ->orWhere('expires_at', '>', now());
-                    });
+            ->where(function ($q) {
+                $q->whereNull('expires_at')
+                    ->orWhere('expires_at', '>', now());
+            });
     }
 
     public function scopeExpiring($query, int $days = 30)
     {
         return $query->where('type', 'earned')
-                    ->where('expired', false)
-                    ->whereNotNull('expires_at')
-                    ->whereBetween('expires_at', [now(), now()->addDays($days)]);
+            ->where('expired', false)
+            ->whereNotNull('expires_at')
+            ->whereBetween('expires_at', [now(), now()->addDays($days)]);
     }
 
     // Methods
@@ -88,12 +88,12 @@ class FidelityTransaction extends Model
 
     public function isActive(): bool
     {
-        return !$this->isExpired();
+        return ! $this->isExpired();
     }
 
     public function getDaysUntilExpiration(): ?int
     {
-        if (!$this->expires_at) {
+        if (! $this->expires_at) {
             return null;
         }
 

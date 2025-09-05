@@ -41,7 +41,7 @@ class ProductTypeController extends Controller
         $sortDirection = $request->get('sort_direction', 'desc');
 
         $allowedSorts = [
-            'name', 'slug', 'products_count', 'is_enabled', 'created_at', 'updated_at'
+            'name', 'slug', 'products_count', 'is_enabled', 'created_at', 'updated_at',
         ];
 
         if (in_array($sortBy, $allowedSorts)) {
@@ -99,7 +99,7 @@ class ProductTypeController extends Controller
             $originalSlug = $data['slug'];
             $counter = 1;
             while (ProductType::where('slug', $data['slug'])->exists()) {
-                $data['slug'] = $originalSlug . '-' . $counter;
+                $data['slug'] = $originalSlug.'-'.$counter;
                 $counter++;
             }
 
@@ -114,7 +114,8 @@ class ProductTypeController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return $this->errorResponse('Failed to create product type: ' . $e->getMessage(), 500);
+
+            return $this->errorResponse('Failed to create product type: '.$e->getMessage(), 500);
         }
     }
 
@@ -136,8 +137,8 @@ class ProductTypeController extends Controller
     public function update(Request $request, ProductType $productType): JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'sometimes|string|max:255|unique:product_types,name,' . $productType->id,
-            'slug' => 'sometimes|string|max:255|unique:product_types,slug,' . $productType->id,
+            'name' => 'sometimes|string|max:255|unique:product_types,name,'.$productType->id,
+            'slug' => 'sometimes|string|max:255|unique:product_types,slug,'.$productType->id,
             'description' => 'nullable|string|max:1000',
             'is_enabled' => 'sometimes|boolean',
         ]);
@@ -152,7 +153,7 @@ class ProductTypeController extends Controller
             $updateData = $request->only(['name', 'slug', 'description', 'is_enabled']);
 
             // Generate slug if name changed but slug not provided
-            if (isset($updateData['name']) && !isset($updateData['slug'])) {
+            if (isset($updateData['name']) && ! isset($updateData['slug'])) {
                 $updateData['slug'] = Str::slug($updateData['name']);
             }
 
@@ -161,7 +162,7 @@ class ProductTypeController extends Controller
                 $originalSlug = $updateData['slug'];
                 $counter = 1;
                 while (ProductType::where('slug', $updateData['slug'])->where('id', '!=', $productType->id)->exists()) {
-                    $updateData['slug'] = $originalSlug . '-' . $counter;
+                    $updateData['slug'] = $originalSlug.'-'.$counter;
                     $counter++;
                 }
             }
@@ -179,7 +180,8 @@ class ProductTypeController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return $this->errorResponse('Failed to update product type: ' . $e->getMessage(), 500);
+
+            return $this->errorResponse('Failed to update product type: '.$e->getMessage(), 500);
         }
     }
 
@@ -191,7 +193,7 @@ class ProductTypeController extends Controller
         try {
             // Check if product type has products
             $productsCount = $productType->products()->count();
-            
+
             if ($productsCount > 0) {
                 return $this->errorResponse(
                     "Cannot delete product type '{$productType->name}' because it has {$productsCount} associated products. Please reassign or delete the products first.",
@@ -206,7 +208,7 @@ class ProductTypeController extends Controller
             ]);
 
         } catch (\Exception $e) {
-            return $this->errorResponse('Failed to delete product type: ' . $e->getMessage(), 500);
+            return $this->errorResponse('Failed to delete product type: '.$e->getMessage(), 500);
         }
     }
 
@@ -216,7 +218,7 @@ class ProductTypeController extends Controller
     public function toggle(ProductType $productType): JsonResponse
     {
         try {
-            $productType->update(['is_enabled' => !$productType->is_enabled]);
+            $productType->update(['is_enabled' => ! $productType->is_enabled]);
 
             $status = $productType->is_enabled ? 'enabled' : 'disabled';
 
@@ -226,7 +228,7 @@ class ProductTypeController extends Controller
             ]);
 
         } catch (\Exception $e) {
-            return $this->errorResponse('Failed to toggle product type status: ' . $e->getMessage(), 500);
+            return $this->errorResponse('Failed to toggle product type status: '.$e->getMessage(), 500);
         }
     }
 
@@ -271,6 +273,7 @@ class ProductTypeController extends Controller
 
                     if ($typesWithProducts->isNotEmpty()) {
                         $names = $typesWithProducts->pluck('name')->join(', ');
+
                         return $this->errorResponse(
                             "Cannot delete product types ({$names}) because they have associated products. Please reassign or delete the products first.",
                             422
@@ -291,7 +294,8 @@ class ProductTypeController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return $this->errorResponse('Bulk operation failed: ' . $e->getMessage(), 500);
+
+            return $this->errorResponse('Bulk operation failed: '.$e->getMessage(), 500);
         }
     }
 
@@ -303,7 +307,7 @@ class ProductTypeController extends Controller
         $query = ProductType::select('id', 'name', 'slug');
 
         // Only enabled by default
-        if (!$request->has('include_disabled')) {
+        if (! $request->has('include_disabled')) {
             $query->where('is_enabled', true);
         }
 
@@ -344,7 +348,7 @@ class ProductTypeController extends Controller
             ]);
 
         } catch (\Exception $e) {
-            return $this->errorResponse('Failed to load statistics: ' . $e->getMessage(), 500);
+            return $this->errorResponse('Failed to load statistics: '.$e->getMessage(), 500);
         }
     }
 }

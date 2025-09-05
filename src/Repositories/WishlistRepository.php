@@ -2,12 +2,13 @@
 
 namespace Shopper\Repositories;
 
-use Shopper\Models\Wishlist;
 use Illuminate\Support\Facades\Cache;
+use Shopper\Models\Wishlist;
 
 class WishlistRepository extends BaseRepository
 {
     protected string $cachePrefix = 'wishlist';
+
     protected int $cacheTtl = 3600; // 1 hour
 
     public function model(): string
@@ -23,7 +24,7 @@ class WishlistRepository extends BaseRepository
         $query = $this->model->query()->with(['customer']);
 
         // Search filter
-        if (!empty($filters['search'])) {
+        if (! empty($filters['search'])) {
             $search = $filters['search'];
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
@@ -36,21 +37,21 @@ class WishlistRepository extends BaseRepository
         }
 
         // Status filter
-        if (!empty($filters['status'])) {
+        if (! empty($filters['status'])) {
             $query->where('status', $filters['status']);
         }
 
         // Customer filter
-        if (!empty($filters['customer_id'])) {
+        if (! empty($filters['customer_id'])) {
             $query->where('customer_id', $filters['customer_id']);
         }
 
         // Date range filter
-        if (!empty($filters['date_from'])) {
+        if (! empty($filters['date_from'])) {
             $query->whereDate('created_at', '>=', $filters['date_from']);
         }
 
-        if (!empty($filters['date_to'])) {
+        if (! empty($filters['date_to'])) {
             $query->whereDate('created_at', '<=', $filters['date_to']);
         }
 
@@ -63,15 +64,15 @@ class WishlistRepository extends BaseRepository
     public function addItem(int $wishlistId, array $itemData): array
     {
         $wishlist = $this->find($wishlistId);
-        
+
         // Check if item already exists
         $existingItem = $wishlist->items()->where('product_id', $itemData['product_id'])->first();
-        
+
         if ($existingItem) {
             // Update quantity
             $existingItem->update([
                 'quantity' => ($existingItem->quantity + ($itemData['quantity'] ?? 1)),
-                'notes' => $itemData['notes'] ?? $existingItem->notes
+                'notes' => $itemData['notes'] ?? $existingItem->notes,
             ]);
             $item = $existingItem;
         } else {
@@ -79,18 +80,18 @@ class WishlistRepository extends BaseRepository
             $item = $wishlist->items()->create([
                 'product_id' => $itemData['product_id'],
                 'quantity' => $itemData['quantity'] ?? 1,
-                'notes' => $itemData['notes'] ?? null
+                'notes' => $itemData['notes'] ?? null,
             ]);
         }
 
         $this->clearCache();
-        
+
         return [
             'id' => $item->id,
             'product_id' => $item->product_id,
             'quantity' => $item->quantity,
             'notes' => $item->notes,
-            'created_at' => $item->created_at
+            'created_at' => $item->created_at,
         ];
     }
 
@@ -101,11 +102,11 @@ class WishlistRepository extends BaseRepository
     {
         $wishlist = $this->find($wishlistId);
         $deleted = $wishlist->items()->where('id', $itemId)->delete();
-        
+
         if ($deleted) {
             $this->clearCache();
         }
-        
+
         return $deleted > 0;
     }
 
@@ -116,11 +117,11 @@ class WishlistRepository extends BaseRepository
     {
         $wishlist = $this->find($wishlistId);
         $deleted = $wishlist->items()->delete();
-        
+
         if ($deleted) {
             $this->clearCache();
         }
-        
+
         return $deleted;
     }
 
@@ -130,12 +131,12 @@ class WishlistRepository extends BaseRepository
     public function generateShareToken(int $wishlistId): string
     {
         $token = \Illuminate\Support\Str::random(32);
-        
+
         $this->update($wishlistId, [
             'share_token' => $token,
-            'is_shared' => true
+            'is_shared' => true,
         ]);
-        
+
         return $token;
     }
 
@@ -162,7 +163,7 @@ class WishlistRepository extends BaseRepository
             $active = $this->model->where('status', 'active')->count();
             $shared = $this->model->where('is_shared', true)->count();
             $avgItems = $this->model->withCount('items')->avg('items_count') ?? 0;
-            
+
             return [
                 'total_wishlists' => $total,
                 'active_wishlists' => $active,
@@ -180,11 +181,11 @@ class WishlistRepository extends BaseRepository
     public function bulkDelete(array $wishlistIds): int
     {
         $deleted = $this->model->whereIn('id', $wishlistIds)->delete();
-        
+
         if ($deleted) {
             $this->clearCache();
         }
-        
+
         return $deleted;
     }
 

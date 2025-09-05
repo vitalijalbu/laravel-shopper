@@ -24,41 +24,41 @@ class StockNotificationRepository extends BaseRepository
         $query = $this->model->newQuery()->with(['customer']);
 
         // Status filter
-        if (!empty($filters['status'])) {
+        if (! empty($filters['status'])) {
             $query->where('status', $filters['status']);
         }
 
         // Customer filter
-        if (!empty($filters['customer_id'])) {
+        if (! empty($filters['customer_id'])) {
             $query->where('customer_id', $filters['customer_id']);
         }
 
         // Product filter
-        if (!empty($filters['product_id'])) {
+        if (! empty($filters['product_id'])) {
             $query->where('product_id', $filters['product_id']);
         }
 
         // Product type filter
-        if (!empty($filters['product_type'])) {
+        if (! empty($filters['product_type'])) {
             $query->where('product_type', $filters['product_type']);
         }
 
         // Preferred method filter
-        if (!empty($filters['preferred_method'])) {
+        if (! empty($filters['preferred_method'])) {
             $query->where('preferred_method', $filters['preferred_method']);
         }
 
         // Date range filter
-        if (!empty($filters['date_from'])) {
+        if (! empty($filters['date_from'])) {
             $query->whereDate('created_at', '>=', $filters['date_from']);
         }
 
-        if (!empty($filters['date_to'])) {
+        if (! empty($filters['date_to'])) {
             $query->whereDate('created_at', '<=', $filters['date_to']);
         }
 
         // Search filter
-        if (!empty($filters['search'])) {
+        if (! empty($filters['search'])) {
             $search = $filters['search'];
             $query->where(function ($q) use ($search) {
                 $q->where('email', 'like', "%{$search}%")
@@ -115,6 +115,7 @@ class StockNotificationRepository extends BaseRepository
         }
 
         $this->clearCache();
+
         return $notified;
     }
 
@@ -143,6 +144,7 @@ class StockNotificationRepository extends BaseRepository
                 'notification_id' => $notification->id,
                 'error' => $e->getMessage(),
             ]);
+
             return false;
         }
     }
@@ -152,11 +154,11 @@ class StockNotificationRepository extends BaseRepository
      */
     public function getByCustomer(int $customerId, ?string $status = null): Collection
     {
-        $cacheKey = $this->getCacheKey('customer', $customerId . '_' . $status);
+        $cacheKey = $this->getCacheKey('customer', $customerId.'_'.$status);
 
         return \Illuminate\Support\Facades\Cache::remember($cacheKey, $this->cacheTtl, function () use ($customerId, $status) {
             $query = $this->model->where('customer_id', $customerId);
-            
+
             if ($status) {
                 $query->where('status', $status);
             }
@@ -171,8 +173,8 @@ class StockNotificationRepository extends BaseRepository
     public function cancel(int $notificationId): bool
     {
         $notification = $this->find($notificationId);
-        
-        if (!$notification || $notification->status !== 'pending') {
+
+        if (! $notification || $notification->status !== 'pending') {
             return false;
         }
 
@@ -192,6 +194,7 @@ class StockNotificationRepository extends BaseRepository
             ->update(['status' => 'cancelled']);
 
         $this->clearCache();
+
         return $cancelled;
     }
 
@@ -249,6 +252,7 @@ class StockNotificationRepository extends BaseRepository
             ->delete();
 
         $this->clearCache();
+
         return $deleted;
     }
 
@@ -324,11 +328,11 @@ class StockNotificationRepository extends BaseRepository
     public function bulkUpdate(array $notificationIds, array $data): int
     {
         $updated = $this->model->whereIn('id', $notificationIds)->update($data);
-        
+
         if ($updated) {
             $this->clearCache();
         }
-        
+
         return $updated;
     }
 

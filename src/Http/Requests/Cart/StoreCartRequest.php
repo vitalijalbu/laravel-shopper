@@ -3,8 +3,8 @@
 namespace Shopper\Http\Requests\Cart;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Shopper\Enums\CartStatus;
 use Illuminate\Validation\Rule;
+use Shopper\Enums\CartStatus;
 
 class StoreCartRequest extends FormRequest
 {

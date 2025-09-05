@@ -10,14 +10,14 @@ return new class extends Migration
     {
         Schema::table('products', function (Blueprint $table) {
             // Add rating fields if they don't exist
-            if (!Schema::hasColumn('products', 'average_rating')) {
+            if (! Schema::hasColumn('products', 'average_rating')) {
                 $table->decimal('average_rating', 3, 2)->nullable()->after('status');
             }
-            
-            if (!Schema::hasColumn('products', 'review_count')) {
+
+            if (! Schema::hasColumn('products', 'review_count')) {
                 $table->integer('review_count')->default(0)->after('average_rating');
             }
-            
+
             // Add indexes for better performance
             $table->index(['average_rating']);
             $table->index(['review_count']);

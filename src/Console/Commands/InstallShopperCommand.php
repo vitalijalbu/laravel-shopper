@@ -195,7 +195,7 @@ class InstallShopperCommand extends Command
         // Build and publish compiled assets
         $this->info('🔨 Building frontend assets...');
         $result = Artisan::call('shopper:build');
-        
+
         if ($result === 0) {
             $this->info('✅ Assets built and published successfully.');
         } else {

@@ -2,11 +2,11 @@
 
 namespace Shopper\Services;
 
-use Shopper\Models\StockNotification;
-use Shopper\Repositories\StockNotificationRepository;
+use Illuminate\Support\Facades\Log;
 use Shopper\Data\StockNotification\StockNotificationData;
 use Shopper\Jobs\SendStockNotificationEmail;
-use Illuminate\Support\Facades\Log;
+use Shopper\Models\StockNotification;
+use Shopper\Repositories\StockNotificationRepository;
 
 class StockNotificationService
 {
@@ -21,18 +21,18 @@ class StockNotificationService
     {
         // Check if user already has notification for this product
         $existing = $this->repository->findExisting($data['user_id'], $data['product_id']);
-        
+
         if ($existing) {
             // Update existing notification
             $notification = $this->repository->update($existing->id, [
                 'status' => 'pending',
-                'created_at' => now()
+                'created_at' => now(),
             ]);
         } else {
             // Create new notification
             $notification = $this->repository->create($data);
         }
-        
+
         return StockNotificationData::fromModel($notification);
     }
 
@@ -51,7 +51,7 @@ class StockNotificationService
         }
 
         Log::info("Sent {$sent} stock notifications for product {$productId}");
-        
+
         return $sent;
     }
 
@@ -64,7 +64,7 @@ class StockNotificationService
             // Update status to sending
             $this->repository->update($notification->id, [
                 'status' => 'sending',
-                'sent_at' => now()
+                'sent_at' => now(),
             ]);
 
             // Dispatch email job
@@ -72,19 +72,19 @@ class StockNotificationService
 
             // Update status to sent
             $this->repository->update($notification->id, [
-                'status' => 'sent'
+                'status' => 'sent',
             ]);
 
             return true;
         } catch (\Exception $e) {
             // Update status to failed
             $this->repository->update($notification->id, [
-                'status' => 'failed'
+                'status' => 'failed',
             ]);
 
             Log::error('Failed to send stock notification', [
                 'notification_id' => $notification->id,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
 
             return false;
@@ -97,7 +97,7 @@ class StockNotificationService
     public function cancelNotification(StockNotification $notification): bool
     {
         return $this->repository->update($notification->id, [
-            'status' => 'cancelled'
+            'status' => 'cancelled',
         ]) ? true : false;
     }
 
@@ -107,8 +107,8 @@ class StockNotificationService
     public function getUserNotifications(int $userId, ?string $status = null): array
     {
         $notifications = $this->repository->getByUser($userId, $status);
-        
-        return $notifications->map(fn($notification) => StockNotificationData::fromModel($notification))->toArray();
+
+        return $notifications->map(fn ($notification) => StockNotificationData::fromModel($notification))->toArray();
     }
 
     /**
@@ -125,7 +125,7 @@ class StockNotificationService
     public function bulkCancel(array $notificationIds): int
     {
         return $this->repository->bulkUpdate($notificationIds, [
-            'status' => 'cancelled'
+            'status' => 'cancelled',
         ]);
     }
 
@@ -143,9 +143,9 @@ class StockNotificationService
     public function canCreateNotification(int $userId, int $productId): bool
     {
         $existing = $this->repository->findExisting($userId, $productId);
-        
+
         // Allow if no existing notification or if existing is not pending
-        return !$existing || $existing->status !== 'pending';
+        return ! $existing || $existing->status !== 'pending';
     }
 
     /**
@@ -165,7 +165,7 @@ class StockNotificationService
         $results = [
             'total' => $pendingNotifications->count(),
             'sent' => 0,
-            'failed' => 0
+            'failed' => 0,
         ];
 
         foreach ($pendingNotifications as $notification) {
@@ -185,7 +185,7 @@ class StockNotificationService
     public function getNotification(int $id): ?StockNotificationData
     {
         $notification = $this->repository->findById($id);
-        
+
         return $notification ? StockNotificationData::fromModel($notification) : null;
     }
 

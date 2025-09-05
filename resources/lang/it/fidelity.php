@@ -16,7 +16,7 @@ return [
     'is_active' => 'Attiva',
     'issued_at' => 'Emessa il',
     'last_activity' => 'Ultima Attività',
-    
+
     'transactions' => [
         'title' => 'Transazioni',
         'type' => 'Tipo',
@@ -25,7 +25,7 @@ return [
         'date' => 'Data',
         'expires_at' => 'Scade il',
         'expired' => 'Scaduto',
-        
+
         'types' => [
             'earned' => 'Guadagnati',
             'redeemed' => 'Riscattati',
@@ -33,14 +33,14 @@ return [
             'adjusted' => 'Aggiustamento',
         ],
     ],
-    
+
     'tiers' => [
         'bronze' => 'Bronzo',
         'silver' => 'Argento',
         'gold' => 'Oro',
         'platinum' => 'Platino',
     ],
-    
+
     'actions' => [
         'create_card' => 'Crea Carta',
         'add_points' => 'Aggiungi Punti',
@@ -49,7 +49,7 @@ return [
         'calculate_points' => 'Calcola Punti',
         'expire_points' => 'Scadi Punti',
     ],
-    
+
     'messages' => [
         'card_created' => 'Carta fedeltà creata con successo',
         'card_updated' => 'Carta fedeltà aggiornata con successo',
@@ -63,7 +63,7 @@ return [
         'system_disabled' => 'Sistema fedeltà disabilitato',
         'points_system_disabled' => 'Sistema punti disabilitato',
     ],
-    
+
     'validation' => [
         'card_number_required' => 'Il numero della carta è obbligatorio',
         'card_number_invalid' => 'Numero della carta non valido',
@@ -73,7 +73,7 @@ return [
         'reason_required' => 'La ragione è obbligatoria',
         'reason_max' => 'La ragione non può superare :max caratteri',
     ],
-    
+
     'statistics' => [
         'total_cards' => 'Totale Carte',
         'active_cards' => 'Carte Attive',
@@ -86,7 +86,7 @@ return [
         'points_redeemed_month' => 'Punti Riscattati (Mese)',
         'expiring_points' => 'Punti in Scadenza',
     ],
-    
+
     'configuration' => [
         'title' => 'Configurazione Fedeltà',
         'system_enabled' => 'Sistema Abilitato',
@@ -100,7 +100,7 @@ return [
         'points_rate' => 'Tasso Conversione',
         'tiers' => 'Scaglioni',
     ],
-    
+
     'emails' => [
         'expiring_points_subject' => 'I tuoi punti fedeltà stanno per scadere',
         'expiring_points_message' => 'Hai :points punti che scadranno il :date. Usali prima che scadano!',

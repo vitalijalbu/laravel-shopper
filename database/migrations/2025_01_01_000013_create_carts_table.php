@@ -21,7 +21,7 @@ return new class extends Migration
             $table->decimal('discount_amount', 15, 2)->default(0);
             $table->decimal('total_amount', 15, 2)->default(0);
             $table->string('currency', 3)->default('EUR');
-            
+
             // Abandonment tracking
             $table->timestamp('last_activity_at')->nullable();
             $table->timestamp('abandoned_at')->nullable();
@@ -29,14 +29,14 @@ return new class extends Migration
             $table->timestamp('last_recovery_email_sent_at')->nullable();
             $table->boolean('recovered')->default(false);
             $table->timestamp('recovered_at')->nullable();
-            
+
             // Shipping and billing info
             $table->json('shipping_address')->nullable();
             $table->json('billing_address')->nullable();
             $table->json('metadata')->nullable(); // Additional cart data
-            
+
             $table->timestamps();
-            
+
             // Indexes
             $table->index(['status', 'last_activity_at']);
             $table->index(['status', 'created_at']);

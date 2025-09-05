@@ -88,7 +88,7 @@ class CustomerFidelityData
             'orders_count' => $this->orders_count,
             'total_spent' => $this->total_spent,
             'fidelity' => [
-                'has_card' => !is_null($this->fidelity_card),
+                'has_card' => ! is_null($this->fidelity_card),
                 'card_number' => $this->fidelity_card_number,
                 'status' => $this->fidelity_card_status,
                 'points' => $this->fidelity_points,

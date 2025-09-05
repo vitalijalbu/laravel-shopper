@@ -12,22 +12,22 @@ return new class extends Migration
             $table->id();
             $table->foreignId('product_id')->constrained('products')->cascadeOnDelete();
             $table->unsignedBigInteger('site_id')->nullable()->index();
-            
+
             // Variant Identity
             $table->string('title')->index(); // Default Title, Red / Large, etc.
             $table->string('sku')->index();
             $table->string('barcode')->nullable()->index(); // UPC, EAN, etc.
-            
+
             // Option Values (Shopify style) - null per varianti di default
             $table->string('option1')->nullable()->index(); // e.g., "Red"
-            $table->string('option2')->nullable()->index(); // e.g., "Large"  
+            $table->string('option2')->nullable()->index(); // e.g., "Large"
             $table->string('option3')->nullable()->index(); // e.g., "Cotton"
-            
+
             // PRICING - I dati principali stanno qui nelle varianti
             $table->decimal('price', 15, 2)->index();
             $table->decimal('compare_at_price', 15, 2)->nullable(); // Compare price
             $table->decimal('cost', 15, 2)->nullable(); // Cost price
-            
+
             // INVENTORY - I dati principali stanno qui nelle varianti
             $table->integer('inventory_quantity')->default(0)->index();
             $table->boolean('track_quantity')->default(true)->index();
@@ -36,27 +36,27 @@ return new class extends Migration
             $table->string('fulfillment_service')->default('manual');
             $table->integer('inventory_quantity_adjustment')->default(0);
             $table->boolean('allow_out_of_stock_purchases')->default(false);
-            
+
             // PHYSICAL PROPERTIES - I dati principali stanno qui nelle varianti
             $table->decimal('weight', 8, 2)->nullable();
             $table->string('weight_unit', 10)->default('kg'); // kg, g, lb, oz
             $table->jsonb('dimensions')->nullable(); // length, width, height
-            
+
             // SHIPPING & TAX - I dati principali stanno qui nelle varianti
             $table->boolean('requires_shipping')->default(true);
             $table->boolean('taxable')->default(true);
             $table->string('tax_code')->nullable();
-            
+
             // Display and Ordering
             $table->integer('position')->default(1)->index(); // Display order
-            
+
             // Status della variante specifica
             $table->string('status')->default('active')->index();
             $table->boolean('available')->default(true)->index(); // Available for sale
-            
+
             // Metafields (Custom data per variante)
             $table->jsonb('metafields')->nullable();
-            
+
             // Timestamps
             $table->timestamps();
             $table->softDeletes();

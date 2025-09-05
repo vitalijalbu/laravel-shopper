@@ -2,15 +2,16 @@
 
 namespace Shopper\Repositories;
 
-use Shopper\Models\Cart;
-use Shopper\Enums\CartStatus;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Carbon;
+use Shopper\Enums\CartStatus;
+use Shopper\Models\Cart;
 
 class CartRepository extends BaseRepository
 {
     protected string $cachePrefix = 'cart';
+
     protected int $cacheTtl = 3600; // 1 hour
 
     public function model(): string
@@ -26,30 +27,30 @@ class CartRepository extends BaseRepository
         $query = $this->model->query()->with(['customer']);
 
         // Status filter
-        if (!empty($filters['status'])) {
+        if (! empty($filters['status'])) {
             $query->where('status', $filters['status']);
         }
 
         // Date range filter
-        if (!empty($filters['date_from'])) {
+        if (! empty($filters['date_from'])) {
             $query->whereDate('created_at', '>=', $filters['date_from']);
         }
 
-        if (!empty($filters['date_to'])) {
+        if (! empty($filters['date_to'])) {
             $query->whereDate('created_at', '<=', $filters['date_to']);
         }
 
         // Amount range filter
-        if (!empty($filters['amount_from'])) {
+        if (! empty($filters['amount_from'])) {
             $query->where('total_amount', '>=', $filters['amount_from']);
         }
 
-        if (!empty($filters['amount_to'])) {
+        if (! empty($filters['amount_to'])) {
             $query->where('total_amount', '<=', $filters['amount_to']);
         }
 
         // Search filter
-        if (!empty($filters['search'])) {
+        if (! empty($filters['search'])) {
             $search = $filters['search'];
             $query->where(function ($q) use ($search) {
                 $q->where('session_id', 'like', "%{$search}%")
@@ -72,7 +73,7 @@ class CartRepository extends BaseRepository
     {
         $updated = $this->model->where('id', $cartId)->update([
             'status' => CartStatus::ABANDONED,
-            'abandoned_at' => now()
+            'abandoned_at' => now(),
         ]);
 
         if ($updated) {
@@ -90,7 +91,7 @@ class CartRepository extends BaseRepository
         $updated = $this->model->where('id', $cartId)->update([
             'recovered' => true,
             'recovered_at' => now(),
-            'status' => CartStatus::ACTIVE
+            'status' => CartStatus::ACTIVE,
         ]);
 
         if ($updated) {
@@ -109,7 +110,7 @@ class CartRepository extends BaseRepository
             'status' => CartStatus::CONVERTED,
             'converted_order_id' => $orderId,
             'recovered' => true,
-            'recovered_at' => now()
+            'recovered_at' => now(),
         ]);
 
         if ($updated) {
@@ -266,11 +267,11 @@ class CartRepository extends BaseRepository
     public function bulkSendRecoveryEmails(array $cartIds): int
     {
         $sent = 0;
-        
+
         foreach ($cartIds as $cartId) {
             $updated = $this->model->where('id', $cartId)->update([
                 'recovery_emails_sent' => DB::raw('COALESCE(recovery_emails_sent, 0) + 1'),
-                'last_recovery_email_sent_at' => now()
+                'last_recovery_email_sent_at' => now(),
             ]);
 
             if ($updated) {
@@ -307,7 +308,7 @@ class CartRepository extends BaseRepository
     public function updateActivity(int $cartId): bool
     {
         return $this->model->where('id', $cartId)->update([
-            'last_activity_at' => now()
+            'last_activity_at' => now(),
         ]) > 0;
     }
 

@@ -178,7 +178,7 @@ class ProductReview extends Model
     public function getHelpfulnessPercentageAttribute(): float
     {
         $totalVotes = $this->helpful_count + $this->unhelpful_count;
-        
+
         if ($totalVotes === 0) {
             return 0;
         }
@@ -191,7 +191,7 @@ class ProductReview extends Model
      */
     public function getHasReplyAttribute(): bool
     {
-        return !empty($this->reply_content);
+        return ! empty($this->reply_content);
     }
 
     /**
@@ -207,7 +207,7 @@ class ProductReview extends Model
      */
     public function getRatingDisplayAttribute(): string
     {
-        return $this->rating . '/5 stars';
+        return $this->rating.'/5 stars';
     }
 
     /**
