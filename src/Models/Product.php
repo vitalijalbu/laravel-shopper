@@ -85,11 +85,6 @@ class Product extends Model implements HasMedia
         return $this->belongsTo(ProductType::class);
     }
 
-    public function categories(): BelongsToMany
-    {
-        return $this->belongsToMany(Category::class)->withPivot('sort_order')->withTimestamps();
-    }
-
     public function options(): BelongsToMany
     {
         return $this->belongsToMany(ProductOption::class, 'product_product_option')->withPivot('sort_order')->withTimestamps();

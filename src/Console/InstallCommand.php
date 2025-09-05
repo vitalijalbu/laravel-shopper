@@ -93,7 +93,7 @@ class InstallCommand extends Command
                     'manage-products',
                     'manage-orders',
                     'manage-customers',
-                    'manage-categories',
+                    'manage-collections',
                     'manage-brands',
                     'manage-discounts',
                     'manage-settings',

@@ -48,11 +48,6 @@ class Navigation
                         'url' => '/cp/collections/customers',
                         'icon' => 'users',
                     ],
-                    'categories' => [
-                        'display' => 'Categories',
-                        'url' => '/cp/collections/categories',
-                        'icon' => 'folder',
-                    ],
                     'inventory' => [
                         'display' => 'Inventory',
                         'url' => '/cp/ecommerce/inventory',
@@ -202,7 +197,7 @@ class Navigation
             ['handle' => 'products', 'title' => 'Products', 'icon' => 'box'],
             ['handle' => 'orders', 'title' => 'Orders', 'icon' => 'document-text'],
             ['handle' => 'customers', 'title' => 'Customers', 'icon' => 'users'],
-            ['handle' => 'categories', 'title' => 'Categories', 'icon' => 'folder'],
+            ['handle' => 'collections', 'title' => 'Collections', 'icon' => 'collection'],
             ['handle' => 'pages', 'title' => 'Pages', 'icon' => 'document'],
             ['handle' => 'blog', 'title' => 'Blog', 'icon' => 'pencil'],
         ];

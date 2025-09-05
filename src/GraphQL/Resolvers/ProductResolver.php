@@ -1,6 +1,11 @@
 <?php
 
-namespace Shopper\GraphQL\Resolvers;
+names        $input = $args['input'];
+
+        // Create the product
+        $product = Product::create($input);
+
+        return $product->fresh(['brand', 'media']);aphQL\Resolvers;
 
 use GraphQL\Type\Definition\ResolveInfo;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
@@ -12,19 +17,10 @@ class ProductResolver
     {
         $input = $args['input'] ?? $args;
 
-        // Extract category IDs if provided
-        $categoryIds = $input['categoryIds'] ?? [];
-        unset($input['categoryIds']);
-
         // Create the product
         $product = Product::create($input);
 
-        // Attach categories if provided
-        if (! empty($categoryIds)) {
-            $product->categories()->attach($categoryIds);
-        }
-
-        return $product->fresh(['brand', 'categories', 'media']);
+        return $product->fresh(['brand', 'media']);
     }
 
     public function update($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo): Product
@@ -32,27 +28,15 @@ class ProductResolver
         $product = Product::findOrFail($args['id']);
         $input = $args['input'] ?? [];
 
-        // Extract category IDs if provided
-        $categoryIds = $input['categoryIds'] ?? null;
-        unset($input['categoryIds']);
-
         // Update the product
         $product->update($input);
 
-        // Sync categories if provided
-        if ($categoryIds !== null) {
-            $product->categories()->sync($categoryIds);
-        }
-
-        return $product->fresh(['brand', 'categories', 'media']);
+        return $product->fresh(['brand', 'media']);
     }
 
     public function delete($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo): bool
     {
         $product = Product::findOrFail($args['id']);
-
-        // Detach relationships
-        $product->categories()->detach();
 
         // Delete the product
         return $product->delete();

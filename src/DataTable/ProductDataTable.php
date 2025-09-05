@@ -45,11 +45,6 @@ class ProductDataTable extends BaseDataTable
         );
 
         $this->addFilter(
-            (new SelectFilter('category_id', 'Category'))
-                ->optionsUrl('/cp/api/categories/options')
-        );
-
-        $this->addFilter(
             (new SelectFilter('brand_id', 'Brand'))
                 ->optionsUrl('/cp/api/brands/options')
         );

@@ -193,10 +193,9 @@ class OptimizeCommand extends Command
     protected function checkDatabaseIndexes(): void
     {
         $tables = [
-            'shopper_products' => ['name', 'sku', 'status', 'is_visible', 'shopper_category_id', 'shopper_brand_id'],
+            'shopper_products' => ['name', 'sku', 'status', 'is_visible', 'shopper_brand_id'],
             'shopper_orders' => ['status', 'customer_id', 'created_at'],
             'shopper_order_items' => ['order_id', 'product_id'],
-            'shopper_categories' => ['slug', 'parent_id'],
             'shopper_brands' => ['slug'],
         ];
 

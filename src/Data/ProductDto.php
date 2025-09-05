@@ -22,8 +22,6 @@ class ProductDto extends BaseDto
 
     public ?string $visibility = null;
 
-    public ?int $category_id = null;
-
     public ?int $brand_id = null;
 
     public ?string $sku = null;

@@ -9,11 +9,8 @@ use Illuminate\Support\Facades\Cache;
 class CacheService
 {
     // Cache TTL constants (in seconds)
-    const PRODUCT_TTL = 3600;        // 1 hour
-
-    const CATEGORY_TTL = 7200;       // 2 hours
-
-    const BRAND_TTL = 7200;          // 2 hours
+    const PRODUCT_TTL = 3600;       // 1 hour
+    const BRAND_TTL = 7200;         // 2 hours
 
     const COLLECTION_TTL = 3600;     // 1 hour
 
@@ -27,8 +24,6 @@ class CacheService
 
     // Cache tags for better invalidation
     const PRODUCT_TAG = 'products';
-
-    const CATEGORY_TAG = 'categories';
 
     const BRAND_TAG = 'brands';
 
@@ -58,20 +53,6 @@ class CacheService
 
         if ($this->tagsSupported) {
             return Cache::tags([self::PRODUCT_TAG])->remember($cacheKey, $ttl, $callback);
-        }
-
-        return Cache::remember($cacheKey, $ttl, $callback);
-    }
-
-    /**
-     * Cache category data
-     */
-    public function rememberCategory(mixed $key, Closure $callback, int $ttl = self::CATEGORY_TTL): mixed
-    {
-        $cacheKey = $this->formatKey(self::CATEGORY_TAG, $key);
-
-        if ($this->tagsSupported) {
-            return Cache::tags([self::CATEGORY_TAG])->remember($cacheKey, $ttl, $callback);
         }
 
         return Cache::remember($cacheKey, $ttl, $callback);
@@ -180,27 +161,6 @@ class CacheService
     }
 
     /**
-     * Invalidate category cache
-     */
-    public function invalidateCategory(?int $categoryId = null): void
-    {
-        if ($this->tagsSupported) {
-            $tags = [self::CATEGORY_TAG];
-
-            if ($categoryId) {
-                $tags[] = "category_{$categoryId}";
-            }
-
-            Cache::tags($tags)->flush();
-        } else {
-            $this->clearPattern('category_*');
-        }
-
-        // Also invalidate products as they depend on categories
-        $this->invalidateProduct();
-    }
-
-    /**
      * Invalidate brand cache
      */
     public function invalidateBrand(?int $brandId = null): void
@@ -301,7 +261,6 @@ class CacheService
         if ($this->tagsSupported) {
             Cache::tags([
                 self::PRODUCT_TAG,
-                self::CATEGORY_TAG,
                 self::BRAND_TAG,
                 self::COLLECTION_TAG,
                 self::USER_TAG,
@@ -334,11 +293,6 @@ class CacheService
      */
     public function warmUp(): void
     {
-        // Warm up categories
-        $this->rememberCategory('all', function () {
-            return \Shopper\Models\Category::with('children')->get();
-        });
-
         // Warm up brands
         $this->rememberBrand('all', function () {
             return \Shopper\Models\Brand::all();
@@ -347,16 +301,13 @@ class CacheService
         // Warm up featured products
         $this->rememberProduct('featured', function () {
             return \Shopper\Models\Product::where('is_featured', true)
-                ->with(['category', 'brand'])
+                ->with(['brand'])
                 ->get();
         });
 
-        // Warm up navigation
+        // Warm up navigation (using collections instead of categories)
         $this->rememberNavigation('main', function () {
-            return \Shopper\Models\Category::whereNull('parent_id')
-                ->with('children')
-                ->orderBy('sort_order')
-                ->get();
+            return \Shopper\Models\Collection::orderBy('sort_order')->get();
         });
     }
 
