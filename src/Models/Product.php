@@ -16,6 +16,7 @@ use Shopper\Support\HasSite;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Shopper\Traits\HasOptimizedFilters;
 
 class Product extends Model implements HasMedia
 {
@@ -24,6 +25,7 @@ class Product extends Model implements HasMedia
     use HasSite;
     use InteractsWithMedia;
     use SoftDeletes;
+    use HasOptimizedFilters;
 
     protected $fillable = [
         'site_id',
@@ -73,6 +75,73 @@ class Product extends Model implements HasMedia
         'published_at' => 'datetime',
         'average_rating' => 'decimal:2',
         'review_count' => 'integer',
+    ];
+
+    /**
+     * Fields that should always be eager loaded (N+1 protection)
+     */
+    protected static array $defaultEagerLoad = [
+        'brand:id,name,slug',
+        'productType:id,name',
+    ];
+
+    /**
+     * Fields that can be filtered
+     */
+    protected static array $filterable = [
+        'id',
+        'name',
+        'slug',
+        'sku',
+        'price',
+        'compare_price',
+        'cost_price',
+        'stock_quantity',
+        'track_quantity',
+        'stock_status',
+        'weight',
+        'is_physical',
+        'is_digital',
+        'requires_shipping',
+        'is_featured',
+        'status',
+        'brand_id',
+        'product_type_id',
+        'published_at',
+        'created_at',
+        'updated_at',
+        'average_rating',
+        'review_count',
+    ];
+
+    /**
+     * Fields that can be sorted
+     */
+    protected static array $sortable = [
+        'id',
+        'name',
+        'price',
+        'compare_price',
+        'cost_price',
+        'stock_quantity',
+        'weight',
+        'is_featured',
+        'status',
+        'published_at',
+        'created_at',
+        'updated_at',
+        'average_rating',
+        'review_count',
+    ];
+
+    /**
+     * Fields that can be searched
+     */
+    protected static array $searchable = [
+        'name',
+        'description',
+        'short_description',
+        'sku',
     ];
 
     public function brand(): BelongsTo

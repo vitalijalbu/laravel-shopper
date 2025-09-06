@@ -4,63 +4,127 @@ namespace Shopper\Http\Controllers\Api;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Shopper\Http\Resources\ProductResource;
 use Shopper\Models\Product;
-use Shopper\Repositories\ProductRepository;
+use Shopper\Services\FilterService;
 
 class ProductController extends ApiController
 {
     public function __construct(
-        private readonly ProductRepository $productRepository
+        private readonly FilterService $filterService
     ) {}
 
     public function index(Request $request): JsonResponse
     {
-        $filters = $request->only([
-            'search', 'category', 'brand', 'min_price', 'max_price',
-            'on_sale', 'status', 'is_visible', 'sort'
+        // Parse filter parameters
+        $params = $this->filterService->parseRequest($request->all());
+        
+        // Get products with filters
+        $products = Product::where('status', 'published')
+            ->paginateFilter($params);
+
+        return $this->success([
+            'data' => ProductResource::collection($products->items()),
+            'meta' => [
+                'total' => $products->total(),
+                'per_page' => $products->perPage(),
+                'current_page' => $products->currentPage(),
+                'last_page' => $products->lastPage(),
+            ],
+            'filters' => $params,
         ]);
-        $perPage = $request->get('per_page', 20);
-        
-        $products = $this->productRepository->searchPaginated($filters, $perPage);
-        
-        return $this->paginatedResponse($products);
     }
 
-    public function show(Product $product): JsonResponse
+    public function show(Product $product): JsonResource
     {
-        $productData = $this->productRepository->findWithRelations($product->id, ['brand', 'categories', 'media']);
+        $product->load(['brand', 'productType', 'variants', 'media']);
         
-        return $this->successResponse(new ProductResource($productData));
+        return new ProductResource($product);
+    }
+
+    public function search(Request $request): JsonResponse
+    {
+        $request->validate([
+            'q' => 'required|string|min:2',
+        ]);
+
+        $params = $this->filterService->parseRequest($request->all());
+        $params['search'] = $request->get('q');
+
+        $products = Product::where('status', 'published')
+            ->paginateFilter($params);
+
+        return $this->success([
+            'data' => ProductResource::collection($products->items()),
+            'meta' => [
+                'total' => $products->total(),
+                'query' => $request->get('q'),
+            ],
+            'filters' => $params,
+        ]);
     }
 
     public function featured(Request $request): JsonResponse
     {
-        $products = $this->productRepository->getFeatured();
+        $params = $this->filterService->parseRequest($request->all());
+        $params['is_featured'] = true;
         
-        return $this->successResponse($products);
+        $products = Product::where('status', 'published')
+            ->paginateFilter($params, 12);
+        
+        return $this->success([
+            'data' => ProductResource::collection($products->items()),
+            'meta' => [
+                'total' => $products->total(),
+            ],
+        ]);
     }
 
     public function popular(Request $request): JsonResponse
     {
         $limit = $request->get('limit', 10);
-        $products = $this->productRepository->getPopular($limit);
         
-        return $this->successResponse($products);
+        $products = Product::where('status', 'published')
+            ->orderBy('average_rating', 'desc')
+            ->orderBy('review_count', 'desc')
+            ->limit($limit)
+            ->get();
+        
+        return $this->success([
+            'data' => ProductResource::collection($products),
+        ]);
     }
 
     public function onSale(Request $request): JsonResponse
     {
-        $products = $this->productRepository->getOnSale();
+        $products = Product::where('status', 'published')
+            ->whereColumn('compare_price', '>', 'price')
+            ->whereNotNull('compare_price')
+            ->limit(12)
+            ->get();
         
-        return $this->successResponse($products);
+        return $this->success([
+            'data' => ProductResource::collection($products),
+        ]);
     }
 
     public function related(Product $product, Request $request): JsonResponse
     {
-        $limit = $request->get('limit', 4);
-        $products = $this->productRepository->getRelated($product, $limit);
+        $limit = $request->get('limit', 6);
         
-        return $this->successResponse($products);
+        // Get related products by category or brand
+        $related = Product::where('status', 'published')
+            ->where('id', '!=', $product->id)
+            ->where(function ($query) use ($product) {
+                $query->where('brand_id', $product->brand_id)
+                    ->orWhere('product_type_id', $product->product_type_id);
+            })
+            ->limit($limit)
+            ->get();
+        
+        return $this->success([
+            'data' => ProductResource::collection($related),
+        ]);
     }
 }

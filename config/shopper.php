@@ -219,4 +219,143 @@ return [
             ],
         ],
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Advanced Filters Configuration
+    |--------------------------------------------------------------------------
+    | Sistema di filtri unificato simile a Directus per tutte le API
+    */
+    'filters' => [
+        /*
+        |--------------------------------------------------------------------------
+        | Pagination Configuration
+        |--------------------------------------------------------------------------
+        */
+        'pagination' => [
+            'default' => env('SHOPPER_PAGINATION_DEFAULT', 15),
+            'max' => env('SHOPPER_PAGINATION_MAX', 100),
+            'options' => [10, 15, 25, 50, 100],
+        ],
+
+        /*
+        |--------------------------------------------------------------------------
+        | Cache Configuration
+        |--------------------------------------------------------------------------
+        */
+        'cache' => [
+            'enabled' => env('SHOPPER_FILTERS_CACHE_ENABLED', true),
+            'ttl' => env('SHOPPER_FILTERS_CACHE_TTL', 3600), // 1 hour
+            'tags' => ['shopper_filters', 'products', 'orders'],
+        ],
+
+        /*
+        |--------------------------------------------------------------------------
+        | Operators Configuration
+        |--------------------------------------------------------------------------
+        */
+        'operators' => [
+            'enabled' => [
+                'eq', 'ne', 'gt', 'gte', 'lt', 'lte',
+                'like', 'nlike', 'starts', 'ends',
+                'in', 'nin', 'between', 'nbetween',
+                'null', 'nnull', 'date', 'month', 'year'
+            ],
+        ],
+
+        /*
+        |--------------------------------------------------------------------------
+        | Model Specific Settings
+        |--------------------------------------------------------------------------
+        */
+        'models' => [
+            'product' => [
+                'per_page' => 20,
+                'max_per_page' => 100,
+                'default_sort' => '-created_at',
+                'searchable' => ['name', 'description', 'short_description', 'sku'],
+                'filterable' => [
+                    'price', 'compare_price', 'cost_price', 'stock_quantity',
+                    'brand_id', 'product_type_id', 'status', 'is_featured',
+                    'is_physical', 'is_digital', 'requires_shipping',
+                    'track_quantity', 'allow_out_of_stock_purchases',
+                    'stock_status', 'weight', 'published_at'
+                ],
+                'sortable' => [
+                    'name', 'price', 'compare_price', 'cost_price',
+                    'stock_quantity', 'weight', 'is_featured', 'status',
+                    'published_at', 'created_at', 'updated_at',
+                    'average_rating', 'review_count'
+                ],
+            ],
+            
+            'order' => [
+                'per_page' => 25,
+                'max_per_page' => 50,
+                'default_sort' => '-created_at',
+                'searchable' => ['order_number', 'customer_email'],
+                'filterable' => [
+                    'status', 'payment_status', 'fulfillment_status',
+                    'total', 'subtotal', 'tax_total', 'shipping_total',
+                    'customer_id', 'currency_id', 'shipped_at', 'delivered_at'
+                ],
+                'sortable' => [
+                    'order_number', 'total', 'subtotal', 'status',
+                    'payment_status', 'fulfillment_status', 'created_at',
+                    'shipped_at', 'delivered_at'
+                ],
+            ],
+            
+            'customer' => [
+                'per_page' => 30,
+                'max_per_page' => 100,
+                'default_sort' => '-created_at',
+                'searchable' => ['first_name', 'last_name', 'email', 'phone'],
+                'filterable' => [
+                    'is_enabled', 'gender', 'date_of_birth',
+                    'email_verified_at', 'last_login_at'
+                ],
+                'sortable' => [
+                    'first_name', 'last_name', 'email', 'created_at',
+                    'last_login_at', 'is_enabled'
+                ],
+            ],
+
+            'brand' => [
+                'per_page' => 20,
+                'searchable' => ['name', 'description'],
+                'filterable' => ['is_enabled', 'created_at'],
+                'sortable' => ['name', 'created_at', 'is_enabled'],
+            ],
+
+            'collection' => [
+                'per_page' => 20,
+                'searchable' => ['name', 'description'],
+                'filterable' => ['type', 'is_enabled', 'created_at'],
+                'sortable' => ['name', 'type', 'created_at', 'is_enabled'],
+            ],
+        ],
+
+        /*
+        |--------------------------------------------------------------------------
+        | Rate Limiting
+        |--------------------------------------------------------------------------
+        */
+        'rate_limit' => [
+            'enabled' => env('SHOPPER_FILTERS_RATE_LIMIT', true),
+            'max_requests' => 60,
+            'per_minutes' => 1,
+        ],
+
+        /*
+        |--------------------------------------------------------------------------
+        | Performance Optimization
+        |--------------------------------------------------------------------------
+        */
+        'performance' => [
+            'auto_index_hints' => env('SHOPPER_FILTERS_AUTO_INDEX', true),
+            'query_timeout' => env('SHOPPER_FILTERS_QUERY_TIMEOUT', 30),
+            'max_joins' => env('SHOPPER_FILTERS_MAX_JOINS', 5),
+        ],
+    ],
 ];

@@ -13,12 +13,14 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Shopper\Traits\HasOptimizedFilters;
 
 class Customer extends Authenticatable
 {
     use HasFactory;
     use Notifiable;
     use SoftDeletes;
+    use HasOptimizedFilters;
 
     protected $fillable = [
         'first_name',
@@ -56,6 +58,55 @@ class Customer extends Authenticatable
         'fidelity_points',
         'fidelity_card_status',
         'fidelity_tier',
+    ];
+
+    /**
+     * Fields that should always be eager loaded (N+1 protection)
+     */
+    protected static array $defaultEagerLoad = [
+        'groups:id,name',
+    ];
+
+    /**
+     * Fields that can be filtered
+     */
+    protected static array $filterable = [
+        'id',
+        'first_name',
+        'last_name',
+        'email',
+        'phone',
+        'date_of_birth',
+        'gender',
+        'is_enabled',
+        'last_login_at',
+        'created_at',
+        'updated_at',
+    ];
+
+    /**
+     * Fields that can be sorted
+     */
+    protected static array $sortable = [
+        'id',
+        'first_name',
+        'last_name',
+        'email',
+        'date_of_birth',
+        'is_enabled',
+        'last_login_at',
+        'created_at',
+        'updated_at',
+    ];
+
+    /**
+     * Fields that can be searched
+     */
+    protected static array $searchable = [
+        'first_name',
+        'last_name',
+        'email',
+        'phone',
     ];
 
     public function groups(): BelongsToMany

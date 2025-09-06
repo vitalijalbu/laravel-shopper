@@ -9,11 +9,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Shopper\Traits\HasOptimizedFilters;
 
 class Order extends Model
 {
     use HasFactory;
     use SoftDeletes;
+    use HasOptimizedFilters;
 
     protected $fillable = [
         'order_number',
@@ -53,6 +55,61 @@ class Order extends Model
         'payment_details' => 'array',
         'shipped_at' => 'datetime',
         'delivered_at' => 'datetime',
+    ];
+
+    /**
+     * Fields that should always be eager loaded (N+1 protection)
+     */
+    protected static array $defaultEagerLoad = [
+        'customer:id,first_name,last_name,email',
+        'currency:id,code,symbol',
+    ];
+
+    /**
+     * Fields that can be filtered
+     */
+    protected static array $filterable = [
+        'id',
+        'order_number',
+        'customer_id',
+        'customer_email',
+        'currency_id',
+        'subtotal',
+        'tax_total',
+        'shipping_total',
+        'discount_total',
+        'total',
+        'status',
+        'payment_status',
+        'fulfillment_status',
+        'created_at',
+        'updated_at',
+        'shipped_at',
+        'delivered_at',
+    ];
+
+    /**
+     * Fields that can be sorted
+     */
+    protected static array $sortable = [
+        'id',
+        'order_number',
+        'total',
+        'status',
+        'payment_status',
+        'fulfillment_status',
+        'created_at',
+        'updated_at',
+        'shipped_at',
+        'delivered_at',
+    ];
+
+    /**
+     * Fields that can be searched
+     */
+    protected static array $searchable = [
+        'order_number',
+        'customer_email',
     ];
 
     public function customer(): BelongsTo

@@ -67,6 +67,26 @@ return new class extends Migration
             $table->index(['price', 'compare_at_price']);
             $table->index(['track_quantity', 'available']);
             $table->index(['weight_unit', 'requires_shipping']);
+            
+            // Additional filter indexes
+            $table->index('cost');
+            $table->index('inventory_management');
+            $table->index('fulfillment_service');
+            $table->index('allow_out_of_stock_purchases');
+            $table->index('weight');
+            $table->index('taxable');
+            $table->index('tax_code');
+            $table->index('created_at');
+            $table->index('updated_at');
+            
+            // Composite indexes for common filter combinations
+            $table->index(['product_id', 'status']);
+            $table->index(['product_id', 'available']);
+            $table->index(['inventory_quantity', 'status']);
+            $table->index(['price', 'status']);
+            $table->index(['available', 'status']);
+            $table->index(['track_quantity', 'inventory_quantity']);
+            
             $table->foreign('site_id')->references('id')->on('sites')->onDelete('cascade');
         });
     }

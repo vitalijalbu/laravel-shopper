@@ -11,12 +11,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Shopper\Traits\HasOptimizedFilters;
 
 class Brand extends Model implements HasMedia
 {
     use HasFactory;
     use InteractsWithMedia;
     use SoftDeletes;
+    use HasOptimizedFilters;
 
     protected $fillable = [
         'name',
@@ -32,6 +34,43 @@ class Brand extends Model implements HasMedia
         'is_enabled' => 'boolean',
         'seo' => 'array',
         'meta' => 'array',
+    ];
+
+    /**
+     * Fields that should always be eager loaded (N+1 protection)
+     */
+    protected static array $defaultEagerLoad = [];
+
+    /**
+     * Fields that can be filtered
+     */
+    protected static array $filterable = [
+        'id',
+        'name',
+        'slug',
+        'is_enabled',
+        'created_at',
+        'updated_at',
+    ];
+
+    /**
+     * Fields that can be sorted
+     */
+    protected static array $sortable = [
+        'id',
+        'name',
+        'slug',
+        'is_enabled',
+        'created_at',
+        'updated_at',
+    ];
+
+    /**
+     * Fields that can be searched
+     */
+    protected static array $searchable = [
+        'name',
+        'description',
     ];
 
     public function products(): HasMany

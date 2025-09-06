@@ -43,6 +43,22 @@ return new class extends Migration
             $table->index(['customer_email', 'site_id']);
             $table->index(['created_at', 'status']);
             $table->index(['total', 'status']);
+            
+            // Additional filter indexes
+            $table->index('subtotal');
+            $table->index('tax_total');
+            $table->index('shipping_total');
+            $table->index('discount_total');
+            $table->index('updated_at');
+            
+            // Composite indexes for common filter combinations
+            $table->index(['status', 'created_at']);
+            $table->index(['payment_status', 'status']);
+            $table->index(['fulfillment_status', 'status']);
+            $table->index(['shipped_at', 'status']);
+            $table->index(['delivered_at', 'status']);
+            $table->index(['currency_id', 'status']);
+            
             $table->foreign('site_id')->references('id')->on('sites')->onDelete('cascade');
         });
     }
