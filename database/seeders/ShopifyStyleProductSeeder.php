@@ -172,11 +172,6 @@ class ShopifyStyleProductSeeder extends Seeder
             'position' => 1,
             'status' => 'active',
             'available' => true,
-            'metafields' => json_encode([
-                'warranty' => '2 years',
-                'battery_life' => '30 hours',
-                'connectivity' => 'Bluetooth 5.0',
-            ]),
             'created_at' => now(),
             'updated_at' => now(),
         ]);

@@ -34,6 +34,7 @@ return new class extends Migration
             $table->timestamp('shipped_at')->nullable()->index();
             $table->timestamp('delivered_at')->nullable()->index();
             $table->timestamps();
+            $table->softDeletes();
 
             $table->unique(['order_number', 'site_id']);
             $table->index(['site_id', 'status']);

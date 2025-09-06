@@ -27,6 +27,7 @@ return new class extends Migration
             $table->date('effective_until')->nullable();
             $table->text('description')->nullable();
             $table->timestamps();
+            $table->softDeletes();
 
             $table->index(['status', 'effective_from', 'effective_until']);
             $table->index(['code', 'status']);

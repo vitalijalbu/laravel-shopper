@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('share_token')->nullable()->unique();
             $table->json('metadata')->nullable();
             $table->timestamps();
+            $table->softDeletes();
 
             $table->index(['customer_id', 'is_public']);
             $table->index('share_token');

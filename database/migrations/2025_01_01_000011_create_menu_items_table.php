@@ -24,6 +24,7 @@ return new class extends Migration
             $table->integer('sort_order')->default(0);
             $table->integer('depth')->default(0);
             $table->timestamps();
+            $table->softDeletes();
 
             $table->index(['menu_id', 'parent_id', 'sort_order']);
             $table->index(['reference_type', 'reference_id']);

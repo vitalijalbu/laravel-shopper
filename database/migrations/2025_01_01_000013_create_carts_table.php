@@ -36,6 +36,7 @@ return new class extends Migration
             $table->json('metadata')->nullable(); // Additional cart data
 
             $table->timestamps();
+            $table->softDeletes();
 
             // Indexes
             $table->index(['status', 'last_activity_at']);

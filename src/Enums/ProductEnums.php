@@ -20,45 +20,6 @@ enum InventoryLocationType: string
     }
 }
 
-enum MetafieldValueType: string
-{
-    case STRING = 'string';
-    case INTEGER = 'integer';
-    case DECIMAL = 'decimal';
-    case BOOLEAN = 'boolean';
-    case JSON = 'json';
-    case DATE = 'date';
-    case URL = 'url';
-    case EMAIL = 'email';
-
-    public function label(): string
-    {
-        return match ($this) {
-            self::STRING => 'String',
-            self::INTEGER => 'Integer',
-            self::DECIMAL => 'Decimal',
-            self::BOOLEAN => 'Boolean',
-            self::JSON => 'JSON',
-            self::DATE => 'Date',
-            self::URL => 'URL',
-            self::EMAIL => 'Email',
-        };
-    }
-
-    public function cast($value): mixed
-    {
-        return match ($this) {
-            self::STRING => (string) $value,
-            self::INTEGER => (int) $value,
-            self::DECIMAL => (float) $value,
-            self::BOOLEAN => (bool) $value,
-            self::JSON => json_decode($value, true),
-            self::DATE => $value instanceof \DateTime ? $value : new \DateTime($value),
-            self::URL, self::EMAIL => (string) $value,
-        };
-    }
-}
-
 enum ProductRelationType: string
 {
     case UPSELL = 'upsell';

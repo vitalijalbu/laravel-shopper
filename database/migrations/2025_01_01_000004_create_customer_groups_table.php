@@ -16,6 +16,7 @@ return new class extends Migration
             $table->boolean('is_default')->default(false);
             $table->string('status')->default('active')->index();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

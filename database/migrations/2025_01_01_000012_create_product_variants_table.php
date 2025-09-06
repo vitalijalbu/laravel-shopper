@@ -54,9 +54,6 @@ return new class extends Migration
             $table->string('status')->default('active')->index();
             $table->boolean('available')->default(true)->index(); // Available for sale
 
-            // Metafields (Custom data per variante)
-            $table->jsonb('metafields')->nullable();
-
             // Timestamps
             $table->timestamps();
             $table->softDeletes();

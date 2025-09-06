@@ -25,6 +25,7 @@ return new class extends Migration
             $table->integer('sort_order')->default(0);
             $table->json('configuration')->nullable(); // Carrier-specific settings
             $table->timestamps();
+            $table->softDeletes();
 
             $table->index(['shipping_zone_id', 'status']);
         });

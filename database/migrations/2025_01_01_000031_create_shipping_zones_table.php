@@ -17,6 +17,7 @@ return new class extends Migration
             $table->json('postcodes')->nullable(); // Array of postcode patterns
             $table->string('status')->default('active')->index(); // active, inactive, draft
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

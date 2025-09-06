@@ -25,6 +25,7 @@ return new class extends Migration
             $table->string('last_login_ip', 45)->nullable();
             $table->rememberToken();
             $table->timestamps();
+            $table->softDeletes();
 
             $table->unique(['email', 'site_id']);
             $table->index(['site_id', 'status']);

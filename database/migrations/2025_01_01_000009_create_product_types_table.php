@@ -15,6 +15,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->string('status')->default('active')->index();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

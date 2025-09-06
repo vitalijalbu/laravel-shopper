@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('status')->default('active')->index();
             $table->json('seo')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
