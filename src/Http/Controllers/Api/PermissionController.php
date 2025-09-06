@@ -5,14 +5,11 @@ namespace Shopper\Http\Controllers\Api;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Shopper\Http\Controllers\Controller;
-use Shopper\Traits\ApiResponseTrait;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
-class PermissionController extends Controller
+class PermissionController extends ApiController
 {
-    use ApiResponseTrait;
-
     public function __construct()
     {
         $this->middleware(['auth:api', 'permission:manage-permissions']);

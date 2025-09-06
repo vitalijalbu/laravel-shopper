@@ -11,8 +11,11 @@ use Shopper\Http\Requests\DiscountRequest;
 use Shopper\Models\Discount;
 use Shopper\Services\DiscountService;
 
-class DiscountController extends Controller
+class DiscountController extends ApiController
 {
+    public function __construct(
+        private readonly DiscountService $discountService
+    ) {}
     public function __construct(
         protected DiscountService $discountService
     ) {}

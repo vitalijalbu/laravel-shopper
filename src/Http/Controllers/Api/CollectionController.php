@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Shopper\Http\Controllers\Controller;
 use Shopper\Repositories\CollectionRepository;
 
-class CollectionController extends Controller
+class CollectionController extends ApiController
 {
     public function __construct(
         protected CollectionRepository $collectionRepository

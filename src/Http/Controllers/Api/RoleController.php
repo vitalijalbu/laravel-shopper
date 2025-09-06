@@ -10,7 +10,7 @@ use Shopper\Traits\ApiResponseTrait;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
-class RoleController extends Controller
+class RoleController extends ApiController
 {
     use ApiResponseTrait;
 

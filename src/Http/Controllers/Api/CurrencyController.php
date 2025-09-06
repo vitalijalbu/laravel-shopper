@@ -4,20 +4,27 @@ namespace Shopper\Http\Controllers\Api;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Shopper\Http\Controllers\Controller;
 use Shopper\Models\Currency;
+use Shopper\Repositories\CurrencyRepository;
 
-class CurrencyController extends Controller
+class CurrencyController extends ApiController
 {
+    public function __construct(
+        private readonly CurrencyRepository $currencyRepository
+    ) {}
+
     /**
      * Display a listing of currencies
      */
     public function index(Request $request): JsonResponse
     {
-        $query = Currency::query();
-
-        // Search filter
-        if ($search = $request->get('search')) {
+        $filters = $request->only(['search', 'is_enabled']);
+        $perPage = $request->get('per_page', 25);
+        
+        $currencies = $this->currencyRepository->getPaginatedWithFilters($filters, $perPage);
+        
+        return $this->paginatedResponse($currencies);
+    }
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
                     ->orWhere('code', 'like', "%{$search}%")

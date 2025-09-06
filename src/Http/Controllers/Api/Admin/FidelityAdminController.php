@@ -7,12 +7,12 @@ namespace Shopper\Http\Controllers\Api\Admin;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Shopper\Http\Controllers\Controller;
+use Shopper\Http\Controllers\Api\ApiController;
 use Shopper\Models\FidelityCard;
 use Shopper\Models\FidelityTransaction;
 use Shopper\Services\FidelityService;
 
-class FidelityAdminController extends Controller
+class FidelityAdminController extends ApiController
 {
     public function __construct(
         protected FidelityService $fidelityService

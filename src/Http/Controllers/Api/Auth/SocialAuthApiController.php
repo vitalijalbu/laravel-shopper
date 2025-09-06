@@ -8,11 +8,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Socialite\Facades\Socialite;
-use Shopper\Http\Controllers\Controller;
+use Shopper\Http\Controllers\Api\ApiController;
 use Shopper\Models\SocialAccount;
 use Shopper\Models\User;
 
-class SocialAuthApiController extends Controller
+class SocialAuthApiController extends ApiController
 {
     /**
      * Get available OAuth providers.

@@ -49,12 +49,18 @@ class ShopperServiceProvider extends ServiceProvider
         // Register repositories
         $this->app->bind(ProductRepositoryInterface::class, ProductRepository::class);
         $this->app->bind(\Shopper\Contracts\SupplierRepositoryInterface::class, \Shopper\Repositories\SupplierRepository::class);
+        $this->app->singleton(\Shopper\Repositories\BrandRepository::class);
+        $this->app->singleton(\Shopper\Repositories\ChannelRepository::class);
+        $this->app->singleton(\Shopper\Repositories\CountryRepository::class);
+        $this->app->singleton(\Shopper\Repositories\CurrencyRepository::class);
+        $this->app->singleton(\Shopper\Repositories\CollectionRepository::class);
         $this->app->singleton(CustomerRepository::class);
         $this->app->singleton(OrderRepository::class);
         $this->app->singleton(SettingRepository::class);
         $this->app->singleton(PaymentGatewayRepository::class);
         $this->app->singleton(TaxRateRepository::class);
         $this->app->singleton(ShippingMethodRepository::class);
+        $this->app->singleton(\Shopper\Repositories\BrandRepository::class);
 
         // Register console commands
         if ($this->app->runningInConsole()) {

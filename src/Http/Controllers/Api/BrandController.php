@@ -6,40 +6,29 @@ namespace Shopper\Http\Controllers\Api;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Shopper\Http\Controllers\Controller;
 use Shopper\Http\Requests\Api\StoreBrandRequest;
 use Shopper\Http\Requests\Api\UpdateBrandRequest;
+use Shopper\Http\Resources\BrandResource;
+use Shopper\Http\Resources\BrandCollection;
 use Shopper\Models\Brand;
-use Shopper\Traits\ApiResponseTrait;
+use Shopper\Repositories\BrandRepository;
 
-class BrandController extends Controller
+class BrandController extends ApiController
 {
-    use ApiResponseTrait;
+    public function __construct(
+        private readonly BrandRepository $brandRepository
+    ) {}
 
     /**
      * Display a listing of brands
      */
     public function index(Request $request): JsonResponse
     {
-        $query = Brand::query();
-
-        // Search filter
-        if ($search = $request->get('search')) {
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                    ->orWhere('slug', 'like', "%{$search}%")
-                    ->orWhere('description', 'like', "%{$search}%");
-            });
-        }
-
-        // Featured filter
-        if ($request->has('is_featured')) {
-            $query->where('is_featured', $request->boolean('is_featured'));
-        }
-
+        $filters = $request->only(['search', 'is_featured', 'status']);
         $perPage = $request->get('per_page', 25);
-        $brands = $query->orderBy('name')->paginate($perPage);
-
+        
+        $brands = $this->brandRepository->getPaginatedWithFilters($filters, $perPage);
+        
         return $this->paginatedResponse($brands);
     }
 
@@ -48,69 +37,121 @@ class BrandController extends Controller
      */
     public function store(StoreBrandRequest $request): JsonResponse
     {
-        $validated = $request->validated();
-
-        // Generate slug if not provided
-        if (empty($validated['slug'])) {
-            $validated['slug'] = \Illuminate\Support\Str::slug($validated['name']);
-        }
-
         try {
-            $brand = Brand::create($validated);
-
-            return $this->createdResponse($brand, 'Brand creato con successo');
+            $brand = $this->brandRepository->create($request->validated());
+            
+            return $this->created(new BrandResource($brand), 'Brand creato con successo');
         } catch (\Exception $e) {
-            return $this->errorResponse('Errore durante la creazione del brand');
+            return $this->errorResponse('Errore nella creazione del brand: ' . $e->getMessage());
         }
     }
 
     /**
      * Display the specified brand
      */
-    public function show(string $id): JsonResponse
+    public function show(Brand $brand): JsonResponse
     {
-        try {
-            $brand = Brand::with('products')->findOrFail($id);
-
-            return $this->successResponse($brand);
-        } catch (\Exception $e) {
-            return $this->notFoundResponse('Brand non trovato');
-        }
+        return $this->successResponse(new BrandResource($brand));
     }
 
     /**
      * Update the specified brand
      */
-    public function update(UpdateBrandRequest $request, string $id): JsonResponse
+    public function update(UpdateBrandRequest $request, Brand $brand): JsonResponse
     {
         try {
-            $brand = Brand::findOrFail($id);
-            $brand->update($request->validated());
-
-            return $this->successResponse($brand->fresh(), 'Brand aggiornato con successo');
+            $updatedBrand = $this->brandRepository->update($brand->id, $request->validated());
+            
+            return $this->successResponse(new BrandResource($updatedBrand), 'Brand aggiornato con successo');
         } catch (\Exception $e) {
-            return $this->errorResponse('Errore durante l\'aggiornamento del brand');
+            return $this->errorResponse('Errore nell\'aggiornamento del brand: ' . $e->getMessage());
         }
     }
 
     /**
      * Remove the specified brand
      */
-    public function destroy(string $id): JsonResponse
+    public function destroy(Brand $brand): JsonResponse
     {
         try {
-            $brand = Brand::findOrFail($id);
-
-            // Check if brand has products
-            if ($brand->products()->exists()) {
-                return $this->validationErrorResponse('Impossibile eliminare il brand con prodotti associati');
+            if (!$this->brandRepository->canDelete($brand->id)) {
+                return $this->errorResponse('Impossibile eliminare il brand: è associato a dei prodotti', 422);
             }
 
-            $brand->delete();
-
+            $this->brandRepository->delete($brand->id);
+            
             return $this->successResponse(null, 'Brand eliminato con successo');
         } catch (\Exception $e) {
-            return $this->errorResponse('Errore durante l\'eliminazione del brand');
+            return $this->errorResponse('Errore nell\'eliminazione del brand: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Toggle brand status
+     */
+    public function toggleStatus(Brand $brand): JsonResponse
+    {
+        try {
+            $updatedBrand = $this->brandRepository->toggleStatus($brand->id);
+            
+            return $this->successResponse(new BrandResource($updatedBrand), 'Stato del brand aggiornato');
+        } catch (\Exception $e) {
+            return $this->errorResponse('Errore nel cambio stato: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Get brand products
+     */
+    public function products(Brand $brand): JsonResponse
+    {
+        $products = $this->brandRepository->getBrandProducts($brand->id);
+        
+        return $this->successResponse($products);
+    }
+
+    /**
+     * Bulk operations
+     */
+    public function bulk(Request $request): JsonResponse
+    {
+        $action = $request->get('action');
+        $ids = $request->get('ids', []);
+
+        if (empty($ids)) {
+            return $this->validationErrorResponse('Nessun ID selezionato');
+        }
+
+        try {
+            switch ($action) {
+                case 'activate':
+                    $count = $this->brandRepository->bulkUpdateStatus($ids, 'active');
+                    return $this->bulkActionResponse('attivazione', $count);
+
+                case 'deactivate':
+                    $count = $this->brandRepository->bulkUpdateStatus($ids, 'inactive');
+                    return $this->bulkActionResponse('disattivazione', $count);
+
+                case 'delete':
+                    $errors = [];
+                    $deleted = 0;
+                    
+                    foreach ($ids as $id) {
+                        if ($this->brandRepository->canDelete($id)) {
+                            $this->brandRepository->delete($id);
+                            $deleted++;
+                        } else {
+                            $errors[] = "Brand ID {$id} non può essere eliminato";
+                        }
+                    }
+                    
+                    return $this->bulkActionResponse('eliminazione', $deleted, $errors);
+
+                default:
+                    return $this->validationErrorResponse('Azione non riconosciuta');
+            }
+        } catch (\Exception $e) {
+            return $this->errorResponse('Errore nell\'operazione bulk: ' . $e->getMessage());
         }
     }
 }

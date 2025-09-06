@@ -286,6 +286,180 @@ class CustomerRepository extends BaseRepository
     }
 
     /**
+     * Find customer with orders relationship
+     */
+    public function findWithOrders(int $id): ?Customer
+    {
+        $cacheKey = $this->getCacheKey('with_orders', $id);
+
+        return \Illuminate\Support\Facades\Cache::remember($cacheKey, $this->cacheTtl, function () use ($id) {
+            return $this->model->with(['orders', 'orders.items', 'orders.payments'])->find($id);
+        });
+    }
+
+    /**
+     * Get customer orders with filters
+     */
+    public function getOrders(int $customerId, array $filters = [], int $perPage = 25): LengthAwarePaginator
+    {
+        $customer = $this->model->find($customerId);
+        
+        if (!$customer) {
+            return new LengthAwarePaginator([], 0, $perPage);
+        }
+
+        $query = $customer->orders()->with(['items', 'payments', 'shippingAddress']);
+
+        // Status filter
+        if (!empty($filters['status'])) {
+            $query->where('status', $filters['status']);
+        }
+
+        // Date range filter
+        if (!empty($filters['date_from'])) {
+            $query->where('created_at', '>=', $filters['date_from']);
+        }
+
+        if (!empty($filters['date_to'])) {
+            $query->where('created_at', '<=', $filters['date_to']);
+        }
+
+        // Sorting
+        $sortField = $filters['sort'] ?? 'created_at';
+        $sortDirection = $filters['direction'] ?? 'desc';
+        $query->orderBy($sortField, $sortDirection);
+
+        return $query->paginate($perPage);
+    }
+
+    /**
+     * Get customer addresses
+     */
+    public function getAddresses(int $customerId): \Illuminate\Database\Eloquent\Collection
+    {
+        $cacheKey = $this->getCacheKey('addresses', $customerId);
+
+        return \Illuminate\Support\Facades\Cache::remember($cacheKey, $this->cacheTtl, function () use ($customerId) {
+            $customer = $this->model->find($customerId);
+            return $customer ? $customer->addresses : collect();
+        });
+    }
+
+    /**
+     * Add address to customer
+     */
+    public function addAddress(int $customerId, array $addressData): ?Model
+    {
+        $customer = $this->model->find($customerId);
+        
+        if (!$customer) {
+            return null;
+        }
+
+        // If this is the first address or is_default is true, make it default
+        if ($customer->addresses()->count() === 0 || ($addressData['is_default'] ?? false)) {
+            $customer->addresses()->update(['is_default' => false]);
+            $addressData['is_default'] = true;
+        }
+
+        $address = $customer->addresses()->create($addressData);
+        $this->clearCache();
+
+        return $address;
+    }
+
+    /**
+     * Get customer statistics
+     */
+    public function getStatistics(int $customerId): array
+    {
+        $cacheKey = $this->getCacheKey('statistics', $customerId);
+
+        return \Illuminate\Support\Facades\Cache::remember($cacheKey, $this->cacheTtl, function () use ($customerId) {
+            $customer = $this->model->with(['orders'])->find($customerId);
+            
+            if (!$customer) {
+                return [];
+            }
+
+            $orders = $customer->orders;
+            $totalSpent = $orders->sum('total_amount');
+            $averageOrderValue = $orders->count() > 0 ? $totalSpent / $orders->count() : 0;
+
+            return [
+                'total_orders' => $orders->count(),
+                'total_spent' => $totalSpent,
+                'average_order_value' => round($averageOrderValue, 2),
+                'first_order_date' => $orders->min('created_at'),
+                'last_order_date' => $orders->max('created_at'),
+                'loyalty_points' => $customer->fidelityCard?->points ?? 0,
+            ];
+        });
+    }
+
+    /**
+     * Bulk action for customers
+     */
+    public function bulkAction(string $action, array $ids, array $metadata = []): array
+    {
+        $validatedIds = $this->model->whereIn('id', $ids)->pluck('id')->toArray();
+        $processedCount = 0;
+        $errors = [];
+
+        foreach ($validatedIds as $id) {
+            try {
+                switch ($action) {
+                    case 'activate':
+                        $this->model->where('id', $id)->update(['is_active' => true]);
+                        $processedCount++;
+                        break;
+
+                    case 'deactivate':
+                        $this->model->where('id', $id)->update(['is_active' => false]);
+                        $processedCount++;
+                        break;
+
+                    case 'delete':
+                        if ($this->canDelete($id)) {
+                            $this->model->find($id)->delete();
+                            $processedCount++;
+                        } else {
+                            $errors[] = "Customer ID {$id}: Cannot delete customer with orders";
+                        }
+                        break;
+
+                    case 'add_to_group':
+                        if (isset($metadata['group_id'])) {
+                            $this->model->where('id', $id)->update(['customer_group_id' => $metadata['group_id']]);
+                            $processedCount++;
+                        } else {
+                            $errors[] = "Customer ID {$id}: Missing group_id";
+                        }
+                        break;
+
+                    case 'export':
+                        $processedCount++;
+                        break;
+
+                    default:
+                        $errors[] = "Customer ID {$id}: Unknown action '{$action}'";
+                }
+            } catch (\Exception $e) {
+                $errors[] = "Customer ID {$id}: {$e->getMessage()}";
+            }
+        }
+
+        $this->clearCache();
+
+        return [
+            'processed' => $processedCount,
+            'total' => count($ids),
+            'errors' => $errors,
+            'success' => count($errors) === 0
+        ];
+    }
+
+    /**
      * Clear repository cache
      */
     protected function clearCache(): void

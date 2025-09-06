@@ -4,10 +4,9 @@ namespace Shopper\Http\Controllers\Api;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Shopper\Http\Controllers\Controller;
 use Shopper\Repositories\CustomerRepository;
 
-class CustomerController extends Controller
+class CustomerController extends ApiController
 {
     public function __construct(
         protected CustomerRepository $customerRepository

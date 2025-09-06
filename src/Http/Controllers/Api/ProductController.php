@@ -4,87 +4,63 @@ namespace Shopper\Http\Controllers\Api;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Shopper\Http\Controllers\Controller;
+use Shopper\Http\Resources\ProductResource;
 use Shopper\Models\Product;
+use Shopper\Repositories\ProductRepository;
 
-class ProductController extends Controller
+class ProductController extends ApiController
 {
+    public function __construct(
+        private readonly ProductRepository $productRepository
+    ) {}
+
     public function index(Request $request): JsonResponse
     {
-        $query = Product::with(['brand', 'categories', 'media'])
-            ->where('is_active', true);
-
-        // Search
-        if ($search = $request->get('search')) {
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'LIKE', "%{$search}%")
-                    ->orWhere('description', 'LIKE', "%{$search}%")
-                    ->orWhere('sku', 'LIKE', "%{$search}%");
-            });
-        }
-
-        // Filter by category
-        if ($category = $request->get('category')) {
-            $query->whereHas('categories', function ($q) use ($category) {
-                $q->where('slug', $category);
-            });
-        }
-
-        // Filter by brand
-        if ($brand = $request->get('brand')) {
-            $query->whereHas('brand', function ($q) use ($brand) {
-                $q->where('slug', $brand);
-            });
-        }
-
-        // Price range
-        if ($minPrice = $request->get('min_price')) {
-            $query->where('price', '>=', $minPrice * 100);
-        }
-
-        if ($maxPrice = $request->get('max_price')) {
-            $query->where('price', '<=', $maxPrice * 100);
-        }
-
-        // Sorting
-        $sort = $request->get('sort', 'created_at');
-        $direction = $request->get('direction', 'desc');
-
-        $allowedSorts = ['name', 'price', 'created_at'];
-        if (in_array($sort, $allowedSorts)) {
-            $query->orderBy($sort, $direction);
-        }
-
-        $products = $query->paginate($request->get('per_page', 20));
-
-        return response()->json([
-            'data' => $products->items(),
-            'meta' => [
-                'current_page' => $products->currentPage(),
-                'last_page' => $products->lastPage(),
-                'per_page' => $products->perPage(),
-                'total' => $products->total(),
-            ],
+        $filters = $request->only([
+            'search', 'category', 'brand', 'min_price', 'max_price',
+            'on_sale', 'status', 'is_visible', 'sort'
         ]);
+        $perPage = $request->get('per_page', 20);
+        
+        $products = $this->productRepository->searchPaginated($filters, $perPage);
+        
+        return $this->paginatedResponse($products);
     }
 
     public function show(Product $product): JsonResponse
     {
-        if (! $product->is_active) {
-            return response()->json([
-                'message' => 'Product not found.',
-            ], 404);
-        }
+        $productData = $this->productRepository->findWithRelations($product->id, ['brand', 'categories', 'media']);
+        
+        return $this->successResponse(new ProductResource($productData));
+    }
 
-        $product->load([
-            'brand',
-            'categories',
-            'variants',
-            'media',
-        ]);
+    public function featured(Request $request): JsonResponse
+    {
+        $products = $this->productRepository->getFeatured();
+        
+        return $this->successResponse($products);
+    }
 
-        return response()->json([
-            'data' => $product,
-        ]);
+    public function popular(Request $request): JsonResponse
+    {
+        $limit = $request->get('limit', 10);
+        $products = $this->productRepository->getPopular($limit);
+        
+        return $this->successResponse($products);
+    }
+
+    public function onSale(Request $request): JsonResponse
+    {
+        $products = $this->productRepository->getOnSale();
+        
+        return $this->successResponse($products);
+    }
+
+    public function related(Product $product, Request $request): JsonResponse
+    {
+        $limit = $request->get('limit', 4);
+        $products = $this->productRepository->getRelated($product, $limit);
+        
+        return $this->successResponse($products);
     }
 }

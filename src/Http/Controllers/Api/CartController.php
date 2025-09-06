@@ -11,7 +11,7 @@ use Shopper\Models\Cart;
 use Shopper\Models\Product;
 use Shopper\Models\ProductVariant;
 
-class CartController extends Controller
+class CartController extends ApiController
 {
     /**
      * Get current cart

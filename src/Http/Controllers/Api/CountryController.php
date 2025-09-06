@@ -4,43 +4,75 @@ namespace Shopper\Http\Controllers\Api;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Shopper\Http\Controllers\Controller;
 use Shopper\Models\Country;
+use Shopper\Repositories\CountryRepository;
 
-class CountryController extends Controller
+class CountryController extends ApiController
 {
+    public function __construct(
+        private readonly CountryRepository $countryRepository
+    ) {}
+
     /**
      * Display a listing of countries
      */
     public function index(Request $request): JsonResponse
     {
-        $query = Country::query();
+        $filters = $request->only(['search', 'is_active']);
+        $perPage = $request->get('per_page', 50);
+        
+        $countries = $this->countryRepository->getPaginatedWithFilters($filters, $perPage);
+        
+        return $this->paginatedResponse($countries);
+    }
 
-        // Search filter
-        if ($search = $request->get('search')) {
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                    ->orWhere('code', 'like', "%{$search}%")
-                    ->orWhere('iso3', 'like', "%{$search}%");
-            });
-        }
+    /**
+     * Get enabled countries for select
+     */
+    public function enabled(): JsonResponse
+    {
+        $countries = $this->countryRepository->getEnabled();
+        
+        return $this->successResponse($countries->map(fn($country) => [
+            'code' => $country->code,
+            'name' => $country->name,
+        ]));
+    }
 
-        // Region filter
-        if ($region = $request->get('region')) {
-            $query->where('region', $region);
-        }
+    /**
+     * Get countries grouped by region
+     */
+    public function byRegion(): JsonResponse
+    {
+        $countries = $this->countryRepository->getByRegion();
+        
+        return $this->successResponse($countries);
+    }
 
-        // Status filter
-        if ($request->has('is_enabled')) {
-            $query->where('is_enabled', $request->boolean('is_enabled'));
-        }
+    /**
+     * Get list of regions
+     */
+    public function regions(): JsonResponse
+    {
+        $regions = $this->countryRepository->getRegions();
+        
+        return $this->successResponse($regions);
+    }
 
-        $perPage = $request->get('per_page', 25);
-        $countries = $query->orderBy('name')->paginate($perPage);
-
-        return response()->json([
-            'data' => $countries->items(),
-            'meta' => [
+    /**
+     * Search countries
+     */
+    public function search(Request $request): JsonResponse
+    {
+        $search = $request->get('q', '');
+        $limit = $request->get('limit', 10);
+        
+        $filters = ['search' => $search, 'is_active' => true];
+        $countries = $this->countryRepository->getPaginatedWithFilters($filters, $limit);
+        
+        return $this->successResponse($countries->items());
+    }
+}
                 'current_page' => $countries->currentPage(),
                 'last_page' => $countries->lastPage(),
                 'per_page' => $countries->perPage(),

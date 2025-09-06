@@ -200,6 +200,214 @@ class OrderRepository extends BaseRepository
     }
 
     /**
+     * Cancel an order
+     */
+    public function cancel(int $id): ?Order
+    {
+        $order = $this->model->find($id);
+        
+        if (!$order || $order->status === 'cancelled' || $order->status === 'delivered') {
+            return null;
+        }
+
+        $order->update([
+            'status' => 'cancelled',
+            'cancelled_at' => now(),
+        ]);
+
+        $this->clearCache();
+
+        return $order->fresh();
+    }
+
+    /**
+     * Mark order as paid
+     */
+    public function markAsPaid(int $id): ?Order
+    {
+        $order = $this->model->find($id);
+        
+        if (!$order || $order->payment_status === 'paid') {
+            return null;
+        }
+
+        $order->update([
+            'payment_status' => 'paid',
+            'paid_at' => now(),
+        ]);
+
+        $this->clearCache();
+
+        return $order->fresh();
+    }
+
+    /**
+     * Mark order as shipped
+     */
+    public function markAsShipped(int $id, array $shippingData): ?Order
+    {
+        $order = $this->model->find($id);
+        
+        if (!$order || in_array($order->status, ['shipped', 'delivered', 'cancelled'])) {
+            return null;
+        }
+
+        $updateData = [
+            'status' => 'shipped',
+            'shipped_at' => now(),
+        ];
+
+        if (isset($shippingData['tracking_number'])) {
+            $updateData['tracking_number'] = $shippingData['tracking_number'];
+        }
+
+        if (isset($shippingData['carrier'])) {
+            $updateData['carrier'] = $shippingData['carrier'];
+        }
+
+        $order->update($updateData);
+
+        $this->clearCache();
+
+        return $order->fresh();
+    }
+
+    /**
+     * Mark order as delivered
+     */
+    public function markAsDelivered(int $id): ?Order
+    {
+        $order = $this->model->find($id);
+        
+        if (!$order || in_array($order->status, ['delivered', 'cancelled'])) {
+            return null;
+        }
+
+        $order->update([
+            'status' => 'delivered',
+            'delivered_at' => now(),
+        ]);
+
+        $this->clearCache();
+
+        return $order->fresh();
+    }
+
+    /**
+     * Get order statistics
+     */
+    public function getStatistics(array $filters = []): array
+    {
+        $cacheKey = $this->getCacheKey('statistics', md5(serialize($filters)));
+
+        return \Illuminate\Support\Facades\Cache::remember($cacheKey, $this->cacheTtl, function () use ($filters) {
+            $query = $this->model->newQuery();
+
+            // Apply date filters
+            if (!empty($filters['date_from'])) {
+                $query->where('created_at', '>=', $filters['date_from']);
+            }
+
+            if (!empty($filters['date_to'])) {
+                $query->where('created_at', '<=', $filters['date_to']);
+            }
+
+            // Apply status filter
+            if (!empty($filters['status'])) {
+                $query->where('status', $filters['status']);
+            }
+
+            $orders = $query->get();
+
+            $totalOrders = $orders->count();
+            $totalRevenue = $orders->sum('total_amount');
+            $averageOrderValue = $totalOrders > 0 ? $totalRevenue / $totalOrders : 0;
+
+            $statusCounts = $orders->groupBy('status')->map->count()->toArray();
+            $paymentStatusCounts = $orders->groupBy('payment_status')->map->count()->toArray();
+
+            return [
+                'total_orders' => $totalOrders,
+                'total_revenue' => round($totalRevenue, 2),
+                'average_order_value' => round($averageOrderValue, 2),
+                'status_breakdown' => $statusCounts,
+                'payment_status_breakdown' => $paymentStatusCounts,
+            ];
+        });
+    }
+
+    /**
+     * Bulk action for orders
+     */
+    public function bulkAction(string $action, array $ids, array $metadata = []): array
+    {
+        $validatedIds = $this->model->whereIn('id', $ids)->pluck('id')->toArray();
+        $processedCount = 0;
+        $errors = [];
+
+        foreach ($validatedIds as $id) {
+            try {
+                switch ($action) {
+                    case 'cancel':
+                        $order = $this->cancel($id);
+                        if ($order) {
+                            $processedCount++;
+                        } else {
+                            $errors[] = "Order ID {$id}: Cannot cancel order";
+                        }
+                        break;
+
+                    case 'mark_as_paid':
+                        $order = $this->markAsPaid($id);
+                        if ($order) {
+                            $processedCount++;
+                        } else {
+                            $errors[] = "Order ID {$id}: Cannot mark as paid";
+                        }
+                        break;
+
+                    case 'mark_as_shipped':
+                        $shippingData = $metadata['shipping'] ?? [];
+                        $order = $this->markAsShipped($id, $shippingData);
+                        if ($order) {
+                            $processedCount++;
+                        } else {
+                            $errors[] = "Order ID {$id}: Cannot mark as shipped";
+                        }
+                        break;
+
+                    case 'mark_as_delivered':
+                        $order = $this->markAsDelivered($id);
+                        if ($order) {
+                            $processedCount++;
+                        } else {
+                            $errors[] = "Order ID {$id}: Cannot mark as delivered";
+                        }
+                        break;
+
+                    case 'export':
+                        $processedCount++;
+                        break;
+
+                    default:
+                        $errors[] = "Order ID {$id}: Unknown action '{$action}'";
+                }
+            } catch (\Exception $e) {
+                $errors[] = "Order ID {$id}: {$e->getMessage()}";
+            }
+        }
+
+        $this->clearCache();
+
+        return [
+            'processed' => $processedCount,
+            'total' => count($ids),
+            'errors' => $errors,
+            'success' => count($errors) === 0
+        ];
+    }
+
+    /**
      * Clear repository cache
      */
     protected function clearCache(): void

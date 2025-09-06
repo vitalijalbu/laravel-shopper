@@ -11,7 +11,7 @@ use Shopper\Http\Requests\Api\UpdateUserGroupRequest;
 use Shopper\Models\UserGroup;
 use Shopper\Traits\ApiResponseTrait;
 
-class UserGroupController extends Controller
+class UserGroupController extends ApiController
 {
     use ApiResponseTrait;
 

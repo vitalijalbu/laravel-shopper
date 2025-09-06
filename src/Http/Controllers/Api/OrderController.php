@@ -4,18 +4,14 @@ namespace Shopper\Http\Controllers\Api;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Shopper\Http\Controllers\Controller;
 use Shopper\Http\Requests\Api\BulkOrderActionRequest;
 use Shopper\Http\Requests\Api\MarkOrderAsShippedRequest;
 use Shopper\Http\Requests\Api\StoreOrderRequest;
 use Shopper\Http\Requests\Api\UpdateOrderRequest;
 use Shopper\Repositories\OrderRepository;
-use Shopper\Traits\ApiResponseTrait;
 
-class OrderController extends Controller
+class OrderController extends ApiController
 {
-    use ApiResponseTrait;
-
     public function __construct(
         protected OrderRepository $orderRepository
     ) {}

@@ -7,15 +7,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
-use Shopper\Http\Controllers\Controller;
+use Shopper\Http\Controllers\Api\ApiController;
 use Shopper\Models\Product;
 use Shopper\Models\ProductReview;
-use Shopper\Traits\ApiResponseTrait;
 
-class ReviewController extends Controller
+class ReviewController extends ApiController
 {
-    use ApiResponseTrait;
-
     /**
      * Display a listing of reviews with advanced filtering
      */

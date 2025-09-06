@@ -7,14 +7,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
-use Shopper\Http\Controllers\Controller;
+use Shopper\Http\Controllers\Api\ApiController;
 use Shopper\Models\ProductType;
-use Shopper\Traits\ApiResponseTrait;
 
-class ProductTypeController extends Controller
+class ProductTypeController extends ApiController
 {
-    use ApiResponseTrait;
-
     /**
      * Display a listing of product types with filtering
      */

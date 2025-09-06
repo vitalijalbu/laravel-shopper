@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Shopper\Http\Controllers\Controller;
 use Shopper\Repositories\ShippingMethodRepository;
 
-class ShippingMethodController extends Controller
+class ShippingMethodController extends ApiController
 {
     public function __construct(
         protected ShippingMethodRepository $shippingMethodRepository

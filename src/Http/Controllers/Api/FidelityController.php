@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Shopper\Http\Controllers\Controller;
 use Shopper\Services\FidelityService;
 
-class FidelityController extends Controller
+class FidelityController extends ApiController
 {
     public function __construct(
         protected FidelityService $fidelityService

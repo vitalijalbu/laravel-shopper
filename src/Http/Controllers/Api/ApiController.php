@@ -8,9 +8,12 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Shopper\Http\Controllers\Controller;
+use Shopper\Traits\ApiResponseTrait;
 
 abstract class ApiController extends Controller
 {
+    use ApiResponseTrait;
+
     /**
      * Return a successful response with data
      */

@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Shopper\Http\Controllers\Controller;
 use Shopper\Repositories\TaxRateRepository;
 
-class TaxRateController extends Controller
+class TaxRateController extends ApiController
 {
     public function __construct(
         protected TaxRateRepository $taxRateRepository

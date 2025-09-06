@@ -313,4 +313,110 @@ class TaxRateRepository extends BaseRepository
 
         return $this->create($duplicatedData);
     }
+
+    /**
+     * Get applicable tax rates based on conditions
+     */
+    public function getApplicableRates(array $conditions = []): \Illuminate\Database\Eloquent\Collection
+    {
+        $query = $this->model->newQuery()->where('is_active', true);
+
+        if (isset($conditions['country_code'])) {
+            $query->whereJsonContains('countries', strtoupper($conditions['country_code']));
+        }
+
+        if (isset($conditions['state_code'])) {
+            $stateKey = strtoupper($conditions['country_code'].'_'.$conditions['state_code']);
+            $query->whereJsonContains('states', $stateKey);
+        }
+
+        if (isset($conditions['category_ids'])) {
+            $query->where(function ($q) use ($conditions) {
+                $q->whereNull('product_categories');
+                foreach ($conditions['category_ids'] as $categoryId) {
+                    $q->orWhereJsonContains('product_categories', $categoryId);
+                }
+            });
+        }
+
+        if (isset($conditions['amount'])) {
+            $query->where(function ($q) use ($conditions) {
+                $amount = $conditions['amount'];
+                $q->where(function ($subQuery) use ($amount) {
+                    $subQuery->whereNull('min_amount')->orWhere('min_amount', '<=', $amount);
+                })->where(function ($subQuery) use ($amount) {
+                    $subQuery->whereNull('max_amount')->orWhere('max_amount', '>=', $amount);
+                });
+            });
+        }
+
+        $cacheKey = $this->getCacheKey('applicable', md5(serialize($conditions)));
+
+        return \Illuminate\Support\Facades\Cache::remember($cacheKey, $this->cacheTtl, function () use ($query) {
+            return $query->orderBy('priority', 'desc')->get();
+        });
+    }
+
+    /**
+     * Bulk action for tax rates
+     */
+    public function bulkAction(string $action, array $ids, array $metadata = []): array
+    {
+        $validatedIds = $this->model->whereIn('id', $ids)->pluck('id')->toArray();
+        $processedCount = 0;
+        $errors = [];
+
+        foreach ($validatedIds as $id) {
+            try {
+                switch ($action) {
+                    case 'activate':
+                        $this->model->where('id', $id)->update(['is_active' => true]);
+                        $processedCount++;
+                        break;
+
+                    case 'deactivate':
+                        $this->model->where('id', $id)->update(['is_active' => false]);
+                        $processedCount++;
+                        break;
+
+                    case 'delete':
+                        $this->model->where('id', $id)->delete();
+                        $processedCount++;
+                        break;
+
+                    case 'update_rate':
+                        if (isset($metadata['rate'])) {
+                            $this->model->where('id', $id)->update(['rate' => $metadata['rate']]);
+                            $processedCount++;
+                        } else {
+                            $errors[] = "Tax rate ID {$id}: Missing rate value";
+                        }
+                        break;
+
+                    case 'update_priority':
+                        if (isset($metadata['priority'])) {
+                            $this->model->where('id', $id)->update(['priority' => $metadata['priority']]);
+                            $processedCount++;
+                        } else {
+                            $errors[] = "Tax rate ID {$id}: Missing priority value";
+                        }
+                        break;
+
+                    default:
+                        $errors[] = "Tax rate ID {$id}: Unknown action '{$action}'";
+                }
+            } catch (\Exception $e) {
+                $errors[] = "Tax rate ID {$id}: {$e->getMessage()}";
+            }
+        }
+
+        $this->clearCache();
+
+        return [
+            'processed' => $processedCount,
+            'total' => count($ids),
+            'errors' => $errors,
+            'success' => count($errors) === 0
+        ];
+    }
 }
