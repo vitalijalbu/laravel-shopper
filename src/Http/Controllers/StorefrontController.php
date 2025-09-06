@@ -4,7 +4,7 @@ namespace Shopper\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Shopper\Models\Category;
+use Shopper\Models\Collection;
 use Shopper\Models\Product;
 use Shopper\Services\TemplateEngine;
 
@@ -80,7 +80,7 @@ class StorefrontController extends Controller
      */
     public function categoryIndex(Request $request): Response
     {
-        $categories = Category::active()
+        $categories = Collection::active()
             ->with(['media'])
             ->orderBy('name')
             ->get();
@@ -104,7 +104,7 @@ class StorefrontController extends Controller
      */
     public function categoryShow(Request $request, string $handle): Response
     {
-        $category = Category::where('handle', $handle)
+        $category = Collection::where('handle', $handle)
             ->with(['media', 'products.media'])
             ->active()
             ->firstOrFail();

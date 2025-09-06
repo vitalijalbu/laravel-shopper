@@ -287,6 +287,25 @@ Route::group([
                 Route::post('/bulk', [BrandController::class, 'bulk'])->name('bulk');
             });
 
+            // Supplier Management (Admin)
+            Route::prefix('suppliers')->name('suppliers.')->group(function () {
+                Route::get('/select', [\Shopper\Http\Controllers\Api\SupplierController::class, 'select'])->name('select');
+                Route::get('/top-performers', [\Shopper\Http\Controllers\Api\SupplierController::class, 'topPerformers'])->name('top-performers');
+                Route::post('/bulk/activate', [\Shopper\Http\Controllers\Api\SupplierController::class, 'bulkActivate'])->name('bulk.activate');
+                Route::post('/bulk/deactivate', [\Shopper\Http\Controllers\Api\SupplierController::class, 'bulkDeactivate'])->name('bulk.deactivate');
+                Route::post('/bulk/delete', [\Shopper\Http\Controllers\Api\SupplierController::class, 'bulkDelete'])->name('bulk.delete');
+                Route::post('/bulk/export', [\Shopper\Http\Controllers\Api\SupplierController::class, 'bulkExport'])->name('bulk.export');
+                Route::get('/', [\Shopper\Http\Controllers\Api\SupplierController::class, 'index'])->name('index');
+                Route::post('/', [\Shopper\Http\Controllers\Api\SupplierController::class, 'store'])->name('store');
+                Route::get('/{supplier}', [\Shopper\Http\Controllers\Api\SupplierController::class, 'show'])->name('show');
+                Route::put('/{supplier}', [\Shopper\Http\Controllers\Api\SupplierController::class, 'update'])->name('update');
+                Route::delete('/{supplier}', [\Shopper\Http\Controllers\Api\SupplierController::class, 'destroy'])->name('destroy');
+                Route::put('/{supplier}/toggle-status', [\Shopper\Http\Controllers\Api\SupplierController::class, 'toggleStatus'])->name('toggle.status');
+                Route::get('/{supplier}/products', [\Shopper\Http\Controllers\Api\SupplierController::class, 'products'])->name('products');
+                Route::get('/{supplier}/purchase-orders', [\Shopper\Http\Controllers\Api\SupplierController::class, 'purchaseOrders'])->name('purchase-orders');
+                Route::get('/{supplier}/performance', [\Shopper\Http\Controllers\Api\SupplierController::class, 'performance'])->name('performance');
+            });
+
             // Collection Management (Admin)
             Route::prefix('collections')->name('collections.')->group(function () {
                 Route::get('/', [CollectionController::class, 'adminIndex'])->name('index');

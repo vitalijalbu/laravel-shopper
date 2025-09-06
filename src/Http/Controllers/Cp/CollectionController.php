@@ -33,7 +33,7 @@ class CollectionController extends BaseController
             ->addBreadcrumb('Collections');
 
         $filters = $this->getFilters(['search', 'status', 'collection_type', 'created_at']);
-        
+
         $collections = Collection::query()
             ->withCount('products')
             ->when($filters, fn ($query) => $this->applyFilters($query, $filters))
@@ -49,7 +49,7 @@ class CollectionController extends BaseController
 
         return $this->inertiaResponse('collections/Index', [
             'page' => $page->compile(),
-            
+
             'collections' => $collections->through(fn ($collection) => new CollectionResource($collection)),
             'filters' => $filters,
         ]);
@@ -74,7 +74,7 @@ class CollectionController extends BaseController
 
         return $this->inertiaResponse('collections/Create', [
             'page' => $page->compile(),
-            
+
         ]);
     }
 
@@ -121,7 +121,7 @@ class CollectionController extends BaseController
 
         return $this->inertiaResponse('collections/Show', [
             'page' => $page->compile(),
-            
+
             'collection' => new CollectionResource($collection),
         ]);
     }
@@ -154,7 +154,7 @@ class CollectionController extends BaseController
 
         return $this->inertiaResponse('collections/Edit', [
             'page' => $page->compile(),
-            
+
             'collection' => new CollectionResource($collection),
         ]);
     }
@@ -270,6 +270,7 @@ class CollectionController extends BaseController
     private function handleBulkExport($collections): int
     {
         $count = $collections->count();
+
         // TODO: Implement actual export logic
         return $count;
     }

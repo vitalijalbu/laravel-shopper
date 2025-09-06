@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Cache;
-use Shopper\Models\Category;
+use Shopper\Models\Collection;
 
 class CategoryRepository extends BaseRepository
 {

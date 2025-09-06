@@ -6,8 +6,8 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Shopper\Models\Brand;
-use Shopper\Models\Category;
 use Shopper\Models\Channel;
+use Shopper\Models\Collection;
 use Shopper\Models\Country;
 use Shopper\Models\Currency;
 use Shopper\Models\CustomerGroup;
@@ -382,7 +382,7 @@ class ShopperSeeder extends Seeder
         ];
 
         foreach ($categories as $category) {
-            Category::firstOrCreate(
+            Collection::firstOrCreate(
                 ['slug' => $category['slug']],
                 $category
             );

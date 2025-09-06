@@ -11,7 +11,7 @@ use Shopper\Http\Controllers\Controller;
 use Shopper\Http\Resources\ProductCollection;
 use Shopper\Http\Resources\ProductResource;
 use Shopper\Models\Brand;
-use Shopper\Models\Category;
+use Shopper\Models\Collection;
 use Shopper\Models\Product;
 use Shopper\Schema\SchemaRepository;
 
@@ -90,7 +90,7 @@ class ProductsController extends Controller
             'page' => $page->compile(),
 
             'schema' => $schema->toArray(),
-            'categories' => Category::select('id', 'name')->get(),
+            'categories' => Collection::select('id', 'name')->get(),
             'brands' => Brand::select('id', 'name')->get(),
         ]);
     }
@@ -207,7 +207,7 @@ class ProductsController extends Controller
 
             'schema' => $schema->toArray(),
             'product' => new ProductResource($product),
-            'categories' => Category::select('id', 'name')->get(),
+            'categories' => Collection::select('id', 'name')->get(),
             'brands' => Brand::select('id', 'name')->get(),
         ]);
     }

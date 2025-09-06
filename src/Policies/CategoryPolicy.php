@@ -3,7 +3,6 @@
 namespace Shopper\Policies;
 
 use Illuminate\Auth\Access\HandlesAuthorization;
-use Shopper\Models\Category;
 use Shopper\Models\User;
 
 class CategoryPolicy

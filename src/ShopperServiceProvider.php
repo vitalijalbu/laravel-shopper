@@ -48,6 +48,7 @@ class ShopperServiceProvider extends ServiceProvider
 
         // Register repositories
         $this->app->bind(ProductRepositoryInterface::class, ProductRepository::class);
+        $this->app->bind(\Shopper\Contracts\SupplierRepositoryInterface::class, \Shopper\Repositories\SupplierRepository::class);
         $this->app->singleton(CustomerRepository::class);
         $this->app->singleton(OrderRepository::class);
         $this->app->singleton(SettingRepository::class);

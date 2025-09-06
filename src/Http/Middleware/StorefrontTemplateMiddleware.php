@@ -4,7 +4,7 @@ namespace Shopper\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Shopper\Models\Category;
+use Shopper\Models\Collection;
 use Shopper\Models\Product;
 use Shopper\Models\Site;
 use Shopper\Services\TemplateEngine;
@@ -106,7 +106,7 @@ class StorefrontTemplateMiddleware
 
         return match ($routeName) {
             'storefront.products.show' => Product::where('handle', $parameters['handle'] ?? $parameters['product'] ?? null)->first(),
-            'storefront.categories.show' => Category::where('handle', $parameters['handle'] ?? $parameters['category'] ?? null)->first(),
+            'storefront.categories.show' => Collection::where('handle', $parameters['handle'] ?? $parameters['category'] ?? null)->first(),
             default => null,
         };
     }

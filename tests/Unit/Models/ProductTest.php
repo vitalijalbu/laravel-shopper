@@ -4,7 +4,7 @@ namespace Shopper\Tests\Unit\Models;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Shopper\Models\Brand;
-use Shopper\Models\Category;
+use Shopper\Models\Collection;
 use Shopper\Models\Collection;
 use Shopper\Models\Product;
 use Shopper\Tests\TestCase;
@@ -81,12 +81,12 @@ class ProductTest extends TestCase
     /** @test */
     public function it_belongs_to_category()
     {
-        $category = Category::factory()->create();
+        $category = Collection::factory()->create();
         $product = Product::factory()->create([
             'shopper_category_id' => $category->id,
         ]);
 
-        $this->assertInstanceOf(Category::class, $product->category);
+        $this->assertInstanceOf(Collection::class, $product->category);
         $this->assertEquals($category->id, $product->category->id);
     }
 

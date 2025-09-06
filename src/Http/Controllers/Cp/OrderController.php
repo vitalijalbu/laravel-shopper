@@ -10,8 +10,8 @@ use Inertia\Response;
 use Shopper\CP\Page;
 use Shopper\Http\Requests\CP\StoreOrderRequest;
 use Shopper\Http\Resources\CP\OrderResource;
-use Shopper\Models\Order;
 use Shopper\Models\Customer;
+use Shopper\Models\Order;
 
 class OrderController extends BaseController
 {
@@ -32,16 +32,16 @@ class OrderController extends BaseController
             ->addBreadcrumb('Orders');
 
         $filters = $this->getFilters([
-            'search', 
-            'status', 
-            'payment_status', 
+            'search',
+            'status',
+            'payment_status',
             'fulfillment_status',
             'customer_id',
             'total_min',
             'total_max',
-            'created_at'
+            'created_at',
         ]);
-        
+
         $orders = Order::query()
             ->with(['customer', 'items.product'])
             ->withCount(['items'])
@@ -59,7 +59,7 @@ class OrderController extends BaseController
 
         return $this->inertiaResponse('orders/Index', [
             'page' => $page->compile(),
-            
+
             'orders' => $orders->through(fn ($order) => new OrderResource($order)),
             'filters' => $filters,
             'stats' => $this->getOrderStats(),
@@ -96,7 +96,7 @@ class OrderController extends BaseController
 
         return $this->inertiaResponse('orders/Create', [
             'page' => $page->compile(),
-            
+
             'customer' => $customer ? new \Shopper\Http\Resources\CP\CustomerResource($customer) : null,
         ]);
     }
@@ -180,7 +180,7 @@ class OrderController extends BaseController
 
         return $this->inertiaResponse('orders/Show', [
             'page' => $page->compile(),
-            
+
             'order' => new OrderResource($order),
         ]);
     }
@@ -219,7 +219,7 @@ class OrderController extends BaseController
 
         return $this->inertiaResponse('orders/Edit', [
             'page' => $page->compile(),
-            
+
             'order' => new OrderResource($order),
         ]);
     }
@@ -247,7 +247,7 @@ class OrderController extends BaseController
 
         return $this->successResponse('Order updated successfully', [
             'order' => new OrderResource($order->fresh([
-                'customer', 'items.product', 'shippingAddress', 'billingAddress'
+                'customer', 'items.product', 'shippingAddress', 'billingAddress',
             ])),
         ]);
     }
@@ -264,6 +264,7 @@ class OrderController extends BaseController
         // If order has payments, mark as cancelled instead of deleting
         if ($order->payments()->exists()) {
             $order->update(['status' => 'cancelled']);
+
             return $this->successResponse('Order cancelled successfully');
         }
 
@@ -388,6 +389,7 @@ class OrderController extends BaseController
     private function handleBulkExport($orders): int
     {
         $count = $orders->count();
+
         // TODO: Implement actual export logic
         return $count;
     }
@@ -398,6 +400,7 @@ class OrderController extends BaseController
     private function handleBulkPrintLabels($orders): int
     {
         $count = $orders->count();
+
         // TODO: Implement label printing logic
         return $count;
     }
