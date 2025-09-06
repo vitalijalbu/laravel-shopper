@@ -219,6 +219,7 @@ import { useShopperStore } from "../stores/shopper";
 import CpNavigation from "./cp-navigation.vue";
 
 const props = defineProps({
+  navigation: Object,
   user: Object,
   sites: Array,
   breadcrumbs: Array,
@@ -226,9 +227,6 @@ const props = defineProps({
 
 const page = usePage();
 const shopperStore = useShopperStore();
-
-// Get navigation from shared data
-const navigation = computed(() => page.props.cp?.navigation || { sections: [], items: [] });
 
 // State
 const globalSearchQuery = ref("");

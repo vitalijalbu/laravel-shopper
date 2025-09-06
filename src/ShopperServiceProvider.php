@@ -68,9 +68,6 @@ class ShopperServiceProvider extends ServiceProvider
         $this->bootRoutes();
         $this->configureAuthentication();
 
-        // Register CP navigation
-        \Shopper\CP\Navigation::registerDefaults();
-
         // Load migrations
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
 
