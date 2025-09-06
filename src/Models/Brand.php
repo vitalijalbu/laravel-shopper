@@ -12,6 +12,7 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Shopper\Traits\HasOptimizedFilters;
+use Shopper\Traits\HasCustomFields;
 
 class Brand extends Model implements HasMedia
 {
@@ -19,6 +20,7 @@ class Brand extends Model implements HasMedia
     use InteractsWithMedia;
     use SoftDeletes;
     use HasOptimizedFilters;
+    use HasCustomFields;
 
     protected $fillable = [
         'name',
@@ -28,6 +30,7 @@ class Brand extends Model implements HasMedia
         'is_enabled',
         'seo',
         'meta',
+        'data',
     ];
 
     protected $casts = [

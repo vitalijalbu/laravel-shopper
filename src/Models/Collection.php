@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Shopper\Support\HasHandle;
 use Shopper\Support\HasSite;
+use Shopper\Traits\HasCustomFields;
 
 class Collection extends Model
 {
@@ -18,6 +19,7 @@ class Collection extends Model
     use HasHandle;
     use HasSite;
     use SoftDeletes;
+    use HasCustomFields;
 
     protected $fillable = [
         'site_id',
@@ -37,6 +39,7 @@ class Collection extends Model
         'published_at',
         'published_scope',
         'template_suffix',
+        'data',
     ];
 
     protected $casts = [

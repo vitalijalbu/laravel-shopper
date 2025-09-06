@@ -9,11 +9,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Shopper\Traits\HasCustomFields;
 
 class ProductVariant extends Model
 {
     use HasFactory;
     use SoftDeletes;
+    use HasCustomFields;
 
     protected $fillable = [
         'product_id',
@@ -30,6 +32,7 @@ class ProductVariant extends Model
         'option_values',
         'status',
         'sort_order',
+        'data',
     ];
 
     protected $casts = [

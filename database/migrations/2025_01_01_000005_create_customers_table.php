@@ -27,6 +27,9 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
 
+            // Custom fields data (JSON schema-based)
+            $table->jsonb('data')->nullable()->comment('Custom fields data based on JSON schema');
+
             $table->unique(['email', 'site_id']);
             $table->index(['site_id', 'status']);
             $table->index(['last_name', 'first_name']);

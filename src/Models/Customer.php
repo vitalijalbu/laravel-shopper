@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Shopper\Traits\HasOptimizedFilters;
+use Shopper\Traits\HasCustomFields;
 
 class Customer extends Authenticatable
 {
@@ -21,6 +22,7 @@ class Customer extends Authenticatable
     use Notifiable;
     use SoftDeletes;
     use HasOptimizedFilters;
+    use HasCustomFields;
 
     protected $fillable = [
         'first_name',
@@ -36,6 +38,7 @@ class Customer extends Authenticatable
         'last_login_ip',
         'avatar',
         'meta',
+        'data',
     ];
 
     protected $hidden = [

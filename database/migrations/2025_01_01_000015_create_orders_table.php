@@ -36,6 +36,9 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
 
+            // Custom fields data (JSON schema-based)
+            $table->jsonb('data')->nullable()->comment('Custom fields data based on JSON schema');
+
             $table->unique(['order_number', 'site_id']);
             $table->index(['site_id', 'status']);
             $table->index(['customer_id', 'status']);

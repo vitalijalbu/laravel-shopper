@@ -17,6 +17,7 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Shopper\Traits\HasOptimizedFilters;
+use Shopper\Traits\HasCustomFields;
 
 class Product extends Model implements HasMedia
 {
@@ -26,6 +27,7 @@ class Product extends Model implements HasMedia
     use InteractsWithMedia;
     use SoftDeletes;
     use HasOptimizedFilters;
+    use HasCustomFields;
 
     protected $fillable = [
         'site_id',
@@ -55,6 +57,7 @@ class Product extends Model implements HasMedia
         'published_at',
         'average_rating',
         'review_count',
+        'data',
     ];
 
     protected $casts = [

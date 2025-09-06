@@ -10,12 +10,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Shopper\Traits\HasOptimizedFilters;
+use Shopper\Traits\HasCustomFields;
 
 class Order extends Model
 {
     use HasFactory;
     use SoftDeletes;
     use HasOptimizedFilters;
+    use HasCustomFields;
 
     protected $fillable = [
         'order_number',
@@ -40,6 +42,7 @@ class Order extends Model
         'notes',
         'shipped_at',
         'delivered_at',
+        'data',
     ];
 
     protected $casts = [

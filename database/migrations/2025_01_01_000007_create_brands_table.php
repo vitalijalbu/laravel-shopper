@@ -18,6 +18,9 @@ return new class extends Migration
             $table->json('seo')->nullable();
             $table->timestamps();
             $table->softDeletes();
+
+            // Custom fields data (JSON schema-based)
+            $table->jsonb('data')->nullable()->comment('Custom fields data based on JSON schema');
             
             // Additional filter indexes
             $table->index('name');
