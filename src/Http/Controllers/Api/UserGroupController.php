@@ -4,7 +4,6 @@ namespace Shopper\Http\Controllers\Api;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Shopper\Http\Controllers\Controller;
 use Shopper\Http\Requests\Api\AssignPermissionRequest;
 use Shopper\Http\Requests\Api\StoreUserGroupRequest;
 use Shopper\Http\Requests\Api\UpdateUserGroupRequest;

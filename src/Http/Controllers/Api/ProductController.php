@@ -19,7 +19,7 @@ class ProductController extends ApiController
     {
         // Parse filter parameters
         $params = $this->filterService->parseRequest($request->all());
-        
+
         // Get products with filters
         $products = Product::where('status', 'published')
             ->paginateFilter($params);
@@ -39,7 +39,7 @@ class ProductController extends ApiController
     public function show(Product $product): JsonResource
     {
         $product->load(['brand', 'productType', 'variants', 'media']);
-        
+
         return new ProductResource($product);
     }
 
@@ -69,10 +69,10 @@ class ProductController extends ApiController
     {
         $params = $this->filterService->parseRequest($request->all());
         $params['is_featured'] = true;
-        
+
         $products = Product::where('status', 'published')
             ->paginateFilter($params, 12);
-        
+
         return $this->success([
             'data' => ProductResource::collection($products->items()),
             'meta' => [
@@ -84,13 +84,13 @@ class ProductController extends ApiController
     public function popular(Request $request): JsonResponse
     {
         $limit = $request->get('limit', 10);
-        
+
         $products = Product::where('status', 'published')
             ->orderBy('average_rating', 'desc')
             ->orderBy('review_count', 'desc')
             ->limit($limit)
             ->get();
-        
+
         return $this->success([
             'data' => ProductResource::collection($products),
         ]);
@@ -103,7 +103,7 @@ class ProductController extends ApiController
             ->whereNotNull('compare_price')
             ->limit(12)
             ->get();
-        
+
         return $this->success([
             'data' => ProductResource::collection($products),
         ]);
@@ -112,7 +112,7 @@ class ProductController extends ApiController
     public function related(Product $product, Request $request): JsonResponse
     {
         $limit = $request->get('limit', 6);
-        
+
         // Get related products by category or brand
         $related = Product::where('status', 'published')
             ->where('id', '!=', $product->id)
@@ -122,7 +122,7 @@ class ProductController extends ApiController
             })
             ->limit($limit)
             ->get();
-        
+
         return $this->success([
             'data' => ProductResource::collection($related),
         ]);

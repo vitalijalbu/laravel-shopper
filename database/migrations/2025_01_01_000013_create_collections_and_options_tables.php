@@ -51,24 +51,24 @@ return new class extends Migration
             $table->index(['site_id', 'status']);
             $table->index(['collection_type', 'status']);
             $table->index(['published_at', 'status']);
-            
+
             // Additional filter indexes
             $table->index('sort_order');
             $table->index('disjunctive');
             $table->index('published_scope');
             $table->index('created_at');
             $table->index('updated_at');
-            
+
             // Composite indexes for common filter combinations
             $table->index(['status', 'collection_type']);
             $table->index(['published_scope', 'status']);
             $table->index(['sort_order', 'status']);
-            
+
             // Full text search (MySQL 5.6+)
             if (config('database.default') === 'mysql') {
                 $table->fullText(['title', 'description']);
             }
-            
+
             $table->foreign('site_id')->references('id')->on('sites')->onDelete('cascade');
         });
 

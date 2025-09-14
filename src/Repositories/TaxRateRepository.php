@@ -416,7 +416,7 @@ class TaxRateRepository extends BaseRepository
             'processed' => $processedCount,
             'total' => count($ids),
             'errors' => $errors,
-            'success' => count($errors) === 0
+            'success' => count($errors) === 0,
         ];
     }
 }

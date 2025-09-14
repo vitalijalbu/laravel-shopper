@@ -13,21 +13,21 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Shopper\Support\HasHandle;
 use Shopper\Support\HasSite;
+use Shopper\Traits\HasCustomFields;
+use Shopper\Traits\HasOptimizedFilters;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
-use Shopper\Traits\HasOptimizedFilters;
-use Shopper\Traits\HasCustomFields;
 
 class Product extends Model implements HasMedia
 {
+    use HasCustomFields;
     use HasFactory;
     use HasHandle;
+    use HasOptimizedFilters;
     use HasSite;
     use InteractsWithMedia;
     use SoftDeletes;
-    use HasOptimizedFilters;
-    use HasCustomFields;
 
     protected $fillable = [
         'site_id',

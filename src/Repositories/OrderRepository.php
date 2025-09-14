@@ -205,8 +205,8 @@ class OrderRepository extends BaseRepository
     public function cancel(int $id): ?Order
     {
         $order = $this->model->find($id);
-        
-        if (!$order || $order->status === 'cancelled' || $order->status === 'delivered') {
+
+        if (! $order || $order->status === 'cancelled' || $order->status === 'delivered') {
             return null;
         }
 
@@ -226,8 +226,8 @@ class OrderRepository extends BaseRepository
     public function markAsPaid(int $id): ?Order
     {
         $order = $this->model->find($id);
-        
-        if (!$order || $order->payment_status === 'paid') {
+
+        if (! $order || $order->payment_status === 'paid') {
             return null;
         }
 
@@ -247,8 +247,8 @@ class OrderRepository extends BaseRepository
     public function markAsShipped(int $id, array $shippingData): ?Order
     {
         $order = $this->model->find($id);
-        
-        if (!$order || in_array($order->status, ['shipped', 'delivered', 'cancelled'])) {
+
+        if (! $order || in_array($order->status, ['shipped', 'delivered', 'cancelled'])) {
             return null;
         }
 
@@ -278,8 +278,8 @@ class OrderRepository extends BaseRepository
     public function markAsDelivered(int $id): ?Order
     {
         $order = $this->model->find($id);
-        
-        if (!$order || in_array($order->status, ['delivered', 'cancelled'])) {
+
+        if (! $order || in_array($order->status, ['delivered', 'cancelled'])) {
             return null;
         }
 
@@ -304,16 +304,16 @@ class OrderRepository extends BaseRepository
             $query = $this->model->newQuery();
 
             // Apply date filters
-            if (!empty($filters['date_from'])) {
+            if (! empty($filters['date_from'])) {
                 $query->where('created_at', '>=', $filters['date_from']);
             }
 
-            if (!empty($filters['date_to'])) {
+            if (! empty($filters['date_to'])) {
                 $query->where('created_at', '<=', $filters['date_to']);
             }
 
             // Apply status filter
-            if (!empty($filters['status'])) {
+            if (! empty($filters['status'])) {
                 $query->where('status', $filters['status']);
             }
 
@@ -403,7 +403,7 @@ class OrderRepository extends BaseRepository
             'processed' => $processedCount,
             'total' => count($ids),
             'errors' => $errors,
-            'success' => count($errors) === 0
+            'success' => count($errors) === 0,
         ];
     }
 

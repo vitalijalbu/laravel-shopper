@@ -8,19 +8,19 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Shopper\Traits\HasCustomFields;
+use Shopper\Traits\HasOptimizedFilters;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
-use Shopper\Traits\HasOptimizedFilters;
-use Shopper\Traits\HasCustomFields;
 
 class Brand extends Model implements HasMedia
 {
+    use HasCustomFields;
     use HasFactory;
+    use HasOptimizedFilters;
     use InteractsWithMedia;
     use SoftDeletes;
-    use HasOptimizedFilters;
-    use HasCustomFields;
 
     protected $fillable = [
         'name',

@@ -20,14 +20,18 @@
         "spatie/laravel-backup": "^9.0",
         "spatie/laravel-medialibrary": "*",
         "spatie/laravel-permission": "^6.21.0",
-        "tightenco/ziggy": "^2.0"
+        "tightenco/ziggy": "^2.0",
+        "zircote/swagger-php": "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.24",
+        "larastan/larastan": "^3.7",
         "laravel/pint": "^1.13",
         "nunomaduro/collision": "^8.8.2",
+        "orchestra/testbench": "^9.0",
         "pestphp/pest": "^4.1.0",
-        "pestphp/pest-plugin-laravel": "^4.0.0"
+        "pestphp/pest-plugin-laravel": "^4.0.0",
+        "phpstan/phpstan": "^2.1"
     },
     "autoload": {
         "psr-4": {
@@ -43,7 +47,7 @@
         }
     },
     "scripts": {
-        "analyse": "vendor/bin/phpstan analyse",
+        "analyse": "./vendor/bin/phpstan analyse --memory-limit=4G",
         "test": "vendor/bin/pest",
         "test-coverage": "vendor/bin/pest --coverage",
         "format": "vendor/bin/pint",

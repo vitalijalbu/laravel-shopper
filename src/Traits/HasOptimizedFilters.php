@@ -3,7 +3,6 @@
 namespace Shopper\Traits;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
@@ -39,8 +38,8 @@ trait HasOptimizedFilters
      */
     protected static function getDefaultEagerLoad(): array
     {
-        return property_exists(static::class, 'defaultEagerLoad') 
-            ? static::$defaultEagerLoad 
+        return property_exists(static::class, 'defaultEagerLoad')
+            ? static::$defaultEagerLoad
             : [];
     }
 
@@ -49,8 +48,8 @@ trait HasOptimizedFilters
      */
     protected static function getFilterableFields(): array
     {
-        return property_exists(static::class, 'filterable') 
-            ? static::$filterable 
+        return property_exists(static::class, 'filterable')
+            ? static::$filterable
             : (new static)->getFillable();
     }
 
@@ -59,8 +58,8 @@ trait HasOptimizedFilters
      */
     protected static function getSortableFields(): array
     {
-        return property_exists(static::class, 'sortable') 
-            ? static::$sortable 
+        return property_exists(static::class, 'sortable')
+            ? static::$sortable
             : ['id', 'created_at', 'updated_at'];
     }
 
@@ -70,7 +69,7 @@ trait HasOptimizedFilters
     public function scopeFilter(Builder $query, array $params = []): Builder
     {
         // 1. Always eager load default relations (N+1 protection)
-        if (!empty(static::getDefaultEagerLoad())) {
+        if (! empty(static::getDefaultEagerLoad())) {
             $query->with(static::getDefaultEagerLoad());
         }
 
@@ -87,7 +86,7 @@ trait HasOptimizedFilters
             }
 
             // Check if field is filterable
-            if (!$this->isFilterable($field)) {
+            if (! $this->isFilterable($field)) {
                 continue;
             }
 
@@ -105,7 +104,7 @@ trait HasOptimizedFilters
         }
 
         // 6. Apply search if present
-        if (isset($params['search']) && !empty($params['search'])) {
+        if (isset($params['search']) && ! empty($params['search'])) {
             $this->applySearch($query, $params['search']);
         }
 
@@ -127,7 +126,7 @@ trait HasOptimizedFilters
             }
         }
 
-        if (!empty($wheres)) {
+        if (! empty($wheres)) {
             $query->whereRaw(implode(' AND ', $wheres), $bindings);
         }
 
@@ -142,12 +141,14 @@ trait HasOptimizedFilters
         // Handle relation filters
         if (str_contains($field, '.')) {
             $this->applyRelationFilter($query, $field, $conditions);
+
             return;
         }
 
         // Simple equality
-        if (!is_array($conditions)) {
+        if (! is_array($conditions)) {
             $query->where($field, $conditions);
+
             return;
         }
 
@@ -166,67 +167,67 @@ trait HasOptimizedFilters
             case 'like':
                 $query->where($field, 'LIKE', "%{$value}%");
                 break;
-            
+
             case 'nlike':
                 $query->where($field, 'NOT LIKE', "%{$value}%");
                 break;
-            
+
             case 'starts':
                 $query->where($field, 'LIKE', "{$value}%");
                 break;
-            
+
             case 'ends':
                 $query->where($field, 'LIKE', "%{$value}");
                 break;
-            
+
             case 'in':
                 $values = is_array($value) ? $value : explode(',', $value);
                 $query->whereIn($field, $values);
                 break;
-            
+
             case 'nin':
                 $values = is_array($value) ? $value : explode(',', $value);
                 $query->whereNotIn($field, $values);
                 break;
-            
+
             case 'between':
                 $values = is_array($value) ? $value : explode(',', $value);
                 if (count($values) >= 2) {
                     $query->whereBetween($field, [$values[0], $values[1]]);
                 }
                 break;
-            
+
             case 'nbetween':
                 $values = is_array($value) ? $value : explode(',', $value);
                 if (count($values) >= 2) {
                     $query->whereNotBetween($field, [$values[0], $values[1]]);
                 }
                 break;
-            
+
             case 'null':
                 $query->whereNull($field);
                 break;
-            
+
             case 'nnull':
                 $query->whereNotNull($field);
                 break;
-            
+
             case 'date':
                 $query->whereDate($field, $value);
                 break;
-            
+
             case 'month':
                 $query->whereMonth($field, $value);
                 break;
-            
+
             case 'year':
                 $query->whereYear($field, $value);
                 break;
-            
+
             default:
                 // Basic operators
                 $sqlOperator = self::$operators[$operator] ?? '=';
-                if (!in_array($sqlOperator, ['NULL', 'NOT_NULL', 'IN', 'NOT_IN', 'BETWEEN', 'NOT_BETWEEN', 'LIKE_START', 'LIKE_END'])) {
+                if (! in_array($sqlOperator, ['NULL', 'NOT_NULL', 'IN', 'NOT_IN', 'BETWEEN', 'NOT_BETWEEN', 'LIKE_START', 'LIKE_END'])) {
                     $query->where($field, $sqlOperator, $value);
                 }
                 break;
@@ -243,7 +244,7 @@ trait HasOptimizedFilters
         $relationField = implode('.', $parts);
 
         $query->whereHas($relation, function ($q) use ($relationField, $conditions) {
-            if (!is_array($conditions)) {
+            if (! is_array($conditions)) {
                 $q->where($relationField, $conditions);
             } else {
                 foreach ($conditions as $operator => $value) {
@@ -262,7 +263,7 @@ trait HasOptimizedFilters
 
         foreach ($sorts as $sortField) {
             $direction = 'asc';
-            
+
             // Check for descending prefix
             if (str_starts_with($sortField, '-')) {
                 $direction = 'desc';
@@ -282,13 +283,13 @@ trait HasOptimizedFilters
     protected function applyIncludes(Builder $query, $includes): void
     {
         $relations = is_array($includes) ? $includes : explode(',', $includes);
-        
+
         // Filter valid relations only
         $validRelations = array_filter($relations, function ($relation) {
             return method_exists($this, Str::camel($relation));
         });
 
-        if (!empty($validRelations)) {
+        if (! empty($validRelations)) {
             $query->with($validRelations);
         }
     }
@@ -298,8 +299,8 @@ trait HasOptimizedFilters
      */
     protected function applySearch(Builder $query, string $search): void
     {
-        $searchable = property_exists(static::class, 'searchable') 
-            ? static::$searchable 
+        $searchable = property_exists(static::class, 'searchable')
+            ? static::$searchable
             : ['name'];
 
         $query->where(function ($q) use ($search, $searchable) {
@@ -315,18 +316,18 @@ trait HasOptimizedFilters
     protected function applyFieldSelection(Builder $query, $fields): void
     {
         $fieldList = is_array($fields) ? $fields : explode(',', $fields);
-        
+
         // Always include ID and foreign keys
-        if (!in_array('id', $fieldList)) {
+        if (! in_array('id', $fieldList)) {
             array_unshift($fieldList, 'id');
         }
 
         // Add foreign keys for eager loaded relations
         foreach (static::getDefaultEagerLoad() as $relation) {
             $relationName = explode(':', $relation)[0];
-            $foreignKey = Str::snake($relationName) . '_id';
-            
-            if (!in_array($foreignKey, $fieldList) && $this->hasColumn($foreignKey)) {
+            $foreignKey = Str::snake($relationName).'_id';
+
+            if (! in_array($foreignKey, $fieldList) && $this->hasColumn($foreignKey)) {
                 $fieldList[] = $foreignKey;
             }
         }
@@ -340,8 +341,8 @@ trait HasOptimizedFilters
     protected function isSpecialParameter(string $field): bool
     {
         return in_array($field, [
-            'page', 'per_page', 'sort', 'order', 
-            'include', 'fields', 'search', 'limit'
+            'page', 'per_page', 'sort', 'order',
+            'include', 'fields', 'search', 'limit',
         ]);
     }
 
@@ -373,7 +374,7 @@ trait HasOptimizedFilters
     {
         $perPage = $perPage ?? $params['per_page'] ?? config('shopper.filters.pagination.default', 15);
         $maxPerPage = config('shopper.filters.pagination.max', 100);
-        
+
         $perPage = min($perPage, $maxPerPage);
 
         return $query->filter($params)

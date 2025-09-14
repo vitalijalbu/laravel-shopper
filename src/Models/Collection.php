@@ -15,11 +15,11 @@ use Shopper\Traits\HasCustomFields;
 
 class Collection extends Model
 {
+    use HasCustomFields;
     use HasFactory;
     use HasHandle;
     use HasSite;
     use SoftDeletes;
-    use HasCustomFields;
 
     protected $fillable = [
         'site_id',

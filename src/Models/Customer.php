@@ -13,16 +13,16 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Shopper\Traits\HasOptimizedFilters;
 use Shopper\Traits\HasCustomFields;
+use Shopper\Traits\HasOptimizedFilters;
 
 class Customer extends Authenticatable
 {
+    use HasCustomFields;
     use HasFactory;
+    use HasOptimizedFilters;
     use Notifiable;
     use SoftDeletes;
-    use HasOptimizedFilters;
-    use HasCustomFields;
 
     protected $fillable = [
         'first_name',

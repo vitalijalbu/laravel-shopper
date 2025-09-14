@@ -22,7 +22,7 @@ class CurrencyRepository extends BaseRepository
     {
         $query = $this->model->newQuery();
 
-        if (!empty($filters['search'])) {
+        if (! empty($filters['search'])) {
             $search = $filters['search'];
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
@@ -55,7 +55,7 @@ class CurrencyRepository extends BaseRepository
     public function setAsDefault(int $id): Currency
     {
         $this->model->where('is_default', true)->update(['is_default' => false]);
-        
+
         $currency = $this->findOrFail($id);
         $currency->update(['is_default' => true]);
 
@@ -68,7 +68,7 @@ class CurrencyRepository extends BaseRepository
     {
         // Mock conversion - in real app you'd use an API
         $rate = 1.0; // This should come from external API
-        
+
         return [
             'from' => $from,
             'to' => $to,

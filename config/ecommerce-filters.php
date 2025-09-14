@@ -33,7 +33,7 @@ return [
             'eq', 'ne', 'gt', 'gte', 'lt', 'lte',
             'like', 'nlike', 'starts', 'ends',
             'in', 'nin', 'between', 'nbetween',
-            'null', 'nnull', 'date', 'month', 'year'
+            'null', 'nnull', 'date', 'month', 'year',
         ],
     ],
 
@@ -51,7 +51,7 @@ return [
             'filterable' => ['price', 'category_id', 'brand_id', 'status'],
             'sortable' => ['name', 'price', 'created_at', 'stock'],
         ],
-        
+
         'orders' => [
             'per_page' => 25,
             'max_per_page' => 50,
@@ -60,7 +60,7 @@ return [
             'filterable' => ['status', 'total', 'user_id'],
             'sortable' => ['created_at', 'total', 'status'],
         ],
-        
+
         'customers' => [
             'per_page' => 30,
             'max_per_page' => 100,

@@ -22,7 +22,7 @@ final class CollectionRepository extends BaseRepository
         $query = $this->model->newQuery()->with(['products']);
 
         // Search filter
-        if (!empty($filters['search'])) {
+        if (! empty($filters['search'])) {
             $search = $filters['search'];
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
@@ -55,8 +55,8 @@ final class CollectionRepository extends BaseRepository
     public function getProducts(int $collectionId, int $perPage = 25): LengthAwarePaginator
     {
         $collection = $this->model->find($collectionId);
-        
-        if (!$collection) {
+
+        if (! $collection) {
             return new LengthAwarePaginator([], 0, $perPage);
         }
 
@@ -66,19 +66,19 @@ final class CollectionRepository extends BaseRepository
     public function addProducts(int $collectionId, array $productIds): array
     {
         $collection = $this->model->find($collectionId);
-        
-        if (!$collection) {
+
+        if (! $collection) {
             return ['success' => false, 'message' => 'Collection not found'];
         }
 
         try {
             $collection->products()->syncWithoutDetaching($productIds);
             $this->clearCache();
-            
+
             return [
                 'success' => true,
                 'message' => 'Products added successfully',
-                'added_count' => count($productIds)
+                'added_count' => count($productIds),
             ];
         } catch (\Exception $e) {
             return ['success' => false, 'message' => $e->getMessage()];
@@ -88,19 +88,19 @@ final class CollectionRepository extends BaseRepository
     public function removeProducts(int $collectionId, array $productIds): array
     {
         $collection = $this->model->find($collectionId);
-        
-        if (!$collection) {
+
+        if (! $collection) {
             return ['success' => false, 'message' => 'Collection not found'];
         }
 
         try {
             $collection->products()->detach($productIds);
             $this->clearCache();
-            
+
             return [
                 'success' => true,
                 'message' => 'Products removed successfully',
-                'removed_count' => count($productIds)
+                'removed_count' => count($productIds),
             ];
         } catch (\Exception $e) {
             return ['success' => false, 'message' => $e->getMessage()];
@@ -145,7 +145,7 @@ final class CollectionRepository extends BaseRepository
             'processed' => $processedCount,
             'total' => count($ids),
             'errors' => $errors,
-            'success' => count($errors) === 0
+            'success' => count($errors) === 0,
         ];
     }
 
@@ -166,7 +166,7 @@ final class CollectionRepository extends BaseRepository
             'is_visible',
             'sort_order',
             'created_at',
-            'updated_at'
+            'updated_at',
         ];
     }
 

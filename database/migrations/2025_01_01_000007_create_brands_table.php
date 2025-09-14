@@ -21,12 +21,12 @@ return new class extends Migration
 
             // Custom fields data (JSON schema-based)
             $table->jsonb('data')->nullable()->comment('Custom fields data based on JSON schema');
-            
+
             // Additional filter indexes
             $table->index('name');
             $table->index('created_at');
             $table->index('updated_at');
-            
+
             // Full text search (MySQL 5.6+)
             if (config('database.default') === 'mysql') {
                 $table->fullText(['name', 'description']);

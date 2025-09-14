@@ -25,41 +25,8 @@ class CurrencyController extends ApiController
         
         return $this->paginatedResponse($currencies);
     }
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                    ->orWhere('code', 'like', "%{$search}%")
-                    ->orWhere('symbol', 'like', "%{$search}%");
-            });
-        }
-
-        // Default filter
-        if ($request->has('is_default')) {
-            $query->where('is_default', $request->boolean('is_default'));
-        }
-
-        $perPage = $request->get('per_page', 25);
-        $currencies = $query->orderBy('is_default', 'desc')
-            ->orderBy('code')
-            ->paginate($perPage);
-
-        return response()->json([
-            'data' => $currencies->items(),
-            'meta' => [
-                'current_page' => $currencies->currentPage(),
-                'last_page' => $currencies->lastPage(),
-                'per_page' => $currencies->perPage(),
-                'total' => $currencies->total(),
-                'from' => $currencies->firstItem(),
-                'to' => $currencies->lastItem(),
-            ],
-            'links' => [
-                'first' => $currencies->url(1),
-                'last' => $currencies->url($currencies->lastPage()),
-                'prev' => $currencies->previousPageUrl(),
-                'next' => $currencies->nextPageUrl(),
-            ],
-        ]);
-    }
+           
+    
 
     /**
      * Store a newly created currency

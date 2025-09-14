@@ -6,7 +6,6 @@ namespace Shopper\Http\Controllers\Api;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Shopper\Http\Controllers\Controller;
 use Shopper\Http\Requests\DiscountRequest;
 use Shopper\Models\Discount;
 use Shopper\Services\DiscountService;
@@ -16,6 +15,7 @@ class DiscountController extends ApiController
     public function __construct(
         private readonly DiscountService $discountService
     ) {}
+
     public function __construct(
         protected DiscountService $discountService
     ) {}

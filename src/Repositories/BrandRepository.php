@@ -111,12 +111,12 @@ class BrandRepository extends BaseRepository
     {
         $brand = $this->find($id);
 
-        if (!$brand) {
+        if (! $brand) {
             return false;
         }
 
         // Check if brand has products
-        return !$brand->products()->exists();
+        return ! $brand->products()->exists();
     }
 
     /**

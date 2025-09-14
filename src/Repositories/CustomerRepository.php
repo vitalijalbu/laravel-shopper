@@ -303,24 +303,24 @@ class CustomerRepository extends BaseRepository
     public function getOrders(int $customerId, array $filters = [], int $perPage = 25): LengthAwarePaginator
     {
         $customer = $this->model->find($customerId);
-        
-        if (!$customer) {
+
+        if (! $customer) {
             return new LengthAwarePaginator([], 0, $perPage);
         }
 
         $query = $customer->orders()->with(['items', 'payments', 'shippingAddress']);
 
         // Status filter
-        if (!empty($filters['status'])) {
+        if (! empty($filters['status'])) {
             $query->where('status', $filters['status']);
         }
 
         // Date range filter
-        if (!empty($filters['date_from'])) {
+        if (! empty($filters['date_from'])) {
             $query->where('created_at', '>=', $filters['date_from']);
         }
 
-        if (!empty($filters['date_to'])) {
+        if (! empty($filters['date_to'])) {
             $query->where('created_at', '<=', $filters['date_to']);
         }
 
@@ -341,6 +341,7 @@ class CustomerRepository extends BaseRepository
 
         return \Illuminate\Support\Facades\Cache::remember($cacheKey, $this->cacheTtl, function () use ($customerId) {
             $customer = $this->model->find($customerId);
+
             return $customer ? $customer->addresses : collect();
         });
     }
@@ -351,8 +352,8 @@ class CustomerRepository extends BaseRepository
     public function addAddress(int $customerId, array $addressData): ?Model
     {
         $customer = $this->model->find($customerId);
-        
-        if (!$customer) {
+
+        if (! $customer) {
             return null;
         }
 
@@ -377,8 +378,8 @@ class CustomerRepository extends BaseRepository
 
         return \Illuminate\Support\Facades\Cache::remember($cacheKey, $this->cacheTtl, function () use ($customerId) {
             $customer = $this->model->with(['orders'])->find($customerId);
-            
-            if (!$customer) {
+
+            if (! $customer) {
                 return [];
             }
 
@@ -455,7 +456,7 @@ class CustomerRepository extends BaseRepository
             'processed' => $processedCount,
             'total' => count($ids),
             'errors' => $errors,
-            'success' => count($errors) === 0
+            'success' => count($errors) === 0,
         ];
     }
 

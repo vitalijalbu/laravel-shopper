@@ -5,7 +5,6 @@ namespace Shopper\Http\Controllers\Api;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Shopper\Http\Controllers\Controller;
 use Shopper\Http\Requests\Api\AssignPermissionRequest;
 use Shopper\Http\Requests\Api\AssignRoleRequest;
 use Shopper\Models\User;

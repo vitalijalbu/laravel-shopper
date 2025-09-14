@@ -9,15 +9,15 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Shopper\Traits\HasOptimizedFilters;
 use Shopper\Traits\HasCustomFields;
+use Shopper\Traits\HasOptimizedFilters;
 
 class Order extends Model
 {
-    use HasFactory;
-    use SoftDeletes;
-    use HasOptimizedFilters;
     use HasCustomFields;
+    use HasFactory;
+    use HasOptimizedFilters;
+    use SoftDeletes;
 
     protected $fillable = [
         'order_number',

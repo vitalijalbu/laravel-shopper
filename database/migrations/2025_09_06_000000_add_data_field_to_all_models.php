@@ -8,10 +8,10 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
-     * 
+     *
      * Adds a `data` JSONB field to all custom models for dynamic field management.
      * This implements a Statamic-like system where custom fields are defined via JSON schemas
-     * and stored in the `data` column, allowing flexible content management without 
+     * and stored in the `data` column, allowing flexible content management without
      * database schema changes.
      */
     public function up(): void
@@ -19,7 +19,7 @@ return new class extends Migration
         // Core business entities
         $tables = [
             'products',
-            'product_variants', 
+            'product_variants',
             'customers',
             'orders',
             'order_lines',
@@ -52,7 +52,7 @@ return new class extends Migration
             'app_installations',
             'app_reviews',
             'stock_notifications',
-            'customer_groups'
+            'customer_groups',
         ];
 
         foreach ($tables as $table) {
@@ -61,7 +61,7 @@ return new class extends Migration
                     // Add JSONB field for custom data
                     // This will store schema-defined custom fields as JSON
                     $table->jsonb('data')->nullable()->comment('Custom fields data based on JSON schema');
-                    
+
                     // Add index for better query performance on data field
                     if (config('database.default') === 'pgsql') {
                         // PostgreSQL specific JSONB index
@@ -82,7 +82,7 @@ return new class extends Migration
     {
         $tables = [
             'products',
-            'product_variants', 
+            'product_variants',
             'customers',
             'orders',
             'order_lines',
@@ -115,7 +115,7 @@ return new class extends Migration
             'app_installations',
             'app_reviews',
             'stock_notifications',
-            'customer_groups'
+            'customer_groups',
         ];
 
         foreach ($tables as $table) {

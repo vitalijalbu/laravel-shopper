@@ -11,8 +11,11 @@ use Shopper\Services\FilterService;
 class UnifiedResourceController extends ApiController
 {
     protected FilterService $filterService;
+
     protected string $modelClass;
+
     protected string $resourceClass;
+
     protected array $relationships = [];
 
     public function __construct(FilterService $filterService)
@@ -26,19 +29,19 @@ class UnifiedResourceController extends ApiController
     public function index(Request $request): JsonResponse
     {
         $this->validateModelClass();
-        
+
         // Parse filter parameters
         $params = $this->filterService->parseRequest($request->all());
-        
+
         // Get model configuration
         $config = $this->filterService->getModelConfig($this->modelClass);
-        
+
         // Apply filters and pagination
         $query = $this->modelClass::query();
-        
+
         // Apply any pre-filters (like active status)
         $this->applyPreFilters($query, $request);
-        
+
         $results = $query->paginateFilter($params, $config['per_page']);
 
         return $this->success([
@@ -67,9 +70,9 @@ class UnifiedResourceController extends ApiController
     public function show(Request $request, int $id): JsonResponse
     {
         $this->validateModelClass();
-        
+
         $model = $this->modelClass::with($this->relationships)->findOrFail($id);
-        
+
         return $this->success([
             'data' => $this->transformSingle($model),
         ]);
@@ -89,7 +92,7 @@ class UnifiedResourceController extends ApiController
 
         $query = $this->modelClass::query();
         $this->applyPreFilters($query, $request);
-        
+
         $results = $query->paginateFilter($params);
 
         return $this->success([
@@ -107,12 +110,12 @@ class UnifiedResourceController extends ApiController
     public function stats(Request $request): JsonResponse
     {
         $this->validateModelClass();
-        
-        $cacheKey = "stats_" . strtolower(class_basename($this->modelClass));
-        
+
+        $cacheKey = 'stats_'.strtolower(class_basename($this->modelClass));
+
         $stats = Cache::remember($cacheKey, 300, function () {
             $model = new $this->modelClass;
-            
+
             $baseStats = [
                 'total' => $model->count(),
                 'recent' => $model->where('created_at', '>=', now()->subDays(7))->count(),
@@ -137,20 +140,20 @@ class UnifiedResourceController extends ApiController
         ]);
 
         $this->validateModelClass();
-        
+
         $count = 0;
-        
+
         switch ($request->action) {
             case 'delete':
                 $count = $this->modelClass::whereIn('id', $request->ids)->delete();
                 break;
-                
+
             case 'activate':
             case 'enable':
                 $count = $this->modelClass::whereIn('id', $request->ids)
                     ->update(['is_enabled' => true]);
                 break;
-                
+
             case 'deactivate':
             case 'disable':
                 $count = $this->modelClass::whereIn('id', $request->ids)
@@ -182,7 +185,7 @@ class UnifiedResourceController extends ApiController
 
         $query = $this->modelClass::query();
         $this->applyPreFilters($query, $request);
-        
+
         $results = $query->filter($params)->limit($limit)->get();
 
         // In a real implementation, you'd generate the file and return a download URL
@@ -210,7 +213,7 @@ class UnifiedResourceController extends ApiController
         if ($this->resourceClass && class_exists($this->resourceClass)) {
             return $this->resourceClass::collection($items)->toArray(request());
         }
-        
+
         return $items->toArray();
     }
 
@@ -222,7 +225,7 @@ class UnifiedResourceController extends ApiController
         if ($this->resourceClass && class_exists($this->resourceClass)) {
             return (new $this->resourceClass($model))->toArray(request());
         }
-        
+
         return $model->toArray();
     }
 
@@ -232,17 +235,17 @@ class UnifiedResourceController extends ApiController
     protected function getModelSpecificStats($model): array
     {
         $stats = [];
-        
+
         // Check for common model patterns
         if (method_exists($model, 'scopeEnabled') || isset($model->is_enabled)) {
             $stats['enabled'] = $model->where('is_enabled', true)->count();
             $stats['disabled'] = $model->where('is_enabled', false)->count();
         }
-        
+
         if (method_exists($model, 'scopeActive') || isset($model->status)) {
             $stats['active'] = $model->where('status', 'active')->count();
         }
-        
+
         return $stats;
     }
 
@@ -251,11 +254,11 @@ class UnifiedResourceController extends ApiController
      */
     protected function validateModelClass(): void
     {
-        if (!$this->modelClass) {
+        if (! $this->modelClass) {
             throw new \InvalidArgumentException('Model class must be defined in controller');
         }
-        
-        if (!class_exists($this->modelClass)) {
+
+        if (! class_exists($this->modelClass)) {
             throw new \InvalidArgumentException("Model class {$this->modelClass} does not exist");
         }
     }

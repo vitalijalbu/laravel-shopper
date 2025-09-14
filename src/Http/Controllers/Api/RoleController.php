@@ -4,7 +4,6 @@ namespace Shopper\Http\Controllers\Api;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Shopper\Http\Controllers\Controller;
 use Shopper\Http\Requests\Api\RoleRequest;
 use Shopper\Traits\ApiResponseTrait;
 use Spatie\Permission\Models\Permission;

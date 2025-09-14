@@ -13,9 +13,9 @@ use Shopper\Traits\HasCustomFields;
 
 class ProductVariant extends Model
 {
+    use HasCustomFields;
     use HasFactory;
     use SoftDeletes;
-    use HasCustomFields;
 
     protected $fillable = [
         'product_id',

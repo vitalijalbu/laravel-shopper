@@ -259,7 +259,7 @@ return [
                 'eq', 'ne', 'gt', 'gte', 'lt', 'lte',
                 'like', 'nlike', 'starts', 'ends',
                 'in', 'nin', 'between', 'nbetween',
-                'null', 'nnull', 'date', 'month', 'year'
+                'null', 'nnull', 'date', 'month', 'year',
             ],
         ],
 
@@ -279,16 +279,16 @@ return [
                     'brand_id', 'product_type_id', 'status', 'is_featured',
                     'is_physical', 'is_digital', 'requires_shipping',
                     'track_quantity', 'allow_out_of_stock_purchases',
-                    'stock_status', 'weight', 'published_at'
+                    'stock_status', 'weight', 'published_at',
                 ],
                 'sortable' => [
                     'name', 'price', 'compare_price', 'cost_price',
                     'stock_quantity', 'weight', 'is_featured', 'status',
                     'published_at', 'created_at', 'updated_at',
-                    'average_rating', 'review_count'
+                    'average_rating', 'review_count',
                 ],
             ],
-            
+
             'order' => [
                 'per_page' => 25,
                 'max_per_page' => 50,
@@ -297,15 +297,15 @@ return [
                 'filterable' => [
                     'status', 'payment_status', 'fulfillment_status',
                     'total', 'subtotal', 'tax_total', 'shipping_total',
-                    'customer_id', 'currency_id', 'shipped_at', 'delivered_at'
+                    'customer_id', 'currency_id', 'shipped_at', 'delivered_at',
                 ],
                 'sortable' => [
                     'order_number', 'total', 'subtotal', 'status',
                     'payment_status', 'fulfillment_status', 'created_at',
-                    'shipped_at', 'delivered_at'
+                    'shipped_at', 'delivered_at',
                 ],
             ],
-            
+
             'customer' => [
                 'per_page' => 30,
                 'max_per_page' => 100,
@@ -313,11 +313,11 @@ return [
                 'searchable' => ['first_name', 'last_name', 'email', 'phone'],
                 'filterable' => [
                     'is_enabled', 'gender', 'date_of_birth',
-                    'email_verified_at', 'last_login_at'
+                    'email_verified_at', 'last_login_at',
                 ],
                 'sortable' => [
                     'first_name', 'last_name', 'email', 'created_at',
-                    'last_login_at', 'is_enabled'
+                    'last_login_at', 'is_enabled',
                 ],
             ],
 

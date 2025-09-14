@@ -99,7 +99,7 @@ class ChannelRepository extends BaseRepository
     {
         // Remove default from all channels
         $this->model->where('is_default', true)->update(['is_default' => false]);
-        
+
         // Set new default
         $channel = $this->findOrFail($id);
         $channel->update(['is_default' => true]);
@@ -116,7 +116,7 @@ class ChannelRepository extends BaseRepository
     {
         $channel = $this->find($id);
 
-        if (!$channel) {
+        if (! $channel) {
             return false;
         }
 
@@ -126,7 +126,7 @@ class ChannelRepository extends BaseRepository
         }
 
         // Check if channel has products or orders
-        return !$channel->products()->exists() && !$channel->orders()->exists();
+        return ! $channel->products()->exists() && ! $channel->orders()->exists();
     }
 
     /**
