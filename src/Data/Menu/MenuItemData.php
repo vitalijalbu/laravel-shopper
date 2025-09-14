@@ -2,9 +2,7 @@
 
 namespace Shopper\Data\Menu;
 
-use Spatie\LaravelData\Data;
-
-class MenuItemData extends Data
+class MenuItemData
 {
     public function __construct(
         public ?int $id,
@@ -43,5 +41,47 @@ class MenuItemData extends Data
             depth: $item->depth,
             children: $item->children->map(fn ($child) => self::fromModel($child))->toArray(),
         );
+    }
+
+    public static function fromRequest(array $data): self
+    {
+        return new self(
+            id: $data['id'] ?? null,
+            menu_id: (int) ($data['menu_id'] ?? 0),
+            parent_id: $data['parent_id'] ?? null,
+            title: $data['title'] ?? '',
+            url: $data['url'] ?? null,
+            type: $data['type'] ?? 'link',
+            reference_type: $data['reference_type'] ?? null,
+            reference_id: $data['reference_id'] ?? null,
+            data: $data['data'] ?? [],
+            status: $data['status'] ?? 'active',
+            opens_in_new_window: (bool) ($data['opens_in_new_window'] ?? false),
+            css_class: $data['css_class'] ?? null,
+            sort_order: (int) ($data['sort_order'] ?? 0),
+            depth: (int) ($data['depth'] ?? 0),
+            children: $data['children'] ?? [],
+        );
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'menu_id' => $this->menu_id,
+            'parent_id' => $this->parent_id,
+            'title' => $this->title,
+            'url' => $this->url,
+            'type' => $this->type,
+            'reference_type' => $this->reference_type,
+            'reference_id' => $this->reference_id,
+            'data' => $this->data,
+            'status' => $this->status,
+            'opens_in_new_window' => $this->opens_in_new_window,
+            'css_class' => $this->css_class,
+            'sort_order' => $this->sort_order,
+            'depth' => $this->depth,
+            'children' => $this->children,
+        ];
     }
 }

@@ -2,9 +2,7 @@
 
 namespace Shopper\Data\Menu;
 
-use Spatie\LaravelData\Data;
-
-class MenuData extends Data
+class MenuData
 {
     public function __construct(
         public ?int $id,
@@ -29,5 +27,33 @@ class MenuData extends Data
             sort_order: $menu->sort_order,
             items: $menu->getTree(),
         );
+    }
+
+    public static function fromRequest(array $data): self
+    {
+        return new self(
+            id: $data['id'] ?? null,
+            handle: $data['handle'] ?? '',
+            title: $data['title'] ?? '',
+            description: $data['description'] ?? null,
+            settings: $data['settings'] ?? [],
+            is_active: (bool) ($data['is_active'] ?? true),
+            sort_order: (int) ($data['sort_order'] ?? 0),
+            items: $data['items'] ?? [],
+        );
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'handle' => $this->handle,
+            'title' => $this->title,
+            'description' => $this->description,
+            'settings' => $this->settings,
+            'is_active' => $this->is_active,
+            'sort_order' => $this->sort_order,
+            'items' => $this->items,
+        ];
     }
 }

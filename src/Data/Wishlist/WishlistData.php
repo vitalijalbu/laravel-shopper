@@ -3,9 +3,8 @@
 namespace Shopper\Data\Wishlist;
 
 use Shopper\Models\Wishlist;
-use Spatie\LaravelData\Data;
 
-class WishlistData extends Data
+class WishlistData
 {
     public function __construct(
         public int $id,
@@ -56,5 +55,41 @@ class WishlistData extends Data
                     ] : null,
                 ])->toArray() : null,
         );
+    }
+
+    public static function fromRequest(array $data): self
+    {
+        return new self(
+            id: $data['id'] ?? 0,
+            customer_id: (int) ($data['customer_id'] ?? 0),
+            name: $data['name'] ?? '',
+            description: $data['description'] ?? null,
+            status: $data['status'] ?? 'active',
+            is_shared: (bool) ($data['is_shared'] ?? false),
+            share_token: $data['share_token'] ?? null,
+            items_count: (int) ($data['items_count'] ?? 0),
+            created_at: $data['created_at'] ?? now()->toISOString(),
+            updated_at: $data['updated_at'] ?? now()->toISOString(),
+            customer: $data['customer'] ?? null,
+            items: $data['items'] ?? null,
+        );
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'customer_id' => $this->customer_id,
+            'name' => $this->name,
+            'description' => $this->description,
+            'status' => $this->status,
+            'is_shared' => $this->is_shared,
+            'share_token' => $this->share_token,
+            'items_count' => $this->items_count,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
+            'customer' => $this->customer,
+            'items' => $this->items,
+        ];
     }
 }

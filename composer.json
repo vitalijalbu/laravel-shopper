@@ -14,11 +14,10 @@
         "inertiajs/inertia-laravel": "^2.0.6",
         "laravel/sanctum": "^4.2.0",
         "laravel/socialite": "^5.23",
-        "league/csv": "^9.16",
+        "league/csv": "^9.25.0",
         "pusher/pusher-php-server": "^7.0",
         "spatie/laravel-activitylog": "^4.0",
         "spatie/laravel-backup": "^9.0",
-        "spatie/laravel-data": "^4.0",
         "spatie/laravel-medialibrary": "*",
         "spatie/laravel-permission": "^6.21.0",
         "tightenco/ziggy": "^2.0"
@@ -27,7 +26,7 @@
         "fakerphp/faker": "^1.24",
         "laravel/pint": "^1.13",
         "nunomaduro/collision": "^8.8.2",
-        "pestphp/pest": "^4.0.4",
+        "pestphp/pest": "^4.1.0",
         "pestphp/pest-plugin-laravel": "^4.0.0"
     },
     "autoload": {
