@@ -20,9 +20,9 @@ class CountryController extends ApiController
     {
         $filters = $request->only(['search', 'is_active']);
         $perPage = $request->get('per_page', 50);
-        
+
         $countries = $this->countryRepository->getPaginatedWithFilters($filters, $perPage);
-        
+
         return $this->paginatedResponse($countries);
     }
 
@@ -32,8 +32,8 @@ class CountryController extends ApiController
     public function enabled(): JsonResponse
     {
         $countries = $this->countryRepository->getEnabled();
-        
-        return $this->successResponse($countries->map(fn($country) => [
+
+        return $this->successResponse($countries->map(fn ($country) => [
             'code' => $country->code,
             'name' => $country->name,
         ]));
@@ -45,7 +45,7 @@ class CountryController extends ApiController
     public function byRegion(): JsonResponse
     {
         $countries = $this->countryRepository->getByRegion();
-        
+
         return $this->successResponse($countries);
     }
 
@@ -55,7 +55,7 @@ class CountryController extends ApiController
     public function regions(): JsonResponse
     {
         $regions = $this->countryRepository->getRegions();
-        
+
         return $this->successResponse($regions);
     }
 
@@ -66,10 +66,10 @@ class CountryController extends ApiController
     {
         $search = $request->get('q', '');
         $limit = $request->get('limit', 10);
-        
+
         $filters = ['search' => $search, 'is_active' => true];
         $countries = $this->countryRepository->getPaginatedWithFilters($filters, $limit);
-        
+
         return $this->successResponse($countries->items());
     }
 

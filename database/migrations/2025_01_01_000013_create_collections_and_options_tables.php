@@ -8,41 +8,29 @@ return new class extends Migration
 {
     public function up(): void
     {
-        // Collections (Shopify-style product groupings)
         Schema::create('collections', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('site_id')->nullable()->index();
-
-            // Basic Information
+            $table->unsignedBigInteger('channel_id')->index();
             $table->string('title')->index();
             $table->string('slug')->index();
-            $table->string('handle')->nullable()->index(); // Shopify handle
+            $table->string('handle')->nullable()->index();
             $table->text('description')->nullable();
             $table->text('body_html')->nullable();
-
-            // Collection Settings
-            $table->string('collection_type')->default('manual')->index(); // manual, smart
-            $table->jsonb('rules')->nullable(); // Smart collection rules
-            $table->string('sort_order')->default('manual')->index(); // manual, best_selling, created, price_asc, price_desc
-            $table->boolean('disjunctive')->default(false); // AND vs OR for smart collections
-
-            // SEO
+            $table->string('collection_type')->default('manual')->index();
+            $table->jsonb('rules')->nullable();
+            $table->string('sort_order')->default('manual')->index();
+            $table->boolean('disjunctive')->default(false);
             $table->string('meta_title')->nullable();
             $table->text('meta_description')->nullable();
             $table->jsonb('seo')->nullable();
-
-            // Publishing
             $table->string('status')->default('draft')->index();
             $table->timestamp('published_at')->nullable()->index();
-            $table->string('published_scope')->default('web')->index(); // web, global
-
-            // Shopify Template
+            $table->string('published_scope')->default('web')->index();
             $table->string('template_suffix')->nullable();
 
             $table->timestamps();
             $table->softDeletes();
-
-            // Custom fields data (JSON schema-based)
             $table->jsonb('data')->nullable()->comment('Custom fields data based on JSON schema');
 
             // Indexes

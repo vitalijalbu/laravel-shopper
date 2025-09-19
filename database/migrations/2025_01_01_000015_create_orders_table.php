@@ -14,7 +14,7 @@ return new class extends Migration
             $table->string('order_number');
             $table->foreignId('customer_id')->nullable()->constrained()->nullOnDelete();
             $table->string('customer_email')->index();
-            $table->jsonb('customer_details'); // name, phone, etc.
+            $table->jsonb('customer_details');
             $table->foreignId('currency_id')->constrained();
             $table->decimal('subtotal', 15, 2);
             $table->decimal('tax_total', 15, 2)->default(0);
@@ -36,7 +36,6 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
 
-            // Custom fields data (JSON schema-based)
             $table->jsonb('data')->nullable()->comment('Custom fields data based on JSON schema');
 
             $table->unique(['order_number', 'site_id']);
@@ -47,14 +46,12 @@ return new class extends Migration
             $table->index(['created_at', 'status']);
             $table->index(['total', 'status']);
 
-            // Additional filter indexes
             $table->index('subtotal');
             $table->index('tax_total');
             $table->index('shipping_total');
             $table->index('discount_total');
             $table->index('updated_at');
 
-            // Composite indexes for common filter combinations
             $table->index(['status', 'created_at']);
             $table->index(['payment_status', 'status']);
             $table->index(['fulfillment_status', 'status']);

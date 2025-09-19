@@ -13,7 +13,7 @@ return new class extends Migration
             $table->string('handle')->unique();
             $table->string('title');
             $table->text('description')->nullable();
-            $table->json('settings')->nullable(); // max_depth, collections, etc.
+            $table->json('settings')->nullable();
             $table->boolean('is_active')->default(true);
             $table->integer('sort_order')->default(0);
             $table->timestamps();

@@ -20,13 +20,11 @@ class CurrencyController extends ApiController
     {
         $filters = $request->only(['search', 'is_enabled']);
         $perPage = $request->get('per_page', 25);
-        
+
         $currencies = $this->currencyRepository->getPaginatedWithFilters($filters, $perPage);
-        
+
         return $this->paginatedResponse($currencies);
     }
-           
-    
 
     /**
      * Store a newly created currency

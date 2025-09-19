@@ -23,9 +23,9 @@ class ChannelController extends ApiController
     {
         $filters = $request->only(['search', 'is_default', 'is_active']);
         $perPage = $request->get('per_page', 25);
-        
+
         $channels = $this->channelRepository->getPaginatedWithFilters($filters, $perPage);
-        
+
         return $this->paginatedResponse($channels);
     }
 
@@ -36,10 +36,10 @@ class ChannelController extends ApiController
     {
         try {
             $channel = $this->channelRepository->create($request->validated());
-            
+
             return $this->created(new ChannelResource($channel), 'Channel creato con successo');
         } catch (\Exception $e) {
-            return $this->errorResponse('Errore nella creazione del channel: ' . $e->getMessage());
+            return $this->errorResponse('Errore nella creazione del channel: '.$e->getMessage());
         }
     }
 
@@ -58,10 +58,10 @@ class ChannelController extends ApiController
     {
         try {
             $updatedChannel = $this->channelRepository->update($channel->id, $request->validated());
-            
+
             return $this->successResponse(new ChannelResource($updatedChannel), 'Channel aggiornato con successo');
         } catch (\Exception $e) {
-            return $this->errorResponse('Errore nell\'aggiornamento del channel: ' . $e->getMessage());
+            return $this->errorResponse('Errore nell\'aggiornamento del channel: '.$e->getMessage());
         }
     }
 
@@ -71,15 +71,15 @@ class ChannelController extends ApiController
     public function destroy(Channel $channel): JsonResponse
     {
         try {
-            if (!$this->channelRepository->canDelete($channel->id)) {
+            if (! $this->channelRepository->canDelete($channel->id)) {
                 return $this->errorResponse('Impossibile eliminare il channel: è quello di default o ha prodotti/ordini associati', 422);
             }
 
             $this->channelRepository->delete($channel->id);
-            
+
             return $this->successResponse(null, 'Channel eliminato con successo');
         } catch (\Exception $e) {
-            return $this->errorResponse('Errore nell\'eliminazione del channel: ' . $e->getMessage());
+            return $this->errorResponse('Errore nell\'eliminazione del channel: '.$e->getMessage());
         }
     }
 
@@ -90,10 +90,10 @@ class ChannelController extends ApiController
     {
         try {
             $updatedChannel = $this->channelRepository->toggleStatus($channel->id);
-            
+
             return $this->successResponse(new ChannelResource($updatedChannel), 'Stato del channel aggiornato');
         } catch (\Exception $e) {
-            return $this->errorResponse('Errore nel cambio stato: ' . $e->getMessage());
+            return $this->errorResponse('Errore nel cambio stato: '.$e->getMessage());
         }
     }
 
@@ -104,10 +104,10 @@ class ChannelController extends ApiController
     {
         try {
             $updatedChannel = $this->channelRepository->setAsDefault($channel->id);
-            
+
             return $this->successResponse(new ChannelResource($updatedChannel), 'Channel impostato come default');
         } catch (\Exception $e) {
-            return $this->errorResponse('Errore nell\'impostazione default: ' . $e->getMessage());
+            return $this->errorResponse('Errore nell\'impostazione default: '.$e->getMessage());
         }
     }
 
@@ -117,8 +117,8 @@ class ChannelController extends ApiController
     public function select(): JsonResponse
     {
         $channels = $this->channelRepository->getActive();
-        
-        return $this->successResponse($channels->map(fn($channel) => [
+
+        return $this->successResponse($channels->map(fn ($channel) => [
             'id' => $channel->id,
             'name' => $channel->name,
             'slug' => $channel->slug,
@@ -141,16 +141,18 @@ class ChannelController extends ApiController
             switch ($action) {
                 case 'activate':
                     $count = $this->channelRepository->bulkUpdateStatus($ids, true);
+
                     return $this->bulkActionResponse('attivazione', $count);
 
                 case 'deactivate':
                     $count = $this->channelRepository->bulkUpdateStatus($ids, false);
+
                     return $this->bulkActionResponse('disattivazione', $count);
 
                 case 'delete':
                     $errors = [];
                     $deleted = 0;
-                    
+
                     foreach ($ids as $id) {
                         if ($this->channelRepository->canDelete($id)) {
                             $this->channelRepository->delete($id);
@@ -159,14 +161,14 @@ class ChannelController extends ApiController
                             $errors[] = "Channel ID {$id} non può essere eliminato";
                         }
                     }
-                    
+
                     return $this->bulkActionResponse('eliminazione', $deleted, $errors);
 
                 default:
                     return $this->validationErrorResponse('Azione non riconosciuta');
             }
         } catch (\Exception $e) {
-            return $this->errorResponse('Errore nell\'operazione bulk: ' . $e->getMessage());
+            return $this->errorResponse('Errore nell\'operazione bulk: '.$e->getMessage());
         }
     }
 }

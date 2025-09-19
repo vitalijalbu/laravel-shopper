@@ -13,11 +13,11 @@ return new class extends Migration
             $table->string('name');
             $table->string('slug')->unique();
             $table->text('description')->nullable();
-            $table->string('provider'); // stripe, paypal, square, etc.
-            $table->json('config')->nullable(); // gateway-specific configuration
+            $table->string('provider');
+            $table->json('config')->nullable();
             $table->enum('status', ['active', 'inactive', 'maintenance', 'deprecated'])->default('inactive')->index();
             $table->boolean('is_default')->default(false);
-            $table->json('supported_currencies')->nullable(); // ['USD', 'EUR', 'GBP']
+            $table->json('supported_currencies')->nullable();
             $table->string('webhook_url')->nullable();
             $table->boolean('test_mode')->default(true);
             $table->integer('sort_order')->default(0);
