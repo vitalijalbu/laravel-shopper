@@ -20,6 +20,7 @@
         "spatie/laravel-backup": "^9.0",
         "spatie/laravel-medialibrary": "^11.15.0",
         "spatie/laravel-permission": "^6.21.0",
+        "symfony/yaml": "^7.3",
         "tightenco/ziggy": "^2.6.0",
         "zircote/swagger-php": "*"
     },

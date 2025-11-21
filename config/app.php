@@ -110,6 +110,9 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\InertiaServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        
+        // CMS Service Providers...
+        Shopper\CMS\CMSServiceProvider::class,
     ],
 
     /*

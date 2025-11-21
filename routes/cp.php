@@ -357,3 +357,12 @@ Route::prefix($cpPrefix)->name('cp.')->middleware(['web', 'shopper.inertia'])->g
 //         ]);
 //     })->name('search');
 // });
+
+// CMS Blueprint System Routes (for testing)
+Route::prefix('blueprints')->name('blueprints.')->group(function () {
+    Route::get('/', [App\Http\Controllers\Admin\BlueprintTestController::class, 'index'])->name('index');
+    Route::get('/{handle}', [App\Http\Controllers\Admin\BlueprintTestController::class, 'show'])->name('show');
+    Route::get('/{handle}/form', [App\Http\Controllers\Admin\BlueprintTestController::class, 'form'])->name('form');
+    Route::post('/{handle}/submit', [App\Http\Controllers\Admin\BlueprintTestController::class, 'submit'])->name('submit');
+    Route::post('/validate', [App\Http\Controllers\Admin\BlueprintTestController::class, 'validateBlueprint'])->name('validate');
+});
