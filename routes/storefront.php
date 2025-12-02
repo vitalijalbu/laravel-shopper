@@ -70,9 +70,43 @@ Route::middleware([
 
         Route::delete('/remove/{line}', [StorefrontController::class, 'cartRemove'])
             ->name('remove');
+
+        Route::post('/apply-coupon', [StorefrontController::class, 'cartApplyCoupon'])
+            ->middleware('throttle:5,1')
+            ->name('apply-coupon');
     });
 
-    // Customer routes
+    // Checkout
+    Route::prefix('checkout')->middleware('throttle:10,1')->name('storefront.checkout.')->group(function () {
+        Route::get('/', [StorefrontController::class, 'checkoutShow'])
+            ->name('show');
+
+        Route::post('/process', [StorefrontController::class, 'checkoutProcess'])
+            ->name('process');
+    });
+
+    // Customer Authentication
+        Route::get('/login', [StorefrontController::class, 'loginShow'])
+            ->name('login')
+            ->middleware('guest:customers');
+
+        Route::post('/login', [StorefrontController::class, 'loginProcess'])
+            ->middleware(['guest:customers', 'throttle:5,1']);
+            ->middleware('guest:customers');
+
+        Route::get('/register', [StorefrontController::class, 'registerShow'])
+            ->name('register')
+            ->middleware('guest:customers');
+
+        Route::post('/register', [StorefrontController::class, 'registerProcess'])
+            ->middleware('guest:customers');
+
+        Route::post('/logout', [StorefrontController::class, 'logout'])
+            ->name('logout')
+            ->middleware('auth:customers');
+    });
+
+    // Customer Account
     Route::prefix('account')->middleware('auth:customers')->name('storefront.account.')->group(function () {
         Route::get('/', [StorefrontController::class, 'accountDashboard'])
             ->name('dashboard');
@@ -82,7 +116,36 @@ Route::middleware([
 
         Route::get('/orders/{order}', [StorefrontController::class, 'accountOrderShow'])
             ->name('orders.show');
+
+        Route::get('/orders/{order}/track', [StorefrontController::class, 'accountOrderTrack'])
+            ->name('orders.track');
+
+        Route::get('/orders/{order}/invoice', [StorefrontController::class, 'accountOrderInvoice'])
+            ->name('orders.invoice');
+
+        Route::get('/addresses', [StorefrontController::class, 'accountAddresses'])
+            ->name('addresses');
+
+        Route::post('/addresses', [StorefrontController::class, 'accountAddressStore'])
+            ->name('addresses.store');
+
+        Route::put('/addresses/{address}', [StorefrontController::class, 'accountAddressUpdate'])
+            ->name('addresses.update');
+
+        Route::delete('/addresses/{address}', [StorefrontController::class, 'accountAddressDestroy'])
+            ->name('addresses.destroy');
+
+        Route::get('/settings', [StorefrontController::class, 'accountSettings'])
+            ->name('settings');
+
+        Route::put('/settings', [StorefrontController::class, 'accountSettingsUpdate'])
+            ->name('settings.update');
     });
+
+    Route::post('/newsletter/subscribe', [StorefrontController::class, 'newsletterSubscribe'])
+        ->middleware('throttle:3,1')
+        ->name('newsletter.subscribe');
+        ->name('newsletter.subscribe');
 
     // Template Preview Routes (Admin only)
     Route::prefix('admin/template-preview')->middleware('auth')->name('admin.template.preview.')->group(function () {

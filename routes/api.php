@@ -11,6 +11,7 @@ use Shopper\Http\Controllers\Api\CollectionController;
 use Shopper\Http\Controllers\Api\CountryController;
 use Shopper\Http\Controllers\Api\CurrencyController;
 use Shopper\Http\Controllers\Api\CustomerController;
+use Shopper\Http\Controllers\Api\Data\StatusController;
 use Shopper\Http\Controllers\Api\DiscountController;
 use Shopper\Http\Controllers\Api\FidelityController;
 use Shopper\Http\Controllers\Api\OrderController;
@@ -49,6 +50,12 @@ Route::group([
     // Authentication
     Route::post('/login', [AuthController::class, 'login'])->name('api.login');
     Route::post('/register', [AuthController::class, 'register'])->name('api.register');
+
+    // Data Endpoints (Statuses, etc.)
+    Route::prefix('data')->name('api.data.')->group(function () {
+        Route::get('/statuses', [StatusController::class, 'index'])->name('statuses.index');
+        Route::get('/statuses/{type}', [StatusController::class, 'show'])->name('statuses.show');
+    });
 
     // Public Product Browsing
     Route::get('/products', [ProductController::class, 'index'])->name('api.products.index');
