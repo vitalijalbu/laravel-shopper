@@ -288,6 +288,31 @@ Route::group([
                 Route::post('/', [BrandController::class, 'store'])->name('store');
                 Route::get('/{brand}', [BrandController::class, 'adminShow'])->name('show');
                 Route::put('/{brand}', [BrandController::class, 'update'])->name('update');
+
+                // Sites Management (Admin)
+                Route::prefix('sites')->name('sites.')->group(function () {
+                    Route::get('/', [\Shopper\Http\Controllers\Api\Admin\SiteController::class, 'index'])->name('index');
+                    Route::post('/', [\Shopper\Http\Controllers\Api\Admin\SiteController::class, 'store'])->name('store');
+                    Route::get('/{site}', [\Shopper\Http\Controllers\Api\Admin\SiteController::class, 'show'])->name('show');
+                    Route::put('/{site}', [\Shopper\Http\Controllers\Api\Admin\SiteController::class, 'update'])->name('update');
+                    Route::delete('/{site}', [\Shopper\Http\Controllers\Api\Admin\SiteController::class, 'destroy'])->name('destroy');
+                    Route::post('/{site}/set-default', [\Shopper\Http\Controllers\Api\Admin\SiteController::class, 'setDefault'])->name('set-default');
+
+                    // Site Catalogs
+                    Route::post('/{site}/catalogs', [\Shopper\Http\Controllers\Api\Admin\SiteController::class, 'attachCatalog'])->name('catalogs.attach');
+                    Route::delete('/{site}/catalogs/{catalog}', [\Shopper\Http\Controllers\Api\Admin\SiteController::class, 'detachCatalog'])->name('catalogs.detach');
+                    Route::put('/{site}/catalogs/{catalog}', [\Shopper\Http\Controllers\Api\Admin\SiteController::class, 'updateCatalogPivot'])->name('catalogs.update');
+                });
+
+                // Channels Management (Admin)
+                Route::prefix('channels')->name('channels.')->group(function () {
+                    Route::get('/', [\Shopper\Http\Controllers\Api\Admin\ChannelController::class, 'index'])->name('index');
+                    Route::post('/', [\Shopper\Http\Controllers\Api\Admin\ChannelController::class, 'store'])->name('store');
+                    Route::get('/{channel}', [\Shopper\Http\Controllers\Api\Admin\ChannelController::class, 'show'])->name('show');
+                    Route::put('/{channel}', [\Shopper\Http\Controllers\Api\Admin\ChannelController::class, 'update'])->name('update');
+                    Route::delete('/{channel}', [\Shopper\Http\Controllers\Api\Admin\ChannelController::class, 'destroy'])->name('destroy');
+                    Route::post('/{channel}/set-default', [\Shopper\Http\Controllers\Api\Admin\ChannelController::class, 'setDefault'])->name('set-default');
+                });
                 Route::delete('/{brand}', [BrandController::class, 'destroy'])->name('destroy');
                 Route::post('/{brand}/toggle-status', [BrandController::class, 'toggleStatus'])->name('toggle.status');
                 Route::get('/{brand}/products', [BrandController::class, 'products'])->name('products');
@@ -436,6 +461,29 @@ Route::group([
                 Route::post('/generate-resource', [\Shopper\Http\Controllers\Api\PermissionBuilderController::class, 'generateResourcePermissions'])->name('resource.generate');
                 Route::get('/export', [\Shopper\Http\Controllers\Api\PermissionBuilderController::class, 'export'])->name('export');
                 Route::post('/import', [\Shopper\Http\Controllers\Api\PermissionBuilderController::class, 'import'])->name('import');
+            });
+
+            // Asset Container Management
+            Route::prefix('asset-containers')->name('asset-containers.')->group(function () {
+                Route::get('/', [\Shopper\Http\Controllers\Api\AssetContainerController::class, 'index'])->name('index');
+                Route::post('/', [\Shopper\Http\Controllers\Api\AssetContainerController::class, 'store'])->name('store');
+                Route::get('/{container}', [\Shopper\Http\Controllers\Api\AssetContainerController::class, 'show'])->name('show');
+                Route::put('/{container}', [\Shopper\Http\Controllers\Api\AssetContainerController::class, 'update'])->name('update');
+                Route::delete('/{container}', [\Shopper\Http\Controllers\Api\AssetContainerController::class, 'destroy'])->name('destroy');
+            });
+
+            // Asset Management
+            Route::prefix('assets')->name('assets.')->group(function () {
+                Route::get('/', [\Shopper\Http\Controllers\Api\AssetController::class, 'index'])->name('index');
+                Route::post('/upload', [\Shopper\Http\Controllers\Api\AssetController::class, 'upload'])->name('upload');
+                Route::post('/upload-multiple', [\Shopper\Http\Controllers\Api\AssetController::class, 'uploadMultiple'])->name('upload.multiple');
+                Route::get('/{asset}', [\Shopper\Http\Controllers\Api\AssetController::class, 'show'])->name('show');
+                Route::put('/{asset}', [\Shopper\Http\Controllers\Api\AssetController::class, 'update'])->name('update');
+                Route::delete('/{asset}', [\Shopper\Http\Controllers\Api\AssetController::class, 'destroy'])->name('destroy');
+                Route::post('/{asset}/move', [\Shopper\Http\Controllers\Api\AssetController::class, 'move'])->name('move');
+                Route::post('/{asset}/rename', [\Shopper\Http\Controllers\Api\AssetController::class, 'rename'])->name('rename');
+                Route::get('/{asset}/download', [\Shopper\Http\Controllers\Api\AssetController::class, 'download'])->name('download');
+                Route::post('/bulk-delete', [\Shopper\Http\Controllers\Api\AssetController::class, 'bulkDelete'])->name('bulk.delete');
             });
         });
     });

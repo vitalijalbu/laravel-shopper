@@ -10,14 +10,23 @@ return new class extends Migration
     {
         Schema::create('menus', function (Blueprint $table) {
             $table->id();
-            $table->string('handle')->unique();
+            $table->foreignId('site_id')->nullable()->constrained('sites')->cascadeOnDelete();
+            $table->string('handle')->index();
             $table->string('title');
             $table->text('description')->nullable();
-            $table->json('settings')->nullable();
-            $table->boolean('is_active')->default(true);
-            $table->integer('sort_order')->default(0);
+            $table->string('location')->nullable()->index(); // header, footer, sidebar, etc.
+            $table->jsonb('settings')->nullable();
+            $table->jsonb('data')->nullable()->comment('Custom fields data');
+            $table->boolean('is_active')->default(true)->index();
+            $table->integer('sort_order')->default(0)->index();
             $table->timestamps();
             $table->softDeletes();
+
+            // Indexes
+            $table->unique(['site_id', 'handle']);
+            $table->index(['site_id', 'is_active']);
+            $table->index(['location', 'is_active']);
+            $table->index(['site_id', 'location', 'is_active']);
         });
     }
 

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Shopper\GraphQL\Mutations;
 
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Shopper\Models\Customer;
 

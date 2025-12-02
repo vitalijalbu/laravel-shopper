@@ -3,111 +3,205 @@
 namespace Shopper\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Shopper\Support\HasHandle;
 
 class Site extends Model
 {
     use HasHandle;
+    use SoftDeletes;
 
     protected $fillable = [
         'handle',
         'name',
+        'description',
         'url',
+        'domain',
+        'domains',
         'locale',
         'lang',
-        'attributes',
+        'countries',
+        'default_currency',
+        'tax_included_in_prices',
+        'tax_region',
+        'priority',
+        'is_default',
+        'status',
         'order',
-        'is_enabled',
+        'published_at',
+        'unpublished_at',
+        'attributes',
     ];
 
     protected $casts = [
-        'attributes' => 'array',
-        'is_enabled' => 'boolean',
+        'domains' => 'array',
+        'countries' => 'array',
+        'tax_included_in_prices' => 'boolean',
+        'is_default' => 'boolean',
+        'priority' => 'integer',
         'order' => 'integer',
+        'published_at' => 'datetime',
+        'unpublished_at' => 'datetime',
+        'attributes' => 'array',
     ];
 
-    /**
-     * Scope to enabled sites
-     */
-    public function scopeEnabled($query)
+    // Relationships
+
+    public function channels(): HasMany
     {
-        return $query->where('is_enabled', true);
+        return $this->hasMany(Channel::class);
     }
 
-    /**
-     * Scope to default site
-     */
+    public function catalogs(): BelongsToMany
+    {
+        return $this->belongsToMany(Catalog::class, 'site_catalog')
+            ->withPivot(['priority', 'is_default', 'is_active', 'starts_at', 'ends_at', 'settings'])
+            ->withTimestamps();
+    }
+
+    public function activeCatalogs(): BelongsToMany
+    {
+        return $this->catalogs()
+            ->wherePivot('is_active', true)
+            ->orderByPivot('priority', 'desc');
+    }
+
+    public function defaultCatalog(): BelongsToMany
+    {
+        return $this->catalogs()
+            ->wherePivot('is_default', true)
+            ->wherePivot('is_active', true)
+            ->limit(1);
+    }
+
+    public function shippingZones(): HasMany
+    {
+        return $this->hasMany(ShippingZone::class);
+    }
+
+    // Scopes
+
+    public function scopeActive($query)
+    {
+        return $query->where('status', 'active');
+    }
+
+    public function scopePublished($query)
+    {
+        return $query->where('status', 'active')
+            ->where(function ($q) {
+                $q->whereNull('published_at')
+                    ->orWhere('published_at', '<=', now());
+            })
+            ->where(function ($q) {
+                $q->whereNull('unpublished_at')
+                    ->orWhere('unpublished_at', '>=', now());
+            });
+    }
+
     public function scopeDefault($query)
     {
-        return $query->enabled()->orderBy('order')->limit(1);
+        return $query->where('is_default', true)
+            ->active()
+            ->orderByDesc('priority')
+            ->limit(1);
     }
 
-    /**
-     * Get site by handle or default
-     */
-    public static function findByHandle(?string $handle = null)
+    public function scopeForCountry($query, string $countryCode)
+    {
+        return $query->where('status', 'active')
+            ->where(function ($q) use ($countryCode) {
+                $q->whereJsonContains('countries', $countryCode)
+                    ->orWhereNull('countries'); // Global sites
+            })
+            ->orderByDesc('priority');
+    }
+
+    public function scopeForDomain($query, string $domain)
+    {
+        return $query->where('status', 'active')
+            ->where(function ($q) use ($domain) {
+                $q->where('domain', $domain)
+                    ->orWhereJsonContains('domains', $domain);
+            });
+    }
+
+    // Accessors
+
+    public function getIsPublishedAttribute(): bool
+    {
+        if ($this->status !== 'active') {
+            return false;
+        }
+
+        if ($this->published_at && $this->published_at->isFuture()) {
+            return false;
+        }
+
+        if ($this->unpublished_at && $this->unpublished_at->isPast()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function getSupportedCurrenciesAttribute(): array
+    {
+        // Get unique currencies from all active channels
+        $currencies = $this->channels()
+            ->where('status', 'active')
+            ->get()
+            ->pluck('currencies')
+            ->flatten()
+            ->unique()
+            ->filter()
+            ->values()
+            ->all();
+
+        return $currencies ?: [$this->default_currency];
+    }
+
+    public function getSupportedLocalesAttribute(): array
+    {
+        // Get unique locales from all active channels
+        $locales = $this->channels()
+            ->where('status', 'active')
+            ->get()
+            ->pluck('locales')
+            ->flatten()
+            ->unique()
+            ->filter()
+            ->values()
+            ->all();
+
+        return $locales ?: [$this->locale];
+    }
+
+    // Static helpers
+
+    public static function findByHandle(?string $handle = null): ?self
     {
         if ($handle) {
-            return static::where('handle', $handle)->enabled()->first();
+            return static::where('handle', $handle)->active()->first();
         }
 
         return static::default()->first();
     }
 
-    /**
-     * Get the route key name for Laravel model route binding.
-     */
+    public static function findForDomain(string $domain): ?self
+    {
+        return static::forDomain($domain)->first();
+    }
+
+    public static function findForCountry(string $countryCode): ?self
+    {
+        return static::forCountry($countryCode)->first();
+    }
+
     public function getRouteKeyName(): string
     {
         return 'handle';
-    }
-
-    /**
-     * Check if this is the current site
-     */
-    public function isCurrent(): bool
-    {
-        return $this->handle === request()->segment(1) ||
-               ($this->order === 1 && ! request()->segment(1));
-    }
-
-    /**
-     * Get site URL with path
-     */
-    public function urlTo(string $path = ''): string
-    {
-        return rtrim($this->url, '/').'/'.ltrim($path, '/');
-    }
-
-    /**
-     * Get all channels for this site
-     */
-    public function channels()
-    {
-        return $this->hasMany(Channel::class);
-    }
-
-    /**
-     * Get all products for this site
-     */
-    public function products()
-    {
-        return $this->hasMany(Product::class);
-    }
-
-    /**
-     * Get all customers for this site
-     */
-    public function customers()
-    {
-        return $this->hasMany(Customer::class);
-    }
-
-    /**
-     * Get all orders for this site
-     */
-    public function orders()
-    {
-        return $this->hasMany(Order::class);
     }
 }

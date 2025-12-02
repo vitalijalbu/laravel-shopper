@@ -57,7 +57,7 @@ class AddonManager
      */
     protected function loadPlugin(string $path): void
     {
-        $manifestPath = $path . '/plugin.json';
+        $manifestPath = $path.'/plugin.json';
 
         if (! File::exists($manifestPath)) {
             return;
@@ -73,7 +73,7 @@ class AddonManager
 
         if (! class_exists($className)) {
             // Try to load via composer autoload from addon directory
-            $autoloadPath = $path . '/vendor/autoload.php';
+            $autoloadPath = $path.'/vendor/autoload.php';
             if (File::exists($autoloadPath)) {
                 require_once $autoloadPath;
             }
@@ -97,7 +97,7 @@ class AddonManager
                 $this->activePlugins->put($plugin->getId(), $plugin);
             }
         } catch (\Exception $e) {
-            logger()->error("Failed to load addon from {$path}: " . $e->getMessage());
+            logger()->error("Failed to load addon from {$path}: ".$e->getMessage());
         }
     }
 
@@ -187,7 +187,7 @@ class AddonManager
 
         if ($dependents->isNotEmpty()) {
             throw new AddonException(
-                "Cannot uninstall {$id} because the following addons depend on it: " .
+                "Cannot uninstall {$id} because the following addons depend on it: ".
                 $dependents->pluck('name')->implode(', ')
             );
         }
@@ -271,7 +271,7 @@ class AddonManager
 
         if ($activeDependents->isNotEmpty()) {
             throw new AddonException(
-                "Cannot deactivate {$id} because the following active addons depend on it: " .
+                "Cannot deactivate {$id} because the following active addons depend on it: ".
                 $activeDependents->pluck('name')->implode(', ')
             );
         }
@@ -363,7 +363,7 @@ class AddonManager
 
             if (! $this->versionSatisfies($installedVersion, $versionConstraint)) {
                 throw new AddonException(
-                    "Plugin {$plugin->getId()} requires {$dependencyId} {$versionConstraint} " .
+                    "Plugin {$plugin->getId()} requires {$dependencyId} {$versionConstraint} ".
                     "but version {$installedVersion} is installed"
                 );
             }
@@ -416,7 +416,7 @@ class AddonManager
             // Compatible versions: ^1.2.3 means >=1.2.3 <2.0.0
             $minVersion = substr($constraint, 1);
             $parts = explode('.', $minVersion);
-            $maxVersion = ($parts[0] + 1) . '.0.0';
+            $maxVersion = ($parts[0] + 1).'.0.0';
 
             return version_compare($version, $minVersion, '>=') &&
                    version_compare($version, $maxVersion, '<');

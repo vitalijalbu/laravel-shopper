@@ -1,29 +1,38 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Shopper\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ShippingZone extends Model
 {
     use HasFactory;
+    use SoftDeletes;
 
     protected $fillable = [
+        'site_id',
         'name',
         'description',
         'countries',
-        'states',
-        'postcodes',
-        'is_enabled',
+        'regions',
+        'postal_codes',
+        'priority',
+        'is_active',
+        'data',
     ];
 
     protected $casts = [
         'countries' => 'array',
-        'states' => 'array',
-        'postcodes' => 'array',
-        'is_enabled' => 'boolean',
+        'regions' => 'array',
+        'postal_codes' => 'array',
+        'priority' => 'integer',
+        'is_active' => 'boolean',
+        'data' => 'array',
     ];
 
     /**

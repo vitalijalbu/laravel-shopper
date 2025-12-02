@@ -6,9 +6,7 @@ namespace Shopper\Core\Addon\Events;
 
 use Shopper\Core\Addon\AddonInterface;
 
-class PluginDeactivated
+class AddonDeactivated
 {
-    public function __construct(public AddonInterface $plugin)
-    {
-    }
+    public function __construct(public AddonInterface $plugin) {}
 }

@@ -354,6 +354,7 @@ class StorefrontController extends Controller
     public function loginShow(Request $request): Response
     {
         $content = $this->templateEngine->render('customers/login', null);
+
         return response($content);
     }
 
@@ -369,6 +370,7 @@ class StorefrontController extends Controller
 
         if (auth('customers')->attempt($request->only('email', 'password'), $request->boolean('remember'))) {
             $request->session()->regenerate();
+
             return redirect()->intended(route('storefront.account.dashboard'));
         }
 
@@ -383,6 +385,7 @@ class StorefrontController extends Controller
     public function registerShow(Request $request): Response
     {
         $content = $this->templateEngine->render('customers/register', null);
+
         return response($content);
     }
 
@@ -635,7 +638,7 @@ class StorefrontController extends Controller
         $request->validate([
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
-            'email' => 'required|email|unique:customers,email,' . $request->user('customers')->id,
+            'email' => 'required|email|unique:customers,email,'.$request->user('customers')->id,
             'phone' => 'nullable|string',
         ]);
 

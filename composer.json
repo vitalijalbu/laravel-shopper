@@ -18,8 +18,10 @@
         "pusher/pusher-php-server": "^7.0",
         "spatie/laravel-activitylog": "^4.0",
         "spatie/laravel-backup": "^9.3.7",
-        "spatie/laravel-medialibrary": "^11.17.5",
         "spatie/laravel-permission": "^6.23.0",
+        "league/glide": "^2.3",
+        "league/flysystem": "^3.0",
+        "intervention/image": "^3.8",
         "symfony/yaml": "^7.3",
         "tightenco/ziggy": "^2.6.0",
         "zircote/swagger-php": "*"

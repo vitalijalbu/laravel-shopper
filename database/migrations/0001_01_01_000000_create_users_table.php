@@ -14,11 +14,38 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('first_name')->nullable()->index();
+            $table->string('last_name')->nullable()->index();
+            $table->string('avatar')->nullable();
+            $table->text('bio')->nullable();
             $table->string('email')->unique();
+            $table->string('phone', 20)->nullable()->index();
             $table->timestamp('email_verified_at')->nullable();
+            $table->timestamp('last_login_at')->nullable()->index();
+            $table->string('last_login_ip', 45)->nullable();
             $table->string('password');
+            $table->string('status')->default('active')->index();
+            $table->boolean('is_super_admin')->default(false)->index();
+            $table->string('locale', 10)->default('en')->index();
+            $table->string('timezone')->default('UTC');
+            $table->jsonb('preferences')->nullable()->comment('UI and notification preferences');
+            $table->unsignedBigInteger('default_site_id')->nullable()->index();
+            $table->jsonb('data')->nullable()->comment('Custom fields data');
+            $table->string('api_key')->nullable()->unique();
+            $table->jsonb('oauth_providers')->nullable()->comment('Connected OAuth providers');
             $table->rememberToken();
             $table->timestamps();
+            $table->softDeletes();
+
+            // Indexes
+            $table->index(['status', 'is_super_admin']);
+            $table->index(['locale', 'status']);
+            $table->index(['first_name', 'last_name']);
+
+            // Full text search
+            if (config('database.default') === 'mysql') {
+                $table->fullText(['first_name', 'last_name', 'email']);
+            }
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {

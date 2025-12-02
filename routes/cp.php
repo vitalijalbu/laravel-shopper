@@ -70,6 +70,9 @@ Route::prefix($cpPrefix)->name('cp.')->middleware(['web', 'shopper.inertia'])->g
         Route::get('dashboard', [DashboardController::class, 'index'])
             ->name('dashboard.index');
 
+        // Assets Management
+        Route::get('/assets', [\Shopper\Http\Controllers\CP\AssetBrowserController::class, 'index'])->name('assets.index');
+
         // Collections Management
         Route::get('/collections', [CollectionsController::class, 'index'])->name('collections.index');
         Route::get('/collections/create', [CollectionsController::class, 'create'])->name('collections.create');
@@ -244,6 +247,20 @@ Route::prefix($cpPrefix)->name('cp.')->middleware(['web', 'shopper.inertia'])->g
             Route::get('/{brand}', [BrandController::class, 'show'])->name('show');
             Route::put('/{brand}', [BrandController::class, 'update'])->name('update');
             Route::delete('/{brand}', [BrandController::class, 'destroy'])->name('destroy');
+        });
+
+        // Sites Management
+        Route::prefix('sites')->name('sites.')->group(function () {
+            Route::get('/', [\Shopper\Http\Controllers\CP\SiteController::class, 'index'])->name('index');
+            Route::get('/create', [\Shopper\Http\Controllers\CP\SiteController::class, 'create'])->name('create');
+            Route::get('/{site}/edit', [\Shopper\Http\Controllers\CP\SiteController::class, 'edit'])->name('edit');
+
+            // Channels nested under sites
+            Route::prefix('{site}/channels')->name('channels.')->group(function () {
+                Route::get('/', [\Shopper\Http\Controllers\CP\ChannelController::class, 'index'])->name('index');
+                Route::get('/create', [\Shopper\Http\Controllers\CP\ChannelController::class, 'create'])->name('create');
+                Route::get('/{channel}/edit', [\Shopper\Http\Controllers\CP\ChannelController::class, 'edit'])->name('edit');
+            });
         });
 
         // Discounts Management

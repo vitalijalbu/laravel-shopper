@@ -8,9 +8,7 @@ use Shopper\Services\CartService;
 
 class CartMutations
 {
-    public function __construct(protected CartService $cartService)
-    {
-    }
+    public function __construct(protected CartService $cartService) {}
 
     /**
      * Add item to cart

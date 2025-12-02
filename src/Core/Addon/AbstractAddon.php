@@ -123,7 +123,7 @@ abstract class AbstractAddon implements AddonInterface
     /**
      * Get addon config
      */
-    public function getConfig(string $key = null, mixed $default = null): mixed
+    public function getConfig(?string $key = null, mixed $default = null): mixed
     {
         if ($key === null) {
             return $this->config;
@@ -146,7 +146,7 @@ abstract class AbstractAddon implements AddonInterface
      */
     protected function loadConfig(): void
     {
-        $configPath = $this->basePath . '/config.json';
+        $configPath = $this->basePath.'/config.json';
 
         if (File::exists($configPath)) {
             $this->config = json_decode(File::get($configPath), true) ?? [];
@@ -158,7 +158,7 @@ abstract class AbstractAddon implements AddonInterface
      */
     protected function saveConfig(): void
     {
-        $configPath = $this->basePath . '/config.json';
+        $configPath = $this->basePath.'/config.json';
 
         File::put($configPath, json_encode($this->config, JSON_PRETTY_PRINT));
     }
@@ -168,15 +168,15 @@ abstract class AbstractAddon implements AddonInterface
      */
     protected function registerRoutes(): void
     {
-        $routesPath = $this->basePath . '/routes';
+        $routesPath = $this->basePath.'/routes';
 
         if (File::isDirectory($routesPath)) {
-            if (File::exists($routesPath . '/web.php')) {
-                require $routesPath . '/web.php';
+            if (File::exists($routesPath.'/web.php')) {
+                require $routesPath.'/web.php';
             }
 
-            if (File::exists($routesPath . '/api.php')) {
-                require $routesPath . '/api.php';
+            if (File::exists($routesPath.'/api.php')) {
+                require $routesPath.'/api.php';
             }
         }
     }
@@ -186,7 +186,7 @@ abstract class AbstractAddon implements AddonInterface
      */
     protected function registerViews(): void
     {
-        $viewsPath = $this->basePath . '/resources/views';
+        $viewsPath = $this->basePath.'/resources/views';
 
         if (File::isDirectory($viewsPath)) {
             app('view')->addNamespace($this->getId(), $viewsPath);
@@ -198,7 +198,7 @@ abstract class AbstractAddon implements AddonInterface
      */
     protected function registerTranslations(): void
     {
-        $langPath = $this->basePath . '/resources/lang';
+        $langPath = $this->basePath.'/resources/lang';
 
         if (File::isDirectory($langPath)) {
             app('translator')->addNamespace($this->getId(), $langPath);
@@ -258,10 +258,10 @@ abstract class AbstractAddon implements AddonInterface
      */
     protected function publishAssets(): void
     {
-        $publicPath = $this->basePath . '/public';
+        $publicPath = $this->basePath.'/public';
 
         if (File::isDirectory($publicPath)) {
-            File::copyDirectory($publicPath, public_path('addons/' . $this->getId()));
+            File::copyDirectory($publicPath, public_path('addons/'.$this->getId()));
         }
     }
 
@@ -270,11 +270,11 @@ abstract class AbstractAddon implements AddonInterface
      */
     protected function runMigrations(): void
     {
-        $migrationsPath = $this->basePath . '/database/migrations';
+        $migrationsPath = $this->basePath.'/database/migrations';
 
         if (File::isDirectory($migrationsPath)) {
             Artisan::call('migrate', [
-                '--path' => str_replace(base_path() . '/', '', $migrationsPath),
+                '--path' => str_replace(base_path().'/', '', $migrationsPath),
                 '--force' => true,
             ]);
         }
@@ -285,11 +285,11 @@ abstract class AbstractAddon implements AddonInterface
      */
     protected function rollbackMigrations(): void
     {
-        $migrationsPath = $this->basePath . '/database/migrations';
+        $migrationsPath = $this->basePath.'/database/migrations';
 
         if (File::isDirectory($migrationsPath)) {
             Artisan::call('migrate:rollback', [
-                '--path' => str_replace(base_path() . '/', '', $migrationsPath),
+                '--path' => str_replace(base_path().'/', '', $migrationsPath),
                 '--force' => true,
             ]);
         }
@@ -316,6 +316,6 @@ abstract class AbstractAddon implements AddonInterface
      */
     protected function removeAssets(): void
     {
-        File::deleteDirectory(public_path('addons/' . $this->getId()));
+        File::deleteDirectory(public_path('addons/'.$this->getId()));
     }
 }

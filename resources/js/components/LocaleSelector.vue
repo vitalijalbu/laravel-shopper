@@ -1,43 +1,64 @@
 <template>
-  <div class="relative">
-    <!-- Language Selector Button -->
-    <button
-      @click="isOpen = !isOpen"
-      type="button"
-      class="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-md transition-colors"
-      :class="{ 'bg-gray-50': isOpen }"
-    >
-      <globe-alt-icon class="w-4 h-4" />
-      <span>{{ currentLocaleLabel }}</span>
-      <chevron-down-icon
-        class="w-4 h-4 transition-transform"
-        :class="{ 'rotate-180': isOpen }"
-      />
-    </button>
-
-    <!-- Dropdown Menu -->
-    <transition
-      enter-active-class="transition ease-out duration-100"
-      enter-from-class="transform opacity-0 scale-95"
-      enter-to-class="transform opacity-100 scale-100"
-      leave-active-class="transition ease-in duration-75"
-      leave-from-class="transform opacity-100 scale-100"
-      leave-to-class="transform opacity-0 scale-95"
-    >
-      <div
-        v-show="isOpen"
-        class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-50"
+  <div>
+    <label class="block text-sm font-medium text-gray-700 mb-2">
+      Select Locales
+    </label>
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-3 max-h-64 overflow-y-auto p-4 border border-gray-300 rounded-md">
+      <label
+        v-for="locale in availableLocales"
+        :key="locale.code"
+        class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-2 rounded"
       >
-        <div class="py-1">
-          <button
-            v-for="option in localeOptions"
-            :key="option.value"
-            @click="changeLocale(option.value)"
-            type="button"
-            class="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors"
-            :class="{
-              'bg-blue-50 text-blue-600': option.value === locale,
-              'font-medium': option.value === locale,
+        <input
+          type="checkbox"
+          :value="locale.code"
+          :checked="isSelected(locale.code)"
+          @change="toggleLocale(locale.code)"
+          class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+        />
+        <span class="text-sm text-gray-700">{{ locale.name }}</span>
+      </label>
+    </div>
+    <p class="mt-2 text-sm text-gray-500">{{ selectedCount }} locales selected</p>
+  </div>
+</template>
+
+<script setup>
+import { computed } from 'vue'
+
+const props = defineProps({
+  modelValue: {
+    type: Array,
+    default: () => [],
+  },
+  availableLocales: {
+    type: Array,
+    required: true,
+  },
+})
+
+const emit = defineEmits(['update:modelValue'])
+
+const selectedCount = computed(() => props.modelValue.length)
+
+const isSelected = (code) => {
+  return props.modelValue.includes(code)
+}
+
+const toggleLocale = (code) => {
+  const newValue = [...props.modelValue]
+  const index = newValue.indexOf(code)
+  
+  if (index > -1) {
+    newValue.splice(index, 1)
+  } else {
+    newValue.push(code)
+  }
+  
+  emit('update:modelValue', newValue)
+}
+</script>
+
             }"
           >
             <span class="flex-1 text-left">{{ option.label }}</span>

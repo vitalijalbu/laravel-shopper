@@ -10,12 +10,18 @@ return new class extends Migration
     {
         Schema::create('product_types', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('slug')->unique();
+            $table->foreignId('site_id')->nullable()->constrained('sites')->cascadeOnDelete();
+            $table->string('name')->index();
+            $table->string('slug')->index();
             $table->text('description')->nullable();
             $table->string('status')->default('active')->index();
+            $table->jsonb('data')->nullable()->comment('Custom fields data');
             $table->timestamps();
             $table->softDeletes();
+
+            $table->unique(['site_id', 'slug']);
+            $table->index(['site_id', 'status']);
+            $table->index(['status', 'name']);
         });
     }
 

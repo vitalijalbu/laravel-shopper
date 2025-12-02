@@ -12,26 +12,26 @@ return new class extends Migration
             $table->id();
             $table->foreignId('catalog_id')->constrained('catalogs')->cascadeOnDelete();
             $table->foreignId('customer_id')->constrained('customers')->cascadeOnDelete();
-            
+
             // Priority for when multiple catalogs are assigned (lower number = higher priority)
             $table->integer('priority')->default(0)->index();
-            
+
             // Status of the assignment
             $table->enum('status', ['active', 'inactive'])->default('active')->index();
-            
+
             // Date range for when this catalog assignment is valid
             $table->timestamp('starts_at')->nullable()->index();
             $table->timestamp('expires_at')->nullable()->index();
-            
+
             // Override customer group catalog assignments (if true, only direct assignments apply)
             $table->boolean('override_group_catalogs')->default(false);
-            
+
             // Timestamps
             $table->timestamps();
-            
+
             // Custom fields data (JSON schema-based)
             $table->jsonb('data')->nullable()->comment('Custom fields data based on JSON schema');
-            
+
             // Indexes
             $table->unique(['catalog_id', 'customer_id']);
             $table->index(['customer_id', 'status', 'priority']);

@@ -11,23 +11,62 @@ return new class extends Migration
         Schema::create('pages', function (Blueprint $table) {
             $table->id();
             $table->foreignId('site_id')->constrained('sites')->cascadeOnDelete();
-            $table->string('title');
+            $table->foreignId('parent_id')->nullable()->constrained('pages')->nullOnDelete();
+
+            // Page Identity
+            $table->string('title')->index();
+            $table->string('slug')->index();
             $table->string('handle')->index();
-            $table->longText('content');
-            $table->enum('status', ['published', 'draft', 'private'])->default('draft');
+            $table->string('template')->nullable(); // blade template to use
+            $table->string('layout')->nullable(); // layout wrapper
+
+            // Content
+            $table->longText('content')->nullable();
+            $table->text('excerpt')->nullable();
+            $table->jsonb('blocks_data')->nullable()->comment('Page builder blocks (Gutenberg-style)');
+
+            // Display
             $table->boolean('show_title')->default(true);
+            $table->string('hero_image')->nullable();
+
+            // SEO
             $table->string('seo_title')->nullable();
             $table->text('seo_description')->nullable();
-            $table->timestamp('published_at')->nullable();
-            $table->unsignedBigInteger('author_id')->nullable(); // User who created the page
-            $table->jsonb('blocks_data')->nullable(); // For page builder blocks
-            $table->timestamps();
+            $table->jsonb('seo')->nullable()->comment('Additional SEO metadata');
 
-            // Indexes for performance
+            // Publishing
+            $table->enum('status', ['published', 'draft', 'private', 'scheduled'])->default('draft')->index();
+            $table->timestamp('published_at')->nullable()->index();
+            $table->timestamp('scheduled_at')->nullable()->index();
+
+            // Author & Editor
+            $table->foreignId('author_id')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();
+
+            // Custom fields (Statamic-style)
+            $table->jsonb('data')->nullable()->comment('Custom fields data');
+
+            // Hierarchy
+            $table->integer('order')->default(0)->index();
+            $table->integer('depth')->default(0)->index();
+
+            $table->timestamps();
+            $table->softDeletes();
+
+            // Indexes
             $table->unique(['site_id', 'handle']);
+            $table->unique(['site_id', 'slug']);
             $table->index(['site_id', 'status']);
             $table->index(['status', 'published_at']);
-            $table->index('author_id');
+            $table->index(['parent_id', 'order']);
+            $table->index(['author_id', 'status']);
+            $table->index(['site_id', 'parent_id', 'order']);
+            $table->index(['scheduled_at', 'status']);
+
+            // Full text search
+            if (config('database.default') === 'mysql') {
+                $table->fullText(['title', 'content', 'excerpt']);
+            }
         });
     }
 

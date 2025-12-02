@@ -10,22 +10,23 @@ return new class extends Migration
     {
         Schema::create('brands', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('slug')->unique();
+            $table->foreignId('site_id')->nullable()->constrained('sites')->cascadeOnDelete();
+            $table->string('name')->index();
+            $table->string('slug')->index();
             $table->text('description')->nullable();
             $table->string('website')->nullable();
+            $table->string('logo')->nullable();
             $table->string('status')->default('active')->index();
-            $table->json('seo')->nullable();
+            $table->jsonb('seo')->nullable();
+            $table->jsonb('data')->nullable()->comment('Custom fields data');
             $table->timestamps();
             $table->softDeletes();
 
-            // Custom fields data (JSON schema-based)
-            $table->jsonb('data')->nullable()->comment('Custom fields data based on JSON schema');
-
-            // Additional filter indexes
-            $table->index('name');
+            // Indexes
+            $table->unique(['site_id', 'slug']);
+            $table->index(['site_id', 'status']);
+            $table->index(['status', 'name']);
             $table->index('created_at');
-            $table->index('updated_at');
 
             // Full text search (MySQL 5.6+)
             if (config('database.default') === 'mysql') {

@@ -13,8 +13,7 @@ class PriceResult
         public float $finalPrice,
         public Collection $appliedRules,
         public int $quantity = 1
-    ) {
-    }
+    ) {}
 
     /**
      * Get total discount amount

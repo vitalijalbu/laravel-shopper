@@ -53,7 +53,7 @@ class StatusController extends Controller
 
         if (empty($statuses)) {
             return response()->json([
-                'message' => "Status type '{$type}' not found"
+                'message' => "Status type '{$type}' not found",
             ], 404);
         }
 

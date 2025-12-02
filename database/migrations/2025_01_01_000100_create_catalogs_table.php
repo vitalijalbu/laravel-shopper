@@ -13,38 +13,66 @@ return new class extends Migration
             $table->string('title')->index();
             $table->string('slug')->unique();
             $table->text('description')->nullable();
-            
+
             // Currency settings
             $table->string('currency', 3)->default('USD')->index();
-            
+
             // Price adjustments (applied to all products in catalog)
             $table->enum('adjustment_type', ['percentage', 'fixed_amount'])->nullable();
             $table->enum('adjustment_direction', ['increase', 'decrease'])->nullable();
             $table->decimal('adjustment_value', 10, 4)->nullable();
-            
+
             // Catalog behavior settings
             $table->boolean('auto_include_new_products')->default(false);
             $table->boolean('is_default')->default(false);
-            
+
             // Status and publishing
             $table->enum('status', ['draft', 'active', 'archived'])->default('draft')->index();
             $table->timestamp('published_at')->nullable()->index();
-            
+
             // Timestamps
             $table->timestamps();
             $table->softDeletes();
-            
+
             // Custom fields data (JSON schema-based)
             $table->jsonb('data')->nullable()->comment('Custom fields data based on JSON schema');
-            
+
             // Indexes
             $table->index(['status', 'published_at']);
             $table->index(['currency', 'status']);
+        });
+
+        // Pivot: Sites can have multiple Catalogs (B2C, B2B, Wholesale, Outlet)
+        Schema::create('site_catalog', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('site_id')->constrained('sites')->cascadeOnDelete();
+            $table->foreignId('catalog_id')->constrained('catalogs')->cascadeOnDelete();
+
+            // Priority for catalog selection (higher = preferred)
+            $table->integer('priority')->default(0)->index();
+
+            // Is this the default catalog for this site?
+            $table->boolean('is_default')->default(false)->index();
+
+            // Status
+            $table->boolean('is_active')->default(true)->index();
+
+            // Scheduling
+            $table->timestamp('starts_at')->nullable();
+            $table->timestamp('ends_at')->nullable();
+
+            $table->timestamps();
+            $table->jsonb('settings')->nullable()->comment('Catalog-specific settings for this site');
+
+            $table->unique(['site_id', 'catalog_id']);
+            $table->index(['site_id', 'is_active', 'priority']);
+            $table->index(['site_id', 'is_default']);
         });
     }
 
     public function down(): void
     {
+        Schema::dropIfExists('site_catalog');
         Schema::dropIfExists('catalogs');
     }
 };

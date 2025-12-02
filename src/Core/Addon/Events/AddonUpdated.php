@@ -12,6 +12,5 @@ class PluginUpdated
         public AddonInterface $plugin,
         public string $fromVersion,
         public string $toVersion
-    ) {
-    }
+    ) {}
 }

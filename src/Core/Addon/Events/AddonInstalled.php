@@ -8,7 +8,5 @@ use Shopper\Core\Addon\AddonInterface;
 
 class PluginInstalled
 {
-    public function __construct(public AddonInterface $plugin)
-    {
-    }
+    public function __construct(public AddonInterface $plugin) {}
 }

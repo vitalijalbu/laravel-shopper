@@ -13,9 +13,96 @@ return new class extends Migration
      * This implements a Statamic-like system where custom fields are defined via JSON schemas
      * and stored in the `data` column, allowing flexible content management without
      * database schema changes.
+     *
+     * Also creates revisions table for content versioning (Statamic/Shopify style).
      */
     public function up(): void
     {
+        // First, create revisions table for content versioning (Statamic-style)
+        Schema::create('revisions', function (Blueprint $table) {
+            $table->id();
+            $table->morphs('revisionable'); // The model being versioned
+            $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
+
+            // Revision metadata
+            $table->string('action')->index(); // created, updated, published, unpublished, restored
+            $table->string('key')->nullable()->index(); // Unique key for this revision
+
+            // Content snapshot
+            $table->jsonb('attributes')->comment('Full snapshot of model attributes');
+            $table->jsonb('changes')->nullable()->comment('Only changed attributes (delta)');
+
+            // Publishing workflow
+            $table->boolean('is_working_copy')->default(false)->index();
+            $table->boolean('is_published')->default(false)->index();
+            $table->timestamp('published_at')->nullable()->index();
+
+            // Metadata
+            $table->text('message')->nullable(); // Commit message
+            $table->string('ip_address', 45)->nullable();
+            $table->text('user_agent')->nullable();
+
+            $table->timestamps();
+
+            // Indexes
+            $table->index(['revisionable_type', 'revisionable_id', 'created_at']);
+            $table->index(['user_id', 'created_at']);
+            $table->index(['action', 'created_at']);
+            $table->index(['is_working_copy', 'revisionable_type', 'revisionable_id']);
+            $table->index(['is_published', 'published_at']);
+        });
+
+        // Create taxonomies system (Statamic-style)
+        Schema::create('taxonomies', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('site_id')->constrained('sites')->cascadeOnDelete();
+            $table->string('handle')->index();
+            $table->string('title');
+            $table->text('description')->nullable();
+            $table->jsonb('data')->nullable()->comment('Custom fields data');
+            $table->jsonb('settings')->nullable();
+            $table->boolean('is_active')->default(true)->index();
+            $table->timestamps();
+            $table->softDeletes();
+
+            $table->unique(['site_id', 'handle']);
+            $table->index(['site_id', 'is_active']);
+        });
+
+        Schema::create('terms', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('taxonomy_id')->constrained('taxonomies')->cascadeOnDelete();
+            $table->foreignId('parent_id')->nullable()->constrained('terms')->nullOnDelete();
+            $table->string('slug')->index();
+            $table->string('title')->index();
+            $table->text('description')->nullable();
+            $table->integer('order')->default(0)->index();
+            $table->jsonb('data')->nullable()->comment('Custom fields data');
+            $table->boolean('is_active')->default(true)->index();
+            $table->timestamps();
+            $table->softDeletes();
+
+            $table->unique(['taxonomy_id', 'slug']);
+            $table->index(['taxonomy_id', 'parent_id', 'order']);
+            $table->index(['taxonomy_id', 'is_active']);
+
+            if (config('database.default') === 'mysql') {
+                $table->fullText(['title', 'description']);
+            }
+        });
+
+        // Pivot table for attaching terms to any model (polymorphic)
+        Schema::create('termables', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('term_id')->constrained('terms')->cascadeOnDelete();
+            $table->morphs('termable');
+            $table->integer('order')->default(0)->index();
+            $table->timestamps();
+
+            $table->unique(['term_id', 'termable_type', 'termable_id']);
+            $table->index(['termable_type', 'termable_id', 'term_id']);
+        });
+
         // Core business entities
         $tables = [
             'products',
@@ -27,7 +114,6 @@ return new class extends Migration
             'product_types',
             'collections',
             'collection_entries',
-            'customer_addresses',
             'addresses',
             'pages',
             'menus',
@@ -53,6 +139,7 @@ return new class extends Migration
             'app_reviews',
             'stock_notifications',
             'customer_groups',
+            'categories',
         ];
 
         foreach ($tables as $table) {
@@ -80,6 +167,12 @@ return new class extends Migration
      */
     public function down(): void
     {
+        // Drop new tables first
+        Schema::dropIfExists('termables');
+        Schema::dropIfExists('terms');
+        Schema::dropIfExists('taxonomies');
+        Schema::dropIfExists('revisions');
+
         $tables = [
             'products',
             'product_variants',
@@ -90,7 +183,6 @@ return new class extends Migration
             'product_types',
             'collections',
             'collection_entries',
-            'customer_addresses',
             'addresses',
             'pages',
             'menus',
@@ -116,6 +208,7 @@ return new class extends Migration
             'app_reviews',
             'stock_notifications',
             'customer_groups',
+            'categories',
         ];
 
         foreach ($tables as $table) {
