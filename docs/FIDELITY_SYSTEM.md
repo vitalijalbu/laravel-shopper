@@ -22,19 +22,19 @@ Il sistema di fedeltà di Shopper permette di gestire carte fedeltà personalizz
 
 ```php
 'fidelity' => [
-    'enabled' => env('SHOPPER_FIDELITY_ENABLED', true),
+    'enabled' => env('CARTINO_FIDELITY_ENABLED', true),
     
     // Configurazione carta
     'card' => [
-        'prefix' => env('SHOPPER_FIDELITY_CARD_PREFIX', 'FID'),
-        'length' => env('SHOPPER_FIDELITY_CARD_LENGTH', 8),
-        'separator' => env('SHOPPER_FIDELITY_CARD_SEPARATOR', '-'),
+        'prefix' => env('CARTINO_FIDELITY_CARD_PREFIX', 'FID'),
+        'length' => env('CARTINO_FIDELITY_CARD_LENGTH', 8),
+        'separator' => env('CARTINO_FIDELITY_CARD_SEPARATOR', '-'),
     ],
     
     // Sistema punti
     'points' => [
-        'enabled' => env('SHOPPER_FIDELITY_POINTS_ENABLED', true),
-        'currency_base' => env('SHOPPER_FIDELITY_CURRENCY_BASE', 'EUR'),
+        'enabled' => env('CARTINO_FIDELITY_POINTS_ENABLED', true),
+        'currency_base' => env('CARTINO_FIDELITY_CURRENCY_BASE', 'EUR'),
         
         // Scaglioni di conversione
         'conversion_rules' => [
@@ -48,14 +48,14 @@ Il sistema di fedeltà di Shopper permette di gestire carte fedeltà personalizz
         
         // Scadenza punti
         'expiration' => [
-            'enabled' => env('SHOPPER_FIDELITY_POINTS_EXPIRATION', true),
-            'months' => env('SHOPPER_FIDELITY_POINTS_EXPIRATION_MONTHS', 12),
+            'enabled' => env('CARTINO_FIDELITY_POINTS_EXPIRATION', true),
+            'months' => env('CARTINO_FIDELITY_POINTS_EXPIRATION_MONTHS', 12),
         ],
         
         // Regole di riscatto
         'redemption' => [
-            'min_points' => env('SHOPPER_FIDELITY_MIN_REDEMPTION_POINTS', 100),
-            'points_to_currency_rate' => env('SHOPPER_FIDELITY_POINTS_TO_CURRENCY', 0.01),
+            'min_points' => env('CARTINO_FIDELITY_MIN_REDEMPTION_POINTS', 100),
+            'points_to_currency_rate' => env('CARTINO_FIDELITY_POINTS_TO_CURRENCY', 0.01),
         ],
     ],
 ],
@@ -65,20 +65,20 @@ Il sistema di fedeltà di Shopper permette di gestire carte fedeltà personalizz
 
 ```env
 # Sistema Fedeltà
-SHOPPER_FIDELITY_ENABLED=true
-SHOPPER_FIDELITY_POINTS_ENABLED=true
+CARTINO_FIDELITY_ENABLED=true
+CARTINO_FIDELITY_POINTS_ENABLED=true
 
 # Formato Carta
-SHOPPER_FIDELITY_CARD_PREFIX=FID
-SHOPPER_FIDELITY_CARD_LENGTH=8
-SHOPPER_FIDELITY_CARD_SEPARATOR=-
+CARTINO_FIDELITY_CARD_PREFIX=FID
+CARTINO_FIDELITY_CARD_LENGTH=8
+CARTINO_FIDELITY_CARD_SEPARATOR=-
 
 # Configurazione Punti
-SHOPPER_FIDELITY_CURRENCY_BASE=EUR
-SHOPPER_FIDELITY_POINTS_EXPIRATION=true
-SHOPPER_FIDELITY_POINTS_EXPIRATION_MONTHS=12
-SHOPPER_FIDELITY_MIN_REDEMPTION_POINTS=100
-SHOPPER_FIDELITY_POINTS_TO_CURRENCY=0.01
+CARTINO_FIDELITY_CURRENCY_BASE=EUR
+CARTINO_FIDELITY_POINTS_EXPIRATION=true
+CARTINO_FIDELITY_POINTS_EXPIRATION_MONTHS=12
+CARTINO_FIDELITY_MIN_REDEMPTION_POINTS=100
+CARTINO_FIDELITY_POINTS_TO_CURRENCY=0.01
 ```
 
 ## Utilizzo

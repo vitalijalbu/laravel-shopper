@@ -2,7 +2,7 @@
 
 ## 📋 Overview
 
-Laravel Shopper include un **sistema di temi completamente esportabile** per lo storefront con:
+Cartino include un **sistema di temi completamente esportabile** per lo storefront con:
 - ✅ Blade components riutilizzabili
 - ✅ Tailwind CSS 4.0
 - ✅ Multi-lingua (IT/EN) con traduzioni complete

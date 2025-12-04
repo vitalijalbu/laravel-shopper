@@ -2,13 +2,8 @@
   <div>
     <Head title="Sites" />
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <!-- Header -->
-      <div class="mb-8 flex justify-between items-center">
-        <div>
-          <h1 class="text-3xl font-bold text-gray-900">Sites</h1>
-          <p class="mt-2 text-gray-600">Manage your multi-site configuration</p>
-        </div>
+    <PageHeader title="Sites" subtitle="Manage your multi-site configuration">
+      <template #actions>
         <Link
           :href="route('cp.sites.create')"
           class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors"
@@ -16,7 +11,7 @@
           <PlusIcon class="h-5 w-5 mr-2" />
           Add Site
         </Link>
-      </div>
+      </template>
 
       <!-- Filters -->
       <div class="mb-6 bg-white rounded-lg border border-gray-200 p-4">
@@ -231,7 +226,7 @@
           />
         </div>
       </div>
-    </div>
+    </PageHeader>
   </div>
 </template>
 
@@ -239,6 +234,7 @@
 import { ref, reactive } from 'vue'
 import { Head, Link, router } from '@inertiajs/vue3'
 import { PlusIcon } from '@heroicons/vue/24/outline'
+import PageHeader from '@/components/PageHeader.vue'
 
 const props = defineProps({
   sites: {

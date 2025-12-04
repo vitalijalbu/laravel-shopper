@@ -8,5 +8,5 @@ use Shopper\Core\Addon\AddonInterface;
 
 class AddonDeactivated
 {
-    public function __construct(public AddonInterface $plugin) {}
+    public function __construct(public AddonInterface $addon) {}
 }

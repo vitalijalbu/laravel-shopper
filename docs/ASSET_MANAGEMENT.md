@@ -1,6 +1,6 @@
 # Asset Management - Statamic Style
 
-Laravel Shopper utilizza un sistema di gestione degli asset simile a Statamic CMS, che costruisce automaticamente il frontend e lo pubblica nella cartella `public/vendor/shopper` dell'applicazione Laravel.
+Cartino utilizza un sistema di gestione degli asset simile a Statamic CMS, che costruisce automaticamente il frontend e lo pubblica nella cartella `public/vendor/shopper` dell'applicazione Laravel.
 
 ## Come Funziona
 
@@ -10,7 +10,7 @@ Quando stai sviluppando il package Shopper stesso:
 
 ```bash
 # Sviluppo con hot reload (build in public/build)
-SHOPPER_DEV=true npm run dev
+CARTINO_DEV=true npm run dev
 
 # Oppure usa l'alias
 npm run dev
@@ -86,7 +86,7 @@ Il sistema usa una configurazione Vite intelligente:
 
 ```javascript
 // vite.config.js
-const isPackageDev = process.env.SHOPPER_DEV === 'true';
+const isPackageDev = process.env.CARTINO_DEV === 'true';
 
 export default defineConfig({
   // ...
@@ -103,7 +103,7 @@ export default defineConfig({
 ### Per Sviluppatori del Package
 
 ```bash
-npm run dev              # Sviluppo con SHOPPER_DEV=true
+npm run dev              # Sviluppo con CARTINO_DEV=true
 npm run dev:package      # Sviluppo normale (build in vendor/shopper)
 npm run build           # Build di produzione
 npm run build:dev       # Build development

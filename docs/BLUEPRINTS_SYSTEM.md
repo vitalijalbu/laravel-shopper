@@ -1,6 +1,6 @@
 # Blueprints & Fieldsets System
 
-This Laravel Shopper implementation uses a **Statamic-inspired** file-based blueprint and fieldset system for managing custom fields across different content types.
+This Cartino implementation uses a **Statamic-inspired** file-based blueprint and fieldset system for managing custom fields across different content types.
 
 ## Overview
 

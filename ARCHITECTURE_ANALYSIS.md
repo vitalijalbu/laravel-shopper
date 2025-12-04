@@ -1,8 +1,8 @@
-# 🏗️ Laravel Shopper - Analisi Architettura Completa e Roadmap
+# 🏗️ Cartino - Analisi Architettura Completa e Roadmap
 
 ## 📋 Executive Summary
 
-Laravel Shopper è un package e-commerce per Laravel ispirato a Shopify, con un'architettura simile a Statamic CMS per la gestione dei fields custom. Questa analisi confronta l'architettura attuale con le migliori piattaforme e-commerce (Shopify, Shopware 6, Medusa.js, Saleor) e fornisce una roadmap dettagliata per renderlo **il miglior eCommerce PHP modulare e scalabile**.
+Cartino è un package e-commerce per Laravel ispirato a Shopify, con un'architettura simile a Statamic CMS per la gestione dei fields custom. Questa analisi confronta l'architettura attuale con le migliori piattaforme e-commerce (Shopify, Shopware 6, Medusa.js, Saleor) e fornisce una roadmap dettagliata per renderlo **il miglior eCommerce PHP modulare e scalabile**.
 
 **Stato attuale:**
 - ✅ 360 file PHP
@@ -210,17 +210,17 @@ class PluginManager
 
     public function boot(): void
     {
-        foreach ($this->plugins as $plugin) {
-            if ($plugin->isEnabled()) {
-                $plugin->boot();
-                $this->loaded[] = $plugin;
+        foreach ($this->plugins as $addon) {
+            if ($addon->isEnabled()) {
+                $addon->boot();
+                $this->loaded[] = $addon;
             }
         }
     }
 
-    public function register(PluginInterface $plugin): void
+    public function register(PluginInterface $addon): void
     {
-        $this->plugins[$plugin->getHandle()] = $plugin;
+        $this->plugins[$addon->getHandle()] = $addon;
     }
 }
 

@@ -1,4 +1,4 @@
-# ♿ Guida all'Accessibilità - Laravel Shopper
+# ♿ Guida all'Accessibilità - Cartino
 
 Implementazione completa degli standard WCAG 2.1 Level AA per garantire che la piattaforma sia accessibile a tutti gli utenti.
 
@@ -662,7 +662,7 @@ import SkipLink from '@/components/accessibility/SkipLink.vue'
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8">
-    <title>@yield('title', 'Laravel Shopper')</title>
+    <title>@yield('title', 'Cartino')</title>
 </head>
 <body>
     <x-accessibility.skip-link />

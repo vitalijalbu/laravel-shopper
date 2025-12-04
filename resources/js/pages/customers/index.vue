@@ -1,19 +1,17 @@
 <template>
-  <div class="space-y-6">
-    <!-- Header -->
-    <div class="flex items-center justify-between">
-      <div>
-        <h1 class="text-2xl font-semibold text-gray-900">Clienti</h1>
-        <p class="text-sm text-gray-500">Gestisci tutti i clienti registrati</p>
-      </div>
-      <button
-        @click="showCreateModal = true"
-        class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-      >
-        <PlusIcon class="h-4 w-4 mr-2" />
-        Nuovo Cliente
-      </button>
-    </div>
+  <div>
+    <PageHeader title="Clienti" subtitle="Gestisci tutti i clienti registrati">
+      <template #actions>
+        <button
+          @click="showCreateModal = true"
+          class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        >
+          <PlusIcon class="h-4 w-4 mr-2" />
+          Nuovo Cliente
+        </button>
+      </template>
+
+    <div class="space-y-6">
 
     <!-- Filters -->
     <div class="bg-white p-4 rounded-lg shadow-sm border">

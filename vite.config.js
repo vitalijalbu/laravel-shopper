@@ -4,7 +4,7 @@ import tailwindcss from "@tailwindcss/vite";
 import { resolve } from "path";
 
 const isDev = process.env.NODE_ENV === 'development';
-const isPackageDev = process.env.SHOPPER_DEV === 'true';
+const isPackageDev = process.env.CARTINO_DEV === 'true';
 
 export default defineConfig({
   plugins: [vue(), tailwindcss()],

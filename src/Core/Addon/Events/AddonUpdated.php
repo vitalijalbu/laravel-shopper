@@ -9,7 +9,7 @@ use Shopper\Core\Addon\AddonInterface;
 class PluginUpdated
 {
     public function __construct(
-        public AddonInterface $plugin,
+        public AddonInterface $addon,
         public string $fromVersion,
         public string $toVersion
     ) {}

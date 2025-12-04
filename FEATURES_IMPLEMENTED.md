@@ -1,6 +1,6 @@
-# 🎉 Features Implementate - Laravel Shopper
+# 🎉 Features Implementate - Cartino
 
-Documentazione completa delle nuove funzionalità implementate per trasformare Laravel Shopper in una piattaforma eCommerce enterprise-grade.
+Documentazione completa delle nuove funzionalità implementate per trasformare Cartino in una piattaforma eCommerce enterprise-grade.
 
 ---
 

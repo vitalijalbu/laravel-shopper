@@ -7,9 +7,9 @@ return [
     |--------------------------------------------------------------------------
     */
     'database' => [
-        'table_prefix' => env('SHOPPER_DB_TABLE_PREFIX', 'shopper_'),
-        'connection' => env('SHOPPER_DB_CONNECTION', 'mysql'),
-        'disable_migrations' => env('SHOPPER_DISABLE_MIGRATIONS', false),
+        'table_prefix' => env('CARTINO_DB_TABLE_PREFIX', 'shopper_'),
+        'connection' => env('CARTINO_DB_CONNECTION', 'mysql'),
+        'disable_migrations' => env('CARTINO_DISABLE_MIGRATIONS', false),
     ],
 
     /*
@@ -39,14 +39,14 @@ return [
     |--------------------------------------------------------------------------
     */
     'cp' => [
-        'name' => env('SHOPPER_CP_NAME', 'Control Panel'),
-        'route_prefix' => env('SHOPPER_CP_PREFIX', 'cp'),
-        'url' => env('SHOPPER_CP_URL', '/cp'),
+        'name' => env('CARTINO_CP_NAME', 'Control Panel'),
+        'route_prefix' => env('CARTINO_CP_PREFIX', 'cp'),
+        'url' => env('CARTINO_CP_URL', '/cp'),
 
         'branding' => [
-            'logo' => env('SHOPPER_CP_LOGO'),
-            'logo_dark' => env('SHOPPER_CP_LOGO_DARK'),
-            'favicon' => env('SHOPPER_CP_FAVICON'),
+            'logo' => env('CARTINO_CP_LOGO'),
+            'logo_dark' => env('CARTINO_CP_LOGO_DARK'),
+            'favicon' => env('CARTINO_CP_FAVICON'),
         ],
 
         'pagination' => [
@@ -75,8 +75,8 @@ return [
     |--------------------------------------------------------------------------
     */
     'admin' => [
-        'enabled' => env('SHOPPER_ADMIN_ENABLED', true),
-        'route_prefix' => env('SHOPPER_ADMIN_ROUTE_PREFIX', 'admin'),
+        'enabled' => env('CARTINO_ADMIN_ENABLED', true),
+        'route_prefix' => env('CARTINO_ADMIN_ROUTE_PREFIX', 'admin'),
         'middleware' => ['web', 'auth:sanctum'],
     ],
 
@@ -86,8 +86,8 @@ return [
     |--------------------------------------------------------------------------
     */
     'storefront' => [
-        'enabled' => env('SHOPPER_STOREFRONT_ENABLED', true),
-        'route_prefix' => env('SHOPPER_STOREFRONT_ROUTE_PREFIX', 'shop'),
+        'enabled' => env('CARTINO_STOREFRONT_ENABLED', true),
+        'route_prefix' => env('CARTINO_STOREFRONT_ROUTE_PREFIX', 'shop'),
     ],
 
     /*
@@ -152,7 +152,7 @@ return [
     |--------------------------------------------------------------------------
     */
     'currency' => [
-        'default' => env('SHOPPER_DEFAULT_CURRENCY', 'USD'),
+        'default' => env('CARTINO_DEFAULT_CURRENCY', 'USD'),
         'supported' => ['USD', 'EUR', 'GBP', 'JPY'],
     ],
 
@@ -162,8 +162,8 @@ return [
     |--------------------------------------------------------------------------
     */
     'media' => [
-        'disk' => env('SHOPPER_MEDIA_DISK', 'public'),
-        'path' => env('SHOPPER_MEDIA_PATH', 'shopper'),
+        'disk' => env('CARTINO_MEDIA_DISK', 'public'),
+        'path' => env('CARTINO_MEDIA_PATH', 'shopper'),
     ],
 
     /*
@@ -172,7 +172,7 @@ return [
     |--------------------------------------------------------------------------
     */
     'customer_groups' => [
-        'default' => env('SHOPPER_DEFAULT_CUSTOMER_GROUP', 'retail'),
+        'default' => env('CARTINO_DEFAULT_CUSTOMER_GROUP', 'retail'),
     ],
 
     /*
@@ -181,19 +181,19 @@ return [
     |--------------------------------------------------------------------------
     */
     'fidelity' => [
-        'enabled' => env('SHOPPER_FIDELITY_ENABLED', true),
+        'enabled' => env('CARTINO_FIDELITY_ENABLED', true),
 
         // Card code configuration
         'card' => [
-            'prefix' => env('SHOPPER_FIDELITY_CARD_PREFIX', 'FID'),
-            'length' => env('SHOPPER_FIDELITY_CARD_LENGTH', 8), // Lunghezza del numero dopo il prefisso
-            'separator' => env('SHOPPER_FIDELITY_CARD_SEPARATOR', '-'),
+            'prefix' => env('CARTINO_FIDELITY_CARD_PREFIX', 'FID'),
+            'length' => env('CARTINO_FIDELITY_CARD_LENGTH', 8), // Lunghezza del numero dopo il prefisso
+            'separator' => env('CARTINO_FIDELITY_CARD_SEPARATOR', '-'),
         ],
 
         // Points calculation system
         'points' => [
-            'enabled' => env('SHOPPER_FIDELITY_POINTS_ENABLED', true),
-            'currency_base' => env('SHOPPER_FIDELITY_CURRENCY_BASE', 'EUR'), // Valuta di base per il calcolo
+            'enabled' => env('CARTINO_FIDELITY_POINTS_ENABLED', true),
+            'currency_base' => env('CARTINO_FIDELITY_CURRENCY_BASE', 'EUR'), // Valuta di base per il calcolo
 
             // Conversion rates: amount spent -> points earned
             'conversion_rules' => [
@@ -208,14 +208,14 @@ return [
 
             // Points expiration
             'expiration' => [
-                'enabled' => env('SHOPPER_FIDELITY_POINTS_EXPIRATION', true),
-                'months' => env('SHOPPER_FIDELITY_POINTS_EXPIRATION_MONTHS', 12), // Scadenza in mesi
+                'enabled' => env('CARTINO_FIDELITY_POINTS_EXPIRATION', true),
+                'months' => env('CARTINO_FIDELITY_POINTS_EXPIRATION_MONTHS', 12), // Scadenza in mesi
             ],
 
             // Redemption rules
             'redemption' => [
-                'min_points' => env('SHOPPER_FIDELITY_MIN_REDEMPTION_POINTS', 100),
-                'points_to_currency_rate' => env('SHOPPER_FIDELITY_POINTS_TO_CURRENCY', 0.01), // 100 punti = 1€
+                'min_points' => env('CARTINO_FIDELITY_MIN_REDEMPTION_POINTS', 100),
+                'points_to_currency_rate' => env('CARTINO_FIDELITY_POINTS_TO_CURRENCY', 0.01), // 100 punti = 1€
             ],
         ],
     ],
@@ -233,8 +233,8 @@ return [
         |--------------------------------------------------------------------------
         */
         'pagination' => [
-            'default' => env('SHOPPER_PAGINATION_DEFAULT', 15),
-            'max' => env('SHOPPER_PAGINATION_MAX', 100),
+            'default' => env('CARTINO_PAGINATION_DEFAULT', 15),
+            'max' => env('CARTINO_PAGINATION_MAX', 100),
             'options' => [10, 15, 25, 50, 100],
         ],
 
@@ -244,8 +244,8 @@ return [
         |--------------------------------------------------------------------------
         */
         'cache' => [
-            'enabled' => env('SHOPPER_FILTERS_CACHE_ENABLED', true),
-            'ttl' => env('SHOPPER_FILTERS_CACHE_TTL', 3600), // 1 hour
+            'enabled' => env('CARTINO_FILTERS_CACHE_ENABLED', true),
+            'ttl' => env('CARTINO_FILTERS_CACHE_TTL', 3600), // 1 hour
             'tags' => ['shopper_filters', 'products', 'orders'],
         ],
 
@@ -342,7 +342,7 @@ return [
         |--------------------------------------------------------------------------
         */
         'rate_limit' => [
-            'enabled' => env('SHOPPER_FILTERS_RATE_LIMIT', true),
+            'enabled' => env('CARTINO_FILTERS_RATE_LIMIT', true),
             'max_requests' => 60,
             'per_minutes' => 1,
         ],
@@ -353,9 +353,9 @@ return [
         |--------------------------------------------------------------------------
         */
         'performance' => [
-            'auto_index_hints' => env('SHOPPER_FILTERS_AUTO_INDEX', true),
-            'query_timeout' => env('SHOPPER_FILTERS_QUERY_TIMEOUT', 30),
-            'max_joins' => env('SHOPPER_FILTERS_MAX_JOINS', 5),
+            'auto_index_hints' => env('CARTINO_FILTERS_AUTO_INDEX', true),
+            'query_timeout' => env('CARTINO_FILTERS_QUERY_TIMEOUT', 30),
+            'max_joins' => env('CARTINO_FILTERS_MAX_JOINS', 5),
         ],
     ],
 ];

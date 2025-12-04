@@ -1,12 +1,10 @@
-# Laravel Shopper
-
-# Laravel Shopper
+# Cartino
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Laravel Version](https://img.shields.io/badge/Laravel-11.0-red.svg)](https://laravel.com)
 [![PHP Version](https://img.shields.io/badge/PHP-8.3+-blue.svg)](https://php.net)
 
-A complete e-commerce platform for Laravel, inspired by **Shopify** and **Statamic CMS**, combining the best of both worlds with modern Laravel architecture.
+**Cartino** is a modern, complete e-commerce platform for Laravel, inspired by **Shopify** and **Statamic CMS**, combining the best of both worlds with a powerful Laravel architecture.
 
 ## Features
 
@@ -32,20 +30,20 @@ A complete e-commerce platform for Laravel, inspired by **Shopify** and **Statam
 ## Quick Installation
 
 ```bash
-composer require vitalijalbu/laravel-shopper
-php artisan shopper:install --oauth
+composer require vitalijalbu/cartino
+php artisan cartino:install --oauth
 ```
 
 ## Manual Installation
 
 1. Install the package:
 ```bash
-composer require vitalijalbu/laravel-shopper
+composer require vitalijalbu/cartino
 ```
 
 2. Publish and run migrations:
 ```bash
-php artisan vendor:publish --provider="Shopper\ShopperServiceProvider" --tag="shopper-migrations"
+php artisan vendor:publish --provider="Shopper\ShopperServiceProvider" --tag="cartino-migrations"
 php artisan migrate
 ```
 

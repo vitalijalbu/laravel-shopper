@@ -2,21 +2,16 @@
   <div>
     <Head :title="`${site.name} - Channels`" />
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <!-- Header -->
-      <div class="mb-8">
-        <Link
-          :href="route('cp.sites.index')"
-          class="inline-flex items-center text-sm text-gray-600 hover:text-gray-900 mb-4"
-        >
-          <ArrowLeftIcon class="h-4 w-4 mr-2" />
-          Back to Sites
-        </Link>
-        <div class="flex justify-between items-center">
-          <div>
-            <h1 class="text-3xl font-bold text-gray-900">{{ site.name }} - Channels</h1>
-            <p class="mt-2 text-gray-600">Manage sales channels for this site</p>
-          </div>
+    <PageHeader :title="`${site.name} - Channels`" subtitle="Manage sales channels for this site">
+      <template #actions>
+        <div class="flex items-center gap-3">
+          <Link
+            :href="route('cp.sites.index')"
+            class="inline-flex items-center text-sm text-gray-600 hover:text-gray-900"
+          >
+            <ArrowLeftIcon class="h-4 w-4 mr-2" />
+            Back to Sites
+          </Link>
           <Link
             :href="route('cp.sites.channels.create', site.id)"
             class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors"
@@ -25,7 +20,7 @@
             Add Channel
           </Link>
         </div>
-      </div>
+      </template>
 
       <!-- Filters -->
       <div class="mb-6 bg-white rounded-lg border border-gray-200 p-4">
@@ -237,7 +232,7 @@
           />
         </div>
       </div>
-    </div>
+    </PageHeader>
   </div>
 </template>
 
@@ -245,6 +240,7 @@
 import { ref, reactive } from 'vue'
 import { Head, Link, router } from '@inertiajs/vue3'
 import { PlusIcon, ArrowLeftIcon } from '@heroicons/vue/24/outline'
+import PageHeader from '@/components/PageHeader.vue'
 
 const props = defineProps({
   site: {

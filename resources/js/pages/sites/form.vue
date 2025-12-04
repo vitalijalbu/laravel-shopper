@@ -2,23 +2,21 @@
   <div>
     <Head :title="isEditing ? 'Edit Site' : 'Create Site'" />
 
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <!-- Header -->
-      <div class="mb-8">
+    <PageHeader
+      :title="isEditing ? 'Edit Site' : 'Create Site'"
+      :subtitle="isEditing ? 'Update site configuration' : 'Add a new site to your multi-site setup'"
+    >
+      <template #actions>
         <Link
           :href="route('cp.sites.index')"
-          class="inline-flex items-center text-sm text-gray-600 hover:text-gray-900 mb-4"
+          class="inline-flex items-center text-sm text-gray-600 hover:text-gray-900"
         >
           <ArrowLeftIcon class="h-4 w-4 mr-2" />
           Back to Sites
         </Link>
-        <h1 class="text-3xl font-bold text-gray-900">
-          {{ isEditing ? 'Edit Site' : 'Create Site' }}
-        </h1>
-        <p class="mt-2 text-gray-600">
-          {{ isEditing ? 'Update site configuration' : 'Add a new site to your multi-site setup' }}
-        </p>
-      </div>
+      </template>
+
+      <div class="max-w-5xl mx-auto">
 
       <form @submit.prevent="submit">
         <!-- Basic Information -->
@@ -275,7 +273,8 @@
           </button>
         </div>
       </form>
-    </div>
+      </div>
+    </PageHeader>
   </div>
 </template>
 
@@ -283,6 +282,7 @@
 import { computed } from 'vue'
 import { Head, Link, useForm } from '@inertiajs/vue3'
 import { ArrowLeftIcon } from '@heroicons/vue/24/outline'
+import PageHeader from '@/components/PageHeader.vue'
 import CountrySelector from '@/components/CountrySelector.vue'
 import CatalogPicker from '@/components/CatalogPicker.vue'
 

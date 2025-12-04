@@ -1,6 +1,6 @@
 {
-    "name": "vitalijalbu/laravel-shopper",
-    "description": "A complete e-commerce package for Laravel inspired by Shopify",
+    "name": "vitalijalbu/cartino",
+    "description": "Cartino - Modern Laravel E-commerce Platform inspired by Shopify & Statamic CMS",
     "type": "library",
     "license": "MIT",
     "authors": [

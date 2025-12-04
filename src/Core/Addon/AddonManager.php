@@ -7,6 +7,7 @@ namespace Shopper\Core\Addon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
+use Shopper\Core\Addon\Events\AddonUninstalled;
 use Shopper\Core\Addon\Events\PluginActivated;
 use Shopper\Core\Addon\Events\PluginDeactivated;
 use Shopper\Core\Addon\Events\PluginInstalled;
@@ -90,11 +91,11 @@ class AddonManager
                 return;
             }
 
-            $this->addons->put($plugin->getId(), $plugin);
+            $this->addons->put($addon->getId(), $addon);
 
             // Check if addon is active in database
-            if ($this->repository->isActive($plugin->getId())) {
-                $this->activePlugins->put($plugin->getId(), $plugin);
+            if ($this->repository->isActive($addon->getId())) {
+                $this->activePlugins->put($addon->getId(), $addon);
             }
         } catch (\Exception $e) {
             logger()->error("Failed to load addon from {$path}: ".$e->getMessage());
@@ -148,25 +149,25 @@ class AddonManager
     {
         $addon = $this->get($id);
 
-        if (! $plugin) {
+        if (! $addon) {
             throw new AddonException("Plugin {$id} not found");
         }
 
         // Check dependencies
-        $this->checkDependencies($plugin);
+        $this->checkDependencies($addon);
 
         // Install plugin
-        $plugin->install();
+        $addon->install();
 
         // Save to database
         $this->repository->create([
-            'id' => $plugin->getId(),
-            'name' => $plugin->getName(),
-            'version' => $plugin->getVersion(),
+            'id' => $addon->getId(),
+            'name' => $addon->getName(),
+            'version' => $addon->getVersion(),
             'is_active' => false,
         ]);
 
-        event(new PluginInstalled($plugin));
+        event(new PluginInstalled($addon));
 
         Cache::tags(['addons'])->flush();
     }
@@ -178,7 +179,7 @@ class AddonManager
     {
         $addon = $this->get($id);
 
-        if (! $plugin) {
+        if (! $addon) {
             throw new AddonException("Plugin {$id} not found");
         }
 
@@ -198,12 +199,12 @@ class AddonManager
         }
 
         // Uninstall plugin
-        $plugin->uninstall();
+        $addon->uninstall();
 
         // Remove from database
         $this->repository->delete($id);
 
-        event(new PluginUninstalled($plugin));
+        event(new AddonUninstalled($addon));
 
         Cache::tags(['addons'])->flush();
     }
@@ -215,7 +216,7 @@ class AddonManager
     {
         $addon = $this->get($id);
 
-        if (! $plugin) {
+        if (! $addon) {
             throw new AddonException("Plugin {$id} not found");
         }
 
@@ -229,24 +230,24 @@ class AddonManager
         }
 
         // Check dependencies are active
-        foreach ($plugin->getDependencies() as $dependencyId => $version) {
+        foreach ($addon->getDependencies() as $dependencyId => $version) {
             if (! $this->isActive($dependencyId)) {
                 throw new AddonException("Plugin {$id} requires {$dependencyId} to be active");
             }
         }
 
         // Activate plugin
-        $plugin->activate();
-        $plugin->register();
-        $plugin->boot();
+        $addon->activate();
+        $addon->register();
+        $addon->boot();
 
         // Update database
         $this->repository->activate($id);
 
         // Add to active addons
-        $this->activePlugins->put($id, $plugin);
+        $this->activePlugins->put($id, $addon);
 
-        event(new PluginActivated($plugin));
+        event(new PluginActivated($addon));
 
         Cache::tags(['addons'])->flush();
     }
@@ -258,7 +259,7 @@ class AddonManager
     {
         $addon = $this->get($id);
 
-        if (! $plugin) {
+        if (! $addon) {
             throw new AddonException("Plugin {$id} not found");
         }
 
@@ -277,7 +278,7 @@ class AddonManager
         }
 
         // Deactivate plugin
-        $plugin->deactivate();
+        $addon->deactivate();
 
         // Update database
         $this->repository->deactivate($id);
@@ -285,7 +286,7 @@ class AddonManager
         // Remove from active addons
         $this->activePlugins->forget($id);
 
-        event(new PluginDeactivated($plugin));
+        event(new PluginDeactivated($addon));
 
         Cache::tags(['addons'])->flush();
     }
@@ -297,24 +298,24 @@ class AddonManager
     {
         $addon = $this->get($id);
 
-        if (! $plugin) {
+        if (! $addon) {
             throw new AddonException("Plugin {$id} not found");
         }
 
         $oldVersion = $this->repository->getVersion($id);
-        $newVersion = $plugin->getVersion();
+        $newVersion = $addon->getVersion();
 
         if (version_compare($newVersion, $oldVersion, '<=')) {
             return;
         }
 
         // Update plugin
-        $plugin->update($oldVersion);
+        $addon->update($oldVersion);
 
         // Update database
         $this->repository->updateVersion($id, $newVersion);
 
-        event(new PluginUpdated($plugin, $oldVersion, $newVersion));
+        event(new PluginUpdated($addon, $oldVersion, $newVersion));
 
         Cache::tags(['addons'])->flush();
     }
@@ -324,8 +325,8 @@ class AddonManager
      */
     public function registerActive(): void
     {
-        foreach ($this->activePlugins as $plugin) {
-            $plugin->register();
+        foreach ($this->activePlugins as $addon) {
+            $addon->register();
         }
     }
 
@@ -334,28 +335,28 @@ class AddonManager
      */
     public function bootActive(): void
     {
-        foreach ($this->activePlugins as $plugin) {
-            $plugin->boot();
+        foreach ($this->activePlugins as $addon) {
+            $addon->boot();
         }
     }
 
     /**
      * Check addon dependencies
      */
-    protected function checkDependencies(AddonInterface $plugin): void
+    protected function checkDependencies(AddonInterface $addon): void
     {
-        foreach ($plugin->getDependencies() as $dependencyId => $versionConstraint) {
+        foreach ($addon->getDependencies() as $dependencyId => $versionConstraint) {
             $dependency = $this->get($dependencyId);
 
             if (! $dependency) {
                 throw new AddonException(
-                    "Plugin {$plugin->getId()} requires {$dependencyId} but it's not available"
+                    "Plugin {$addon->getId()} requires {$dependencyId} but it's not available"
                 );
             }
 
             if (! $this->repository->exists($dependencyId)) {
                 throw new AddonException(
-                    "Plugin {$plugin->getId()} requires {$dependencyId} to be installed"
+                    "Plugin {$addon->getId()} requires {$dependencyId} to be installed"
                 );
             }
 
@@ -363,7 +364,7 @@ class AddonManager
 
             if (! $this->versionSatisfies($installedVersion, $versionConstraint)) {
                 throw new AddonException(
-                    "Plugin {$plugin->getId()} requires {$dependencyId} {$versionConstraint} ".
+                    "Plugin {$addon->getId()} requires {$dependencyId} {$versionConstraint} ".
                     "but version {$installedVersion} is installed"
                 );
             }
@@ -375,8 +376,8 @@ class AddonManager
      */
     protected function getDependents(string $id): Collection
     {
-        return $this->addons->filter(function (AddonInterface $plugin) use ($id) {
-            return array_key_exists($id, $plugin->getDependencies());
+        return $this->addons->filter(function (AddonInterface $addon) use ($id) {
+            return array_key_exists($id, $addon->getDependencies());
         });
     }
 
@@ -385,8 +386,8 @@ class AddonManager
      */
     protected function getActiveDependents(string $id): Collection
     {
-        return $this->activePlugins->filter(function (AddonInterface $plugin) use ($id) {
-            return array_key_exists($id, $plugin->getDependencies());
+        return $this->activePlugins->filter(function (AddonInterface $addon) use ($id) {
+            return array_key_exists($id, $addon->getDependencies());
         });
     }
 

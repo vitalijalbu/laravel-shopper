@@ -2,7 +2,7 @@
 
 ## 🎯 Overview
 
-Laravel Shopper uses **Sites as Markets** - a flexible architecture where each Site represents a geographic or strategic market, with built-in support for multi-currency, multi-locale, and multi-catalog operations.
+Cartino uses **Sites as Markets** - a flexible architecture where each Site represents a geographic or strategic market, with built-in support for multi-currency, multi-locale, and multi-catalog operations.
 
 ### Key Concepts
 

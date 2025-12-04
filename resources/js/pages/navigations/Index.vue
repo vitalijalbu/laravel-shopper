@@ -2,19 +2,16 @@
   <div>
     <Head title="Navigations" />
 
-    <div class="flex items-center justify-between mb-8">
-      <div>
-        <h1 class="text-3xl font-bold text-gray-900">Navigations</h1>
-        <p class="text-gray-600 mt-1">Manage your site's navigation menus</p>
-      </div>
-      <Link
-        :href="route('cp.navigations.create')"
-        class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-      >
-        <PlusIcon class="w-4 h-4 mr-2" />
-        Create Navigation
-      </Link>
-    </div>
+    <PageHeader title="Navigations" subtitle="Manage your site's navigation menus">
+      <template #actions>
+        <Link
+          :href="route('cp.navigations.create')"
+          class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+        >
+          <PlusIcon class="w-4 h-4 mr-2" />
+          Create Navigation
+        </Link>
+      </template>
 
     <div class="bg-white shadow-sm rounded-lg border border-gray-200 overflow-hidden">
       <div class="px-6 py-4 border-b border-gray-200">

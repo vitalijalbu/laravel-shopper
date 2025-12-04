@@ -2,23 +2,21 @@
   <div>
     <Head :title="isEditing ? 'Edit Channel' : 'Create Channel'" />
 
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <!-- Header -->
-      <div class="mb-8">
+    <PageHeader
+      :title="isEditing ? 'Edit Channel' : 'Create Channel'"
+      :subtitle="site.name"
+    >
+      <template #actions>
         <Link
           :href="route('cp.sites.channels.index', site.id)"
-          class="inline-flex items-center text-sm text-gray-600 hover:text-gray-900 mb-4"
+          class="inline-flex items-center text-sm text-gray-600 hover:text-gray-900"
         >
           <ArrowLeftIcon class="h-4 w-4 mr-2" />
           Back to Channels
         </Link>
-        <h1 class="text-3xl font-bold text-gray-900">
-          {{ isEditing ? 'Edit Channel' : 'Create Channel' }}
-        </h1>
-        <p class="mt-2 text-gray-600">
-          {{ site.name }}
-        </p>
-      </div>
+      </template>
+
+      <div class="max-w-4xl mx-auto">
 
       <form @submit.prevent="submit">
         <!-- Basic Information -->
@@ -173,7 +171,8 @@
           </button>
         </div>
       </form>
-    </div>
+      </div>
+    </PageHeader>
   </div>
 </template>
 
@@ -181,6 +180,7 @@
 import { computed, ref, watch } from 'vue'
 import { Head, Link, useForm } from '@inertiajs/vue3'
 import { ArrowLeftIcon } from '@heroicons/vue/24/outline'
+import PageHeader from '@/components/PageHeader.vue'
 import LocaleSelector from '@/components/LocaleSelector.vue'
 import CurrencySelector from '@/components/CurrencySelector.vue'
 
