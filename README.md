@@ -30,7 +30,7 @@
 ## Quick Installation
 
 ```bash
-composer require vitalijalbu/cartino
+composer require cartinophp/cartino
 php artisan cartino:install --oauth
 ```
 
@@ -38,7 +38,7 @@ php artisan cartino:install --oauth
 
 1. Install the package:
 ```bash
-composer require vitalijalbu/cartino
+composer require cartinophp/cartino
 ```
 
 2. Publish and run migrations:

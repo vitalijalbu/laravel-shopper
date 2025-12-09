@@ -48,7 +48,7 @@ composer create-project laravel/laravel my-store
 cd my-store
 
 # Install Cartino
-composer require vitalijalbu/cartino
+composer require cartinophp/cartino
 
 # Run installation command
 php artisan cartino:install
@@ -67,7 +67,7 @@ Add Cartino to an existing Laravel application:
 
 ```bash
 # Install package
-composer require vitalijalbu/cartino
+composer require cartinophp/cartino
 
 # Run installation
 php artisan cartino:install --no-migrate
@@ -109,7 +109,7 @@ For development with hot reload:
 
 ```bash
 # Install with dev dependencies
-composer require vitalijalbu/cartino --dev
+composer require cartinophp/cartino --dev
 
 # Install frontend dependencies
 npm install
@@ -251,7 +251,7 @@ sudo chown -R $USER:www-data storage bootstrap/cache
 If Composer runs out of memory:
 
 ```bash
-php -d memory_limit=-1 /usr/local/bin/composer require vitalijalbu/cartino
+php -d memory_limit=-1 /usr/local/bin/composer require cartinophp/cartino
 ```
 
 ---
@@ -269,7 +269,7 @@ cd my-store
 ./vendor/bin/sail up -d
 
 # Install Cartino
-./vendor/bin/sail composer require vitalijalbu/cartino
+./vendor/bin/sail composer require cartinophp/cartino
 ./vendor/bin/sail artisan cartino:install
 ```
 
@@ -322,7 +322,7 @@ Now that Cartino is installed:
 To update to the latest version:
 
 ```bash
-composer update vitalijalbu/cartino
+composer update cartinophp/cartino
 php artisan cartino:update
 ```
 
@@ -339,10 +339,10 @@ To remove Cartino:
 
 ```bash
 # Remove package
-composer remove vitalijalbu/cartino
+composer remove cartinophp/cartino
 
 # Optional: Remove migrations
-php artisan migrate:rollback --path=vendor/vitalijalbu/cartino/database/migrations
+php artisan migrate:rollback --path=vendor/cartinophp/cartino/database/migrations
 ```
 
 > **Note**: This will not delete your data. Back up your database first!

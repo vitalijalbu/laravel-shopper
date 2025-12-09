@@ -21,7 +21,7 @@ Get your first Cartino store up and running in 15 minutes.
 ## Step 1: Install Cartino
 
 ```bash
-composer require vitalijalbu/cartino
+composer require cartinophp/cartino
 php artisan cartino:install
 ```
 
@@ -122,6 +122,6 @@ php artisan db:seed
 
 ## Community
 
-- GitHub: [github.com/vitalijalbu/cartino](https://github.com/vitalijalbu/cartino)
+- GitHub: [github.com/cartinophp/cartino](https://github.com/cartinophp/cartino)
 - Discord: Join our community
 - Docs: [cartino.dev/docs](https://cartino.dev/docs)
