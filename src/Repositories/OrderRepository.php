@@ -64,6 +64,7 @@ class OrderRepository extends BaseRepository
 
         $order = $this->model->create($data);
         $this->clearCache();
+
         return $order;
     }
 
@@ -75,6 +76,7 @@ class OrderRepository extends BaseRepository
         $order = $this->findOrFail($id);
         $order->update($data);
         $this->clearCache();
+
         return $order->fresh();
     }
 
@@ -86,6 +88,7 @@ class OrderRepository extends BaseRepository
         $order = $this->findOrFail($id);
         $deleted = $order->delete();
         $this->clearCache();
+
         return $deleted;
     }
 
@@ -95,6 +98,7 @@ class OrderRepository extends BaseRepository
     public function canDelete(int $id): bool
     {
         $order = $this->findOrFail($id);
+
         return in_array($order->status, ['draft', 'cancelled']);
     }
 

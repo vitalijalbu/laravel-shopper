@@ -32,9 +32,9 @@ class OrderResource extends JsonResource
             'fulfilled_at' => $this->fulfilled_at?->toISOString(),
             'created_at' => $this->created_at->toISOString(),
             'updated_at' => $this->updated_at->toISOString(),
-            
+
             // Relations
-            'customer' => $this->whenLoaded('customer', fn() => new CustomerResource($this->customer)),
+            'customer' => $this->whenLoaded('customer', fn () => new CustomerResource($this->customer)),
             'items' => OrderLineResource::collection($this->whenLoaded('items')),
             'transactions' => TransactionResource::collection($this->whenLoaded('transactions')),
         ];

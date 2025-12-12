@@ -46,6 +46,7 @@ final class CategoryRepository extends BaseRepository
     {
         $category = $this->model->create($data);
         $this->clearCache();
+
         return $category;
     }
 
@@ -57,6 +58,7 @@ final class CategoryRepository extends BaseRepository
         $category = $this->findOrFail($id);
         $category->update($data);
         $this->clearCache();
+
         return $category->fresh();
     }
 
@@ -68,6 +70,7 @@ final class CategoryRepository extends BaseRepository
         $category = $this->findOrFail($id);
         $deleted = $category->delete();
         $this->clearCache();
+
         return $deleted;
     }
 
@@ -77,7 +80,8 @@ final class CategoryRepository extends BaseRepository
     public function canDelete(int $id): bool
     {
         $category = $this->findOrFail($id);
-        return !$category->products()->exists() && !$category->children()->exists();
+
+        return ! $category->products()->exists() && ! $category->children()->exists();
     }
 
     /**
@@ -89,6 +93,7 @@ final class CategoryRepository extends BaseRepository
         $newStatus = $category->is_visible ? false : true;
         $category->update(['is_visible' => $newStatus]);
         $this->clearCache();
+
         return $category->fresh();
     }
 

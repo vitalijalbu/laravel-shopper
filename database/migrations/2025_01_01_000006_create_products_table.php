@@ -1,21 +1,19 @@
 <?php
 
-use Cartino\Database\Migrations\Concerns\{
-    HasSiteScope,
-    HasStatus,
-    HasSlug,
-    HasSeo,
-    HasJsonFields,
-    HasPublishing,
-    HasReference
-};
+use Cartino\Database\Migrations\Concerns\HasJsonFields;
+use Cartino\Database\Migrations\Concerns\HasPublishing;
+use Cartino\Database\Migrations\Concerns\HasReference;
+use Cartino\Database\Migrations\Concerns\HasSeo;
+use Cartino\Database\Migrations\Concerns\HasSiteScope;
+use Cartino\Database\Migrations\Concerns\HasSlug;
+use Cartino\Database\Migrations\Concerns\HasStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    use HasSiteScope, HasStatus, HasSlug, HasSeo, HasJsonFields, HasPublishing, HasReference;
+    use HasJsonFields, HasPublishing, HasReference, HasSeo, HasSiteScope, HasSlug, HasStatus;
 
     public function up(): void
     {

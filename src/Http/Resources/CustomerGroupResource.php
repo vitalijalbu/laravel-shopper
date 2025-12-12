@@ -19,7 +19,7 @@ class CustomerGroupResource extends JsonResource
             'is_default' => $this->is_default,
             'created_at' => $this->created_at->toISOString(),
             'updated_at' => $this->updated_at->toISOString(),
-            
+
             'customers' => CustomerResource::collection($this->whenLoaded('customers')),
         ];
     }

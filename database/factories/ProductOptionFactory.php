@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
-use Cartino\Models\ProductOption;
 use Cartino\Models\Product;
+use Cartino\Models\ProductOption;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ProductOptionFactory extends Factory
@@ -15,7 +15,7 @@ class ProductOptionFactory extends Factory
     public function definition(): array
     {
         $optionType = $this->faker->randomElement(['Size', 'Color', 'Material', 'Style']);
-        
+
         $values = match ($optionType) {
             'Size' => $this->faker->randomElements(['XS', 'S', 'M', 'L', 'XL', 'XXL'], $this->faker->numberBetween(3, 5)),
             'Color' => $this->faker->randomElements(['Red', 'Blue', 'Green', 'Black', 'White', 'Yellow', 'Pink'], $this->faker->numberBetween(3, 6)),

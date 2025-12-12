@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Cartino\Http\Controllers\Api;
 
-use Cartino\DTO\TaxRateDTO;
 use Cartino\Http\Requests\Api\StoreTaxRateRequest;
 use Cartino\Http\Requests\Api\UpdateTaxRateRequest;
 use Cartino\Http\Resources\TaxRateResource;

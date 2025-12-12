@@ -2,9 +2,6 @@
 
 namespace Cartino\Enums;
 
-
-
-
 enum PricingRuleType: string
 {
     case PERCENTAGE = 'percentage';
@@ -26,8 +23,6 @@ enum PricingRuleType: string
         };
     }
 }
-
-
 
 enum ReturnStatus: string
 {

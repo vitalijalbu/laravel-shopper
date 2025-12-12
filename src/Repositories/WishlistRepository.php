@@ -4,6 +4,8 @@ namespace Cartino\Repositories;
 
 use Cartino\Models\Wishlist;
 use Illuminate\Support\Facades\Cache;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class WishlistRepository extends BaseRepository
 {
@@ -21,11 +23,11 @@ class WishlistRepository extends BaseRepository
      */
     public function findAll(array $filters = []): \Illuminate\Pagination\LengthAwarePaginator
     {
-        return \Spatie\QueryBuilder\QueryBuilder::for(Wishlist::class)
+        return QueryBuilder::for(Wishlist::class)
             ->allowedFilters([
                 'name',
-                \Spatie\QueryBuilder\AllowedFilter::exact('customer_id'),
-                \Spatie\QueryBuilder\AllowedFilter::exact('status'),
+                AllowedFilter::exact('customer_id'),
+                AllowedFilter::exact('status'),
             ])
             ->allowedSorts(['name', 'created_at'])
             ->allowedIncludes(['customer', 'items', 'items.product'])
@@ -48,6 +50,7 @@ class WishlistRepository extends BaseRepository
     {
         $wishlist = $this->model->create($data);
         $this->clearCache();
+
         return $wishlist;
     }
 
@@ -59,6 +62,7 @@ class WishlistRepository extends BaseRepository
         $wishlist = $this->findOrFail($id);
         $wishlist->update($data);
         $this->clearCache();
+
         return $wishlist->fresh();
     }
 
@@ -70,6 +74,7 @@ class WishlistRepository extends BaseRepository
         $wishlist = $this->findOrFail($id);
         $deleted = $wishlist->delete();
         $this->clearCache();
+
         return $deleted;
     }
 

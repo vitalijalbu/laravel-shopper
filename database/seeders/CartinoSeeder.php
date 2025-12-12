@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use Cartino\Models\Address;
+use Cartino\Models\AnalyticsEvent;
 use Cartino\Models\Brand;
 use Cartino\Models\Cart;
 use Cartino\Models\CartLine;
@@ -12,36 +13,35 @@ use Cartino\Models\Country;
 use Cartino\Models\Currency;
 use Cartino\Models\Customer;
 use Cartino\Models\CustomerGroup;
+use Cartino\Models\Discount;
+use Cartino\Models\Favorite;
+use Cartino\Models\Menu;
+use Cartino\Models\MenuItem;
 use Cartino\Models\Order;
 use Cartino\Models\OrderLine;
+use Cartino\Models\Page;
 use Cartino\Models\Product;
 use Cartino\Models\ProductOption;
+use Cartino\Models\ProductReview;
 use Cartino\Models\ProductType;
 use Cartino\Models\ProductVariant;
+use Cartino\Models\PurchaseOrder;
+use Cartino\Models\PurchaseOrderItem;
+use Cartino\Models\ReviewMedia;
+use Cartino\Models\ReviewVote;
 use Cartino\Models\Setting;
 use Cartino\Models\ShippingRate;
 use Cartino\Models\ShippingZone;
 use Cartino\Models\Site;
+use Cartino\Models\StockNotification;
+use Cartino\Models\Supplier;
 use Cartino\Models\TaxRate;
+use Cartino\Models\Transaction;
 use Cartino\Models\User;
+use Cartino\Models\UserGroup;
 use Cartino\Models\VariantPrice;
 use Cartino\Models\Wishlist;
 use Cartino\Models\WishlistItem;
-use Cartino\Models\ProductReview;
-use Cartino\Models\ReviewMedia;
-use Cartino\Models\ReviewVote;
-use Cartino\Models\Discount;
-use Cartino\Models\Transaction;
-use Cartino\Models\Page;
-use Cartino\Models\Menu;
-use Cartino\Models\MenuItem;
-use Cartino\Models\Supplier;
-use Cartino\Models\PurchaseOrder;
-use Cartino\Models\PurchaseOrderItem;
-use Cartino\Models\AnalyticsEvent;
-use Cartino\Models\StockNotification;
-use Cartino\Models\Favorite;
-use Cartino\Models\UserGroup;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -240,7 +240,7 @@ class CartinoSeeder extends Seeder
         // Menus
         $this->command->info('🗂️ Seeding menus...');
         $menus = Menu::factory()->count(5)->create();
-        
+
         foreach ($menus as $menu) {
             MenuItem::factory()->count(10)->state(['menu_id' => $menu->id])->create();
         }
@@ -289,7 +289,7 @@ class CartinoSeeder extends Seeder
                     'site_id' => $mainSite->id,
                     'parent_id' => $rootCat->id,
                     'level' => 1,
-                    'path' => $rootData['slug'] . '/' . fake()->slug(2),
+                    'path' => $rootData['slug'].'/'.fake()->slug(2),
                 ])->create();
                 $categories->push($subCat);
             }
@@ -298,21 +298,21 @@ class CartinoSeeder extends Seeder
         // Create even more categories
         Category::factory()->count(50)->state([
             'site_id' => $mainSite->id,
-        ])->create()->each(fn($cat) => $categories->push($cat));
+        ])->create()->each(fn ($cat) => $categories->push($cat));
 
-        $this->command->info('✅ Categories created: ' . $categories->count());
+        $this->command->info('✅ Categories created: '.$categories->count());
 
         // Products with variants using factory - MASSIVE QUANTITY
         $this->command->info('🛍️ Seeding MASSIVE product catalog...');
         $this->command->info('⏳ This will take a while... creating 500 products with variants...');
-        
+
         $products = collect();
         $batchSize = 100;
         $totalProducts = 5000;
 
         for ($batch = 0; $batch < ($totalProducts / $batchSize); $batch++) {
-            $this->command->info("📦 Processing batch " . ($batch + 1) . " of " . ($totalProducts / $batchSize));
-            
+            $this->command->info('📦 Processing batch '.($batch + 1).' of '.($totalProducts / $batchSize));
+
             for ($i = 0; $i < $batchSize; $i++) {
                 $product = Product::factory()->state([
                     'site_id' => $mainSite->id,
@@ -336,7 +336,7 @@ class CartinoSeeder extends Seeder
                 // Attach random categories (1-3 per product)
                 $numCategories = rand(1, min(3, $categories->count()));
                 $chosenCategories = $categories->random($numCategories);
-                
+
                 foreach ($chosenCategories as $cat) {
                     DB::table('category_product')->insert([
                         'category_id' => $cat->id,
@@ -369,12 +369,12 @@ class CartinoSeeder extends Seeder
             }
         }
 
-        $this->command->info('✅ Products with variants seeded: ' . $products->count());
+        $this->command->info('✅ Products with variants seeded: '.$products->count());
 
         // Product Reviews - MASSIVE
         $this->command->info('⭐ Seeding product reviews...');
         $productIds = $products->pluck('id')->toArray();
-        
+
         foreach (array_slice($productIds, 0, 200) as $productId) {
             $reviewCount = rand(2, 15);
             $reviews = ProductReview::factory()->count($reviewCount)->state([
@@ -399,7 +399,7 @@ class CartinoSeeder extends Seeder
         // Purchase Orders & Suppliers
         $this->command->info('📋 Seeding purchase orders...');
         $suppliers = Supplier::all();
-        
+
         foreach ($suppliers->take(20) as $supplier) {
             $pos = PurchaseOrder::factory()->count(rand(2, 8))->state([
                 'supplier_id' => $supplier->id,
@@ -441,10 +441,10 @@ class CartinoSeeder extends Seeder
         ])->create();
 
         $this->command->info('🛒 Processing customer data (carts, wishlists, orders)...');
-        
+
         foreach ($customers as $index => $customer) {
             if ($index % 20 === 0) {
-                $this->command->info("  Processing customer " . ($index + 1) . " of " . $customers->count());
+                $this->command->info('  Processing customer '.($index + 1).' of '.$customers->count());
             }
 
             // Address using factory (1-3 addresses per customer)
@@ -491,7 +491,7 @@ class CartinoSeeder extends Seeder
                     'quantity' => $quantity,
                     'line_total' => $variant->price * $quantity,
                 ])->create();
-                
+
                 $totals['subtotal'] += $line->line_total;
             }
 
@@ -505,7 +505,7 @@ class CartinoSeeder extends Seeder
 
             // Create multiple orders per customer (1-5 orders)
             $orderCount = rand(1, 5);
-            
+
             for ($o = 0; $o < $orderCount; $o++) {
                 $order = Order::factory()->state([
                     'customer_id' => $customer->id,
@@ -518,14 +518,14 @@ class CartinoSeeder extends Seeder
                 $orderLineCount = rand(1, 10);
                 $orderLineVariants = $products->flatMap(fn ($p) => $p->variants)->shuffle()->take($orderLineCount);
                 $orderSubtotal = 0;
-                
+
                 foreach ($orderLineVariants as $variant) {
                     $line = OrderLine::factory()->state([
                         'order_id' => $order->id,
                         'product_id' => $variant->product_id,
                         'product_variant_id' => $variant->id,
                     ])->create();
-                    
+
                     $orderSubtotal += $line->line_total;
                 }
 
@@ -569,8 +569,8 @@ class CartinoSeeder extends Seeder
             }
         }
 
-        $this->command->info('✅ Customers seeded: ' . $customers->count());
-        $this->command->info('✅ Total orders created: ~' . ($customers->count() * 3));
+        $this->command->info('✅ Customers seeded: '.$customers->count());
+        $this->command->info('✅ Total orders created: ~'.($customers->count() * 3));
     }
 
     /**

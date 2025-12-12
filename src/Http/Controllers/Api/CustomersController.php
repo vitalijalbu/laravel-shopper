@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Cartino\Http\Controllers\Api;
 
-use Cartino\DTO\CustomerDTO;
 use Cartino\Http\Requests\Api\StoreCustomerRequest;
 use Cartino\Http\Requests\Api\UpdateCustomerRequest;
 use Cartino\Http\Resources\CustomerResource;
@@ -73,7 +72,7 @@ class CustomersController extends ApiController
     public function destroy(Customer $customer): JsonResponse
     {
         try {
-            if (!$this->repository->canDelete($customer->id)) {
+            if (! $this->repository->canDelete($customer->id)) {
                 return $this->errorResponse('Impossibile eliminare il customer: ha ordini associati', 422);
             }
 

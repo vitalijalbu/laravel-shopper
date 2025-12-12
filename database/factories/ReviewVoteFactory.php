@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
-use Cartino\Models\ReviewVote;
-use Cartino\Models\ProductReview;
 use Cartino\Models\Customer;
+use Cartino\Models\ProductReview;
+use Cartino\Models\ReviewVote;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ReviewVoteFactory extends Factory

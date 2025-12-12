@@ -26,7 +26,7 @@ class SupplierFactory extends Factory
             'country' => $this->faker->country(),
             'postal_code' => $this->faker->postcode(),
             'tax_id' => $this->faker->numerify('##########'),
-            'payment_terms' => $this->faker->numberBetween(15, 90) . ' days',
+            'payment_terms' => $this->faker->numberBetween(15, 90).' days',
             'notes' => $this->faker->optional()->paragraph(),
             'is_active' => $this->faker->boolean(90),
         ];

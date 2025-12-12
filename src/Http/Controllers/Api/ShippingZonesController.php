@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Cartino\Http\Controllers\Api;
 
-use Cartino\DTO\ShippingZoneDTO;
 use Cartino\Http\Requests\Api\StoreShippingZoneRequest;
 use Cartino\Http\Requests\Api\UpdateShippingZoneRequest;
 use Cartino\Http\Resources\ShippingZoneResource;

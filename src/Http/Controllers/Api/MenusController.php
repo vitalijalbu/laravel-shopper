@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Cartino\Http\Controllers\Api;
 
-use Cartino\DTO\MenuDTO;
 use Cartino\Http\Requests\Api\StoreMenuRequest;
 use Cartino\Http\Requests\Api\UpdateMenuRequest;
 use Cartino\Http\Resources\MenuResource;

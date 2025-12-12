@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Cartino\Repositories;
 
 use Cartino\Models\Brand;
-use Illuminate\Database\Eloquent\Category;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Spatie\QueryBuilder\QueryBuilder;
@@ -50,6 +49,7 @@ class BrandRepository extends BaseRepository
     {
         $brand = $this->model->create($data);
         $this->clearCache();
+
         return $brand;
     }
 
@@ -61,6 +61,7 @@ class BrandRepository extends BaseRepository
         $brand = $this->findOrFail($id);
         $brand->update($data);
         $this->clearCache();
+
         return $brand->fresh();
     }
 
@@ -72,6 +73,7 @@ class BrandRepository extends BaseRepository
         $brand = $this->findOrFail($id);
         $deleted = $brand->delete();
         $this->clearCache();
+
         return $deleted;
     }
 
@@ -81,7 +83,8 @@ class BrandRepository extends BaseRepository
     public function canDelete(int $id): bool
     {
         $brand = $this->findOrFail($id);
-        return !$brand->products()->exists();
+
+        return ! $brand->products()->exists();
     }
 
     /**
@@ -93,6 +96,7 @@ class BrandRepository extends BaseRepository
         $newStatus = $brand->status === 'active' ? 'inactive' : 'active';
         $brand->update(['status' => $newStatus]);
         $this->clearCache();
+
         return $brand->fresh();
     }
 

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Cartino\Http\Controllers\Api;
 
-use Cartino\DTO\CustomerGroupDTO;
 use Cartino\Http\Requests\Api\StoreCustomerGroupRequest;
 use Cartino\Http\Requests\Api\UpdateCustomerGroupRequest;
 use Cartino\Http\Resources\CustomerGroupResource;
@@ -73,7 +72,7 @@ class CustomerGroupsController extends ApiController
     public function destroy(CustomerGroup $customerGroup): JsonResponse
     {
         try {
-            if (!$this->repository->canDelete($customerGroup->id)) {
+            if (! $this->repository->canDelete($customerGroup->id)) {
                 return $this->errorResponse('Impossibile eliminare il customer group: ha clienti associati', 422);
             }
 

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Cartino\Http\Controllers\Api;
 
-use Cartino\DTO\PurchaseOrderDTO;
 use Cartino\Http\Requests\Api\StorePurchaseOrderRequest;
 use Cartino\Http\Requests\Api\UpdatePurchaseOrderRequest;
 use Cartino\Http\Resources\PurchaseOrderResource;
@@ -73,7 +72,7 @@ class PurchaseOrdersController extends ApiController
     public function destroy(PurchaseOrder $purchaseOrder): JsonResponse
     {
         try {
-            if (!$this->repository->canDelete($purchaseOrder->id)) {
+            if (! $this->repository->canDelete($purchaseOrder->id)) {
                 return $this->errorResponse('Impossibile eliminare il purchase order: stato non valido', 422);
             }
 

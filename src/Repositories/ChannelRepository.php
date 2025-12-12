@@ -50,6 +50,7 @@ class ChannelRepository extends BaseRepository
     {
         $channel = $this->model->create($data);
         $this->clearCache();
+
         return $channel;
     }
 
@@ -61,6 +62,7 @@ class ChannelRepository extends BaseRepository
         $channel = $this->findOrFail($id);
         $channel->update($data);
         $this->clearCache();
+
         return $channel->fresh();
     }
 
@@ -72,6 +74,7 @@ class ChannelRepository extends BaseRepository
         $channel = $this->findOrFail($id);
         $deleted = $channel->delete();
         $this->clearCache();
+
         return $deleted;
     }
 

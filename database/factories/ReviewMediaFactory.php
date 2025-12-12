@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
-use Cartino\Models\ReviewMedia;
 use Cartino\Models\ProductReview;
+use Cartino\Models\ReviewMedia;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ReviewMediaFactory extends Factory
@@ -15,7 +15,7 @@ class ReviewMediaFactory extends Factory
     public function definition(): array
     {
         $type = $this->faker->randomElement(['image', 'video']);
-        
+
         return [
             'product_review_id' => ProductReview::query()->inRandomOrder()->value('id') ?? ProductReview::factory(),
             'type' => $type,

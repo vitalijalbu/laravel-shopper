@@ -8,7 +8,6 @@ use Cartino\Models\ProductType;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Spatie\QueryBuilder\QueryBuilder;
-use Spatie\QueryBuilder\AllowedFilter;
 
 class ProductTypeRepository extends BaseRepository
 {
@@ -91,7 +90,7 @@ class ProductTypeRepository extends BaseRepository
     {
         $productType = $this->findOrFail($id);
 
-        return !$productType->products()->exists();
+        return ! $productType->products()->exists();
     }
 
     /**

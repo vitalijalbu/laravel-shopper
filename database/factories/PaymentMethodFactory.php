@@ -13,7 +13,7 @@ class PaymentMethodFactory extends Factory
     public function definition(): array
     {
         $provider = $this->faker->randomElement(['stripe', 'paypal', 'bank_transfer', 'cash_on_delivery']);
-        $name = ucfirst($provider) . ' ' . $this->faker->randomElement(['Card', 'Payment', 'Transfer']);
+        $name = ucfirst($provider).' '.$this->faker->randomElement(['Card', 'Payment', 'Transfer']);
 
         return [
             'name' => $name,

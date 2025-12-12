@@ -20,7 +20,7 @@ class CurrencyRepository extends BaseRepository
 
     public function findAll(array $filters = []): LengthAwarePaginator
     {
-        return \Spatie\QueryBuilder\QueryBuilder::for(Currency::class)
+        return QueryBuilder::for(Currency::class)
             ->allowedFilters(['name', 'code', 'symbol', 'is_enabled'])
             ->allowedSorts(['name', 'code', 'created_at'])
             ->paginate($filters['per_page'] ?? config('settings.pagination.per_page', 15))
@@ -45,6 +45,7 @@ class CurrencyRepository extends BaseRepository
     {
         $currency = $this->model->create($data);
         $this->clearCache();
+
         return $currency;
     }
 
@@ -56,6 +57,7 @@ class CurrencyRepository extends BaseRepository
         $currency = $this->findOrFail($id);
         $currency->update($data);
         $this->clearCache();
+
         return $currency->fresh();
     }
 
@@ -67,6 +69,7 @@ class CurrencyRepository extends BaseRepository
         $currency = $this->findOrFail($id);
         $deleted = $currency->delete();
         $this->clearCache();
+
         return $deleted;
     }
 
@@ -76,7 +79,8 @@ class CurrencyRepository extends BaseRepository
     public function canDelete(int $id): bool
     {
         $currency = $this->findOrFail($id);
-        return !$currency->is_default;
+
+        return ! $currency->is_default;
     }
 
     /**
@@ -85,8 +89,9 @@ class CurrencyRepository extends BaseRepository
     public function toggleStatus(int $id): Currency
     {
         $currency = $this->findOrFail($id);
-        $currency->update(['is_enabled' => !$currency->is_enabled]);
+        $currency->update(['is_enabled' => ! $currency->is_enabled]);
         $this->clearCache();
+
         return $currency->fresh();
     }
 

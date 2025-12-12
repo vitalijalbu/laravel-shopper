@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Cartino\Http\Controllers\Api;
 
-use Cartino\DTO\ProductVariantDTO;
 use Cartino\Http\Requests\Api\StoreProductVariantRequest;
 use Cartino\Http\Requests\Api\UpdateProductVariantRequest;
 use Cartino\Http\Resources\ProductVariantResource;
@@ -73,7 +72,7 @@ class ProductVariantsController extends ApiController
     public function destroy(ProductVariant $productVariant): JsonResponse
     {
         try {
-            if (!$this->repository->canDelete($productVariant->id)) {
+            if (! $this->repository->canDelete($productVariant->id)) {
                 return $this->errorResponse('Impossibile eliminare la variant: è associata a ordini', 422);
             }
 

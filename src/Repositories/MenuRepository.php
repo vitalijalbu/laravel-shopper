@@ -21,7 +21,7 @@ class MenuRepository extends BaseRepository
      */
     public function findAll(array $filters = []): LengthAwarePaginator
     {
-        return \Spatie\QueryBuilder\QueryBuilder::for(Menu::class)
+        return QueryBuilder::for(Menu::class)
             ->allowedFilters(['title', 'handle', 'is_active'])
             ->allowedSorts(['title', 'sort_order', 'created_at'])
             ->allowedIncludes(['items'])
@@ -48,6 +48,7 @@ class MenuRepository extends BaseRepository
     {
         $menu = $this->model->create($data);
         $this->clearCache();
+
         return $menu;
     }
 
@@ -59,6 +60,7 @@ class MenuRepository extends BaseRepository
         $menu = $this->findOrFail($id);
         $menu->update($data);
         $this->clearCache();
+
         return $menu->fresh();
     }
 
@@ -70,6 +72,7 @@ class MenuRepository extends BaseRepository
         $menu = $this->findOrFail($id);
         $deleted = $menu->delete();
         $this->clearCache();
+
         return $deleted;
     }
 
@@ -87,8 +90,9 @@ class MenuRepository extends BaseRepository
     public function toggleStatus(int $id): Menu
     {
         $menu = $this->findOrFail($id);
-        $menu->update(['is_active' => !$menu->is_active]);
+        $menu->update(['is_active' => ! $menu->is_active]);
         $this->clearCache();
+
         return $menu->fresh();
     }
 

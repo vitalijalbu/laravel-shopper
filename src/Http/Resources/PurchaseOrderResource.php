@@ -23,8 +23,8 @@ class PurchaseOrderResource extends JsonResource
             'notes' => $this->notes,
             'created_at' => $this->created_at->toISOString(),
             'updated_at' => $this->updated_at->toISOString(),
-            
-            'supplier' => $this->whenLoaded('supplier', fn() => new SupplierResource($this->supplier)),
+
+            'supplier' => $this->whenLoaded('supplier', fn () => new SupplierResource($this->supplier)),
             'items' => PurchaseOrderItemResource::collection($this->whenLoaded('items')),
         ];
     }

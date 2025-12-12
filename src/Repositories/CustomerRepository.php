@@ -58,6 +58,7 @@ class CustomerRepository extends BaseRepository
     {
         $customer = $this->model->create($data);
         $this->clearCache();
+
         return $customer;
     }
 
@@ -69,6 +70,7 @@ class CustomerRepository extends BaseRepository
         $customer = $this->findOrFail($id);
         $customer->update($data);
         $this->clearCache();
+
         return $customer->fresh();
     }
 
@@ -80,6 +82,7 @@ class CustomerRepository extends BaseRepository
         $customer = $this->findOrFail($id);
         $deleted = $customer->delete();
         $this->clearCache();
+
         return $deleted;
     }
 
@@ -89,7 +92,8 @@ class CustomerRepository extends BaseRepository
     public function canDelete(int $id): bool
     {
         $customer = $this->findOrFail($id);
-        return !$customer->orders()->exists();
+
+        return ! $customer->orders()->exists();
     }
 
     /**
@@ -98,8 +102,9 @@ class CustomerRepository extends BaseRepository
     public function toggleStatus(int $id): Customer
     {
         $customer = $this->findOrFail($id);
-        $customer->update(['is_active' => !$customer->is_active]);
+        $customer->update(['is_active' => ! $customer->is_active]);
         $this->clearCache();
+
         return $customer->fresh();
     }
 

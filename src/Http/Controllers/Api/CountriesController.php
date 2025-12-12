@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Cartino\Http\Controllers\Api;
 
-use Cartino\DTO\CountryDTO;
 use Cartino\Http\Requests\Api\StoreCountryRequest;
 use Cartino\Http\Requests\Api\UpdateCountryRequest;
 use Cartino\Http\Resources\CountryResource;

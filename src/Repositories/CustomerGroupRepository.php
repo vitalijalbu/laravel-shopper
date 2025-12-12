@@ -7,8 +7,8 @@ namespace Cartino\Repositories;
 use Cartino\Models\CustomerGroup;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Spatie\QueryBuilder\QueryBuilder;
 use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class CustomerGroupRepository extends BaseRepository
 {
@@ -88,6 +88,6 @@ class CustomerGroupRepository extends BaseRepository
     {
         $group = $this->findOrFail($id);
 
-        return !$group->customers()->exists();
+        return ! $group->customers()->exists();
     }
 }

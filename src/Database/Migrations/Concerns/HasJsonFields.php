@@ -3,7 +3,6 @@
 namespace Cartino\Database\Migrations\Concerns;
 
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\DB;
 
 trait HasJsonFields
 {

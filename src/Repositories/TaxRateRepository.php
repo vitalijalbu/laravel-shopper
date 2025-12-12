@@ -5,6 +5,8 @@ namespace Cartino\Repositories;
 use Cartino\Models\TaxRate;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class TaxRateRepository extends BaseRepository
 {
@@ -20,12 +22,12 @@ class TaxRateRepository extends BaseRepository
      */
     public function findAll(array $filters = []): LengthAwarePaginator
     {
-        return \Spatie\QueryBuilder\QueryBuilder::for(TaxRate::class)
+        return QueryBuilder::for(TaxRate::class)
             ->allowedFilters([
                 'name',
                 'code',
                 'type',
-                \Spatie\QueryBuilder\AllowedFilter::exact('is_enabled'),
+                AllowedFilter::exact('is_enabled'),
             ])
             ->allowedSorts(['name', 'code', 'rate', 'created_at'])
             ->paginate($filters['per_page'] ?? config('settings.pagination.per_page', 15))
@@ -289,7 +291,7 @@ class TaxRateRepository extends BaseRepository
             ]);
         });
     }
-    }
+
 
     /**
      * Update priorities for multiple tax rates

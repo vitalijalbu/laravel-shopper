@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
-use Cartino\Models\StockNotification;
-use Cartino\Models\ProductVariant;
 use Cartino\Models\Customer;
+use Cartino\Models\ProductVariant;
+use Cartino\Models\StockNotification;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class StockNotificationFactory extends Factory

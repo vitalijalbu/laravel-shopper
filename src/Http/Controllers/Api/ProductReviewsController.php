@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Cartino\Http\Controllers\Api;
 
-use Cartino\DTO\ProductReviewDTO;
 use Cartino\Http\Requests\Api\StoreProductReviewRequest;
 use Cartino\Http\Requests\Api\UpdateProductReviewRequest;
 use Cartino\Http\Resources\ProductReviewResource;

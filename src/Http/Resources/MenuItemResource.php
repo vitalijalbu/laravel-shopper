@@ -19,7 +19,7 @@ class MenuItemResource extends JsonResource
             'url' => $this->url,
             'target' => $this->target,
             'sort_order' => $this->sort_order,
-            
+
             'children' => MenuItemResource::collection($this->whenLoaded('children')),
         ];
     }

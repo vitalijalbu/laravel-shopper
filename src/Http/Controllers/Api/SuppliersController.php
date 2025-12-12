@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Cartino\Http\Controllers\Api;
 
-use Cartino\DTO\SupplierDTO;
 use Cartino\Http\Requests\Api\StoreSupplierRequest;
 use Cartino\Http\Requests\Api\UpdateSupplierRequest;
 use Cartino\Http\Resources\SupplierResource;
@@ -73,7 +72,7 @@ class SuppliersController extends ApiController
     public function destroy(Supplier $supplier): JsonResponse
     {
         try {
-            if (!$this->repository->canDelete($supplier->id)) {
+            if (! $this->repository->canDelete($supplier->id)) {
                 return $this->errorResponse('Impossibile eliminare il supplier: ha ordini associati', 422);
             }
 

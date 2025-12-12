@@ -18,7 +18,7 @@ trait EnumSerializable
     public static function toNamesArray(): array
     {
         return array_map(
-            fn(self $case) => $case->name,
+            fn (self $case) => $case->name,
             self::cases()
         );
     }
@@ -31,7 +31,7 @@ trait EnumSerializable
     public static function toValuesArray(): array
     {
         return array_map(
-            fn(self $case) => $case->value,
+            fn (self $case) => $case->value,
             self::cases()
         );
     }
@@ -44,7 +44,7 @@ trait EnumSerializable
     public static function toArray(): array
     {
         return array_map(
-            fn(self $case) => [
+            fn (self $case) => [
                 'name' => $case->name,
                 'value' => $case->value,
             ],

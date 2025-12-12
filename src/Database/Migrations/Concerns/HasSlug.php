@@ -21,7 +21,7 @@ trait HasSlug
             $column->nullable();
         }
 
-        if ($withIndex && !$scopeColumn) {
+        if ($withIndex && ! $scopeColumn) {
             $table->index('slug');
         }
     }

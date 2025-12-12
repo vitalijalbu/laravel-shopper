@@ -53,7 +53,7 @@ trait HasOrdering
     /**
      * Add hierarchy fields (parent_id, depth, order)
      */
-    public function addHierarchy(Blueprint $table, string $parentTable = null): void
+    public function addHierarchy(Blueprint $table, ?string $parentTable = null): void
     {
         $parentTable = $parentTable ?? $table->getTable();
 

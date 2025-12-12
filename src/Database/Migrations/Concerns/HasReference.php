@@ -16,7 +16,7 @@ trait HasReference
     ): void {
         $table->string('handle');
 
-        if ($unique && !$scopeColumn) {
+        if ($unique && ! $scopeColumn) {
             $table->unique('handle');
         }
 
@@ -34,7 +34,7 @@ trait HasReference
     ): void {
         $column = $table->string('code', $length);
 
-        if ($unique && !$scopeColumn) {
+        if ($unique && ! $scopeColumn) {
             $column->unique();
         }
 

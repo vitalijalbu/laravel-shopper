@@ -22,7 +22,7 @@ class OrderLineFactory extends Factory
             'order_id' => fn () => Order::factory(),
             'product_id' => fn () => Product::factory(),
             'product_variant_id' => null,
-            'product_name' => $this->faker->productName(),
+            'product_name' => $this->faker->word(4, true),
             'product_sku' => 'SKU-'.$this->faker->unique()->numerify('####'),
             'product_options' => null,
             'quantity' => $quantity,

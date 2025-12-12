@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Cartino\Http\Controllers\Api;
 
-use Cartino\DTO\ChannelDTO;
 use Cartino\Http\Requests\Api\StoreChannelRequest;
 use Cartino\Http\Requests\Api\UpdateChannelRequest;
 use Cartino\Http\Resources\ChannelResource;
@@ -73,7 +72,7 @@ class ChannelsController extends ApiController
     public function destroy(Channel $channel): JsonResponse
     {
         try {
-            if (!$this->repository->canDelete($channel->id)) {
+            if (! $this->repository->canDelete($channel->id)) {
                 return $this->errorResponse('Impossibile eliminare il channel: è il channel di default', 422);
             }
 

@@ -7,8 +7,8 @@ namespace Cartino\Repositories;
 use Cartino\Models\ProductReview;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Spatie\QueryBuilder\QueryBuilder;
 use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class ProductReviewRepository extends BaseRepository
 {

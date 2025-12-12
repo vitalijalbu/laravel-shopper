@@ -6,7 +6,6 @@ namespace Database\Factories;
 
 use Cartino\Models\Discount;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 
 class DiscountFactory extends Factory
 {
@@ -15,7 +14,7 @@ class DiscountFactory extends Factory
     public function definition(): array
     {
         $type = $this->faker->randomElement(['percentage', 'fixed', 'buy_x_get_y', 'free_shipping']);
-        
+
         return [
             'code' => strtoupper($this->faker->unique()->bothify('????-####')),
             'name' => $this->faker->words(3, true),

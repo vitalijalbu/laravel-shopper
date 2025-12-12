@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
-use Cartino\Models\Favorite;
 use Cartino\Models\Customer;
+use Cartino\Models\Favorite;
 use Cartino\Models\Product;
 use Illuminate\Database\Eloquent\Factories\Factory;
 

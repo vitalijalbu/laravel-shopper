@@ -2,6 +2,8 @@
 
 namespace Cartino\Http\Controllers\Api;
 
+use Cartino\Http\Requests\Api\AssignRolePermissionsRequest;
+use Cartino\Http\Requests\Api\AssignRoleUsersRequest;
 use Cartino\Http\Requests\Api\RoleRequest;
 use Cartino\Traits\ApiResponseTrait;
 use Illuminate\Http\JsonResponse;
@@ -158,13 +160,8 @@ class RoleController extends ApiController
     /**
      * Assign users to role
      */
-    public function assignUsers(Request $request, string $id): JsonResponse
+    public function assignUsers(AssignRoleUsersRequest $request, string $id): JsonResponse
     {
-        $request->validate([
-            'user_ids' => 'required|array',
-            'user_ids.*' => 'integer|exists:users,id',
-        ]);
-
         try {
             $role = Role::findOrFail($id);
 
@@ -185,13 +182,8 @@ class RoleController extends ApiController
     /**
      * Remove users from role
      */
-    public function removeUsers(Request $request, string $id): JsonResponse
+    public function removeUsers(AssignRoleUsersRequest $request, string $id): JsonResponse
     {
-        $request->validate([
-            'user_ids' => 'required|array',
-            'user_ids.*' => 'integer|exists:users,id',
-        ]);
-
         try {
             $role = Role::findOrFail($id);
 

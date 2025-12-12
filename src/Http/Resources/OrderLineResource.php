@@ -21,9 +21,9 @@ class OrderLineResource extends JsonResource
             'total_price' => $this->total_price,
             'tax_amount' => $this->tax_amount,
             'discount_amount' => $this->discount_amount,
-            
-            'product' => $this->whenLoaded('product', fn() => new ProductResource($this->product)),
-            'variant' => $this->whenLoaded('variant', fn() => new ProductVariantResource($this->variant)),
+
+            'product' => $this->whenLoaded('product', fn () => new ProductResource($this->product)),
+            'variant' => $this->whenLoaded('variant', fn () => new ProductVariantResource($this->variant)),
         ];
     }
 }

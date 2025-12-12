@@ -16,7 +16,7 @@ trait HasAddress
         bool $withValidation = false,
         string $prefix = ''
     ): void {
-        $nullable = !$required;
+        $nullable = ! $required;
 
         $table->string($prefix.'address_line_1')->nullable($nullable);
         $table->string($prefix.'address_line_2')->nullable();

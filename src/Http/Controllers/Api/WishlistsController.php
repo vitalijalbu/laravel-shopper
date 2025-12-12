@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Cartino\Http\Controllers\Api;
 
-use Cartino\DTO\WishlistDTO;
 use Cartino\Http\Requests\Api\StoreWishlistRequest;
 use Cartino\Http\Requests\Api\UpdateWishlistRequest;
 use Cartino\Http\Resources\WishlistResource;

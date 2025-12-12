@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Cartino\Http\Controllers\Api;
 
-use Cartino\DTO\TransactionDTO;
 use Cartino\Http\Requests\Api\StoreTransactionRequest;
 use Cartino\Http\Requests\Api\UpdateTransactionRequest;
 use Cartino\Http\Resources\TransactionResource;

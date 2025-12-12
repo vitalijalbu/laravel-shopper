@@ -18,8 +18,8 @@ class ShippingZoneResource extends JsonResource
             'countries' => $this->countries,
             'created_at' => $this->created_at->toISOString(),
             'updated_at' => $this->updated_at->toISOString(),
-            
-            'site' => $this->whenLoaded('site', fn() => new SiteResource($this->site)),
+
+            'site' => $this->whenLoaded('site', fn () => new SiteResource($this->site)),
             'rates' => ShippingRateResource::collection($this->whenLoaded('rates')),
         ];
     }

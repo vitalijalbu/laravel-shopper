@@ -9,7 +9,7 @@ use Cartino\Helpers\EnumSerializable;
 enum StockStatus: string
 {
     use EnumSerializable;
-    
+
     case InStock = 'in_stock';
     case OutOfStock = 'out_of_stock';
     case OnBackorder = 'on_backorder';

@@ -283,7 +283,7 @@ class SupplierRepository extends BaseRepository implements SupplierRepositoryInt
             ];
         }
 
-        $onTimeDeliveries = $purchaseOrders->filter(fn ($order) => $order->delivered_on_time)->count();
+        $onTimeDeliveries = $purchaseOrders->filter(fn($order) => $order->delivered_on_time)->count();
         $totalValue = $purchaseOrders->sum('total_amount');
         $deliveredOrders = $purchaseOrders->whereNotNull('delivery_date');
         $averageDeliveryTime = $deliveredOrders->avg(function ($order) {
@@ -298,7 +298,7 @@ class SupplierRepository extends BaseRepository implements SupplierRepositoryInt
             'total_value' => $totalValue,
             'average_order_value' => round($totalValue / $totalOrders, 2),
         ];
-    }
+
         // Check if supplier has purchase orders
         if ($supplier->purchaseOrders()->exists()) {
             return false;

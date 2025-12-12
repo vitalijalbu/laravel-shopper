@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
-use Cartino\Models\MenuItem;
 use Cartino\Models\Menu;
+use Cartino\Models\MenuItem;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class MenuItemFactory extends Factory

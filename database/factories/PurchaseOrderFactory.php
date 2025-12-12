@@ -16,10 +16,10 @@ class PurchaseOrderFactory extends Factory
     {
         $subtotal = $this->faker->randomFloat(2, 100, 10000);
         $tax = $subtotal * 0.22;
-        
+
         return [
             'supplier_id' => Supplier::query()->inRandomOrder()->value('id') ?? Supplier::factory(),
-            'po_number' => 'PO-' . strtoupper($this->faker->unique()->bothify('####-????')),
+            'po_number' => 'PO-'.strtoupper($this->faker->unique()->bothify('####-????')),
             'status' => $this->faker->randomElement(['draft', 'submitted', 'approved', 'received', 'cancelled']),
             'order_date' => $this->faker->dateTimeBetween('-3 months'),
             'expected_delivery_date' => $this->faker->dateTimeBetween('now', '+2 months'),

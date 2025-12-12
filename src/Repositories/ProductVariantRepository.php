@@ -7,8 +7,8 @@ namespace Cartino\Repositories;
 use Cartino\Models\ProductVariant;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Spatie\QueryBuilder\QueryBuilder;
 use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class ProductVariantRepository extends BaseRepository
 {
@@ -91,6 +91,6 @@ class ProductVariantRepository extends BaseRepository
     {
         $variant = $this->findOrFail($id);
 
-        return !$variant->orderLines()->exists();
+        return ! $variant->orderLines()->exists();
     }
 }

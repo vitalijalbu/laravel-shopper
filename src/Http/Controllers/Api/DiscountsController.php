@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Cartino\Http\Controllers\Api;
 
-use Cartino\DTO\DiscountDTO;
 use Cartino\Http\Requests\Api\StoreDiscountRequest;
 use Cartino\Http\Requests\Api\UpdateDiscountRequest;
 use Cartino\Http\Resources\DiscountResource;

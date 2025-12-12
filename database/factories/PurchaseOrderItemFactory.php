@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
-use Cartino\Models\PurchaseOrderItem;
-use Cartino\Models\PurchaseOrder;
 use Cartino\Models\ProductVariant;
+use Cartino\Models\PurchaseOrder;
+use Cartino\Models\PurchaseOrderItem;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class PurchaseOrderItemFactory extends Factory
@@ -17,7 +17,7 @@ class PurchaseOrderItemFactory extends Factory
     {
         $quantity = $this->faker->numberBetween(1, 100);
         $unitCost = $this->faker->randomFloat(2, 5, 500);
-        
+
         return [
             'purchase_order_id' => PurchaseOrder::query()->inRandomOrder()->value('id') ?? PurchaseOrder::factory(),
             'product_variant_id' => ProductVariant::query()->inRandomOrder()->value('id') ?? ProductVariant::factory(),

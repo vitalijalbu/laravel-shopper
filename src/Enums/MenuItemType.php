@@ -24,6 +24,4 @@ enum MenuItemType: string
             self::CUSTOM => __('cartino::menu.item_type.custom'),
         };
     }
-
-
 }

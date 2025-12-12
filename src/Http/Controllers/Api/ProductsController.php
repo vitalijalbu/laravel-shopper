@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Cartino\Http\Controllers\Api;
 
-use Cartino\DTO\ProductDTO;
 use Cartino\Http\Requests\Api\StoreProductRequest;
 use Cartino\Http\Requests\Api\UpdateProductRequest;
 use Cartino\Http\Resources\ProductResource;
@@ -73,7 +72,7 @@ class ProductsController extends ApiController
     public function destroy(Product $product): JsonResponse
     {
         try {
-            if (!$this->repository->canDelete($product->id)) {
+            if (! $this->repository->canDelete($product->id)) {
                 return $this->errorResponse('Impossibile eliminare il product: ha relazioni attive', 422);
             }
 

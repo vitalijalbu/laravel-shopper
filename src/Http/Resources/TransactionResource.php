@@ -24,8 +24,8 @@ class TransactionResource extends JsonResource
             'processed_at' => $this->processed_at?->toISOString(),
             'created_at' => $this->created_at->toISOString(),
             'updated_at' => $this->updated_at->toISOString(),
-            
-            'order' => $this->whenLoaded('order', fn() => new OrderResource($this->order)),
+
+            'order' => $this->whenLoaded('order', fn () => new OrderResource($this->order)),
         ];
     }
 }

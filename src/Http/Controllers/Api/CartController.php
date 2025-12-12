@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Cartino\Http\Controllers\Api;
 
+use Cartino\Http\Requests\Api\AddCartItemRequest;
+use Cartino\Http\Requests\Api\ApplyCouponRequest;
+use Cartino\Http\Requests\Api\UpdateCartItemRequest;
+use Cartino\Http\Requests\Api\UpdateCartShippingRequest;
 use Cartino\Models\Cart;
 use Cartino\Models\Product;
 use Cartino\Models\ProductVariant;
@@ -41,16 +45,10 @@ class CartController extends ApiController
     /**
      * Add item to cart
      */
-    public function addItem(Request $request): JsonResponse
+    public function addItem(AddCartItemRequest $request): JsonResponse
     {
-        $validated = $request->validate([
-            'product_id' => 'required|integer|exists:products,id',
-            'product_variant_id' => 'nullable|integer|exists:product_variants,id',
-            'quantity' => 'required|integer|min:1',
-            'options' => 'nullable|array',
-        ]);
-
         try {
+            $validated = $request->validated();
             $cart = $this->getOrCreateCart($request);
             $product = Product::findOrFail($validated['product_id']);
             $variant = $validated['product_variant_id']
@@ -82,13 +80,10 @@ class CartController extends ApiController
     /**
      * Update cart item quantity
      */
-    public function updateItem(Request $request, string $lineId): JsonResponse
+    public function updateItem(UpdateCartItemRequest $request, string $lineId): JsonResponse
     {
-        $validated = $request->validate([
-            'quantity' => 'required|integer|min:0',
-        ]);
-
         try {
+            $validated = $request->validated();
             $cart = $this->getCurrentCart($request);
 
             if (! $cart) {
@@ -189,13 +184,10 @@ class CartController extends ApiController
     /**
      * Apply discount code
      */
-    public function applyDiscount(Request $request): JsonResponse
+    public function applyDiscount(ApplyCouponRequest $request): JsonResponse
     {
-        $validated = $request->validate([
-            'code' => 'required|string',
-        ]);
-
         try {
+            $validated = $request->validated();
             $cart = $this->getCurrentCart($request);
 
             if (! $cart) {
@@ -222,26 +214,15 @@ class CartController extends ApiController
     /**
      * Update shipping address
      */
-    public function updateShippingAddress(Request $request): JsonResponse
+    public function updateShippingAddress(UpdateCartShippingRequest $request): JsonResponse
     {
-        $validated = $request->validate([
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
-            'company' => 'nullable|string|max:255',
-            'address_line_1' => 'required|string|max:255',
-            'address_line_2' => 'nullable|string|max:255',
-            'city' => 'required|string|max:255',
-            'state' => 'nullable|string|max:255',
-            'postal_code' => 'required|string|max:20',
-            'country_code' => 'required|string|size:2',
-            'phone' => 'nullable|string|max:20',
-        ]);
-
         try {
+            $validated = $request->validated();
             $cart = $this->getOrCreateCart($request);
 
             $cart->update([
-                'shipping_address' => $validated,
+                'shipping_address' => $validated['shipping_address'],
+                'shipping_method_id' => $validated['shipping_method_id'],
             ]);
 
             return response()->json([

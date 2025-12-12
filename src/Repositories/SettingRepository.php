@@ -21,7 +21,7 @@ class SettingRepository extends BaseRepository
      */
     public function findAll(array $filters = []): \Illuminate\Pagination\LengthAwarePaginator
     {
-        return \Spatie\QueryBuilder\QueryBuilder::for(Setting::class)
+        return QueryBuilder::for(Setting::class)
             ->allowedFilters(['key', 'group'])
             ->allowedSorts(['key', 'created_at'])
             ->paginate($filters['per_page'] ?? config('settings.pagination.per_page', 15))
@@ -46,6 +46,7 @@ class SettingRepository extends BaseRepository
     {
         $setting = $this->model->create($data);
         $this->clearCache();
+
         return $setting;
     }
 
@@ -57,6 +58,7 @@ class SettingRepository extends BaseRepository
         $setting = $this->findOrFail($id);
         $setting->update($data);
         $this->clearCache();
+
         return $setting->fresh();
     }
 
@@ -68,6 +70,7 @@ class SettingRepository extends BaseRepository
         $setting = $this->findOrFail($id);
         $deleted = $setting->delete();
         $this->clearCache();
+
         return $deleted;
     }
 

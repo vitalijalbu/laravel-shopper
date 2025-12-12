@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Cartino\Http\Controllers\Api;
 
-use Cartino\DTO\CurrencyDTO;
 use Cartino\Http\Requests\Api\StoreCurrencyRequest;
 use Cartino\Http\Requests\Api\UpdateCurrencyRequest;
 use Cartino\Http\Resources\CurrencyResource;
@@ -73,7 +72,7 @@ class CurrenciesController extends ApiController
     public function destroy(Currency $currency): JsonResponse
     {
         try {
-            if (!$this->repository->canDelete($currency->id)) {
+            if (! $this->repository->canDelete($currency->id)) {
                 return $this->errorResponse('Impossibile eliminare la currency: è la currency di default o ha dati associati', 422);
             }
 

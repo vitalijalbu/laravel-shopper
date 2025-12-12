@@ -15,7 +15,7 @@ trait HasStatus
         string $default = 'active',
         bool $withIndex = true
     ): void {
-        if (!empty($values)) {
+        if (! empty($values)) {
             $table->enum('status', $values)->default($default);
         } else {
             $table->string('status')->default($default);

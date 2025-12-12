@@ -19,8 +19,8 @@ class WishlistResource extends JsonResource
             'status' => $this->status,
             'created_at' => $this->created_at->toISOString(),
             'updated_at' => $this->updated_at->toISOString(),
-            
-            'customer' => $this->whenLoaded('customer', fn() => new CustomerResource($this->customer)),
+
+            'customer' => $this->whenLoaded('customer', fn () => new CustomerResource($this->customer)),
             'items' => WishlistItemResource::collection($this->whenLoaded('items')),
         ];
     }

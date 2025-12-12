@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
-use Cartino\Models\Transaction;
 use Cartino\Models\Order;
+use Cartino\Models\Transaction;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class TransactionFactory extends Factory
@@ -15,7 +15,7 @@ class TransactionFactory extends Factory
     public function definition(): array
     {
         $status = $this->faker->randomElement(['pending', 'success', 'failed', 'refunded']);
-        
+
         return [
             'order_id' => Order::query()->inRandomOrder()->value('id') ?? Order::factory(),
             'transaction_id' => $this->faker->unique()->uuid(),

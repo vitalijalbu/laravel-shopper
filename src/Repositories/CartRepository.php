@@ -7,6 +7,8 @@ use Cartino\Models\Cart;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class CartRepository extends BaseRepository
 {
@@ -24,12 +26,12 @@ class CartRepository extends BaseRepository
      */
     public function findAll(array $filters = []): \Illuminate\Pagination\LengthAwarePaginator
     {
-        return \Spatie\QueryBuilder\QueryBuilder::for(Cart::class)
+        return QueryBuilder::for(Cart::class)
             ->allowedFilters([
                 'session_id',
                 'email',
-                \Spatie\QueryBuilder\AllowedFilter::exact('customer_id'),
-                \Spatie\QueryBuilder\AllowedFilter::exact('status'),
+                AllowedFilter::exact('customer_id'),
+                AllowedFilter::exact('status'),
             ])
             ->allowedSorts(['created_at', 'total_amount', 'abandoned_at'])
             ->allowedIncludes(['customer', 'items', 'items.product'])
@@ -52,6 +54,7 @@ class CartRepository extends BaseRepository
     {
         $cart = $this->model->create($data);
         $this->clearCache();
+
         return $cart;
     }
 
@@ -63,6 +66,7 @@ class CartRepository extends BaseRepository
         $cart = $this->findOrFail($id);
         $cart->update($data);
         $this->clearCache();
+
         return $cart->fresh();
     }
 
@@ -74,6 +78,7 @@ class CartRepository extends BaseRepository
         $cart = $this->findOrFail($id);
         $deleted = $cart->delete();
         $this->clearCache();
+
         return $deleted;
     }
 

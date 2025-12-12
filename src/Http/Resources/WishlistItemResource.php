@@ -19,8 +19,8 @@ class WishlistItemResource extends JsonResource
             'quantity' => $this->quantity,
             'notes' => $this->notes,
             'added_at' => $this->created_at->toISOString(),
-            
-            'product' => $this->whenLoaded('product', fn() => new ProductResource($this->product)),
+
+            'product' => $this->whenLoaded('product', fn () => new ProductResource($this->product)),
         ];
     }
 }

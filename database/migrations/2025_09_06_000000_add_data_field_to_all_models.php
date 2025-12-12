@@ -143,7 +143,7 @@ return new class extends Migration
         ];
 
         foreach ($tables as $table) {
-            if (Schema::hasTable($table) && !Schema::hasColumn($table, 'data')) {
+            if (Schema::hasTable($table) && ! Schema::hasColumn($table, 'data')) {
                 Schema::table($table, function (Blueprint $table) {
                     // Add JSONB field for custom data
                     // This will store schema-defined custom fields as JSON

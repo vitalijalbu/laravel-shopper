@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Cartino\Http\Controllers\Api;
 
-use Cartino\DTO\PageDTO;
 use Cartino\Http\Requests\Api\StorePageRequest;
 use Cartino\Http\Requests\Api\UpdatePageRequest;
 use Cartino\Http\Resources\PageResource;

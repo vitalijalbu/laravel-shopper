@@ -16,7 +16,7 @@ class PageFactory extends Factory
     public function definition(): array
     {
         $title = $this->faker->unique()->sentence(4);
-        
+
         return [
             'site_id' => Site::query()->inRandomOrder()->value('id') ?? Site::factory(),
             'title' => rtrim($title, '.'),

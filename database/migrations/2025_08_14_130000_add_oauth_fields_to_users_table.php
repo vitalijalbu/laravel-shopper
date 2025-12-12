@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        $addProvider = !Schema::hasColumn('users', 'provider');
-        $addProviderId = !Schema::hasColumn('users', 'provider_id');
-        $addProviderToken = !Schema::hasColumn('users', 'provider_token');
-        $addProviderRefreshToken = !Schema::hasColumn('users', 'provider_refresh_token');
-        $addAvatar = !Schema::hasColumn('users', 'avatar');
+        $addProvider = ! Schema::hasColumn('users', 'provider');
+        $addProviderId = ! Schema::hasColumn('users', 'provider_id');
+        $addProviderToken = ! Schema::hasColumn('users', 'provider_token');
+        $addProviderRefreshToken = ! Schema::hasColumn('users', 'provider_refresh_token');
+        $addAvatar = ! Schema::hasColumn('users', 'avatar');
 
-        $providerWillExist = !$addProvider ? true : true;
-        $providerIdWillExist = !$addProviderId ? true : true;
+        $providerWillExist = ! $addProvider ? true : true;
+        $providerIdWillExist = ! $addProviderId ? true : true;
         $shouldAddIndex = ($addProvider || $addProviderId) && $providerWillExist && $providerIdWillExist;
 
         Schema::table('users', function (Blueprint $table) use (
@@ -57,7 +57,7 @@ return new class extends Migration
             }
         });
 
-        // Create social_accounts table for multiple provider support per user
+        // Create user_social_accounts table for multiple provider support per user
         Schema::create('user_social_accounts', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
@@ -96,7 +96,7 @@ return new class extends Migration
                 Schema::hasColumn('users', 'avatar') ? 'avatar' : null,
             ]));
 
-            if (!empty($columnsToDrop)) {
+            if (! empty($columnsToDrop)) {
                 $table->dropColumn($columnsToDrop);
             }
         });

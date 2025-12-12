@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Cartino\Http\Controllers\Api;
 
-use Cartino\DTO\ProductTypeDTO;
 use Cartino\Http\Requests\Api\StoreProductTypeRequest;
 use Cartino\Http\Requests\Api\UpdateProductTypeRequest;
 use Cartino\Http\Resources\ProductTypeResource;
@@ -73,7 +72,7 @@ class ProductTypesController extends ApiController
     public function destroy(ProductType $productType): JsonResponse
     {
         try {
-            if (!$this->repository->canDelete($productType->id)) {
+            if (! $this->repository->canDelete($productType->id)) {
                 return $this->errorResponse('Impossibile eliminare il product type: ha prodotti associati', 422);
             }
 

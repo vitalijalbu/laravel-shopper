@@ -7,7 +7,7 @@ use Cartino\Helpers\EnumSerializable;
 enum PaymentStatus: string
 {
     use EnumSerializable;
-    
+
     case PENDING = 'pending';
     case CONFIRMED = 'confirmed';
     case PROCESSING = 'processing';

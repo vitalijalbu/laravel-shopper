@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Cartino\Http\Controllers\Api;
 
-use Cartino\DTO\OrderDTO;
 use Cartino\Http\Requests\Api\StoreOrderRequest;
 use Cartino\Http\Requests\Api\UpdateOrderRequest;
 use Cartino\Http\Resources\OrderResource;
@@ -73,7 +72,7 @@ class OrdersController extends ApiController
     public function destroy(Order $order): JsonResponse
     {
         try {
-            if (!$this->repository->canDelete($order->id)) {
+            if (! $this->repository->canDelete($order->id)) {
                 return $this->errorResponse('Impossibile eliminare l\'order: stato non valido', 422);
             }
 
