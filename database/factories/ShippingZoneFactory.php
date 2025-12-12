@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Database\Factories\Cartino\Models;
+namespace Database\Factories;
 
 use Cartino\Models\ShippingZone;
 use Cartino\Models\Site;

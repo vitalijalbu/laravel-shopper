@@ -45,10 +45,10 @@ return new class extends Migration
             $table->timestamps();
 
             // Indexes
-            $table->index(['revisionable_type', 'revisionable_id', 'created_at']);
+            $table->index(['revisionable_type', 'revisionable_id', 'created_at'], 'revisions_rev_created_idx');
             $table->index(['user_id', 'created_at']);
             $table->index(['action', 'created_at']);
-            $table->index(['is_working_copy', 'revisionable_type', 'revisionable_id']);
+            $table->index(['is_working_copy', 'revisionable_type', 'revisionable_id'], 'revisions_working_rev_idx');
             $table->index(['is_published', 'published_at']);
         });
 
@@ -153,9 +153,6 @@ return new class extends Migration
                     if (config('database.default') === 'pgsql') {
                         // PostgreSQL specific JSONB index
                         $table->index('data', null, 'gin');
-                    } else {
-                        // MySQL JSON index (MySQL 5.7+)
-                        $table->index('data');
                     }
                 });
             }

@@ -1,6 +1,6 @@
 <?php
 
-use Database\Migrations\Concerns\{
+use Cartino\Database\Migrations\Concerns\{
     HasSiteScope,
     HasStatus,
     HasSlug,

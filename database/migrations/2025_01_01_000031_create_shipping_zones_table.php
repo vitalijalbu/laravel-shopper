@@ -109,7 +109,7 @@ return new class extends Migration
             $table->foreignId('product_id')->constrained('products')->cascadeOnDelete();
             $table->timestamps();
 
-            $table->unique(['shipping_rate_id', 'product_id']);
+            $table->unique(['shipping_rate_id', 'product_id'], 'ship_rate_prod_excl_uq');
         });
     }
 

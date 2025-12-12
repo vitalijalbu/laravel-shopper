@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Migrations\Concerns;
+namespace Cartino\Database\Migrations\Concerns;
 
 use Illuminate\Database\Schema\Blueprint;
 

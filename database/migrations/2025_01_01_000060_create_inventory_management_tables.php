@@ -154,7 +154,7 @@ return new class extends Migration
 
             $table->timestamps();
 
-            $table->index(['stock_transfer_id', 'inventory_item_id']);
+            $table->index(['stock_transfer_id', 'inventory_item_id'], 'stock_transfer_items_idx');
         });
 
         // Stock Adjustments - Manual inventory corrections
@@ -189,7 +189,7 @@ return new class extends Migration
 
             $table->timestamps();
 
-            $table->index(['stock_adjustment_id', 'inventory_item_id']);
+            $table->index(['stock_adjustment_id', 'inventory_item_id'], 'stock_adjustment_items_idx');
         });
     }
 

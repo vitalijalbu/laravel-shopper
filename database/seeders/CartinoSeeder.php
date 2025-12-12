@@ -38,6 +38,11 @@ class CartinoSeeder extends Seeder
 {
     use WithoutModelEvents;
 
+    protected function packageDataPath(string $relativePath): string
+    {
+        return __DIR__ . '/../data/' . ltrim($relativePath, '/');
+    }
+
     /**
      * Run the database seeds.
      */
@@ -64,10 +69,10 @@ class CartinoSeeder extends Seeder
         $this->command->info('⚙️ Core setup...');
 
         // Load data from files
-        $currencies = include database_path('data/currencies.php');
-        $countries = include database_path('data/countries.php');
-        $channels = include database_path('data/channels.php');
-        $customerGroups = include database_path('data/customer_groups.php');
+        $currencies = include $this->packageDataPath('currencies.php');
+        $countries = include $this->packageDataPath('countries.php');
+        $channels = include $this->packageDataPath('channels.php');
+        $customerGroups = include $this->packageDataPath('customer_groups.php');
 
         // Seed Sites first
         $this->command->info('🌐 Seeding sites...');
@@ -306,7 +311,7 @@ class CartinoSeeder extends Seeder
             }
 
             $category = Category::unguarded(function () use ($mainSite, $parent, $data) {
-                return Category::create([
+                return \Database\Factories\CategoryFactory::new()->create([
                     'site_id' => $mainSite->id,
                     'parent_id' => $parent?->id,
                     'level' => $parent ? $parent->level + 1 : 0,

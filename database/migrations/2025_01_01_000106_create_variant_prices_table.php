@@ -99,7 +99,7 @@ return new class extends Migration
 
             $table->timestamps();
 
-            $table->unique(['price_list_id', 'product_variant_id', 'min_quantity']);
+            $table->unique(['price_list_id', 'product_variant_id', 'min_quantity'], 'price_list_items_uq');
             $table->index(['product_variant_id']);
         });
     }

@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('purchase_order_id')->constrained()->onDelete('cascade');
             $table->foreignId('product_id')->constrained()->onDelete('restrict');
-            $table->foreignId('product_variant_id')->nullable()->constrained('product_variations')->onDelete('restrict');
+            $table->foreignId('product_variant_id')->nullable()->constrained('product_variants')->onDelete('restrict');
 
             // Order item details
             $table->string('sku'); // Product SKU at time of order

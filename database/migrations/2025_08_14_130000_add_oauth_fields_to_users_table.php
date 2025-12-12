@@ -24,7 +24,7 @@ return new class extends Migration
         });
 
         // Create social_accounts table for multiple provider support per user
-        Schema::create('social_accounts', function (Blueprint $table) {
+        Schema::create('user_social_accounts', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('provider'); // google, facebook, twitter, etc.

@@ -57,12 +57,12 @@ return new class extends Migration
             $table->index(['is_validated', 'validation_source']);
 
             // Composite indexes for common queries
-            $table->index(['addressable_type', 'addressable_id', 'is_default_shipping']);
-            $table->index(['addressable_type', 'addressable_id', 'is_default_billing']);
+            $table->index(['addressable_type', 'addressable_id', 'is_default_shipping'], 'addr_addrable_def_ship_idx');
+            $table->index(['addressable_type', 'addressable_id', 'is_default_billing'], 'addr_addrable_def_bill_idx');
 
             // Full text search
             if (config('database.default') === 'mysql') {
-                $table->fullText(['first_name', 'last_name', 'company', 'address_line_1', 'city']);
+                $table->fullText(['first_name', 'last_name', 'company', 'address_line_1', 'city'], 'addr_fulltext_idx');
             }
         });
     }
