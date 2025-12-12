@@ -7,7 +7,7 @@ namespace Cartino\Http\Controllers\Api;
 use Cartino\Http\Requests\Api\StoreGlobalRequest;
 use Cartino\Http\Requests\Api\UpdateGlobalRequest;
 use Cartino\Http\Resources\GlobalResource;
-use Cartino\Models\Global;
+use Cartino\Models\GlobalSet;
 use Cartino\Repositories\GlobalRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -23,8 +23,8 @@ class GlobalsController extends ApiController
      */
     public function index(Request $request): JsonResponse
     {
-        $this->authorize('viewAny', Global::class);
-        
+        $this->authorize('viewAny', GlobalSet::class);
+
         $data = $this->repository->findAll($request->all());
 
         return $this->paginatedResponse($data);
@@ -37,7 +37,7 @@ class GlobalsController extends ApiController
     {
         $data = $this->repository->findOne($handleOrId);
 
-        if (!$data) {
+        if (! $data) {
             return $this->errorResponse('Global non trovato', 404);
         }
 
@@ -51,46 +51,46 @@ class GlobalsController extends ApiController
      */
     public function store(StoreGlobalRequest $request): JsonResponse
     {
-        $this->authorize('create', Global::class);
-        
-        try {
-            $global = $this->repository->createOne($request->validated());
+        $this->authorize('create', GlobalSet::class);
 
-            return $this->created(new GlobalResource($global), 'Global creato con successo');
+        try {
+            $globalSet = $this->repository->createOne($request->validated());
+
+            return $this->created(new GlobalResource($globalSet), 'Global creato con successo');
         } catch (\Exception $e) {
-            return $this->errorResponse('Errore nella creazione del global: ' . $e->getMessage());
+            return $this->errorResponse('Errore nella creazione del global: '.$e->getMessage());
         }
     }
 
     /**
      * Update the specified global
      */
-    public function update(UpdateGlobalRequest $request, Global $global): JsonResponse
+    public function update(UpdateGlobalRequest $request, GlobalSet $globalSet): JsonResponse
     {
-        $this->authorize('update', $global);
-        
+        $this->authorize('update', $globalSet);
+
         try {
-            $updatedGlobal = $this->repository->updateOne($global->id, $request->validated());
+            $updatedGlobal = $this->repository->updateOne($globalSet->id, $request->validated());
 
             return $this->successResponse(new GlobalResource($updatedGlobal), 'Global aggiornato con successo');
         } catch (\Exception $e) {
-            return $this->errorResponse('Errore nell\'aggiornamento del global: ' . $e->getMessage());
+            return $this->errorResponse('Errore nell\'aggiornamento del global: '.$e->getMessage());
         }
     }
 
     /**
      * Remove the specified global
      */
-    public function destroy(Global $global): JsonResponse
+    public function destroy(GlobalSet $globalSet): JsonResponse
     {
-        $this->authorize('delete', $global);
-        
+        $this->authorize('delete', $globalSet);
+
         try {
-            $this->repository->deleteOne($global->id);
+            $this->repository->deleteOne($globalSet->id);
 
             return $this->successResponse(null, 'Global eliminato con successo');
         } catch (\Exception $e) {
-            return $this->errorResponse('Errore nell\'eliminazione del global: ' . $e->getMessage());
+            return $this->errorResponse('Errore nell\'eliminazione del global: '.$e->getMessage());
         }
     }
 
@@ -99,13 +99,13 @@ class GlobalsController extends ApiController
      */
     public function byHandle(string $handle): JsonResponse
     {
-        $global = $this->repository->getByHandle($handle);
+        $globalSet = $this->repository->getByHandle($handle);
 
-        if (!$global) {
+        if (! $globalSet) {
             return $this->errorResponse('Global non trovato', 404);
         }
 
-        return $this->successResponse(new GlobalResource($global));
+        return $this->successResponse(new GlobalResource($globalSet));
     }
 
     /**
@@ -118,15 +118,15 @@ class GlobalsController extends ApiController
         ]);
 
         try {
-            $global = $this->repository->updateByHandle($handle, $request->data);
+            $globalSet = $this->repository->updateByHandle($handle, $request->data);
 
-            if (!$global) {
+            if (! $globalSet) {
                 return $this->errorResponse('Global non trovato', 404);
             }
 
-            return $this->successResponse(new GlobalResource($global), 'Global aggiornato con successo');
+            return $this->successResponse(new GlobalResource($globalSet), 'Global aggiornato con successo');
         } catch (\Exception $e) {
-            return $this->errorResponse('Errore nell\'aggiornamento del global: ' . $e->getMessage());
+            return $this->errorResponse('Errore nell\'aggiornamento del global: '.$e->getMessage());
         }
     }
 
@@ -141,15 +141,15 @@ class GlobalsController extends ApiController
         ]);
 
         try {
-            $global = $this->repository->setValue($handle, $request->key, $request->value);
+            $globalSet = $this->repository->setValue($handle, $request->key, $request->value);
 
-            if (!$global) {
+            if (! $globalSet) {
                 return $this->errorResponse('Global non trovato', 404);
             }
 
-            return $this->successResponse(new GlobalResource($global), 'Valore aggiornato con successo');
+            return $this->successResponse(new GlobalResource($globalSet), 'Valore aggiornato con successo');
         } catch (\Exception $e) {
-            return $this->errorResponse('Errore nell\'aggiornamento del valore: ' . $e->getMessage());
+            return $this->errorResponse('Errore nell\'aggiornamento del valore: '.$e->getMessage());
         }
     }
 

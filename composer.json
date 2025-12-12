@@ -40,7 +40,9 @@
     },
     "autoload": {
         "psr-4": {
-            "Cartino\\": "src/"
+            "Cartino\\": "src/",
+            "Database\\Factories\\": "database/factories/",
+            "Database\\Seeders\\": "database/seeders/"
         },
         "files": [
             "src/Support/helpers.php"

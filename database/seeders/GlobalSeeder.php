@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use Cartino\Models\Global;
+use Cartino\Models\GlobalSet;
 use Illuminate\Database\Seeder;
 
 class GlobalSeeder extends Seeder
@@ -13,7 +13,7 @@ class GlobalSeeder extends Seeder
     public function run(): void
     {
         // Site Settings
-        Global::create([
+        GlobalSet::create([
             'handle' => 'site_settings',
             'title' => 'Site Settings',
             'data' => [
@@ -33,7 +33,7 @@ class GlobalSeeder extends Seeder
         ]);
 
         // Social Media
-        Global::create([
+        GlobalSet::create([
             'handle' => 'social_media',
             'title' => 'Social Media',
             'data' => [
@@ -47,7 +47,7 @@ class GlobalSeeder extends Seeder
         ]);
 
         // Header Settings
-        Global::create([
+        GlobalSet::create([
             'handle' => 'header',
             'title' => 'Header',
             'data' => [
@@ -66,7 +66,7 @@ class GlobalSeeder extends Seeder
         ]);
 
         // Footer Settings
-        Global::create([
+        GlobalSet::create([
             'handle' => 'footer',
             'title' => 'Footer',
             'data' => [
@@ -99,7 +99,7 @@ class GlobalSeeder extends Seeder
         ]);
 
         // SEO Settings
-        Global::create([
+        GlobalSet::create([
             'handle' => 'seo',
             'title' => 'SEO Settings',
             'data' => [
@@ -115,7 +115,7 @@ class GlobalSeeder extends Seeder
         ]);
 
         // Checkout Settings
-        Global::create([
+        GlobalSet::create([
             'handle' => 'checkout',
             'title' => 'Checkout Settings',
             'data' => [

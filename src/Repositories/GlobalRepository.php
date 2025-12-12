@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Cartino\Repositories;
 
-use Cartino\Models\Global;
+use Cartino\Models\GlobalSet;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Spatie\QueryBuilder\AllowedFilter;
@@ -18,7 +18,7 @@ class GlobalRepository extends BaseRepository
 
     protected function makeModel(): \Illuminate\Database\Eloquent\Model
     {
-        return new Global;
+        return new GlobalSet;
     }
 
     /**
@@ -26,7 +26,7 @@ class GlobalRepository extends BaseRepository
      */
     public function findAll(array $filters = []): LengthAwarePaginator
     {
-        return QueryBuilder::for(Global::class)
+        return QueryBuilder::for(GlobalSet::class)
             ->allowedFilters([
                 'handle',
                 'title',
@@ -40,7 +40,7 @@ class GlobalRepository extends BaseRepository
     /**
      * Find one by ID or handle
      */
-    public function findOne(int|string $id): ?Global
+    public function findOne(int|string $id): ?GlobalSet
     {
         if (is_numeric($id)) {
             return $this->model->find($id);
@@ -52,24 +52,24 @@ class GlobalRepository extends BaseRepository
     /**
      * Create a new global
      */
-    public function createOne(array $data): Global
+    public function createOne(array $data): GlobalSet
     {
-        $global = $this->model->create($data);
+        $globalSet = $this->model->create($data);
         $this->clearCache();
 
-        return $global;
+        return $globalSet;
     }
 
     /**
      * Update a global
      */
-    public function updateOne(int $id, array $data): Global
+    public function updateOne(int $id, array $data): GlobalSet
     {
-        $global = $this->model->findOrFail($id);
-        $global->update($data);
+        $globalSet = $this->model->findOrFail($id);
+        $globalSet->update($data);
         $this->clearCache();
 
-        return $global->fresh();
+        return $globalSet->fresh();
     }
 
     /**
@@ -77,9 +77,9 @@ class GlobalRepository extends BaseRepository
      */
     public function deleteOne(int $id): bool
     {
-        $global = $this->model->findOrFail($id);
-        $deleted = $global->delete();
-        
+        $globalSet = $this->model->findOrFail($id);
+        $deleted = $globalSet->delete();
+
         if ($deleted) {
             $this->clearCache();
         }
@@ -99,7 +99,7 @@ class GlobalRepository extends BaseRepository
     /**
      * Get global by handle
      */
-    public function getByHandle(string $handle): ?Global
+    public function getByHandle(string $handle): ?GlobalSet
     {
         return $this->model->byHandle($handle)->first();
     }
@@ -115,36 +115,36 @@ class GlobalRepository extends BaseRepository
     /**
      * Update global data by handle
      */
-    public function updateByHandle(string $handle, array $data): ?Global
+    public function updateByHandle(string $handle, array $data): ?GlobalSet
     {
-        $global = $this->getByHandle($handle);
-        
-        if (!$global) {
+        $globalSet = $this->getByHandle($handle);
+
+        if (! $globalSet) {
             return null;
         }
 
-        $global->update(['data' => $data]);
+        $globalSet->update(['data' => $data]);
         $this->clearCache();
 
-        return $global->fresh();
+        return $globalSet->fresh();
     }
 
     /**
      * Set a specific value in global data
      */
-    public function setValue(string $handle, string $key, mixed $value): ?Global
+    public function setValue(string $handle, string $key, mixed $value): ?GlobalSet
     {
-        $global = $this->getByHandle($handle);
-        
-        if (!$global) {
+        $globalSet = $this->getByHandle($handle);
+
+        if (! $globalSet) {
             return null;
         }
 
-        $global->set($key, $value);
-        $global->save();
+        $globalSet->set($key, $value);
+        $globalSet->save();
         $this->clearCache();
 
-        return $global->fresh();
+        return $globalSet->fresh();
     }
 
     /**
@@ -152,12 +152,12 @@ class GlobalRepository extends BaseRepository
      */
     public function getValue(string $handle, string $key, mixed $default = null): mixed
     {
-        $global = $this->getByHandle($handle);
-        
-        if (!$global) {
+        $globalSet = $this->getByHandle($handle);
+
+        if (! $globalSet) {
             return $default;
         }
 
-        return $global->get($key, $default);
+        return $globalSet->get($key, $default);
     }
 }

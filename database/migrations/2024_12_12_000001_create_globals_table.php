@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('globals', function (Blueprint $table) {
+        Schema::create('global_sets', function (Blueprint $table) {
             $table->id();
             $table->string('handle')->unique()->comment('Identificatore univoco per il global set');
             $table->string('title')->comment('Nome visualizzato del global set');
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('globals');
+        Schema::dropIfExists('global_sets');
     }
 };

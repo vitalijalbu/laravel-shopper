@@ -21,7 +21,6 @@ class ProductRepository extends BaseRepository
         return new Product;
     }
 
-
     public function findAll(array $filters = []): LengthAwarePaginator
     {
         $dynamicIncludes = Arr::get($filters, 'includes', []);
@@ -36,7 +35,7 @@ class ProductRepository extends BaseRepository
                 'collections',
                 'tags',
                 'variants',
-                ...$dynamicIncludes
+                ...$dynamicIncludes,
             ])
             ->paginate($filters['per_page'] ?? config('settings.pagination.per_page'))
             ->appends($filters);
@@ -60,6 +59,7 @@ class ProductRepository extends BaseRepository
     {
         $product = $this->model->create($data);
         $this->clearCache();
+
         return $product;
     }
 
@@ -71,6 +71,7 @@ class ProductRepository extends BaseRepository
         $product = $this->findOrFail($id);
         $product->update($data);
         $this->clearCache();
+
         return $product->fresh();
     }
 
@@ -82,6 +83,7 @@ class ProductRepository extends BaseRepository
         $product = $this->findOrFail($id);
         $deleted = $product->delete();
         $this->clearCache();
+
         return $deleted;
     }
 
@@ -91,7 +93,8 @@ class ProductRepository extends BaseRepository
     public function canDelete(int $id): bool
     {
         $product = $this->findOrFail($id);
-        return !$product->variants()->exists() && !$product->orderLines()->exists();
+
+        return ! $product->variants()->exists() && ! $product->orderLines()->exists();
     }
 
     /**
@@ -103,6 +106,7 @@ class ProductRepository extends BaseRepository
         $newStatus = $product->status === 'published' ? 'draft' : 'published';
         $product->update(['status' => $newStatus]);
         $this->clearCache();
+
         return $product->fresh();
     }
 
@@ -125,8 +129,6 @@ class ProductRepository extends BaseRepository
 
         return $product->load(['category', 'brand', 'collections', 'tags']);
     }
-
-   
 
     public function getByCollection(int $collectionId): Product
     {
@@ -231,11 +233,6 @@ class ProductRepository extends BaseRepository
         $this->query->orderBy('price_amount', $direction);
 
         return $this;
-    }
-            return false;
-        }
-
-        return true;
     }
 
     public function bulkUpdate(array $ids, array $data): int

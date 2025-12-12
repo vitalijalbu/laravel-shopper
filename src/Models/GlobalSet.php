@@ -7,9 +7,11 @@ namespace Cartino\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Global extends Model
+class GlobalSet extends Model
 {
     use HasFactory;
+
+    protected $table = 'global_sets';
 
     protected $fillable = [
         'handle',

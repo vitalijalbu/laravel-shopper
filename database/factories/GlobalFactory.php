@@ -2,12 +2,12 @@
 
 namespace Database\Factories;
 
-use Cartino\Models\Global;
+use Cartino\Models\GlobalSet;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class GlobalFactory extends Factory
 {
-    protected $model = Global::class;
+    protected $model = GlobalSet::class;
 
     public function definition(): array
     {
@@ -50,9 +50,9 @@ class GlobalFactory extends Factory
             'handle' => 'social_media',
             'title' => 'Social Media',
             'data' => [
-                'facebook' => 'https://facebook.com/' . $this->faker->userName,
-                'instagram' => 'https://instagram.com/' . $this->faker->userName,
-                'twitter' => 'https://twitter.com/' . $this->faker->userName,
+                'facebook' => 'https://facebook.com/'.$this->faker->userName,
+                'instagram' => 'https://instagram.com/'.$this->faker->userName,
+                'twitter' => 'https://twitter.com/'.$this->faker->userName,
             ],
         ]);
     }

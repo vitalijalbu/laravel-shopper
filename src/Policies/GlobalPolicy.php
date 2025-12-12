@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Cartino\Policies;
 
-use Cartino\Models\Global;
 use Illuminate\Foundation\Auth\User;
 
 class GlobalPolicy
@@ -33,7 +32,7 @@ class GlobalPolicy
     /**
      * Determine whether the user can view the global.
      */
-    public function view(User $user, Global $global): bool
+    public function view(User $user, GlobalModel $global): bool
     {
         return $user->can('view globals');
     }
@@ -49,7 +48,7 @@ class GlobalPolicy
     /**
      * Determine whether the user can update the global.
      */
-    public function update(User $user, Global $global): bool
+    public function update(User $user, GlobalModel $global): bool
     {
         return $user->can('edit globals');
     }
@@ -57,7 +56,7 @@ class GlobalPolicy
     /**
      * Determine whether the user can delete the global.
      */
-    public function delete(User $user, Global $global): bool
+    public function delete(User $user, GlobalModel $global): bool
     {
         return $user->can('delete globals');
     }
@@ -65,7 +64,7 @@ class GlobalPolicy
     /**
      * Determine whether the user can restore the global.
      */
-    public function restore(User $user, Global $global): bool
+    public function restore(User $user, GlobalModel $global): bool
     {
         return $user->can('restore globals');
     }
@@ -73,7 +72,7 @@ class GlobalPolicy
     /**
      * Determine whether the user can permanently delete the global.
      */
-    public function forceDelete(User $user, Global $global): bool
+    public function forceDelete(User $user, GlobalModel $global): bool
     {
         return $user->can('force delete globals');
     }

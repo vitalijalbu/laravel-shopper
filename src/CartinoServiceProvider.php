@@ -207,7 +207,7 @@ class CartinoServiceProvider extends ServiceProvider
         // Register policies for Cartino models
         $policies = [
             \Cartino\Models\Product::class => \Cartino\Policies\ProductPolicy::class,
-            \Cartino\Models\Global::class => \Cartino\Policies\GlobalPolicy::class,
+            \Cartino\Models\GlobalSet::class => \Cartino\Policies\GlobalPolicy::class,
             \Cartino\Models\Entry::class => \Cartino\Policies\EntryPolicy::class,
             // Add more model-policy mappings here as needed
         ];
