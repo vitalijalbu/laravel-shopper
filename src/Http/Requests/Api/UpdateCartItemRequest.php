@@ -19,12 +19,4 @@ class UpdateCartItemRequest extends FormRequest
             'quantity' => ['required', 'integer', 'min:0'],
         ];
     }
-
-    public function messages(): array
-    {
-        return [
-            'quantity.required' => 'La quantità è obbligatoria',
-            'quantity.min' => 'La quantità minima è 0',
-        ];
-    }
 }

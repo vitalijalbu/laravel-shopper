@@ -16,7 +16,7 @@ class UpdateCountryRequest extends FormRequest
     public function rules(): array
     {
         $countryId = $this->route('country');
-        
+
         return [
             'name' => ['sometimes', 'string', 'max:255'],
             'code' => ['sometimes', 'string', 'size:2', "unique:countries,code,{$countryId}"],

@@ -25,7 +25,7 @@ return new class extends Migration
             $table->integer('order')->default(0)->comment('Ordinamento manuale');
             $table->timestamps();
             $table->softDeletes();
-            
+
             $table->unique(['collection', 'slug', 'locale']);
             $table->index(['collection', 'status']);
             $table->index(['collection', 'published_at']);

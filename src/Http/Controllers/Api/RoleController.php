@@ -2,7 +2,6 @@
 
 namespace Cartino\Http\Controllers\Api;
 
-use Cartino\Http\Requests\Api\AssignRolePermissionsRequest;
 use Cartino\Http\Requests\Api\AssignRoleUsersRequest;
 use Cartino\Http\Requests\Api\RoleRequest;
 use Cartino\Traits\ApiResponseTrait;

@@ -20,12 +20,4 @@ class AssignRolePermissionsRequest extends FormRequest
             'permission_ids.*' => ['integer', 'exists:permissions,id'],
         ];
     }
-
-    public function messages(): array
-    {
-        return [
-            'permission_ids.required' => 'Almeno un permesso deve essere specificato',
-            'permission_ids.*.exists' => 'Uno o più permessi selezionati non esistono',
-        ];
-    }
 }

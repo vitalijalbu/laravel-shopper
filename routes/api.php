@@ -165,8 +165,6 @@ Route::group([
             Route::post('/estimate-shipping', [CartController::class, 'estimateShipping'])->name('estimate-shipping');
         });
 
-
-
         // Enhanced Fidelity System
         Route::prefix('fidelity')->name('fidelity.')->group(function () {
             // Public endpoints
@@ -295,9 +293,6 @@ Route::group([
             Route::post('brands/{brand}/toggle-status', [BrandsController::class, 'toggleStatus'])->name('api.admin.brands.toggleStatus');
             Route::get('brands/{brand}/products', [BrandsController::class, 'products'])->name('api.admin.brands.products');
 
-
-
-
             // Order Management (Admin)
             Route::prefix('orders')->name('orders.')->group(function () {
                 Route::get('/', [OrderController::class, 'adminIndex'])->name('index');
@@ -402,6 +397,36 @@ Route::group([
                 Route::post('/{asset}/rename', [\Cartino\Http\Controllers\Api\AssetController::class, 'rename'])->name('rename');
                 Route::get('/{asset}/download', [\Cartino\Http\Controllers\Api\AssetController::class, 'download'])->name('download');
                 Route::post('/bulk-delete', [\Cartino\Http\Controllers\Api\AssetController::class, 'bulkDelete'])->name('bulk.delete');
+            });
+
+            // Globals Management (like Statamic)
+            Route::prefix('globals')->name('globals.')->group(function () {
+                Route::get('/', [\Cartino\Http\Controllers\Api\GlobalsController::class, 'index'])->name('index');
+                Route::post('/', [\Cartino\Http\Controllers\Api\GlobalsController::class, 'store'])->name('store');
+                Route::get('/handle/{handle}', [\Cartino\Http\Controllers\Api\GlobalsController::class, 'byHandle'])->name('by-handle');
+                Route::put('/handle/{handle}', [\Cartino\Http\Controllers\Api\GlobalsController::class, 'updateByHandle'])->name('update-by-handle');
+                Route::post('/handle/{handle}/set-value', [\Cartino\Http\Controllers\Api\GlobalsController::class, 'setValue'])->name('set-value');
+                Route::get('/handle/{handle}/get-value/{key}', [\Cartino\Http\Controllers\Api\GlobalsController::class, 'getValue'])->name('get-value');
+                Route::get('/{global}', [\Cartino\Http\Controllers\Api\GlobalsController::class, 'show'])->name('show');
+                Route::put('/{global}', [\Cartino\Http\Controllers\Api\GlobalsController::class, 'update'])->name('update');
+                Route::delete('/{global}', [\Cartino\Http\Controllers\Api\GlobalsController::class, 'destroy'])->name('destroy');
+            });
+
+            // Entries Management (like Statamic Collections)
+            Route::prefix('entries')->name('entries.')->group(function () {
+                Route::get('/', [\Cartino\Http\Controllers\Api\EntriesController::class, 'index'])->name('index');
+                Route::post('/', [\Cartino\Http\Controllers\Api\EntriesController::class, 'store'])->name('store');
+                Route::post('/reorder', [\Cartino\Http\Controllers\Api\EntriesController::class, 'reorder'])->name('reorder');
+                Route::get('/collection/{collection}', [\Cartino\Http\Controllers\Api\EntriesController::class, 'byCollection'])->name('by-collection');
+                Route::get('/collection/{collection}/tree', [\Cartino\Http\Controllers\Api\EntriesController::class, 'tree'])->name('tree');
+                Route::get('/collection/{collection}/{slug}', [\Cartino\Http\Controllers\Api\EntriesController::class, 'bySlug'])->name('by-slug');
+                Route::get('/{entry}', [\Cartino\Http\Controllers\Api\EntriesController::class, 'show'])->name('show');
+                Route::put('/{entry}', [\Cartino\Http\Controllers\Api\EntriesController::class, 'update'])->name('update');
+                Route::delete('/{entry}', [\Cartino\Http\Controllers\Api\EntriesController::class, 'destroy'])->name('destroy');
+                Route::post('/{entry}/publish', [\Cartino\Http\Controllers\Api\EntriesController::class, 'publish'])->name('publish');
+                Route::post('/{entry}/unpublish', [\Cartino\Http\Controllers\Api\EntriesController::class, 'unpublish'])->name('unpublish');
+                Route::post('/{entry}/schedule', [\Cartino\Http\Controllers\Api\EntriesController::class, 'schedule'])->name('schedule');
+                Route::post('/{entry}/duplicate', [\Cartino\Http\Controllers\Api\EntriesController::class, 'duplicate'])->name('duplicate');
             });
         });
     });

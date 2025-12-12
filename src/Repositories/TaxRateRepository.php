@@ -52,6 +52,7 @@ class TaxRateRepository extends BaseRepository
     {
         $taxRate = $this->model->create($data);
         $this->clearCache();
+
         return $taxRate;
     }
 
@@ -63,6 +64,7 @@ class TaxRateRepository extends BaseRepository
         $taxRate = $this->findOrFail($id);
         $taxRate->update($data);
         $this->clearCache();
+
         return $taxRate->fresh();
     }
 
@@ -74,6 +76,7 @@ class TaxRateRepository extends BaseRepository
         $taxRate = $this->findOrFail($id);
         $deleted = $taxRate->delete();
         $this->clearCache();
+
         return $deleted;
     }
 
@@ -91,8 +94,9 @@ class TaxRateRepository extends BaseRepository
     public function toggleStatus(int $id): TaxRate
     {
         $taxRate = $this->findOrFail($id);
-        $taxRate->update(['is_enabled' => !$taxRate->is_enabled]);
+        $taxRate->update(['is_enabled' => ! $taxRate->is_enabled]);
         $this->clearCache();
+
         return $taxRate->fresh();
     }
 
@@ -291,7 +295,6 @@ class TaxRateRepository extends BaseRepository
             ]);
         });
     }
-
 
     /**
      * Update priorities for multiple tax rates

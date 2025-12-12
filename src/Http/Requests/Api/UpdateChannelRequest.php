@@ -16,7 +16,7 @@ class UpdateChannelRequest extends FormRequest
     public function rules(): array
     {
         $channelId = $this->route('channel');
-        
+
         return [
             'name' => ['sometimes', 'string', 'max:255'],
             'slug' => ['sometimes', 'string', 'max:255', "unique:channels,slug,{$channelId}"],

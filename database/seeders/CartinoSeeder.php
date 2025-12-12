@@ -192,6 +192,10 @@ class CartinoSeeder extends Seeder
         $this->command->info('⚙️ Seeding settings...');
         Setting::factory()->count(50)->create();
 
+        // Globals (like Statamic)
+        $this->command->info('🌐 Seeding globals...');
+        $this->call(GlobalSeeder::class);
+
         // Shipping zones and rates
         $this->command->info('🚚 Seeding shipping zones & rates...');
         $zones = ShippingZone::factory()->count(10)->state([
@@ -232,10 +236,14 @@ class CartinoSeeder extends Seeder
         Discount::factory()->count(100)->create();
         Discount::factory()->count(50)->active()->create();
 
-        // Pages
-        $this->command->info('📄 Seeding pages...');
+        // Pages (Legacy - migrating to Entries)
+        $this->command->info('📄 Seeding pages (legacy)...');
         Page::factory()->count(50)->create();
         Page::factory()->count(30)->published()->create();
+
+        // Entries (like Statamic Collections)
+        $this->command->info('📝 Seeding entries...');
+        $this->call(EntrySeeder::class);
 
         // Menus
         $this->command->info('🗂️ Seeding menus...');

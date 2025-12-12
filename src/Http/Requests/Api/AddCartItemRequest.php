@@ -22,15 +22,4 @@ class AddCartItemRequest extends FormRequest
             'options' => ['nullable', 'array'],
         ];
     }
-
-    public function messages(): array
-    {
-        return [
-            'product_id.required' => 'Il prodotto è obbligatorio',
-            'product_id.exists' => 'Il prodotto selezionato non esiste',
-            'product_variant_id.exists' => 'La variante selezionata non esiste',
-            'quantity.required' => 'La quantità è obbligatoria',
-            'quantity.min' => 'La quantità minima è 1',
-        ];
-    }
 }

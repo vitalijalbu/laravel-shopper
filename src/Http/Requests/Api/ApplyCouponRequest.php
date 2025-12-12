@@ -19,11 +19,4 @@ class ApplyCouponRequest extends FormRequest
             'coupon_code' => ['required', 'string'],
         ];
     }
-
-    public function messages(): array
-    {
-        return [
-            'coupon_code.required' => 'Il codice coupon è obbligatorio',
-        ];
-    }
 }

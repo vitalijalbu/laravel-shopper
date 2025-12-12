@@ -16,7 +16,7 @@ class UpdateCurrencyRequest extends FormRequest
     public function rules(): array
     {
         $currencyId = $this->route('currency');
-        
+
         return [
             'name' => ['sometimes', 'string', 'max:255'],
             'code' => ['sometimes', 'string', 'size:3', "unique:currencies,code,{$currencyId}"],

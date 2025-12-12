@@ -16,7 +16,7 @@ class UpdateTaxRateRequest extends FormRequest
     public function rules(): array
     {
         $taxRateId = $this->route('tax_rate');
-        
+
         return [
             'name' => ['sometimes', 'string', 'max:255'],
             'code' => ['sometimes', 'string', 'max:50', "unique:tax_rates,code,{$taxRateId}"],

@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('title')->comment('Nome visualizzato del global set');
             $table->json('data')->nullable()->comment('Dati del global set in formato JSON');
             $table->timestamps();
-            
+
             $table->index('handle');
         });
     }

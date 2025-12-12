@@ -8,7 +8,6 @@ use Cartino\Contracts\SupplierRepositoryInterface;
 use Cartino\Models\Supplier;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Collection;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
@@ -61,6 +60,7 @@ class SupplierRepository extends BaseRepository implements SupplierRepositoryInt
     {
         $supplier = $this->model->create($data);
         $this->clearCache();
+
         return $supplier;
     }
 
@@ -72,6 +72,7 @@ class SupplierRepository extends BaseRepository implements SupplierRepositoryInt
         $supplier = $this->findOrFail($id);
         $supplier->update($data);
         $this->clearCache();
+
         return $supplier->fresh();
     }
 
@@ -83,6 +84,7 @@ class SupplierRepository extends BaseRepository implements SupplierRepositoryInt
         $supplier = $this->findOrFail($id);
         $deleted = $supplier->delete();
         $this->clearCache();
+
         return $deleted;
     }
 
@@ -92,7 +94,8 @@ class SupplierRepository extends BaseRepository implements SupplierRepositoryInt
     public function canDelete(int $id): bool
     {
         $supplier = $this->findOrFail($id);
-        return !$supplier->purchaseOrders()->exists();
+
+        return ! $supplier->purchaseOrders()->exists();
     }
 
     /**
@@ -104,6 +107,7 @@ class SupplierRepository extends BaseRepository implements SupplierRepositoryInt
         $newStatus = $supplier->status === 'active' ? 'inactive' : 'active';
         $supplier->update(['status' => $newStatus]);
         $this->clearCache();
+
         return $supplier->fresh();
     }
 
@@ -283,7 +287,7 @@ class SupplierRepository extends BaseRepository implements SupplierRepositoryInt
             ];
         }
 
-        $onTimeDeliveries = $purchaseOrders->filter(fn($order) => $order->delivered_on_time)->count();
+        $onTimeDeliveries = $purchaseOrders->filter(fn ($order) => $order->delivered_on_time)->count();
         $totalValue = $purchaseOrders->sum('total_amount');
         $deliveredOrders = $purchaseOrders->whereNotNull('delivery_date');
         $averageDeliveryTime = $deliveredOrders->avg(function ($order) {
