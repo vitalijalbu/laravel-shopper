@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelShopper\Fieldtypes;
+namespace Cartino\Fieldtypes;
 
 class Money extends Fieldtype
 {
@@ -48,6 +48,7 @@ class Money extends Fieldtype
         }
 
         $formatter = new \NumberFormatter($locale, \NumberFormatter::CURRENCY);
+
         return $formatter->formatCurrency($value / 100, $currency);
     }
 
@@ -72,7 +73,7 @@ class Money extends Fieldtype
     public function rules()
     {
         $rules = parent::rules();
-        
+
         $rules[] = 'numeric';
         $rules[] = 'min:0';
 

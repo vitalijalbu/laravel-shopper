@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelShopper\Fieldtypes;
+namespace Cartino\Fieldtypes;
 
 class Assets extends Fieldtype
 {
@@ -36,7 +36,7 @@ class Assets extends Fieldtype
             return $this->augmentSingle($value);
         }
 
-        if (!is_array($value)) {
+        if (! is_array($value)) {
             $value = [$value];
         }
 
@@ -90,7 +90,7 @@ class Assets extends Fieldtype
 
         if ($this->config('max_files', 1) > 1) {
             $rules[] = 'array';
-            $rules[] = 'max:' . $this->config('max_files');
+            $rules[] = 'max:'.$this->config('max_files');
         }
 
         if ($allowed = $this->config('allowed_extensions')) {

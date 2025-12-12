@@ -1,90 +1,121 @@
 <?php
 
-namespace LaravelShopper\Http\Controllers\Api;
+namespace Cartino\Http\Controllers\Api;
 
-use Illuminate\Http\Request;
+use Cartino\Http\Resources\ProductResource;
+use Cartino\Models\Product;
+use Cartino\Repositories\ProductRepository;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Routing\Controller;
-use LaravelShopper\Models\Product;
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
 
-class ProductController extends Controller
+class ProductController extends ApiController
 {
+    public function __construct(
+        private readonly ProductRepository $repository
+    ) {}
+
+    /**
+     * Display a listing of brands
+     */
     public function index(Request $request): JsonResponse
     {
-        $query = Product::with(['brand', 'categories', 'media'])
-            ->where('is_active', true);
+        $request = $request->all();
 
-        // Search
-        if ($search = $request->get('search')) {
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'LIKE', "%{$search}%")
-                  ->orWhere('description', 'LIKE', "%{$search}%")
-                  ->orWhere('sku', 'LIKE', "%{$search}%");
-            });
-        }
+        $data = $this->repository->findAll($request);
 
-        // Filter by category
-        if ($category = $request->get('category')) {
-            $query->whereHas('categories', function ($q) use ($category) {
-                $q->where('slug', $category);
-            });
-        }
+        return $this->paginatedResponse($data);
+    }
 
-        // Filter by brand
-        if ($brand = $request->get('brand')) {
-            $query->whereHas('brand', function ($q) use ($brand) {
-                $q->where('slug', $brand);
-            });
-        }
+    public function show(Product $product): JsonResource
+    {
+        $product->load(['brand', 'productType', 'variants', 'media']);
 
-        // Price range
-        if ($minPrice = $request->get('min_price')) {
-            $query->where('price', '>=', $minPrice * 100);
-        }
+        return new ProductResource($product);
+    }
 
-        if ($maxPrice = $request->get('max_price')) {
-            $query->where('price', '<=', $maxPrice * 100);
-        }
+    public function search(Request $request): JsonResponse
+    {
+        $request->validate([
+            'q' => 'required|string|min:2',
+        ]);
 
-        // Sorting
-        $sort = $request->get('sort', 'created_at');
-        $direction = $request->get('direction', 'desc');
-        
-        $allowedSorts = ['name', 'price', 'created_at'];
-        if (in_array($sort, $allowedSorts)) {
-            $query->orderBy($sort, $direction);
-        }
+        $params = $this->filterService->parseRequest($request->all());
+        $params['search'] = $request->get('q');
 
-        $products = $query->paginate($request->get('per_page', 20));
+        $products = Product::where('status', 'published')
+            ->paginateFilter($params);
 
-        return response()->json([
-            'data' => $products->items(),
+        return $this->success([
+            'data' => ProductResource::collection($products->items()),
             'meta' => [
-                'current_page' => $products->currentPage(),
-                'last_page' => $products->lastPage(),
-                'per_page' => $products->perPage(),
+                'total' => $products->total(),
+                'query' => $request->get('q'),
+            ],
+            'filters' => $params,
+        ]);
+    }
+
+    public function featured(Request $request): JsonResponse
+    {
+        $params = $this->filterService->parseRequest($request->all());
+        $params['is_featured'] = true;
+
+        $products = Product::where('status', 'published')
+            ->paginateFilter($params, 12);
+
+        return $this->success([
+            'data' => ProductResource::collection($products->items()),
+            'meta' => [
                 'total' => $products->total(),
             ],
         ]);
     }
 
-    public function show(Product $product): JsonResponse
+    public function popular(Request $request): JsonResponse
     {
-        if (!$product->is_active) {
-            return response()->json([
-                'message' => 'Product not found.'
-            ], 404);
-        }
+        $limit = $request->get('limit', 10);
 
-        $product->load([
-            'brand',
-            'categories',
-            'variants',
-            'media',
+        $products = Product::where('status', 'published')
+            ->orderBy('average_rating', 'desc')
+            ->orderBy('review_count', 'desc')
+            ->limit($limit)
+            ->get();
+
+        return $this->success([
+            'data' => ProductResource::collection($products),
         ]);
+    }
 
-        return response()->json([
-            'data' => $product,
+    public function onSale(Request $request): JsonResponse
+    {
+        $products = Product::where('status', 'published')
+            ->whereColumn('compare_price', '>', 'price')
+            ->whereNotNull('compare_price')
+            ->limit(12)
+            ->get();
+
+        return $this->success([
+            'data' => ProductResource::collection($products),
+        ]);
+    }
+
+    public function related(Product $product, Request $request): JsonResponse
+    {
+        $limit = $request->get('limit', 6);
+
+        // Get related products by category or brand
+        $related = Product::where('status', 'published')
+            ->where('id', '!=', $product->id)
+            ->where(function ($query) use ($product) {
+                $query->where('brand_id', $product->brand_id)
+                    ->orWhere('product_type_id', $product->product_type_id);
+            })
+            ->limit($limit)
+            ->get();
+
+        return $this->success([
+            'data' => ProductResource::collection($related),
         ]);
     }
 }

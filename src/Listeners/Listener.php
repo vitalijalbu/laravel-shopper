@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelShopper\Listeners;
+namespace Cartino\Listeners;
 
 abstract class Listener
 {
@@ -14,7 +14,7 @@ abstract class Listener
      */
     public static function subscribe($events = [])
     {
-        $listener = new static();
+        $listener = new static;
 
         foreach ($events as $event => $priority) {
             if (is_numeric($event)) {

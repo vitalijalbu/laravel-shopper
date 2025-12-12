@@ -1,12 +1,12 @@
 <?php
 
-namespace LaravelShopper\Listeners;
+namespace Cartino\Listeners;
 
-use LaravelShopper\Events\InventoryUpdated;
-use LaravelShopper\Events\OrderCreated;
-use LaravelShopper\Events\OrderStatusChanged;
-use LaravelShopper\Events\ProductCreated;
-use LaravelShopper\Events\ProductUpdated;
+use Cartino\Events\InventoryUpdated;
+use Cartino\Events\OrderCreated;
+use Cartino\Events\OrderStatusChanged;
+use Cartino\Events\ProductCreated;
+use Cartino\Events\ProductUpdated;
 
 class InventoryListener extends Listener
 {
@@ -16,19 +16,19 @@ class InventoryListener extends Listener
             case InventoryUpdated::class:
                 $this->handleInventoryUpdate($eventData);
                 break;
-                
+
             case OrderCreated::class:
                 $this->handleOrderCreated($eventData);
                 break;
-                
+
             case OrderStatusChanged::class:
                 $this->handleOrderStatusChanged($eventData);
                 break;
-                
+
             case ProductCreated::class:
                 $this->handleProductCreated($eventData);
                 break;
-                
+
             case ProductUpdated::class:
                 $this->handleProductUpdated($eventData);
                 break;
@@ -59,7 +59,7 @@ class InventoryListener extends Listener
         // Check for out of stock
         if ($newInventory <= 0) {
             $this->notify("Out of stock: {$product->get('title')} is now out of stock");
-            
+
             // Auto-update product status
             $product->set('status', 'out_of_stock');
             $product->save();
@@ -80,7 +80,7 @@ class InventoryListener extends Listener
             $quantity = $item['quantity'];
 
             // This would typically fetch the product and update inventory
-            $this->log("Reducing inventory for order", [
+            $this->log('Reducing inventory for order', [
                 'order_number' => $order->get('order_number'),
                 'product_id' => $productId,
                 'quantity' => $quantity,
@@ -113,7 +113,7 @@ class InventoryListener extends Listener
                 ]);
             }
 
-            $this->log("Queued inventory restoration for cancelled order", [
+            $this->log('Queued inventory restoration for cancelled order', [
                 'order_number' => $order->get('order_number'),
                 'items_count' => count($items),
             ]);
@@ -125,7 +125,7 @@ class InventoryListener extends Listener
         $product = $eventData['product'];
         $initialInventory = $product->get('inventory', 0);
 
-        $this->log("Product created with inventory", [
+        $this->log('Product created with inventory', [
             'product_id' => $product->id(),
             'sku' => $product->get('sku'),
             'initial_inventory' => $initialInventory,
@@ -141,7 +141,7 @@ class InventoryListener extends Listener
         $original = $eventData['original'];
 
         if ($original && $product->get('inventory') !== $original->get('inventory')) {
-            $this->log("Product inventory updated directly", [
+            $this->log('Product inventory updated directly', [
                 'product_id' => $product->id(),
                 'previous' => $original->get('inventory'),
                 'new' => $product->get('inventory'),

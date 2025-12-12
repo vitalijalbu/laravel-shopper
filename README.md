@@ -1,53 +1,482 @@
-# Laravel Shopper
+# Cartino
 
-🛒 **Laravel E-commerce Package with Statamic CMS Architecture**
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Laravel Version](https://img.shields.io/badge/Laravel-11.0-red.svg)](https://laravel.com)
+[![PHP Version](https://img.shields.io/badge/PHP-8.3+-blue.svg)](https://php.net)
 
-A complete e-commerce package for Laravel inspired by Shopify, built with Vue.js 3, Inertia.js, and Tailwind CSS v4. Features collections, entries, fields, import/export, and multisite support just like Statamic CMS.
+**Cartino** is a modern, complete e-commerce platform for Laravel, inspired by **Shopify** and **Statamic CMS**, combining the best of both worlds with a powerful Laravel architecture.
 
-## ✨ Features
+## Features
 
-- **🛪 E-commerce Core**: Products, categories, brands, orders, customers
-- **💝 Wishlists & Favorites**: Advanced wishlist system with public sharing + favorites for products/brands/categories
-- **📝 Content Management**: Collections and entries system like Statamic
-- **🎨 Modern Admin Interface**: Vue.js 3.5 + Inertia.js 2.0 + Tailwind CSS v4
-- **📊 DataTable**: Advanced filtering, sorting, pagination, bulk operations
-- **📈 Import/Export**: CSV import/export with League CSV
-- **🌐 Multisite Support**: Multiple sites management
-- **🔒 Authentication**: Laravel Sanctum integration
-- **💰 Discount System**: Advanced coupon system (percentage, fixed, free shipping)
-- **🧪 Testing**: PestPHP test suite included
+- **Multilingual System**: Full support for Italian and English with easy extension to other languages
+- **App Marketplace**: Shopify-style app ecosystem with installable extensions  
+- **OAuth Authentication**: Complete social login system with 8+ providers (Google, Facebook, GitHub, etc.)
+- **Modern Stack**: Laravel 11, Inertia.js, Vue.js, Tailwind CSS
+- **Permissions**: Role-based access control with Spatie Laravel Permission
+- **Media Management**: File uploads and media library with Spatie Laravel Medialibrary
+- **API Ready**: RESTful APIs with Laravel Sanctum authentication
 
-## 📋 Requirements
+## OAuth Providers Supported
 
-- **PHP**: ^8.3
-- **Laravel**: ^11.0
-- **Node.js**: >=18.0.0
-- **npm**: >=8.0.0
+- Google
+- Facebook  
+- Twitter
+- GitHub
+- LinkedIn
+- Apple
+- Discord
+- Microsoft
 
-## 🚀 Installation
-
-### 1. Install via Composer
-
-```bash
-composer require vitalijalbu/laravel-shopper
-```
-
-### 2. Publish Configuration & Assets
+## Quick Installation
 
 ```bash
-php artisan vendor:publish --tag="shopper-config"
-php artisan vendor:publish --tag="shopper-views"
-php artisan vendor:publish --tag="shopper-assets"
+composer require cartinophp/cartino
+php artisan cartino:install --oauth
 ```
 
-### 3. Install Frontend Dependencies
+## Manual Installation
+
+1. Install the package:
+```bash
+composer require cartinophp/cartino
+```
+
+2. Publish and run migrations:
+```bash
+php artisan vendor:publish --provider="Cartino\CartinoServiceProvider" --tag="cartino-migrations"
+php artisan migrate
+```
+
+3. Publish OAuth components (optional):
+```bash
+php artisan vendor:publish --provider="Cartino\CartinoServiceProvider" --tag="cartino-oauth-config"
+php artisan vendor:publish --provider="Cartino\CartinoServiceProvider" --tag="cartino-components"
+```
+
+## OAuth Configuration
+
+Add OAuth provider credentials to your `.env` file:
+
+```env
+# Google OAuth
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+
+# Facebook OAuth  
+FACEBOOK_CLIENT_ID=your_facebook_client_id
+FACEBOOK_CLIENT_SECRET=your_facebook_client_secret
+
+# GitHub OAuth
+GITHUB_CLIENT_ID=your_github_client_id
+GITHUB_CLIENT_SECRET=your_github_client_secret
+
+# ... other providers
+```
+
+## Usage Example
+
+```vue
+<template>
+  <div>
+    <SocialAuthComponent 
+      :auth-mode="'login'"
+      :show-divider="true"
+      @success="handleSuccess"
+      @error="handleError"
+    />
+  </div>
+</template>
+
+<script setup>
+import SocialAuthComponent from '@/components/Shopper/Auth/SocialAuthComponent.vue'
+
+const handleSuccess = (data) => {
+  console.log('Authentication successful:', data)
+}
+
+const handleError = (error) => {
+  console.error('Authentication failed:', error)
+}
+</script>
+```
+
+## Documentation
+
+- [OAuth Setup Guide](OAUTH_SETUP.md) - Complete OAuth authentication setup
+- [Multilingual System](MULTILINGUAL_SYSTEM.md) - Language system documentation  
+- [Implementation Summary](IMPLEMENTATION_SUMMARY.md) - Technical implementation details
+
+## Requirements
+
+- PHP 8.3 or higher
+- Laravel 11.0 or higher
+- MySQL 8.0 or MariaDB 10.3
+- Node.js 18.0 or higher
+
+## 🚀 Features
+
+### 🏪 E-commerce Core
+
+- **Multi-site Architecture**: Manage multiple stores from one installation
+- **Products & Variants**: Full product catalog with variants, inventory tracking
+- **Orders & Fulfillment**: Complete order management with Shopify-style workflow
+- **Customer Management**: Customer accounts, segments, and analytics
+- **Inventory Tracking**: Real-time inventory with adjustments and transfers
+- **Categories & Collections**: Flexible product organization
+
+### 🎨 Storefront Builder
+
+- **Template Engine**: Database-driven templates with Blade + Vue.js components
+- **Visual Page Builder**: Drag-and-drop interface like Shopify's Online Store 2.0
+- **Sections & Blocks**: Reusable UI components with JSON schema configuration
+- **Custom Templates**: Assign different templates to products, collections, pages
+- **Theme System**: Multi-theme support with customizable settings
+
+### 🎛️ Control Panel (CP)
+
+- **Shopify-inspired Dashboard**: Clean, intuitive interface identical to Shopify
+- **Extensible Pages**: Custom actions, UI blocks, and component system
+- **Advanced Navigation**: Collapsible sections, badges, permissions like Statamic
+- **Content Management**: Pages, blog posts, navigation menus
+- **Analytics**: Sales reports, customer insights, performance metrics
+
+### 🔧 Developer Experience
+
+- **API-First**: RESTful APIs for headless commerce
+- **Multi-tenancy**: Site isolation with performance optimization
+- **Handle-based Routing**: SEO-friendly URLs with ID fallback
+- **Modern Stack**: Laravel 11, Inertia.js, Vue 3, Tailwind CSS
+- **Database Performance**: PostgreSQL with JSONB, GIN indexes
+
+## 📦 Installation
 
 ```bash
-npm install
-npm run build
+composer require vitalijalbu/laravel-cartino
 ```
 
-### 4. Run Migrations
+### Publish and Run Migrations
+
+```bash
+php artisan vendor:publish --provider="Cartino\CartinoServiceProvider" --tag="migrations"
+php artisan migrate
+```
+
+### Publish Assets
+
+```bash
+php artisan vendor:publish --provider="Cartino\CartinoServiceProvider" --tag="assets"
+npm install && npm run build
+```
+
+### Create Admin User
+
+```bash
+php artisan cartino:install
+```
+
+## 🎯 Quick Start
+
+### 1. Access Control Panel
+
+Visit `/cp` to access the Shopify-style control panel.
+
+### 2. Create Your First Product
+
+```php
+use Cartino\Models\Product;
+
+$product = Product::create([
+    'site_id' => 1,
+    'name' => 'Awesome T-Shirt',
+    'handle' => 'awesome-t-shirt',
+    'description' => 'The most comfortable t-shirt ever made.',
+    'price' => 2999, // in cents
+    'status' => 'active',
+]);
+```
+
+### 3. Create a Custom Template
+
+```php
+use Cartino\Models\StorefrontTemplate;
+
+$template = StorefrontTemplate::create([
+    'site_id' => 1,
+    'handle' => 'product-premium',
+    'name' => 'Premium Product Template',
+    'type' => 'product',
+    'sections' => [
+        [
+            'type' => 'hero',
+            'settings' => ['layout' => 'full-width'],
+            'blocks' => [
+                ['type' => 'image', 'settings' => ['src' => '{{product.featured_image}}']]
+            ]
+        ]
+    ]
+]);
+```
+
+### 4. Build Custom CP Pages
+
+```php
+use Cartino\CP\Page;
+
+$page = Page::make('My Custom Page')
+    ->primaryAction('Save', '/save-url')
+    ->card('Statistics')
+    ->content('StatsChart', ['data' => $chartData]);
+
+return Inertia::render('CP/CustomPage', [
+    'page' => $page->compile()
+]);
+```
+
+## 🎨 Storefront Templates
+
+### Template Types
+
+| Template Type | Purpose | Example URL |
+|---------------|---------|-------------|
+| `index` | Homepage | `/` |
+| `product` | Product pages | `/products/awesome-shirt` |
+| `collection` | Category pages | `/collections/t-shirts` |
+| `page` | Static pages | `/pages/about-us` |
+| `blog` | Blog listing | `/blog` |
+| `article` | Blog posts | `/blog/our-story` |
+
+### Creating Sections
+
+```php
+use Cartino\Models\StorefrontSection;
+
+$section = StorefrontSection::create([
+    'site_id' => 1,
+    'handle' => 'hero',
+    'name' => 'Hero Section',
+    'component_path' => 'sections/Hero.vue',
+    'schema' => [
+        'settings' => [
+            [
+                'type' => 'text',
+                'id' => 'heading',
+                'label' => 'Heading',
+                'default' => 'Welcome to our store'
+            ],
+            [
+                'type' => 'select',
+                'id' => 'layout',
+                'label' => 'Layout',
+                'options' => [
+                    ['value' => 'centered', 'label' => 'Centered'],
+                    ['value' => 'full-width', 'label' => 'Full Width']
+                ]
+            ]
+        ]
+    ],
+    'blocks' => [
+        'image' => ['name' => 'Image', 'limit' => 1],
+        'text' => ['name' => 'Text', 'limit' => 3]
+    ]
+]);
+```
+
+## 🎛️ Control Panel Extensions
+
+### Custom Dashboard Cards
+
+```php
+use Cartino\CP\Dashboard;
+
+Dashboard::card('SalesChart', [
+    'title' => 'Sales Overview',
+    'period' => '30d'
+], 10);
+
+Dashboard::metric('Total Sales', function () {
+    return Order::sum('total');
+}, 'dollar-sign', 'green');
+```
+
+### Navigation Items
+
+```php
+use Cartino\CP\Navigation;
+
+Navigation::section('custom', 'My Section')
+    ->order(50);
+
+Navigation::item('custom.reports')
+    ->label('Custom Reports')
+    ->icon('bar-chart')
+    ->url('/cp/custom/reports')
+    ->section('custom')
+    ->permissions(['view-reports']);
+```
+
+### Extensible Pages
+
+```php
+use Cartino\CP\Page;
+
+$page = Page::make('Advanced Product')
+    ->primaryAction('Save Product', null, ['form' => 'product-form'])
+    ->secondaryActions([
+        ['label' => 'Duplicate', 'url' => '/duplicate'],
+        ['label' => 'Delete', 'destructive' => true]
+    ])
+    ->tab('details', 'Details', 'ProductDetails')
+    ->tab('inventory', 'Inventory', 'ProductInventory')
+    ->tab('seo', 'SEO', 'ProductSEO');
+
+// Two-column layout
+$layout = $page->layout();
+$layout->twoColumns()
+    ->primary('ProductForm', ['product' => $product])
+    ->secondary('ProductStatus')
+    ->secondary('ProductVisibility');
+```
+
+## 🛠️ Architecture
+
+### Multi-site Structure
+
+```php
+Site::create([
+    'name' => 'Main Store',
+    'handle' => 'main',
+    'domain' => 'shop.example.com',
+    'locale' => 'en',
+    'currency' => 'USD',
+    'is_default' => true
+]);
+```
+
+### Handle-based Routing
+
+All models support both ID and handle-based routing:
+
+```php
+// Both work automatically
+Route::get('/products/{handle}', [ProductController::class, 'show']);
+
+// Resolves: /products/123 OR /products/awesome-shirt
+```
+
+### Performance Optimizations
+
+- **JSONB Fields**: PostgreSQL-optimized JSON storage
+- **GIN Indexes**: Full-text search on JSON fields
+- **Composite Indexes**: Multi-column query optimization
+- **Site Isolation**: Tenant-scoped queries
+
+## 📊 API Reference
+
+### Products API
+
+```http
+GET /api/products
+GET /api/products/{handle}
+POST /api/products
+PUT /api/products/{handle}
+DELETE /api/products/{handle}
+```
+
+### Storefront API
+
+```http
+GET /api/storefront/products
+GET /api/storefront/collections
+GET /api/storefront/pages
+POST /api/storefront/cart/add
+```
+
+## 🧪 Testing & Development
+
+```bash
+composer test
+```
+
+## 🔧 Configuration
+
+Publish the config file:
+
+```bash
+php artisan vendor:publish --provider="Cartino\CartinoServiceProvider" --tag="config"
+```
+
+### Key Configuration Options
+
+```php
+// config/cartino.php
+return [
+    'multi_site' => true,
+    'default_currency' => 'USD',
+    'handle_routing' => true,
+    'template_engine' => 'hybrid', // hybrid, blade, vue
+    'cp_path' => 'cp',
+    'api_path' => 'api',
+];
+```
+
+## 🎨 Frontend Integration
+
+### Vue 3 Components
+
+```vue
+<template>
+  <section class="hero">
+    <h1>{{ settings.heading }}</h1>
+    <img :src="block.settings.image" />
+  </section>
+</template>
+
+<script setup>
+defineProps(['settings', 'blocks'])
+</script>
+```
+
+### Blade Templates
+
+```blade
+@extends('layouts.app')
+
+@section('content')
+    <div class="product-page">
+        <h1>{{ $product->name }}</h1>
+        <div class="price">${{ $product->price / 100 }}</div>
+    </div>
+@endsection
+```
+
+## 🤝 Contributing
+
+1. Fork the project
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- **Shopify**: Inspiration for the admin interface and e-commerce workflow
+- **Statamic CMS**: Template system and content management approach
+- **Laravel**: The amazing framework that makes this possible
+- **Inertia.js**: Seamless SPA experience with server-side rendering
+
+## 📞 Support
+
+- **Issues**: [GitHub Issues](https://github.com/vitalijalbu/laravel-cartino/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/vitalijalbu/laravel-cartino/discussions)
+- **Documentation**: [Full Documentation](https://laravel-cartino.dev)
+
+---
+
+**Made with ❤️ by [Vitali Jalbu](https://github.com/vitalijalbu)**
 
 ```bash
 php artisan migrate
@@ -59,444 +488,19 @@ php artisan migrate
 
 ```bash
 # Create new Laravel app
-laravel new shopper-test
-cd shopper-test
+laravel new cartino-test
+cd cartino-test
 
 # Install the package
-composer config repositories.local path ../laravel-shopper
-composer require vitalijalbu/laravel-shopper:@dev
+composer config repositories.local path ../laravel-cartino
+composer require vitalijalbu/laravel-cartino:@dev
 
 # Publish and configure
-php artisan vendor:publish --tag="shopper-config"
-php artisan vendor:publish --tag="shopper-assets"
+php artisan vendor:publish --tag="cartino-config"
+php artisan vendor:publish --tag="cartino-assets"
 
 # Install frontend dependencies
 npm install
 npm run build
 
-# Start server
-php artisan serve
-```
 
-Then visit: **http://localhost:8000/cp**
-
-### Option 2: Direct Testing
-
-```bash
-# Clone the package
-git clone https://github.com/vitalijalbu/laravel-shopper.git
-cd laravel-shopper
-
-# Install dependencies
-composer install
-npm install
-
-# Build assets
-npm run build
-
-# Run tests
-composer test
-```
-
-## 🎯 Usage
-
-### Admin Interface
-
-Access the control panel at `/cp`:
-
-```php
-// Collections management
-Route::get('/cp/collections')
-
-// Entries management  
-Route::get('/cp/collections/{collection}/entries')
-
-// Import/Export utilities
-Route::get('/cp/utilities/import')
-Route::get('/cp/utilities/export')
-```
-
-### API Endpoints
-
-```php
-// Collections API
-GET    /cp/api/collections
-POST   /cp/api/collections
-PUT    /cp/api/collections/{collection}
-DELETE /cp/api/collections/{collection}
-
-// Entries API
-GET    /cp/api/collections/{collection}/entries
-POST   /cp/api/collections/{collection}/entries
-PUT    /cp/api/collections/{collection}/entries/{entry}
-DELETE /cp/api/collections/{collection}/entries/{entry}
-POST   /cp/api/collections/{collection}/entries/bulk
-```
-
-## 🏗️ Architecture
-
-### Collections & Entries System
-
-Inspired by Statamic CMS:
-
-- **Collections**: Product catalogs, content types
-- **Entries**: Individual items within collections  
-- **Fields**: JSON schema-based field definitions
-- **Sites**: Multisite architecture support
-
-### Frontend Stack
-
-- **Vue.js 3.5**: Composition API components
-- **Inertia.js 2.0**: SPA without the complexity
-- **Tailwind CSS v4**: Latest utility-first framework
-- **Pinia**: State management (no Vue Router needed!)
-
-## 📁 Key Files Structure
-
-```
-laravel-shopper/
-├── src/
-│   ├── Http/Controllers/Cp/        # Control Panel controllers
-│   │   ├── CollectionsController.php
-│   │   ├── EntriesController.php
-│   │   └── ImportExportController.php
-│   └── ShopperServiceProvider.php  # Main service provider
-├── resources/
-│   ├── js/                        # Vue.js components  
-│   │   ├── components/            # Reusable components
-│   │   ├── pages/                 # Inertia pages
-│   │   └── app.js                 # Main app file
-│   └── views/app.blade.php        # Main layout
-├── routes/cp.php                  # All CP routes
-├── config/shopper.php             # Configuration
-└── tests/Feature/                 # PestPHP tests
-```
-
-## 🧪 Testing
-
-```bash
-# Run all tests
-composer test
-
-# Run with coverage  
-composer test-coverage
-
-# Code formatting
-composer format
-```
-
----
-
-**🎉 Ready to use!** The package includes everything needed for a complete Statamic-style e-commerce admin interface.
-- **Autenticazione**: Laravel Sanctum per API sicure
-- **Design System**: Reka UI per un'interfaccia utente moderna
-- **Database Ottimizzato**: Struttura database ispirata a LunarPHP
-- **Estendibile**: Facilmente personalizzabile ed estendibile
-
-## 📦 Installazione
-
-### Requisiti
-
-- PHP 8.2+
-- Laravel 10.0+
-- Node.js 18+
-
-### Installazione via Composer
-
-```bash
-composer require vitalijalbu/laravel-shopper
-```
-
-### Pubblicazione degli Asset
-
-```bash
-# Pubblica la configurazione
-php artisan vendor:publish --tag="shopper-config"
-
-# Pubblica le migration
-php artisan vendor:publish --tag="shopper-migrations"
-
-# Pubblica le views (opzionale)
-php artisan vendor:publish --tag="shopper-views"
-
-# Pubblica gli asset Vue.js (opzionale)
-php artisan vendor:publish --tag="shopper-assets"
-```
-
-### Esecuzione delle Migration
-
-```bash
-php artisan migrate
-```
-
-### Installazione Frontend (se usando asset personalizzati)
-
-```bash
-cd resources/js/vendor/shopper-admin
-npm install
-npm run build
-```
-
-## ⚙️ Configurazione
-
-Il file di configurazione `config/shopper.php` contiene tutte le opzioni personalizzabili:
-
-```php
-return [
-    'database' => [
-        'table_prefix' => env('SHOPPER_DB_TABLE_PREFIX', 'shopper_'),
-        'connection' => env('SHOPPER_DB_CONNECTION', 'mysql'),
-    ],
-    
-    'admin' => [
-        'enabled' => env('SHOPPER_ADMIN_ENABLED', true),
-        'route_prefix' => env('SHOPPER_ADMIN_ROUTE_PREFIX', 'admin'),
-        'middleware' => ['web', 'auth:sanctum'],
-    ],
-    
-    'auth' => [
-        'guard' => 'sanctum',
-        'model' => 'App\Models\User',
-    ],
-    
-    // ... altre configurazioni
-];
-```
-
-### Variabili d'Ambiente
-
-Aggiungi al tuo file `.env`:
-
-```env
-SHOPPER_DB_TABLE_PREFIX=shopper_
-SHOPPER_ADMIN_ENABLED=true
-SHOPPER_ADMIN_ROUTE_PREFIX=admin
-SHOPPER_DEFAULT_CURRENCY=USD
-SHOPPER_MEDIA_DISK=public
-```
-
-## 🏗️ Struttura del Package
-
-```
-laravel-shopper/
-├── packages/
-│   ├── core/                 # Package Core
-│   │   ├── src/
-│   │   │   ├── Models/       # Modelli Eloquent
-│   │   │   └── ...
-│   │   └── database/
-│   │       └── migrations/   # Migration database
-│   │
-│   └── admin/                # Package Admin
-│       ├── src/
-│       │   ├── Http/
-│       │   │   └── Controllers/
-│       │   └── routes/
-│       └── resources/
-│           ├── js/           # Componenti Vue.js
-│           │   ├── Pages/    # Pagine Inertia
-│           │   └── Components/
-│           └── css/          # Stili Tailwind CSS
-│
-├── src/                      # Service Provider principale
-├── config/                   # File di configurazione
-└── database/migrations/      # Migration pubblicabili
-```
-
-## 🛠️ Utilizzo
-
-### Modelli Principali
-
-```php
-use VitaliJalbu\LaravelShopper\Core\Models\Product;
-use VitaliJalbu\LaravelShopper\Core\Models\Customer;
-use VitaliJalbu\LaravelShopper\Core\Models\Order;
-
-// Creare un prodotto
-$product = Product::create([
-    'name' => 'Awesome T-Shirt',
-    'slug' => 'awesome-t-shirt',
-    'description' => 'A really awesome t-shirt',
-    'status' => 'active',
-    'brand_id' => 1,
-    'product_type_id' => 1,
-]);
-
-// Aggiungere varianti
-$product->variants()->create([
-    'sku' => 'AWESOME-M-RED',
-    'price' => 2999, // In centesimi
-    'quantity' => 100,
-    'option_values' => [
-        'Size' => 'M',
-        'Color' => 'Red'
-    ]
-]);
-```
-
-### Gestione Carrelli
-
-```php
-use VitaliJalbu\LaravelShopper\Core\Models\Cart;
-
-$cart = Cart::create([
-    'customer_id' => $customer->id,
-    'currency_id' => 1,
-    'channel_id' => 1,
-]);
-
-$cart->lines()->create([
-    'purchasable_type' => ProductVariant::class,
-    'purchasable_id' => $variant->id,
-    'quantity' => 2,
-    'unit_price' => $variant->price,
-    'total_price' => $variant->price * 2,
-]);
-```
-
-### API Routes
-
-Il package espone automaticamente le API routes:
-
-```
-GET    /api/admin/products           # Lista prodotti
-POST   /api/admin/products           # Crea prodotto
-GET    /api/admin/products/{id}      # Dettaglio prodotto
-PUT    /api/admin/products/{id}      # Aggiorna prodotto
-DELETE /api/admin/products/{id}      # Elimina prodotto
-```
-
-## 🎨 Personalizzazione Frontend
-
-### Usando Reka UI
-
-I componenti sono costruiti con Reka UI per Vue 3:
-
-```vue
-<template>
-  <Card>
-    <CardHeader>
-      <CardTitle>Product Details</CardTitle>
-    </CardHeader>
-    <CardContent>
-      <Input 
-        v-model="product.name" 
-        label="Product Name"
-        required
-      />
-    </CardContent>
-  </Card>
-</template>
-
-<script setup>
-import { Card, CardHeader, CardTitle, CardContent } from '@reka-ui/vue'
-import Input from '@/Components/UI/Input.vue'
-</script>
-```
-
-### Estendere il Layout
-
-Puoi personalizzare il layout admin pubblicando le views:
-
-```php
-php artisan vendor:publish --tag="shopper-views"
-```
-
-## 🔐 Permessi e Sicurezza
-
-Il package integra Spatie Permissions:
-
-```php
-// Assegnare permessi
-$user->givePermissionTo('manage-products');
-$user->givePermissionTo('manage-orders');
-
-// Nei controller
-if ($user->can('manage-products')) {
-    // Logic here
-}
-```
-
-### Middleware Disponibili
-
-- `web` - Standard Laravel web middleware
-- `auth:sanctum` - Autenticazione via Sanctum
-- `shopper.admin` - Middleware custom per admin (se configurato)
-
-## 📊 Database Schema
-
-### Tabelle Principali
-
-- `shopper_products` - Prodotti
-- `shopper_product_variants` - Varianti prodotto
-- `shopper_customers` - Clienti
-- `shopper_orders` - Ordini
-- `shopper_order_lines` - Righe ordine
-- `shopper_carts` - Carrelli
-- `shopper_cart_lines` - Righe carrello
-- `shopper_brands` - Marchi
-- `shopper_categories` - Categorie
-- `shopper_discounts` - Sconti
-
-### Relazioni
-
-Il sistema di relazioni è ottimizzato per performance:
-
-```php
-// Prodotto con varianti e prezzi
-$product = Product::with(['variants', 'brand', 'categories'])->find(1);
-
-// Ordine completo
-$order = Order::with(['lines.purchasable', 'customer', 'addresses'])->find(1);
-```
-
-## 🚀 Performance
-
-### Caching
-
-Il package supporta caching automatico:
-
-```php
-// Nel config
-'cache' => [
-    'enabled' => true,
-    'prefix' => 'shopper:',
-    'ttl' => 3600,
-],
-```
-
-### Query Ottimizzate
-
-Tutte le query sono ottimizzate con:
-- Eager loading per ridurre N+1 problems
-- Indici database appropriati
-- Paginazione efficiente
-
-## 🧪 Testing
-
-```bash
-vendor/bin/pest
-```
-
-## 🤝 Contribuire
-
-1. Fork del repository
-2. Crea un branch per la feature (`git checkout -b feature/AmazingFeature`)
-3. Commit dei cambiamenti (`git commit -m 'Add some AmazingFeature'`)
-4. Push al branch (`git push origin feature/AmazingFeature`)
-5. Apri una Pull Request
-
-## 📄 Licenza
-
-Questo progetto è rilasciato sotto licenza MIT. Vedi il file `LICENSE` per dettagli.
-
-## 🙏 Credits
-
-- Ispirato da [LunarPHP](https://lunarphp.io) per la struttura database
-- Costruito con [Laravel](https://laravel.com)
-- UI con [Reka UI](https://reka-ui.com)
-- Frontend con [Vue 3](https://vuejs.org) e [Inertia.js](https://inertiajs.com)
-
-## 📞 Supporto
-
-Per supporto, apri un issue su GitHub o contatta [vitalijalbu@example.com](mailto:vitalijalbu@example.com).

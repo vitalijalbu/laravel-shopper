@@ -1,13 +1,15 @@
 <?php
 
-namespace LaravelShopper\Fields;
+namespace Cartino\Fields;
 
 use Illuminate\Support\Str;
 
 class Field
 {
     protected $handle;
+
     protected $config;
+
     protected $value;
 
     public function __construct($handle, array $config = [])
@@ -84,14 +86,14 @@ class Field
     {
         $type = $this->type();
 
-        $class = "LaravelShopper\\Fieldtypes\\" . Str::studly($type);
+        $class = 'Cartino\\Fieldtypes\\'.Str::studly($type);
 
         if (class_exists($class)) {
             return app($class)->setField($this);
         }
 
         // Fallback to text fieldtype
-        return app("LaravelShopper\\Fieldtypes\\Text")->setField($this);
+        return app('Cartino\\Fieldtypes\\Text')->setField($this);
     }
 
     public function setValue($value)

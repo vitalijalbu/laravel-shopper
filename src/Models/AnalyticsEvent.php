@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace LaravelShopper\Models;
+namespace Cartino\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
 
 class AnalyticsEvent extends Model
 {
@@ -69,7 +69,7 @@ class AnalyticsEvent extends Model
     public function scopeThisMonth($query)
     {
         return $query->whereMonth('occurred_at', now()->month)
-                    ->whereYear('occurred_at', now()->year);
+            ->whereYear('occurred_at', now()->year);
     }
 
     public function scopeLastDays($query, int $days)

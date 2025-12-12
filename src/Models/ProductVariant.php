@@ -2,16 +2,20 @@
 
 declare(strict_types=1);
 
-namespace LaravelShopper\Models;
+namespace Cartino\Models;
 
+use Cartino\Traits\HasCustomFields;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ProductVariant extends Model
 {
+    use HasCustomFields;
     use HasFactory;
+    use SoftDeletes;
 
     protected $fillable = [
         'product_id',
@@ -26,8 +30,9 @@ class ProductVariant extends Model
         'weight',
         'dimensions',
         'option_values',
-        'is_enabled',
+        'status',
         'sort_order',
+        'data',
     ];
 
     protected $casts = [
@@ -39,7 +44,6 @@ class ProductVariant extends Model
         'weight' => 'decimal:2',
         'dimensions' => 'array',
         'option_values' => 'array',
-        'is_enabled' => 'boolean',
         'sort_order' => 'integer',
     ];
 

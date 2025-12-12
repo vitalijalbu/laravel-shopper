@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace LaravelShopper\Models;
+namespace Cartino\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -42,11 +42,11 @@ class WishlistItem extends Model
     public function getDisplayNameAttribute(): string
     {
         $name = $this->product->name;
-        
+
         if ($this->variant) {
-            $name .= ' - ' . $this->variant->name;
+            $name .= ' - '.$this->variant->name;
         }
-        
+
         return $name;
     }
 

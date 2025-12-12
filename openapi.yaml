@@ -1,0 +1,793 @@
+openapi: 3.0.0
+info:
+  title: Cartino API
+  description: Complete e-commerce API for Cartino
+  version: 1.0.0
+  contact:
+    name: Cartino Team
+    url: https://laravelshopper.dev
+    email: support@laravelshopper.dev
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: https://api.example.com/api/cartino
+    description: Production server
+  - url: https://staging-api.example.com/api/cartino
+    description: Staging server
+  - url: http://localhost:8000/api/cartino
+    description: Development server
+
+security:
+  - bearerAuth: []
+
+paths:
+  /products:
+    get:
+      summary: List products
+      description: Retrieve a paginated list of products with filtering and sorting options
+      tags:
+        - Products
+      parameters:
+        - name: page
+          in: query
+          description: Page number for pagination
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: per_page
+          in: query
+          description: Number of items per page (max 100)
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: search
+          in: query
+          description: Search term for product name, SKU, or description
+          schema:
+            type: string
+            maxLength: 255
+        - name: status
+          in: query
+          description: Filter by product status
+          schema:
+            type: string
+            enum: [published, draft, archived]
+        - name: category_id
+          in: query
+          description: Filter by category ID
+          schema:
+            type: integer
+        - name: brand_id
+          in: query
+          description: Filter by brand ID
+          schema:
+            type: integer
+        - name: min_price
+          in: query
+          description: Minimum price filter (in cents)
+          schema:
+            type: integer
+            minimum: 0
+        - name: max_price
+          in: query
+          description: Maximum price filter (in cents)
+          schema:
+            type: integer
+            minimum: 0
+        - name: is_visible
+          in: query
+          description: Filter by visibility
+          schema:
+            type: boolean
+        - name: on_sale
+          in: query
+          description: Filter products on sale
+          schema:
+            type: boolean
+        - name: sort_by
+          in: query
+          description: Sort field
+          schema:
+            type: string
+            enum: [name, price, created_at, popularity]
+            default: created_at
+        - name: sort_direction
+          in: query
+          description: Sort direction
+          schema:
+            type: string
+            enum: [asc, desc]
+            default: desc
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Product'
+                  meta:
+                    $ref: '#/components/schemas/PaginationMeta'
+                  links:
+                    $ref: '#/components/schemas/PaginationLinks'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+    post:
+      summary: Create a new product
+      description: Create a new product with all required information
+      tags:
+        - Products
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProductRequest'
+            examples:
+              basic_product:
+                summary: Basic product example
+                value:
+                  name: "iPhone 15 Pro"
+                  slug: "iphone-15-pro"
+                  sku: "IP15-PRO-001"
+                  price_amount: 129900
+                  description: "The latest iPhone with advanced features"
+                  status: "published"
+                  is_visible: true
+              product_with_relations:
+                summary: Product with relations example
+                value:
+                  name: "MacBook Pro M3"
+                  slug: "macbook-pro-m3"
+                  sku: "MBP-M3-001"
+                  price_amount: 249900
+                  sale_price_amount: 229900
+                  description: "Professional laptop with M3 chip"
+                  status: "published"
+                  is_visible: true
+                  shopper_category_id: 1
+                  shopper_brand_id: 2
+                  relations:
+                    collections: [1, 3]
+                    tags: ["featured", "new"]
+      responses:
+        '201':
+          description: Product created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Product created successfully"
+                  data:
+                    $ref: '#/components/schemas/Product'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /products/{id}:
+    get:
+      summary: Get product details
+      description: Retrieve detailed information about a specific product
+      tags:
+        - Products
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Product ID
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Product details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/ProductDetails'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+    put:
+      summary: Update a product
+      description: Update an existing product's information
+      tags:
+        - Products
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Product ID
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateProductRequest'
+      responses:
+        '200':
+          description: Product updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Product updated successfully"
+                  data:
+                    $ref: '#/components/schemas/Product'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+    delete:
+      summary: Delete a product
+      description: Soft delete a product (can be restored)
+      tags:
+        - Products
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Product ID
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Product deleted successfully
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /products/bulk:
+    post:
+      summary: Bulk operations on products
+      description: Perform bulk operations (update, delete, publish, unpublish) on multiple products
+      tags:
+        - Products
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                products:
+                  type: array
+                  maxItems: 100
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        description: Product ID
+                      action:
+                        type: string
+                        enum: [update, delete, publish, unpublish]
+                      data:
+                        type: object
+                        description: Update data (required for update action)
+                    required:
+                      - id
+                      - action
+              example:
+                products:
+                  - id: 1
+                    action: "publish"
+                  - id: 2
+                    action: "update"
+                    data:
+                      price_amount: 19900
+                  - id: 3
+                    action: "delete"
+      responses:
+        '200':
+          description: Bulk operation completed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Bulk operation completed"
+                  results:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        status:
+                          type: string
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Product:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: "iPhone 15 Pro"
+        slug:
+          type: string
+          example: "iphone-15-pro"
+        sku:
+          type: string
+          example: "IP15-PRO-001"
+        price_amount:
+          type: integer
+          description: Price in cents
+          example: 129900
+        sale_price_amount:
+          type: integer
+          nullable: true
+          description: Sale price in cents
+          example: 119900
+        formatted_price:
+          type: string
+          example: "€1,299.00"
+        formatted_sale_price:
+          type: string
+          nullable: true
+          example: "€1,199.00"
+        description:
+          type: string
+          nullable: true
+          example: "The latest iPhone with advanced features"
+        status:
+          type: string
+          enum: [published, draft, archived]
+          example: "published"
+        is_visible:
+          type: boolean
+          example: true
+        is_featured:
+          type: boolean
+          example: false
+        stock_quantity:
+          type: integer
+          example: 100
+        track_quantity:
+          type: boolean
+          example: true
+        weight:
+          type: number
+          nullable: true
+          example: 0.5
+        seo_title:
+          type: string
+          nullable: true
+          example: "iPhone 15 Pro - Best Price"
+        seo_description:
+          type: string
+          nullable: true
+          example: "Get the iPhone 15 Pro with advanced features and best price"
+        shopper_category_id:
+          type: integer
+          nullable: true
+          example: 1
+        shopper_brand_id:
+          type: integer
+          nullable: true
+          example: 2
+        created_at:
+          type: string
+          format: date-time
+          example: "2024-01-01T00:00:00.000000Z"
+        updated_at:
+          type: string
+          format: date-time
+          example: "2024-01-01T00:00:00.000000Z"
+
+    ProductDetails:
+      allOf:
+        - $ref: '#/components/schemas/Product'
+        - type: object
+          properties:
+            category:
+              $ref: '#/components/schemas/Category'
+            brand:
+              $ref: '#/components/schemas/Brand'
+            collections:
+              type: array
+              items:
+                $ref: '#/components/schemas/Category'
+            variants:
+              type: array
+              items:
+                $ref: '#/components/schemas/ProductVariant'
+            media:
+              type: array
+              items:
+                $ref: '#/components/schemas/Media'
+
+    Category:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: "Smartphones"
+        slug:
+          type: string
+          example: "smartphones"
+        description:
+          type: string
+          nullable: true
+          example: "Latest smartphones and mobile devices"
+
+    Brand:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: "Apple"
+        slug:
+          type: string
+          example: "apple"
+        description:
+          type: string
+          nullable: true
+          example: "Apple Inc. products"
+
+    Category:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: "Featured Products"
+        slug:
+          type: string
+          example: "featured-products"
+
+    ProductVariant:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        sku:
+          type: string
+          example: "IP15-PRO-128GB-BLK"
+        price_amount:
+          type: integer
+          example: 129900
+        options:
+          type: object
+          example:
+            color: "Black"
+            storage: "128GB"
+
+    Media:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        url:
+          type: string
+          example: "https://example.com/images/product-1.jpg"
+        alt_text:
+          type: string
+          nullable: true
+          example: "iPhone 15 Pro in Black"
+
+    CreateProductRequest:
+      type: object
+      required:
+        - name
+        - sku
+        - price_amount
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          example: "iPhone 15 Pro"
+        slug:
+          type: string
+          maxLength: 255
+          example: "iphone-15-pro"
+        sku:
+          type: string
+          maxLength: 255
+          example: "IP15-PRO-001"
+        price_amount:
+          type: integer
+          minimum: 0
+          example: 129900
+        sale_price_amount:
+          type: integer
+          minimum: 0
+          nullable: true
+          example: 119900
+        description:
+          type: string
+          nullable: true
+        status:
+          type: string
+          enum: [published, draft, archived]
+          default: "draft"
+        is_visible:
+          type: boolean
+          default: true
+        is_featured:
+          type: boolean
+          default: false
+        stock_quantity:
+          type: integer
+          minimum: 0
+          default: 0
+        track_quantity:
+          type: boolean
+          default: true
+        weight:
+          type: number
+          minimum: 0
+          nullable: true
+        seo_title:
+          type: string
+          maxLength: 255
+          nullable: true
+        seo_description:
+          type: string
+          maxLength: 500
+          nullable: true
+        shopper_category_id:
+          type: integer
+          nullable: true
+        shopper_brand_id:
+          type: integer
+          nullable: true
+        relations:
+          type: object
+          properties:
+            collections:
+              type: array
+              items:
+                type: integer
+            tags:
+              type: array
+              items:
+                type: string
+
+    UpdateProductRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 255
+        slug:
+          type: string
+          maxLength: 255
+        sku:
+          type: string
+          maxLength: 255
+        price_amount:
+          type: integer
+          minimum: 0
+        sale_price_amount:
+          type: integer
+          minimum: 0
+          nullable: true
+        description:
+          type: string
+          nullable: true
+        status:
+          type: string
+          enum: [published, draft, archived]
+        is_visible:
+          type: boolean
+        is_featured:
+          type: boolean
+        stock_quantity:
+          type: integer
+          minimum: 0
+        track_quantity:
+          type: boolean
+        weight:
+          type: number
+          minimum: 0
+          nullable: true
+        seo_title:
+          type: string
+          maxLength: 255
+          nullable: true
+        seo_description:
+          type: string
+          maxLength: 500
+          nullable: true
+        shopper_category_id:
+          type: integer
+          nullable: true
+        shopper_brand_id:
+          type: integer
+          nullable: true
+        relations:
+          type: object
+          properties:
+            collections:
+              type: array
+              items:
+                type: integer
+            tags:
+              type: array
+              items:
+                type: string
+
+    PaginationMeta:
+      type: object
+      properties:
+        current_page:
+          type: integer
+          example: 1
+        per_page:
+          type: integer
+          example: 20
+        total:
+          type: integer
+          example: 150
+        last_page:
+          type: integer
+          example: 8
+
+    PaginationLinks:
+      type: object
+      properties:
+        first:
+          type: string
+          nullable: true
+          example: "https://api.example.com/products?page=1"
+        last:
+          type: string
+          nullable: true
+          example: "https://api.example.com/products?page=8"
+        prev:
+          type: string
+          nullable: true
+          example: null
+        next:
+          type: string
+          nullable: true
+          example: "https://api.example.com/products?page=2"
+
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "The given data was invalid."
+        errors:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+
+  responses:
+    Unauthorized:
+      description: Authentication required
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "Unauthenticated."
+
+    Forbidden:
+      description: Access denied
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "This action is unauthorized."
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "Product not found."
+
+    ValidationError:
+      description: Validation error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            message: "The given data was invalid."
+            errors:
+              name:
+                - "The name field is required."
+              sku:
+                - "The sku field is required."
+                - "The sku has already been taken."
+
+    InternalError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "An error occurred while processing your request."
+
+tags:
+  - name: Products
+    description: Product management operations
+  - name: Categories
+    description: Category management operations
+  - name: Brands
+    description: Brand management operations
+  - name: Orders
+    description: Order management operations
+  - name: Customers
+    description: Customer management operations
+  - name: Analytics
+    description: Analytics and reporting operations

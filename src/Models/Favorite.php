@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace LaravelShopper\Models;
+namespace Cartino\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -45,6 +45,7 @@ class Favorite extends Model
 
         if ($favorite) {
             $favorite->delete();
+
             return false; // Removed from favorites
         }
 

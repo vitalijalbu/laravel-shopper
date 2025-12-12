@@ -1,42 +1,52 @@
 <?php
 
-namespace LaravelShopper\Entries;
+namespace Cartino\Entries;
 
 use ArrayAccess;
-use Illuminate\Contracts\Support\Arrayable;
-use LaravelShopper\Contracts\Entries\Entry as Contract;
-use LaravelShopper\Data\ContainsCascadingData;
-use LaravelShopper\Data\ExistsAsFile;
-use LaravelShopper\Data\HasAugmentedData;
-use LaravelShopper\Events\Entries\EntryCreated;
-use LaravelShopper\Events\Entries\EntryCreating;
-use LaravelShopper\Events\Entries\EntryDeleted;
-use LaravelShopper\Events\Entries\EntryDeleting;
-use LaravelShopper\Events\Entries\EntrySaved;
-use LaravelShopper\Events\Entries\EntrySaving;
-use LaravelShopper\Facades\Collection;
-use LaravelShopper\Facades\Site;
-use LaravelShopper\Support\Traits\FluentlyGetsAndSets;
 use Carbon\Carbon;
-
-use function LaravelShopper\trans as __;
+use Cartino\Contracts\Entries\Entry as Contract;
+use Cartino\Data\ContainsCascadingData;
+use Cartino\Data\ExistsAsFile;
+use Cartino\Data\HasAugmentedData;
+use Cartino\Events\Entries\EntryCreated;
+use Cartino\Events\Entries\EntryCreating;
+use Cartino\Events\Entries\EntryDeleted;
+use Cartino\Events\Entries\EntryDeleting;
+use Cartino\Events\Entries\EntrySaved;
+use Cartino\Events\Entries\EntrySaving;
+use Cartino\Facades\Category;
+use Cartino\Facades\Site;
+use Cartino\Support\Traits\FluentlyGetsAndSets;
+use Illuminate\Contracts\Support\Arrayable;
 
 class Entry implements Arrayable, ArrayAccess, Contract
 {
     use ContainsCascadingData, ExistsAsFile, FluentlyGetsAndSets, HasAugmentedData;
 
     protected $id;
+
     protected $slug;
+
     protected $uri;
+
     protected $collection;
+
     protected $blueprint;
+
     protected $locale;
+
     protected $origin;
+
     protected $published = true;
+
     protected $date;
+
     protected $data = [];
+
     protected $supplements = [];
+
     protected $withEvents = true;
+
     protected $afterSaveCallbacks = [];
 
     public function __construct()
@@ -72,7 +82,7 @@ class Entry implements Arrayable, ArrayAccess, Contract
             return null;
         }
 
-        return app(\LaravelShopper\Contracts\Routing\UrlBuilder::class)
+        return app(\Cartino\Contracts\Routing\UrlBuilder::class)
             ->content($this)
             ->merge($this->routeData())
             ->build($this->route());
@@ -81,9 +91,9 @@ class Entry implements Arrayable, ArrayAccess, Contract
     public function collection($collection = null)
     {
         if (func_num_args() === 0) {
-            return $this->collection instanceof \LaravelShopper\Collections\Collection
+            return $this->collection instanceof \Cartino\Collections\Category
                 ? $this->collection
-                : Collection::findByHandle($this->collection);
+                : Category::findByHandle($this->collection);
         }
 
         $this->collection = $collection;
@@ -93,7 +103,7 @@ class Entry implements Arrayable, ArrayAccess, Contract
 
     public function collectionHandle()
     {
-        return $this->collection instanceof \LaravelShopper\Collections\Collection
+        return $this->collection instanceof \Cartino\Collections\Category
             ? $this->collection->handle()
             : $this->collection;
     }
@@ -346,7 +356,7 @@ class Entry implements Arrayable, ArrayAccess, Contract
             return null;
         }
 
-        return number_format($price, 2, '.', ',') . ' ' . $currency;
+        return number_format($price, 2, '.', ',').' '.$currency;
     }
 
     public function inStock()
@@ -377,7 +387,7 @@ class Entry implements Arrayable, ArrayAccess, Contract
         $this->ensureId();
 
         // Save the entry through the repository
-        app(\LaravelShopper\Contracts\Entries\EntryRepository::class)->save($this);
+        app(\Cartino\Contracts\Entries\EntryRepository::class)->save($this);
 
         if ($withEvents) {
             if ($isNew) {
@@ -398,7 +408,7 @@ class Entry implements Arrayable, ArrayAccess, Contract
     {
         EntryDeleting::dispatch($this);
 
-        app(\LaravelShopper\Contracts\Entries\EntryRepository::class)->delete($this);
+        app(\Cartino\Contracts\Entries\EntryRepository::class)->delete($this);
 
         EntryDeleted::dispatch($this);
     }
@@ -419,7 +429,7 @@ class Entry implements Arrayable, ArrayAccess, Contract
         return vsprintf('%s/%s/%s.md', [
             rtrim(app('stache')->store('entries')->directory(), '/'),
             $this->collectionHandle(),
-            $this->slug()
+            $this->slug(),
         ]);
     }
 

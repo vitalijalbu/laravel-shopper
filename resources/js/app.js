@@ -1,79 +1,85 @@
-import { createApp } from 'vue'
-import { createPinia } from 'pinia'
-import router from './router'
-import './components/icons'
+import { createApp, h } from "vue";
+import { createInertiaApp } from "@inertiajs/vue3";
+import { createPinia } from "pinia";
+import CpLayout from "@/layouts/cp-layout.vue";
 
-// Import main layout component
-import App from './App.vue'
+// Import Cartino configuration fallbacks
+import { defaultCartinoConfig } from "@/config/cartino-config.js";
 
 // Import global styles
-import '../css/app.css'
+import "../css/app.css";
 
-// Create Vue app
-const app = createApp(App)
+// Configure CSRF token for requests
+const token = document.head.querySelector('meta[name="csrf-token"]');
+if (token) {
+    window.Laravel = {
+        csrfToken: token.content
+    };
+}
 
-// Install Pinia for state management
-app.use(createPinia())
+createInertiaApp({
+  resolve: (name) => {
+    const pages = import.meta.glob("./pages/**/*.vue", { eager: true });
+    const page = pages[`./pages/${name}.vue`];
+    
+    // Set default layout only if not already specified and not an auth page
+    if (!page.default.layout && !name.startsWith('auth/')) {
+      page.default.layout = CpLayout;
+    }
+    
+    return page;
+  },
+  setup({ el, App, props, plugin }) {
+    const app = createApp({ render: () => h(App, props) })
+      .use(plugin)
+      .use(createPinia());
 
-// Install Vue Router
-app.use(router)
+    // Configure CSRF token for Inertia requests
+    if (window.Laravel && window.Laravel.csrfToken) {
+      app.config.globalProperties.$csrf = window.Laravel.csrfToken;
+    }
 
-// Global Properties
-app.config.globalProperties.$shopperConfig = window.ShopperConfig || {}
+    // Global Properties - ensure CartinoConfig has all required properties
+    const cartinoConfig = window.CartinoConfig || defaultCartinoConfig;
+    cartinoConfig.translations = cartinoConfig.translations || {};
+    app.config.globalProperties.$cartinoConfig = cartinoConfig;
 
-// Global Components Registration
-import Icon from './components/icon.vue'
-import Page from './components/page.vue'
-import DataTable from './components/data-table.vue'
-import Modal from './components/modal.vue'
-import ConfirmModal from './components/confirm-modal.vue'
+    // Global Components Registration
+    import("@/components/icon.vue").then((module) =>
+      app.component("Icon", module.default),
+    );
+    import("@/components/page.vue").then((module) =>
+      app.component("Page", module.default),
+    );
+    import("@/components/data-table.vue").then((module) =>
+      app.component("DataTable", module.default),
+    );
+    import("@/components/modal.vue").then((module) =>
+      app.component("Modal", module.default),
+    );
 
-app.component('Icon', Icon)
-app.component('Page', Page) 
-app.component('DataTable', DataTable)
-app.component('Modal', Modal)
-app.component('ConfirmModal', ConfirmModal)
+    // Error Handler
+    app.config.errorHandler = (err, vm, info) => {
+      console.error("Vue Error:", err, info);
 
-// Error Handler
-app.config.errorHandler = (err, vm, info) => {
-  console.error('Vue Error:', err, info)
-  
-  // Send to error reporting service
-  if (window.Sentry) {
-    window.Sentry.captureException(err, {
-      contexts: {
-        vue: {
-          componentName: vm.$options.name,
-          propsData: vm.$options.propsData,
-          info: info
-        }
+      // Send to error reporting service
+      if (window.Sentry) {
+        window.Sentry.captureException(err, {
+          contexts: {
+            vue: {
+              componentName: vm?.$options?.name,
+              info: info,
+            },
+          },
+        });
       }
-    })
-  }
-}
+    };
 
-// Mount the app
-app.mount('#app')
-
-// Hot Module Replacement (HMR)
-if (import.meta.hot) {
-  import.meta.hot.accept()
-}
-
-// Service Worker Registration (for PWA features)
-if ('serviceWorker' in navigator && import.meta.env.PROD) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
-      .then((registration) => {
-        console.log('SW registered: ', registration)
-      })
-      .catch((registrationError) => {
-        console.log('SW registration failed: ', registrationError)
-      })
-  })
-}
+    return app.mount(el);
+  },
+});
 
 // Export for debugging
 if (import.meta.env.DEV) {
-  window.ShopperApp = app
+  window.CartinoApp = app;
 }

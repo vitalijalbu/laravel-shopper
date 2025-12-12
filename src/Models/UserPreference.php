@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace LaravelShopper\Models;
+namespace Cartino\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -28,7 +28,7 @@ class UserPreference extends Model
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(config('shopper.auth.model', 'App\\Models\\User'));
+        return $this->belongsTo(config('cartino.auth.model', 'App\\Models\\User'));
     }
 
     public function scopeForUser($query, $userId)
@@ -75,10 +75,10 @@ class UserPreference extends Model
         return $preference ? $preference->preference_value : $default;
     }
 
-    public static function getAllForUser($userId, string $type = null): array
+    public static function getAllForUser($userId, ?string $type = null): array
     {
         $query = self::where('user_id', $userId);
-        
+
         if ($type) {
             $query->where('preference_type', $type);
         }

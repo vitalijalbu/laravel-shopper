@@ -1,0 +1,418 @@
+<?php
+
+namespace Cartino\Repositories;
+
+use Cartino\Models\Customer;
+use Cartino\Models\Order;
+use Cartino\Models\Product;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Pagination\LengthAwarePaginator;
+
+class OrderRepository extends BaseRepository
+{
+    protected array $with = ['customer', 'items', 'items.product'];
+
+    protected string $cachePrefix = 'orders';
+
+    protected function makeModel(): Model
+    {
+        return new Order;
+    }
+
+    /**
+     * Get paginated orders with filters and search
+     */
+    public function findAll(array $filters = []): LengthAwarePaginator
+    {
+        $query = $this->model->newQuery()
+            ->with(['customer', 'items.product']);
+
+        // Search filter
+        if (! empty($filters['search'])) {
+            $search = $filters['search'];
+            $query->where(function ($q) use ($search) {
+                $q->where('order_number', 'like', "%{$search}%")
+                    ->orWhereHas('customer', function ($customerQuery) use ($search) {
+                        $customerQuery->where('first_name', 'like', "%{$search}%")
+                            ->orWhere('last_name', 'like', "%{$search}%")
+                            ->orWhere('email', 'like', "%{$search}%");
+                    });
+            });
+        }
+
+        // Status filter
+        if (! empty($filters['status'])) {
+            $query->where('status', $filters['status']);
+        }
+
+        // Payment status filter
+        if (! empty($filters['payment_status'])) {
+            $query->where('payment_status', $filters['payment_status']);
+        }
+
+        // Date range filters
+        if (! empty($filters['date_from'])) {
+            $query->whereDate('created_at', '>=', $filters['date_from']);
+        }
+
+        if (! empty($filters['date_to'])) {
+            $query->whereDate('created_at', '<=', $filters['date_to']);
+        }
+
+        // Sorting
+        $sortField = $filters['sort'] ?? 'created_at';
+        $sortDirection = $filters['direction'] ?? 'desc';
+
+        $query->orderBy($sortField, $sortDirection);
+
+        return $query->paginate($perPage);
+    }
+
+    /**
+     * Create a new order with items
+     */
+    public function createWithItems(array $orderData, array $items): Order
+    {
+        // Clear cache
+        $this->clearCache();
+
+        // Generate order number if not provided
+        if (empty($orderData['order_number'])) {
+            $orderData['order_number'] = $this->generateOrderNumber();
+        }
+
+        // Calculate totals
+        $subtotal = collect($items)->sum(fn ($item) => $item['quantity'] * $item['unit_price']);
+        $shippingAmount = $orderData['shipping_amount'] ?? 0;
+        $orderData['total_amount'] = $subtotal + $shippingAmount;
+
+        // Create order
+        $order = $this->model->create($orderData);
+
+        // Add order items
+        foreach ($items as $item) {
+            $order->items()->create([
+                'product_id' => $item['product_id'],
+                'quantity' => $item['quantity'],
+                'unit_price' => $item['unit_price'],
+                'total_price' => $item['quantity'] * $item['unit_price'],
+            ]);
+        }
+
+        return $order->load(['customer', 'items.product']);
+    }
+
+    /**
+     * Update order with items
+     */
+    public function updateWithItems(int $id, array $orderData, array $items): Model
+    {
+        // Clear cache
+        $this->clearCache();
+
+        $order = $this->model->find($id);
+
+        // Calculate totals
+        $subtotal = collect($items)->sum(fn ($item) => $item['quantity'] * $item['unit_price']);
+        $shippingAmount = $orderData['shipping_amount'] ?? 0;
+        $orderData['total_amount'] = $subtotal + $shippingAmount;
+
+        // Update order
+        $order->update($orderData);
+
+        // Update order items - delete old ones and create new ones
+        $order->items()->delete();
+
+        foreach ($items as $item) {
+            $order->items()->create([
+                'product_id' => $item['product_id'],
+                'quantity' => $item['quantity'],
+                'unit_price' => $item['unit_price'],
+                'total_price' => $item['quantity'] * $item['unit_price'],
+            ]);
+        }
+
+        return $order->load(['customer', 'items.product']);
+    }
+
+    /**
+     * Update order
+     */
+    public function update(int $id, array $attributes): Model
+    {
+        // Clear cache
+        $this->clearCache();
+
+        $order = $this->model->find($id);
+        $order->update($attributes);
+
+        return $order;
+    }
+
+    /**
+     * Delete order
+     */
+    public function delete(int $id): bool
+    {
+        // Clear cache
+        $this->clearCache();
+
+        $order = $this->model->find($id);
+
+        // Delete order items first
+        $order->items()->delete();
+
+        return $order->delete();
+    }
+
+    /**
+     * Get customers for order creation
+     */
+    public function getCustomersForSelect(): \Illuminate\Database\Eloquent\Category
+    {
+        return Customer::select('id', 'first_name', 'last_name', 'email')
+            ->where('is_active', true)
+            ->orderBy('first_name')
+            ->get();
+    }
+
+    /**
+     * Get products for order creation
+     */
+    public function getProductsForSelect(): \Illuminate\Database\Eloquent\Category
+    {
+        return Product::select('id', 'name', 'price')
+            ->where('is_active', true)
+            ->orderBy('name')
+            ->get();
+    }
+
+    /**
+     * Generate unique order number
+     */
+    protected function generateOrderNumber(): string
+    {
+        do {
+            $orderNumber = 'ORD-'.date('Y').'-'.str_pad(mt_rand(1, 999999), 6, '0', STR_PAD_LEFT);
+        } while ($this->model->where('order_number', $orderNumber)->exists());
+
+        return $orderNumber;
+    }
+
+    /**
+     * Cancel an order
+     */
+    public function cancel(int $id): ?Order
+    {
+        $order = $this->model->find($id);
+
+        if (! $order || $order->status === 'cancelled' || $order->status === 'delivered') {
+            return null;
+        }
+
+        $order->update([
+            'status' => 'cancelled',
+            'cancelled_at' => now(),
+        ]);
+
+        $this->clearCache();
+
+        return $order->fresh();
+    }
+
+    /**
+     * Mark order as paid
+     */
+    public function markAsPaid(int $id): ?Order
+    {
+        $order = $this->model->find($id);
+
+        if (! $order || $order->payment_status === 'paid') {
+            return null;
+        }
+
+        $order->update([
+            'payment_status' => 'paid',
+            'paid_at' => now(),
+        ]);
+
+        $this->clearCache();
+
+        return $order->fresh();
+    }
+
+    /**
+     * Mark order as shipped
+     */
+    public function markAsShipped(int $id, array $shippingData): ?Order
+    {
+        $order = $this->model->find($id);
+
+        if (! $order || in_array($order->status, ['shipped', 'delivered', 'cancelled'])) {
+            return null;
+        }
+
+        $updateData = [
+            'status' => 'shipped',
+            'shipped_at' => now(),
+        ];
+
+        if (isset($shippingData['tracking_number'])) {
+            $updateData['tracking_number'] = $shippingData['tracking_number'];
+        }
+
+        if (isset($shippingData['carrier'])) {
+            $updateData['carrier'] = $shippingData['carrier'];
+        }
+
+        $order->update($updateData);
+
+        $this->clearCache();
+
+        return $order->fresh();
+    }
+
+    /**
+     * Mark order as delivered
+     */
+    public function markAsDelivered(int $id): ?Order
+    {
+        $order = $this->model->find($id);
+
+        if (! $order || in_array($order->status, ['delivered', 'cancelled'])) {
+            return null;
+        }
+
+        $order->update([
+            'status' => 'delivered',
+            'delivered_at' => now(),
+        ]);
+
+        $this->clearCache();
+
+        return $order->fresh();
+    }
+
+    /**
+     * Get order statistics
+     */
+    public function getStatistics(array $filters = []): array
+    {
+        $cacheKey = $this->getCacheKey('statistics', md5(serialize($filters)));
+
+        return \Illuminate\Support\Facades\Cache::remember($cacheKey, $this->cacheTtl, function () use ($filters) {
+            $query = $this->model->newQuery();
+
+            // Apply date filters
+            if (! empty($filters['date_from'])) {
+                $query->where('created_at', '>=', $filters['date_from']);
+            }
+
+            if (! empty($filters['date_to'])) {
+                $query->where('created_at', '<=', $filters['date_to']);
+            }
+
+            // Apply status filter
+            if (! empty($filters['status'])) {
+                $query->where('status', $filters['status']);
+            }
+
+            $orders = $query->get();
+
+            $totalOrders = $orders->count();
+            $totalRevenue = $orders->sum('total_amount');
+            $averageOrderValue = $totalOrders > 0 ? $totalRevenue / $totalOrders : 0;
+
+            $statusCounts = $orders->groupBy('status')->map->count()->toArray();
+            $paymentStatusCounts = $orders->groupBy('payment_status')->map->count()->toArray();
+
+            return [
+                'total_orders' => $totalOrders,
+                'total_revenue' => round($totalRevenue, 2),
+                'average_order_value' => round($averageOrderValue, 2),
+                'status_breakdown' => $statusCounts,
+                'payment_status_breakdown' => $paymentStatusCounts,
+            ];
+        });
+    }
+
+    /**
+     * Bulk action for orders
+     */
+    public function bulkAction(string $action, array $ids, array $metadata = []): array
+    {
+        $validatedIds = $this->model->whereIn('id', $ids)->pluck('id')->toArray();
+        $processedCount = 0;
+        $errors = [];
+
+        foreach ($validatedIds as $id) {
+            try {
+                switch ($action) {
+                    case 'cancel':
+                        $order = $this->cancel($id);
+                        if ($order) {
+                            $processedCount++;
+                        } else {
+                            $errors[] = "Order ID {$id}: Cannot cancel order";
+                        }
+                        break;
+
+                    case 'mark_as_paid':
+                        $order = $this->markAsPaid($id);
+                        if ($order) {
+                            $processedCount++;
+                        } else {
+                            $errors[] = "Order ID {$id}: Cannot mark as paid";
+                        }
+                        break;
+
+                    case 'mark_as_shipped':
+                        $shippingData = $metadata['shipping'] ?? [];
+                        $order = $this->markAsShipped($id, $shippingData);
+                        if ($order) {
+                            $processedCount++;
+                        } else {
+                            $errors[] = "Order ID {$id}: Cannot mark as shipped";
+                        }
+                        break;
+
+                    case 'mark_as_delivered':
+                        $order = $this->markAsDelivered($id);
+                        if ($order) {
+                            $processedCount++;
+                        } else {
+                            $errors[] = "Order ID {$id}: Cannot mark as delivered";
+                        }
+                        break;
+
+                    case 'export':
+                        $processedCount++;
+                        break;
+
+                    default:
+                        $errors[] = "Order ID {$id}: Unknown action '{$action}'";
+                }
+            } catch (\Exception $e) {
+                $errors[] = "Order ID {$id}: {$e->getMessage()}";
+            }
+        }
+
+        $this->clearCache();
+
+        return [
+            'processed' => $processedCount,
+            'total' => count($ids),
+            'errors' => $errors,
+            'success' => count($errors) === 0,
+        ];
+    }
+
+    /**
+     * Clear repository cache
+     */
+    protected function clearCache(): void
+    {
+        $tags = [$this->cachePrefix];
+        \Illuminate\Support\Facades\Cache::tags($tags)->flush();
+    }
+}

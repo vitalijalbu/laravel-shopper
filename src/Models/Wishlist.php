@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace LaravelShopper\Models;
+namespace Cartino\Models;
 
+use Cartino\Enums\WishlistStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -25,6 +26,7 @@ class Wishlist extends Model
     ];
 
     protected $casts = [
+        'status' => WishlistStatus::class,
         'is_public' => 'boolean',
         'is_default' => 'boolean',
         'meta' => 'array',

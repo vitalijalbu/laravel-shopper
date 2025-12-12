@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace LaravelShopper\Events;
+namespace Cartino\Events;
 
 class ProductUpdated extends Event
 {
@@ -46,7 +46,7 @@ class ProductUpdated extends Event
 
     protected function hasChanged($field)
     {
-        if (!$original = $this->original()) {
+        if (! $original = $this->original()) {
             return true;
         }
 

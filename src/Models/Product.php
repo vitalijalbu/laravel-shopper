@@ -2,24 +2,35 @@
 
 declare(strict_types=1);
 
-namespace LaravelShopper\Models;
+namespace Cartino\Models;
 
+use Cartino\Support\HasHandle;
+use Cartino\Support\HasSite;
+use Cartino\Traits\HasCustomFields;
+use Cartino\Traits\HasOptimizedFilters;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class Product extends Model implements HasMedia
 {
+    use HasCustomFields;
     use HasFactory;
+    use HasHandle;
+    use HasOptimizedFilters;
+    use HasSite;
     use InteractsWithMedia;
+    use SoftDeletes;
 
     protected $fillable = [
+        'site_id',
         'name',
         'slug',
         'description',
@@ -37,7 +48,6 @@ class Product extends Model implements HasMedia
         'is_physical',
         'is_digital',
         'requires_shipping',
-        'is_enabled',
         'is_featured',
         'status',
         'brand_id',
@@ -45,6 +55,9 @@ class Product extends Model implements HasMedia
         'seo',
         'meta',
         'published_at',
+        'average_rating',
+        'review_count',
+        'data',
     ];
 
     protected $casts = [
@@ -59,11 +72,79 @@ class Product extends Model implements HasMedia
         'is_physical' => 'boolean',
         'is_digital' => 'boolean',
         'requires_shipping' => 'boolean',
-        'is_enabled' => 'boolean',
         'is_featured' => 'boolean',
         'seo' => 'array',
         'meta' => 'array',
         'published_at' => 'datetime',
+        'average_rating' => 'decimal:2',
+        'review_count' => 'integer',
+    ];
+
+    /**
+     * Fields that should always be eager loaded (N+1 protection)
+     */
+    protected static array $defaultEagerLoad = [
+        'brand:id,name,slug',
+        'productType:id,name',
+    ];
+
+    /**
+     * Fields that can be filtered
+     */
+    protected static array $filterable = [
+        'id',
+        'name',
+        'slug',
+        'sku',
+        'price',
+        'compare_price',
+        'cost_price',
+        'stock_quantity',
+        'track_quantity',
+        'stock_status',
+        'weight',
+        'is_physical',
+        'is_digital',
+        'requires_shipping',
+        'is_featured',
+        'status',
+        'brand_id',
+        'product_type_id',
+        'published_at',
+        'created_at',
+        'updated_at',
+        'average_rating',
+        'review_count',
+    ];
+
+    /**
+     * Fields that can be sorted
+     */
+    protected static array $sortable = [
+        'id',
+        'name',
+        'price',
+        'compare_price',
+        'cost_price',
+        'stock_quantity',
+        'weight',
+        'is_featured',
+        'status',
+        'published_at',
+        'created_at',
+        'updated_at',
+        'average_rating',
+        'review_count',
+    ];
+
+    /**
+     * Fields that can be searched
+     */
+    protected static array $searchable = [
+        'name',
+        'description',
+        'short_description',
+        'sku',
     ];
 
     public function brand(): BelongsTo
@@ -74,11 +155,6 @@ class Product extends Model implements HasMedia
     public function productType(): BelongsTo
     {
         return $this->belongsTo(ProductType::class);
-    }
-
-    public function categories(): BelongsToMany
-    {
-        return $this->belongsToMany(Category::class)->withPivot('sort_order')->withTimestamps();
     }
 
     public function options(): BelongsToMany
@@ -109,6 +185,16 @@ class Product extends Model implements HasMedia
     public function favorites(): MorphMany
     {
         return $this->morphMany(Favorite::class, 'favoriteable');
+    }
+
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(ProductReview::class);
+    }
+
+    public function approvedReviews(): HasMany
+    {
+        return $this->hasMany(ProductReview::class)->where('is_approved', true);
     }
 
     public function isFavoritedBy(Customer $customer): bool

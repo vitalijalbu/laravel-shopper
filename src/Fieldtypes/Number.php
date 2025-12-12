@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelShopper\Fieldtypes;
+namespace Cartino\Fieldtypes;
 
 class Number extends Fieldtype
 {
@@ -41,7 +41,7 @@ class Number extends Fieldtype
     public function rules()
     {
         $rules = parent::rules();
-        
+
         $rules[] = 'numeric';
 
         if ($min = $this->config('min')) {

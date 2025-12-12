@@ -22,8 +22,20 @@ return new class extends Migration
             $table->json('meta')->nullable();
             $table->timestamps();
 
-            $table->index('order_id');
             $table->index(['product_id', 'product_variant_id']);
+
+            // Additional filter indexes
+            $table->index('product_sku');
+            $table->index('quantity');
+            $table->index('unit_price');
+            $table->index('line_total');
+            $table->index('created_at');
+
+            // Composite indexes for common filter combinations (covers order_id standalone)
+            $table->index(['order_id', 'product_id']);
+            $table->index(['product_id', 'quantity']);
+            $table->index(['unit_price', 'quantity']);
+            $table->index(['line_total', 'quantity']);
         });
     }
 

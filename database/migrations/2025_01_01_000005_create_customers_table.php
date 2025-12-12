@@ -10,19 +10,43 @@ return new class extends Migration
     {
         Schema::create('customers', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->unsignedBigInteger('site_id')->nullable();
             $table->string('first_name');
             $table->string('last_name');
-            $table->string('email')->unique();
+            $table->string('email');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->string('phone')->nullable();
+            $table->string('phone', 20)->nullable();
             $table->date('date_of_birth')->nullable();
-            $table->enum('gender', ['male', 'female', 'other'])->nullable();
-            $table->boolean('is_enabled')->default(true);
+            $table->string('gender')->nullable();
+            $table->string('status')->default('active');
             $table->timestamp('last_login_at')->nullable();
-            $table->string('last_login_ip')->nullable();
+            $table->string('last_login_ip', 45)->nullable();
             $table->rememberToken();
             $table->timestamps();
+            $table->softDeletes();
+
+            // Custom fields data (JSON schema-based)
+            $table->jsonb('data')->nullable();
+
+            $table->unique(['email', 'site_id']);
+            $table->index(['site_id', 'status']);
+            $table->index(['last_name', 'first_name']);
+            $table->index(['phone', 'site_id']);
+            $table->index('created_at');
+
+            // Composite indexes for common filter combinations
+            $table->index(['status', 'created_at']);
+            $table->index(['gender', 'status']);
+            $table->index(['last_login_at', 'status']);
+
+            // Full text search for names (MySQL 5.6+)
+            if (config('database.default') === 'mysql') {
+                $table->fullText(['first_name', 'last_name']);
+            }
+
+            $table->foreign('site_id')->references('id')->on('sites')->onDelete('cascade');
         });
     }
 

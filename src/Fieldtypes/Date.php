@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelShopper\Fieldtypes;
+namespace Cartino\Fieldtypes;
 
 class Date extends Fieldtype
 {

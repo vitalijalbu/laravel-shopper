@@ -1,75 +1,107 @@
 <?php
 
-namespace LaravelShopper\Collections;
+namespace Cartino\Collections;
 
 use ArrayAccess;
+use Cartino\Contracts\Collections\Category as Contract;
+use Cartino\Data\ContainsCascadingData;
+use Cartino\Data\ExistsAsFile;
+use Cartino\Data\HasAugmentedData;
+use Cartino\Events\Collections\CollectionCreated;
+use Cartino\Events\Collections\CollectionCreating;
+use Cartino\Events\Collections\CollectionDeleted;
+use Cartino\Events\Collections\CollectionDeleting;
+use Cartino\Events\Collections\CollectionSaved;
+use Cartino\Events\Collections\CollectionSaving;
+use Cartino\Facades\Blink;
+use Cartino\Facades\Blueprint;
+use Cartino\Facades\Entry;
+use Cartino\Facades\Site;
+use Cartino\Facades\Stache;
+use Cartino\Support\Arr;
+use Cartino\Support\Traits\FluentlyGetsAndSets;
 use Illuminate\Contracts\Support\Arrayable;
-use InvalidArgumentException;
 use Statamic\Contracts\Data\Augmentable as AugmentableContract;
-use LaravelShopper\Contracts\Collections\Collection as Contract;
-use LaravelShopper\Data\ContainsCascadingData;
-use LaravelShopper\Data\ExistsAsFile;
-use LaravelShopper\Data\HasAugmentedData;
-use LaravelShopper\Events\Collections\CollectionCreated;
-use LaravelShopper\Events\Collections\CollectionCreating;
-use LaravelShopper\Events\Collections\CollectionDeleted;
-use LaravelShopper\Events\Collections\CollectionDeleting;
-use LaravelShopper\Events\Collections\CollectionSaved;
-use LaravelShopper\Events\Collections\CollectionSaving;
-use LaravelShopper\Facades\Blink;
-use LaravelShopper\Facades\Blueprint;
-use LaravelShopper\Facades\Entry;
-use LaravelShopper\Facades\File;
-use LaravelShopper\Facades\Site;
-use LaravelShopper\Facades\Stache;
-use LaravelShopper\Support\Arr;
-use LaravelShopper\Support\Str;
-use LaravelShopper\Support\Traits\FluentlyGetsAndSets;
 
-use function LaravelShopper\trans as __;
+use function Cartino\trans as __;
 
-class Collection implements Arrayable, ArrayAccess, AugmentableContract, Contract
+class Category implements Arrayable, ArrayAccess, AugmentableContract, Contract
 {
     use ContainsCascadingData, ExistsAsFile, FluentlyGetsAndSets, HasAugmentedData;
 
     protected $handle;
+
     protected $routes = [];
+
     private $cachedRoutes = null;
+
     protected $mount;
+
     protected $title;
+
     protected $template;
+
     protected $layout;
+
     protected $sites;
+
     protected $propagate = false;
+
     protected $blueprints = [];
+
     protected $searchIndex;
+
     protected $dated = false;
+
     protected $sortField;
+
     protected $sortDirection;
+
     protected $revisions = false;
+
     protected $positions;
+
     protected $defaultPublishState = true;
+
     protected $originBehavior = 'select';
+
     protected $futureDateBehavior = 'public';
+
     protected $pastDateBehavior = 'public';
+
     protected $structure;
+
     protected $structureContents;
+
     protected $taxonomies = [];
+
     protected $requiresSlugs = true;
+
     protected $titleFormats = [];
+
     protected $previewTargets = [];
+
     protected $autosave;
+
     protected $entryBlueprints;
+
     protected $withEvents = true;
 
     // E-commerce specific properties
     protected $productCollection = false;
+
     protected $customerCollection = false;
+
     protected $orderCollection = false;
+
     protected $categoryCollection = false;
+
     protected $ecommerceType = null;
+
     protected $priceField = 'price';
+
     protected $skuField = 'sku';
+
     protected $inventoryField = 'inventory';
 
     public function __construct()
@@ -246,7 +278,7 @@ class Collection implements Arrayable, ArrayAccess, AugmentableContract, Contrac
 
     public function save()
     {
-        $isNew = is_null(Facades\Collection::find($this->id()));
+        $isNew = is_null(Facades\Category::find($this->id()));
 
         $withEvents = $this->withEvents;
         $this->withEvents = true;
@@ -262,7 +294,7 @@ class Collection implements Arrayable, ArrayAccess, AugmentableContract, Contrac
             CollectionSaving::dispatch($this);
         }
 
-        Facades\Collection::save($this);
+        Facades\Category::save($this);
 
         Blink::forget('collection-handles');
         Blink::forget('mounted-collections');
@@ -287,7 +319,7 @@ class Collection implements Arrayable, ArrayAccess, AugmentableContract, Contrac
     {
         CollectionDeleting::dispatch($this);
 
-        Facades\Collection::delete($this);
+        Facades\Category::delete($this);
 
         CollectionDeleted::dispatch($this);
     }
@@ -356,11 +388,11 @@ class Collection implements Arrayable, ArrayAccess, AugmentableContract, Contrac
 
     public function offsetSet($key, $value): void
     {
-        throw new \Exception('Collection is immutable');
+        throw new \Exception('Category is immutable');
     }
 
     public function offsetUnset($key): void
     {
-        throw new \Exception('Collection is immutable');
+        throw new \Exception('Category is immutable');
     }
 }

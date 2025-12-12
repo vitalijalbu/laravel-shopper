@@ -1,0 +1,88 @@
+<?php
+
+use Database\Migrations\Concerns\{
+    HasSiteScope,
+    HasStatus,
+    HasSlug,
+    HasSeo,
+    HasJsonFields,
+    HasPublishing,
+    HasReference
+};
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    use HasSiteScope, HasStatus, HasSlug, HasSeo, HasJsonFields, HasPublishing, HasReference;
+
+    public function up(): void
+    {
+        Schema::create('products', function (Blueprint $table) {
+            $table->id();
+
+            // Multi-tenancy
+            $this->addSiteScope($table); // auto-index [site_id, status]
+
+            // Base
+            $table->string('title');
+            $this->addSiteSlug($table); // slug with site scope
+            $this->addHandle($table, unique: false); // unique per site
+
+            $table->text('excerpt')->nullable();
+            $table->text('description')->nullable();
+
+            // Product Classification
+            $table->string('product_type')->default('physical');
+            $table->foreignId('brand_id')->nullable()->constrained('brands')->nullOnDelete();
+            $table->foreignId('product_type_id')->nullable()->constrained('product_types')->nullOnDelete();
+
+            // Product Options & Tags
+            $table->jsonb('options')->nullable()->comment('[{"name": "Color", "values": ["Red", "Blue"]}]');
+            $table->jsonb('tags')->nullable();
+
+            // SEO
+            $this->addSeoFields($table);
+
+            // Shopify-specific
+            $table->string('template_suffix')->nullable();
+            $table->boolean('requires_selling_plan')->default(false);
+
+            // Status & Publishing
+            $this->addStatus($table, default: 'draft');
+            $this->addPublishingFields($table, withScope: true);
+
+            // Timestamps
+            $table->timestamps();
+            $table->softDeletes();
+
+            // Custom fields (Statamic-style)
+            $this->addDataField($table);
+
+            // Unique constraints
+            $table->unique(['slug', 'site_id']);
+            $table->unique(['handle', 'site_id']);
+
+            // Additional indexes
+            $table->index(['brand_id', 'product_type_id']);
+            $table->index(['product_type', 'status']);
+            $table->index('requires_selling_plan');
+            $table->index('created_at');
+
+            // Composite indexes for common queries
+            $table->index(['brand_id', 'status']);
+            $table->index(['product_type_id', 'status']);
+
+            // Full text search
+            if (config('database.default') === 'mysql') {
+                $table->fullText(['title', 'description', 'excerpt']);
+            }
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('products');
+    }
+};

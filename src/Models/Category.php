@@ -2,102 +2,199 @@
 
 declare(strict_types=1);
 
-namespace LaravelShopper\Models;
+namespace Cartino\Models;
 
+use Cartino\Support\HasHandle;
+use Cartino\Support\HasSite;
+use Cartino\Traits\HasCustomFields;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Spatie\MediaLibrary\HasMedia;
-use Spatie\MediaLibrary\InteractsWithMedia;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Category extends Model implements HasMedia
+class Category extends Model
 {
+    use HasCustomFields;
     use HasFactory;
-    use InteractsWithMedia;
+    use HasHandle;
+    use HasSite;
+    use SoftDeletes;
 
     protected $fillable = [
-        'name',
+        'site_id',
+        'title',
         'slug',
+        'handle',
         'description',
-        'parent_id',
+        'body_html',
+        'collection_type',
+        'rules',
         'sort_order',
-        'is_enabled',
+        'disjunctive',
+        'meta_title',
+        'meta_description',
         'seo',
-        'meta',
+        'status',
+        'published_at',
+        'published_scope',
+        'template_suffix',
+        'data',
     ];
 
     protected $casts = [
-        'is_enabled' => 'boolean',
-        'sort_order' => 'integer',
+        'rules' => 'array',
         'seo' => 'array',
-        'meta' => 'array',
+        'disjunctive' => 'boolean',
+        'published_at' => 'datetime',
     ];
 
-    public function getRouteKeyName(): string
-    {
-        return 'slug';
-    }
+    protected $appends = [
+        'url',
+        'image_url',
+    ];
 
-    public function parent(): BelongsTo
+    // Relationships
+    public function site(): BelongsTo
     {
-        return $this->belongsTo(self::class, 'parent_id');
-    }
-
-    public function children(): HasMany
-    {
-        return $this->hasMany(self::class, 'parent_id')->orderBy('sort_order');
+        return $this->belongsTo(Site::class);
     }
 
     public function products(): BelongsToMany
     {
-        return $this->belongsToMany(Product::class)->withPivot('sort_order')->withTimestamps();
+        return $this->belongsToMany(Product::class, 'collection_products')
+            ->withPivot(['position', 'featured'])
+            ->withTimestamps()
+            ->orderBy('collection_products.position');
     }
 
-    public function registerMediaCollections(): void
+    // Scopes
+    public function scopePublished($query)
     {
-        $this->addMediaCollection('image')
-            ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/webp'])
-            ->singleFile();
+        return $query->where('status', 'published')
+            ->where(function ($q) {
+                $q->whereNull('published_at')
+                    ->orWhere('published_at', '<=', now());
+            });
     }
 
-    public function registerMediaConversions(?Media $media = null): void
+    public function scopeManual($query)
     {
-        $this->addMediaConversion('thumb')
-            ->width(300)
-            ->height(300)
-            ->sharpen(10);
-
-        $this->addMediaConversion('large')
-            ->width(800)
-            ->height(600)
-            ->sharpen(10);
+        return $query->where('collection_type', 'manual');
     }
 
-    public function getImageAttribute()
+    public function scopeSmart($query)
     {
-        return $this->getFirstMediaUrl('image');
+        return $query->where('collection_type', 'smart');
     }
 
-    public function getThumbAttribute()
+    public function scopeActive($query)
     {
-        return $this->getFirstMediaUrl('image', 'thumb');
+        return $query->where('status', 'active');
     }
 
-    public function scopeEnabled($query)
+    // Accessors
+    public function getUrlAttribute(): string
     {
-        return $query->where('is_enabled', true);
+        return "/collections/{$this->handle}";
     }
 
-    public function scopeParent($query)
+    public function getImageUrlAttribute(): ?string
     {
-        return $query->whereNull('parent_id');
+        // TODO: Implement image handling with Spatie Media Library
+        return null;
     }
 
-    public function scopeChild($query)
+    // Methods
+    public function isPublished(): bool
     {
-        return $query->whereNotNull('parent_id');
+        return $this->status === 'published' &&
+               ($this->published_at === null || $this->published_at <= now());
+    }
+
+    public function isManual(): bool
+    {
+        return $this->collection_type === 'manual';
+    }
+
+    public function isSmart(): bool
+    {
+        return $this->collection_type === 'smart';
+    }
+
+    public function addProduct(Product $product, array $attributes = []): void
+    {
+        $this->products()->syncWithoutDetaching([
+            $product->id => array_merge($attributes, [
+                'position' => $this->products()->count() + 1,
+            ]),
+        ]);
+    }
+
+    public function removeProduct(Product $product): void
+    {
+        $this->products()->detach($product->id);
+    }
+
+    public function updateProductPosition(Product $product, int $position): void
+    {
+        $this->products()->updateExistingPivot($product->id, [
+            'position' => $position,
+        ]);
+    }
+
+    public function featuredProducts()
+    {
+        return $this->products()->wherePivot('featured', true);
+    }
+
+    /**
+     * Apply smart collection rules to get products.
+     */
+    public function getSmartProducts()
+    {
+        if (! $this->isSmart() || empty($this->rules)) {
+            return collect();
+        }
+
+        $query = Product::query()->published();
+
+        foreach ($this->rules as $rule) {
+            $field = $rule['field'] ?? null;
+            $operator = $rule['operator'] ?? 'equals';
+            $value = $rule['value'] ?? null;
+
+            if (! $field || ! $value) {
+                continue;
+            }
+
+            match ($operator) {
+                'equals' => $query->where($field, $value),
+                'not_equals' => $query->where($field, '!=', $value),
+                'contains' => $query->where($field, 'like', "%{$value}%"),
+                'not_contains' => $query->where($field, 'not like', "%{$value}%"),
+                'starts_with' => $query->where($field, 'like', "{$value}%"),
+                'ends_with' => $query->where($field, 'like', "%{$value}"),
+                'greater_than' => $query->where($field, '>', $value),
+                'less_than' => $query->where($field, '<', $value),
+                'is_set' => $query->whereNotNull($field),
+                'is_not_set' => $query->whereNull($field),
+                default => null,
+            };
+        }
+
+        return $query->get();
+    }
+
+    /**
+     * Get all products (manual + smart).
+     */
+    public function getAllProducts()
+    {
+        if ($this->isManual()) {
+            return $this->products;
+        }
+
+        return $this->getSmartProducts();
     }
 }

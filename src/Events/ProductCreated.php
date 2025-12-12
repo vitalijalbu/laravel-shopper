@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace LaravelShopper\Events;
+namespace Cartino\Events;
 
 class ProductCreated extends Event
 {

@@ -10,8 +10,8 @@ return new class extends Migration
     {
         Schema::create('customer_customer_group', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('customer_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('customer_group_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('customer_id')->constrained('customers')->cascadeOnDelete();
+            $table->foreignId('customer_group_id')->constrained('customer_groups')->cascadeOnDelete();
             $table->timestamps();
 
             $table->unique(['customer_id', 'customer_group_id']);

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace LaravelShopper\Events;
+namespace Cartino\Events;
 
 class OrderStatusChanged extends Event
 {

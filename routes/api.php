@@ -1,59 +1,408 @@
 <?php
 
-use Illuminate\Http\Request;
+declare(strict_types=1);
+
+use Cartino\Http\Controllers\Api\AuthController;
+use Cartino\Http\Controllers\Api\BrandsController;
+use Cartino\Http\Controllers\Api\CartController;
+use Cartino\Http\Controllers\Api\CategoriesController;
+use Cartino\Http\Controllers\Api\ChannelController;
+use Cartino\Http\Controllers\Api\CountryController;
+use Cartino\Http\Controllers\Api\CurrencyController;
+use Cartino\Http\Controllers\Api\CustomerController;
+use Cartino\Http\Controllers\Api\Data\StatusController;
+use Cartino\Http\Controllers\Api\DiscountController;
+use Cartino\Http\Controllers\Api\FidelityController;
+use Cartino\Http\Controllers\Api\OrderController;
+use Cartino\Http\Controllers\Api\ProductController;
+use Cartino\Http\Controllers\Api\ShippingMethodController;
+use Cartino\Http\Controllers\Api\SitesController;
+use Cartino\Http\Controllers\Api\TaxRateController;
+use Cartino\Http\Controllers\Api\UserController;
+use Cartino\Http\Controllers\Api\UserGroupController;
 use Illuminate\Support\Facades\Route;
-use VitaliJalbu\LaravelShopper\Http\Controllers\Api\ProductController;
-use VitaliJalbu\LaravelShopper\Http\Controllers\Api\CategoryController;
-use VitaliJalbu\LaravelShopper\Http\Controllers\Api\BrandController;
-use VitaliJalbu\LaravelShopper\Http\Controllers\Api\CartController;
-use VitaliJalbu\LaravelShopper\Http\Controllers\Api\AuthController;
 
 /*
 |--------------------------------------------------------------------------
 | API Routes
 |--------------------------------------------------------------------------
 |
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
+| API routes for Cartino with support for:
+| - Public product/collection browsing
+| - Authentication (Sanctum)
+| - Cart management
+| - Admin operations with permissions
+| - Multi-site support
 |
 */
 
 Route::group([
-    'prefix' => 'shopper/api',
-    'middleware' => ['api'],
+    'prefix' => 'api',
+    'middleware' => ['api', 'force.json'],
 ], function () {
 
-    // Authentication routes
-    Route::post('/login', [AuthController::class, 'login'])->name('shopper.api.login');
-    Route::post('/register', [AuthController::class, 'register'])->name('shopper.api.register');
-    Route::post('/logout', [AuthController::class, 'logout'])
-        ->middleware('auth:sanctum')
-        ->name('shopper.api.logout');
+    /*
+    |--------------------------------------------------------------------------
+    | Public Routes (No Authentication Required)
+    |--------------------------------------------------------------------------
+    */
+    // Brands resource with additional custom methods
+    Route::apiResource('brands', BrandsController::class, [
+        'names' => 'api.brands',
+    ]);
+    Route::apiResource('channels', ChannelController::class, [
+        'names' => 'api.channels',
+    ]);
+    Route::apiResource('products', ProductController::class, [
+        'names' => 'api.products',
+    ]);
+    Route::apiResource('sites', SitesController::class, [
+        'names' => 'api.sites',
+    ]);
+    Route::apiResource('categories', CategoriesController::class, [
+        'names' => 'api.categories',
+    ]);
 
-    // Public routes
-    Route::get('/products', [ProductController::class, 'index'])->name('shopper.api.products.index');
-    Route::get('/products/{product}', [ProductController::class, 'show'])->name('shopper.api.products.show');
-    
-    Route::get('/categories', [CategoryController::class, 'index'])->name('shopper.api.categories.index');
-    Route::get('/categories/{category}', [CategoryController::class, 'show'])->name('shopper.api.categories.show');
-    
-    Route::get('/brands', [BrandController::class, 'index'])->name('shopper.api.brands.index');
-    Route::get('/brands/{brand}', [BrandController::class, 'show'])->name('shopper.api.brands.show');
+    // Additional brand operations
+    Route::post('brands/create-many', [BrandsController::class, 'createMany'])->name('api.brands.createMany');
+    Route::put('brands/update-many', [BrandsController::class, 'updateMany'])->name('api.brands.updateMany');
+    Route::delete('brands/destroy-many', [BrandsController::class, 'destroyMany'])->name('api.brands.destroyMany');
 
-    // Cart routes (require authentication)
-    Route::middleware('auth:sanctum')->group(function () {
-        Route::get('/cart', [CartController::class, 'show'])->name('shopper.api.cart.show');
-        Route::post('/cart/add', [CartController::class, 'add'])->name('shopper.api.cart.add');
-        Route::put('/cart/{item}', [CartController::class, 'update'])->name('shopper.api.cart.update');
-        Route::delete('/cart/{item}', [CartController::class, 'remove'])->name('shopper.api.cart.remove');
-        Route::delete('/cart', [CartController::class, 'clear'])->name('shopper.api.cart.clear');
+    // Authentication
+    Route::post('/login', [AuthController::class, 'login'])->name('api.login');
+    Route::post('/register', [AuthController::class, 'register'])->name('api.register');
+
+    // Data Endpoints (Statuses, etc.)
+    Route::prefix('data')->name('api.data.')->group(function () {
+        Route::get('/statuses', [StatusController::class, 'index'])->name('statuses.index');
+        Route::get('/statuses/{type}', [StatusController::class, 'show'])->name('statuses.show');
     });
 
-    // User routes (require authentication)
+    // Public Countries/Currencies
+    Route::prefix('countries')->name('api.countries.')->group(function () {
+        Route::get('/', [\Cartino\Http\Controllers\Api\CountryController::class, 'index'])->name('index');
+        Route::get('/{country}', [\Cartino\Http\Controllers\Api\CountryController::class, 'show'])->name('show');
+        Route::get('/{country}/states', [\Cartino\Http\Controllers\Api\CountryController::class, 'states'])->name('states');
+        Route::get('/{country}/cities', [\Cartino\Http\Controllers\Api\CountryController::class, 'cities'])->name('cities');
+    });
+
+    Route::prefix('currencies')->name('api.currencies.')->group(function () {
+        Route::get('/', [\Cartino\Http\Controllers\Api\CurrencyController::class, 'index'])->name('index');
+        Route::get('/{currency}', [\Cartino\Http\Controllers\Api\CurrencyController::class, 'show'])->name('show');
+        Route::post('/convert', [\Cartino\Http\Controllers\Api\CurrencyController::class, 'convert'])->name('convert');
+    });
+
+    // Public Shipping Methods
+    Route::prefix('shipping-methods')->name('api.shipping-methods.')->group(function () {
+        Route::get('/', [\Cartino\Http\Controllers\Api\ShippingMethodController::class, 'index'])->name('index');
+        Route::post('/calculate', [\Cartino\Http\Controllers\Api\ShippingMethodController::class, 'calculate'])->name('calculate');
+    });
+
+    // Public Tax Rates
+    Route::prefix('tax-rates')->name('api.tax-rates.')->group(function () {
+        Route::get('/', [\Cartino\Http\Controllers\Api\TaxRateController::class, 'index'])->name('index');
+        Route::post('/calculate', [\Cartino\Http\Controllers\Api\TaxRateController::class, 'calculate'])->name('calculate');
+    });
+
+    // Fidelity System Configuration (Public)
+    Route::get('/fidelity/configuration', [FidelityController::class, 'configuration'])->name('api.fidelity.configuration');
+    Route::post('/fidelity/calculate-points', [FidelityController::class, 'calculatePoints'])->name('api.fidelity.calculate-points');
+    Route::post('/fidelity/find-card', [FidelityController::class, 'findByCardNumber'])->name('api.fidelity.find-card');
+
+    /*
+    |--------------------------------------------------------------------------
+    | Protected Routes (Authentication Required)
+    |--------------------------------------------------------------------------
+    */
+
     Route::middleware('auth:sanctum')->group(function () {
-        Route::get('/user', function (Request $request) {
-            return $request->user();
+
+        // Authentication
+        Route::post('/logout', [AuthController::class, 'logout'])->name('api.logout');
+
+        // Customer Authentication and Management
+        Route::prefix('customers')->name('customers.')->group(function () {
+            Route::post('/register', [CustomerController::class, 'register'])->name('register');
+            Route::post('/login', [CustomerController::class, 'login'])->name('login');
+            Route::post('/logout', [CustomerController::class, 'logout'])->name('logout')->middleware('auth:customer');
+            Route::post('/forgot-password', [CustomerController::class, 'forgotPassword'])->name('forgot-password');
+            Route::post('/reset-password', [CustomerController::class, 'resetPassword'])->name('reset-password');
+            Route::get('/verify/{token}', [CustomerController::class, 'verify'])->name('verify');
+
+            // Authenticated Customer Routes
+            Route::middleware(['auth:customer'])->group(function () {
+                Route::get('/profile', [CustomerController::class, 'profile'])->name('profile');
+                Route::put('/profile', [CustomerController::class, 'updateProfile'])->name('update-profile');
+                Route::get('/addresses', [CustomerController::class, 'addresses'])->name('addresses');
+                Route::post('/addresses', [CustomerController::class, 'storeAddress'])->name('store-address');
+                Route::put('/addresses/{address}', [CustomerController::class, 'updateAddress'])->name('update-address');
+                Route::delete('/addresses/{address}', [CustomerController::class, 'destroyAddress'])->name('destroy-address');
+                Route::get('/orders', [CustomerController::class, 'customerOrders'])->name('orders');
+                Route::get('/orders/{order}', [CustomerController::class, 'customerOrder'])->name('order');
+            });
+        });
+
+        // Order Management for Customers
+        Route::prefix('orders')->name('orders.')->middleware(['auth:customer'])->group(function () {
+            Route::get('/', [OrderController::class, 'customerIndex'])->name('customer.index');
+            Route::post('/', [OrderController::class, 'customerStore'])->name('customer.store');
+            Route::get('/{order}', [OrderController::class, 'customerShow'])->name('customer.show');
+            Route::post('/{order}/cancel', [OrderController::class, 'customerCancel'])->name('customer.cancel');
+            Route::get('/{order}/invoice', [OrderController::class, 'invoice'])->name('customer.invoice');
+            Route::get('/{order}/track', [OrderController::class, 'track'])->name('customer.track');
+        });
+
+        // Enhanced Cart Management
+        Route::prefix('cart')->name('cart.')->group(function () {
+            Route::get('/', [CartController::class, 'show'])->name('show');
+            Route::post('/add', [CartController::class, 'add'])->name('add');
+            Route::put('/{item}', [CartController::class, 'update'])->name('update');
+            Route::delete('/{item}', [CartController::class, 'remove'])->name('remove');
+            Route::delete('/', [CartController::class, 'clear'])->name('clear');
+            Route::post('/apply-discount', [CartController::class, 'applyDiscount'])->name('apply-discount');
+            Route::delete('/remove-discount', [CartController::class, 'removeDiscount'])->name('remove-discount');
+            Route::get('/totals', [CartController::class, 'totals'])->name('totals');
+            Route::post('/estimate-shipping', [CartController::class, 'estimateShipping'])->name('estimate-shipping');
+        });
+
+
+
+        // Enhanced Fidelity System
+        Route::prefix('fidelity')->name('fidelity.')->group(function () {
+            // Public endpoints
+            Route::get('/configuration', [FidelityController::class, 'configuration'])->name('configuration');
+            Route::post('/calculate-points', [FidelityController::class, 'calculatePoints'])->name('calculate-points');
+            Route::post('/find-card', [FidelityController::class, 'findByCardNumber'])->name('find-card');
+
+            // Customer authenticated endpoints
+            Route::middleware(['auth:customer'])->group(function () {
+                Route::get('/card', [FidelityController::class, 'card'])->name('card');
+                Route::get('/transactions', [FidelityController::class, 'transactions'])->name('transactions');
+                Route::get('/balance', [FidelityController::class, 'balance'])->name('balance');
+                Route::post('/redeem', [FidelityController::class, 'redeem'])->name('redeem');
+                Route::get('/offers', [FidelityController::class, 'offers'])->name('offers');
+            });
+        });
+
+        // Discount/Coupon Validation
+        Route::prefix('discounts')->name('discounts.')->group(function () {
+            Route::post('/validate', [DiscountController::class, 'validate'])->name('validate');
+            Route::get('/public', [DiscountController::class, 'public'])->name('public');
+        });
+
+        /*
+        |--------------------------------------------------------------------------
+        | Admin Routes (Permissions Required)
+        |--------------------------------------------------------------------------
+        */
+
+        Route::prefix('admin')->name('api.admin.')->group(function () {
+
+            // Permission Management
+            Route::prefix('permissions')->name('permissions.')->group(function () {
+                Route::get('/', [\Cartino\Http\Controllers\Api\PermissionController::class, 'index'])->name('index');
+                Route::get('/roles/{role}/permissions', [\Cartino\Http\Controllers\Api\PermissionController::class, 'rolePermissions'])->name('role.permissions');
+                Route::put('/roles/{role}/permissions', [\Cartino\Http\Controllers\Api\PermissionController::class, 'updateRolePermissions'])->name('role.update');
+                Route::post('/generate', [\Cartino\Http\Controllers\Api\PermissionController::class, 'generatePermissions'])->name('generate');
+                Route::post('/super-role', [\Cartino\Http\Controllers\Api\PermissionController::class, 'createSuperRole'])->name('super.create');
+                Route::get('/tree', [\Cartino\Http\Controllers\Api\PermissionController::class, 'permissionTree'])->name('tree');
+            });
+
+            // Role Management
+            Route::prefix('roles')->name('roles.')->group(function () {
+                Route::get('/', [\Cartino\Http\Controllers\Api\RoleController::class, 'index'])->name('index');
+                Route::post('/', [\Cartino\Http\Controllers\Api\RoleController::class, 'store'])->name('store');
+                Route::get('/{role}', [\Cartino\Http\Controllers\Api\RoleController::class, 'show'])->name('show');
+                Route::put('/{role}', [\Cartino\Http\Controllers\Api\RoleController::class, 'update'])->name('update');
+                Route::delete('/{role}', [\Cartino\Http\Controllers\Api\RoleController::class, 'destroy'])->name('destroy');
+                Route::post('/{role}/assign-users', [\Cartino\Http\Controllers\Api\RoleController::class, 'assignUsers'])->name('assign.users');
+                Route::post('/{role}/remove-users', [\Cartino\Http\Controllers\Api\RoleController::class, 'removeUsers'])->name('remove.users');
+                Route::post('/{role}/clone', [\Cartino\Http\Controllers\Api\RoleController::class, 'clone'])->name('clone');
+                Route::get('/statistics', [\Cartino\Http\Controllers\Api\RoleController::class, 'statistics'])->name('statistics');
+            });
+
+            // Customer Management
+            Route::prefix('customers')->name('customers.')->group(function () {
+                Route::get('/', [\Cartino\Http\Controllers\Api\CustomerController::class, 'index'])->name('index');
+                Route::get('/with-fidelity', [\Cartino\Http\Controllers\Api\CustomerController::class, 'indexWithFidelity'])->name('index-with-fidelity');
+                Route::post('/', [\Cartino\Http\Controllers\Api\CustomerController::class, 'store'])->name('store');
+                Route::get('/{customer}', [\Cartino\Http\Controllers\Api\CustomerController::class, 'show'])->name('show');
+                Route::put('/{customer}', [\Cartino\Http\Controllers\Api\CustomerController::class, 'update'])->name('update');
+                Route::delete('/{customer}', [\Cartino\Http\Controllers\Api\CustomerController::class, 'destroy'])->name('destroy');
+                Route::get('/{customer}/fidelity', [\Cartino\Http\Controllers\Api\CustomerController::class, 'fidelityCard'])->name('fidelity');
+                Route::post('/{customer}/fidelity', [\Cartino\Http\Controllers\Api\CustomerController::class, 'createFidelityCard'])->name('fidelity.create');
+                Route::get('/{customer}/orders', [\Cartino\Http\Controllers\Api\CustomerController::class, 'orders'])->name('orders');
+                Route::get('/{customer}/addresses', [\Cartino\Http\Controllers\Api\CustomerController::class, 'addresses'])->name('addresses');
+                Route::post('/{customer}/addresses', [\Cartino\Http\Controllers\Api\CustomerController::class, 'addAddress'])->name('addresses.add');
+                Route::get('/{customer}/statistics', [\Cartino\Http\Controllers\Api\CustomerController::class, 'statistics'])->name('statistics');
+                Route::post('/bulk', [\Cartino\Http\Controllers\Api\CustomerController::class, 'bulk'])->name('bulk');
+            });
+
+            // Fidelity System Management
+            Route::prefix('fidelity')->name('fidelity.')->group(function () {
+                Route::post('/redeem-points', [FidelityController::class, 'redeemPoints'])->name('redeem-points');
+                Route::get('/cards', [\Cartino\Http\Controllers\Api\Admin\FidelityAdminController::class, 'index'])->name('cards.index');
+                Route::get('/cards/{card}', [\Cartino\Http\Controllers\Api\Admin\FidelityAdminController::class, 'show'])->name('cards.show');
+                Route::put('/cards/{card}', [\Cartino\Http\Controllers\Api\Admin\FidelityAdminController::class, 'update'])->name('cards.update');
+                Route::post('/cards/{card}/add-points', [\Cartino\Http\Controllers\Api\Admin\FidelityAdminController::class, 'addPoints'])->name('cards.add-points');
+                Route::get('/statistics', [\Cartino\Http\Controllers\Api\Admin\FidelityAdminController::class, 'statistics'])->name('statistics');
+                Route::post('/expire-points', [\Cartino\Http\Controllers\Api\Admin\FidelityAdminController::class, 'expirePoints'])->name('expire-points');
+            });
+
+            // User Group Management
+            Route::prefix('user-groups')->name('user-groups.')->group(function () {
+                Route::get('/', [UserGroupController::class, 'index'])->name('index');
+                Route::post('/', [UserGroupController::class, 'store'])->name('store');
+                Route::get('/{group}', [UserGroupController::class, 'show'])->name('show');
+                Route::put('/{group}', [UserGroupController::class, 'update'])->name('update');
+                Route::delete('/{group}', [UserGroupController::class, 'destroy'])->name('destroy');
+                Route::post('/{group}/assign-users', [UserGroupController::class, 'assignUsers'])->name('assign.users');
+                Route::post('/{group}/remove-users', [UserGroupController::class, 'removeUsers'])->name('remove.users');
+                Route::get('/{group}/permissions', [UserGroupController::class, 'permissions'])->name('permissions');
+            });
+
+            // User Management
+            Route::prefix('users')->name('users.')->group(function () {
+                Route::get('/', [UserController::class, 'index'])->name('index');
+                Route::post('/', [UserController::class, 'store'])->name('store');
+                Route::get('/{user}', [UserController::class, 'show'])->name('show');
+                Route::put('/{user}', [UserController::class, 'update'])->name('update');
+                Route::delete('/{user}', [UserController::class, 'destroy'])->name('destroy');
+                Route::post('/{user}/activate', [UserController::class, 'activate'])->name('activate');
+                Route::post('/{user}/deactivate', [UserController::class, 'deactivate'])->name('deactivate');
+                Route::post('/{user}/assign-roles', [UserController::class, 'assignRoles'])->name('assign.roles');
+                Route::post('/{user}/assign-permissions', [UserController::class, 'assignPermissions'])->name('assign.permissions');
+                Route::get('/{user}/activity', [UserController::class, 'activity'])->name('activity');
+                Route::post('/bulk', [UserController::class, 'bulk'])->name('bulk');
+            });
+
+            // Brand Management (Admin) resource
+            Route::apiResource('brands', BrandsController::class, [
+                'names' => 'api.admin.brands',
+            ]);
+
+            // Additional admin brand operations
+            Route::post('brands/create-many', [BrandsController::class, 'createMany'])->name('api.admin.brands.createMany');
+            Route::put('brands/update-many', [BrandsController::class, 'updateMany'])->name('api.admin.brands.updateMany');
+            Route::delete('brands/destroy-many', [BrandsController::class, 'destroyMany'])->name('api.admin.brands.destroyMany');
+
+            // Specific bulk operations
+            Route::post('brands/bulk-activate', [BrandsController::class, 'bulkActivate'])->name('api.admin.brands.bulkActivate');
+            Route::post('brands/bulk-deactivate', [BrandsController::class, 'bulkDeactivate'])->name('api.admin.brands.bulkDeactivate');
+            Route::post('brands/bulk-delete', [BrandsController::class, 'bulkDelete'])->name('api.admin.brands.bulkDelete');
+            Route::post('brands/bulk-export', [BrandsController::class, 'bulkExport'])->name('api.admin.brands.bulkExport');
+
+            Route::post('brands/{brand}/toggle-status', [BrandsController::class, 'toggleStatus'])->name('api.admin.brands.toggleStatus');
+            Route::get('brands/{brand}/products', [BrandsController::class, 'products'])->name('api.admin.brands.products');
+
+
+
+
+            // Order Management (Admin)
+            Route::prefix('orders')->name('orders.')->group(function () {
+                Route::get('/', [OrderController::class, 'adminIndex'])->name('index');
+                Route::post('/', [OrderController::class, 'store'])->name('store');
+                Route::get('/{order}', [OrderController::class, 'adminShow'])->name('show');
+                Route::put('/{order}', [OrderController::class, 'update'])->name('update');
+                Route::delete('/{order}', [OrderController::class, 'destroy'])->name('destroy');
+                Route::post('/{order}/fulfill', [OrderController::class, 'fulfill'])->name('fulfill');
+                Route::post('/{order}/cancel', [OrderController::class, 'cancel'])->name('cancel');
+                Route::post('/{order}/refund', [OrderController::class, 'refund'])->name('refund');
+                Route::post('/{order}/archive', [OrderController::class, 'archive'])->name('archive');
+                Route::get('/{order}/timeline', [OrderController::class, 'timeline'])->name('timeline');
+                Route::get('/statistics', [OrderController::class, 'statistics'])->name('statistics');
+                Route::post('/bulk', [OrderController::class, 'bulk'])->name('bulk');
+            });
+            // Country Management
+            Route::prefix('countries')->name('countries.')->group(function () {
+                Route::get('/', [CountryController::class, 'adminIndex'])->name('index');
+                Route::post('/', [CountryController::class, 'store'])->name('store');
+                Route::get('/{country}', [CountryController::class, 'adminShow'])->name('show');
+                Route::put('/{country}', [CountryController::class, 'update'])->name('update');
+                Route::delete('/{country}', [CountryController::class, 'destroy'])->name('destroy');
+                Route::post('/{country}/toggle-status', [CountryController::class, 'toggleStatus'])->name('toggle.status');
+                Route::post('/bulk', [CountryController::class, 'bulk'])->name('bulk');
+            });
+
+            // Currency Management
+            Route::prefix('currencies')->name('currencies.')->group(function () {
+                Route::get('/', [CurrencyController::class, 'adminIndex'])->name('index');
+                Route::post('/', [CurrencyController::class, 'store'])->name('store');
+                Route::get('/{currency}', [CurrencyController::class, 'adminShow'])->name('show');
+                Route::put('/{currency}', [CurrencyController::class, 'update'])->name('update');
+                Route::delete('/{currency}', [CurrencyController::class, 'destroy'])->name('destroy');
+                Route::post('/{currency}/set-default', [CurrencyController::class, 'setDefault'])->name('set.default');
+                Route::post('/bulk', [CurrencyController::class, 'bulk'])->name('bulk');
+            });
+
+            // Shipping Method Management
+            Route::prefix('shipping-methods')->name('shipping-methods.')->group(function () {
+                Route::get('/', [ShippingMethodController::class, 'adminIndex'])->name('index');
+                Route::post('/', [ShippingMethodController::class, 'store'])->name('store');
+                Route::get('/{method}', [ShippingMethodController::class, 'adminShow'])->name('show');
+                Route::put('/{method}', [ShippingMethodController::class, 'update'])->name('update');
+                Route::delete('/{method}', [ShippingMethodController::class, 'destroy'])->name('destroy');
+                Route::post('/{method}/toggle-status', [ShippingMethodController::class, 'toggleStatus'])->name('toggle.status');
+                Route::post('/bulk', [ShippingMethodController::class, 'bulk'])->name('bulk');
+            });
+
+            // Tax Rate Management
+            Route::prefix('tax-rates')->name('tax-rates.')->group(function () {
+                Route::get('/', [TaxRateController::class, 'adminIndex'])->name('index');
+                Route::post('/', [TaxRateController::class, 'store'])->name('store');
+                Route::get('/{rate}', [TaxRateController::class, 'adminShow'])->name('show');
+                Route::put('/{rate}', [TaxRateController::class, 'update'])->name('update');
+                Route::delete('/{rate}', [TaxRateController::class, 'destroy'])->name('destroy');
+                Route::post('/{rate}/toggle-status', [TaxRateController::class, 'toggleStatus'])->name('toggle.status');
+                Route::post('/bulk', [TaxRateController::class, 'bulk'])->name('bulk');
+            });
+
+            // Discount Management (Admin)
+            Route::prefix('discounts')->name('discounts.')->group(function () {
+                Route::get('/', [DiscountController::class, 'adminIndex'])->name('index');
+                Route::post('/', [DiscountController::class, 'store'])->name('store');
+                Route::get('/{discount}', [DiscountController::class, 'adminShow'])->name('show');
+                Route::put('/{discount}', [DiscountController::class, 'update'])->name('update');
+                Route::delete('/{discount}', [DiscountController::class, 'destroy'])->name('destroy');
+                Route::post('/{discount}/toggle', [DiscountController::class, 'toggle'])->name('toggle');
+                Route::post('/{discount}/duplicate', [DiscountController::class, 'duplicate'])->name('duplicate');
+                Route::post('/validate-code', [DiscountController::class, 'validateCode'])->name('validate-code');
+                Route::get('/statistics', [DiscountController::class, 'statistics'])->name('statistics');
+                Route::post('/bulk', [DiscountController::class, 'bulk'])->name('bulk');
+            });
+
+            // Permission Builder
+            Route::prefix('permission-builder')->name('builder.')->group(function () {
+                Route::get('/', [\Cartino\Http\Controllers\Api\PermissionBuilderController::class, 'builder'])->name('index');
+                Route::put('/matrix', [\Cartino\Http\Controllers\Api\PermissionBuilderController::class, 'updateMatrix'])->name('matrix.update');
+                Route::post('/apply-template', [\Cartino\Http\Controllers\Api\PermissionBuilderController::class, 'applyTemplate'])->name('template.apply');
+                Route::post('/generate-resource', [\Cartino\Http\Controllers\Api\PermissionBuilderController::class, 'generateResourcePermissions'])->name('resource.generate');
+                Route::get('/export', [\Cartino\Http\Controllers\Api\PermissionBuilderController::class, 'export'])->name('export');
+                Route::post('/import', [\Cartino\Http\Controllers\Api\PermissionBuilderController::class, 'import'])->name('import');
+            });
+
+            // Asset Container Management
+            Route::prefix('asset-containers')->name('asset-containers.')->group(function () {
+                Route::get('/', [\Cartino\Http\Controllers\Api\AssetContainerController::class, 'index'])->name('index');
+                Route::post('/', [\Cartino\Http\Controllers\Api\AssetContainerController::class, 'store'])->name('store');
+                Route::get('/{container}', [\Cartino\Http\Controllers\Api\AssetContainerController::class, 'show'])->name('show');
+                Route::put('/{container}', [\Cartino\Http\Controllers\Api\AssetContainerController::class, 'update'])->name('update');
+                Route::delete('/{container}', [\Cartino\Http\Controllers\Api\AssetContainerController::class, 'destroy'])->name('destroy');
+            });
+
+            // Asset Management
+            Route::prefix('assets')->name('assets.')->group(function () {
+                Route::get('/', [\Cartino\Http\Controllers\Api\AssetController::class, 'index'])->name('index');
+                Route::post('/upload', [\Cartino\Http\Controllers\Api\AssetController::class, 'upload'])->name('upload');
+                Route::post('/upload-multiple', [\Cartino\Http\Controllers\Api\AssetController::class, 'uploadMultiple'])->name('upload.multiple');
+                Route::get('/{asset}', [\Cartino\Http\Controllers\Api\AssetController::class, 'show'])->name('show');
+                Route::put('/{asset}', [\Cartino\Http\Controllers\Api\AssetController::class, 'update'])->name('update');
+                Route::delete('/{asset}', [\Cartino\Http\Controllers\Api\AssetController::class, 'destroy'])->name('destroy');
+                Route::post('/{asset}/move', [\Cartino\Http\Controllers\Api\AssetController::class, 'move'])->name('move');
+                Route::post('/{asset}/rename', [\Cartino\Http\Controllers\Api\AssetController::class, 'rename'])->name('rename');
+                Route::get('/{asset}/download', [\Cartino\Http\Controllers\Api\AssetController::class, 'download'])->name('download');
+                Route::post('/bulk-delete', [\Cartino\Http\Controllers\Api\AssetController::class, 'bulkDelete'])->name('bulk.delete');
+            });
         });
     });
 });

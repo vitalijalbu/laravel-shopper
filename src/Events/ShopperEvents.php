@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelShopper\Events;
+namespace Cartino\Events;
 
 class EntryCreated extends Event
 {
@@ -55,7 +55,7 @@ class EntryUpdated extends Event
 
     public function hasChanged($field = null)
     {
-        if (!$original = $this->original()) {
+        if (! $original = $this->original()) {
             return true;
         }
 

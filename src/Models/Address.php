@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace LaravelShopper\Models;
+namespace Cartino\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -52,23 +52,23 @@ class Address extends Model
     public function getFullAddressAttribute(): string
     {
         $address = $this->address_line_1;
-        
+
         if ($this->address_line_2) {
-            $address .= ', ' . $this->address_line_2;
+            $address .= ', '.$this->address_line_2;
         }
-        
-        $address .= ', ' . $this->city;
-        
+
+        $address .= ', '.$this->city;
+
         if ($this->state) {
-            $address .= ', ' . $this->state;
+            $address .= ', '.$this->state;
         }
-        
+
         if ($this->postal_code) {
-            $address .= ' ' . $this->postal_code;
+            $address .= ' '.$this->postal_code;
         }
-        
-        $address .= ', ' . $this->country->name;
-        
+
+        $address .= ', '.$this->country->name;
+
         return $address;
     }
 }
