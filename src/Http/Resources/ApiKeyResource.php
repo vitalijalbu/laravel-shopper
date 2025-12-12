@@ -43,7 +43,7 @@ class ApiKeyResource extends JsonResource
             ]),
             'created_at' => $this->created_at->toIso8601String(),
             'updated_at' => $this->updated_at->toIso8601String(),
-            
+
             // Include la chiave in chiaro solo alla creazione
             'key' => $this->when($this->plainKey !== null, $this->plainKey),
         ];

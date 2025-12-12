@@ -26,7 +26,15 @@ class OrderRepository extends BaseRepository
      */
     public function findAll(array $filters = []): LengthAwarePaginator
     {
+        $perPage = $filters['per_page'] ?? config('settings.pagination.per_page', 15);
+
         return QueryBuilder::for(Order::class)
+            ->select('orders.*')
+            ->with([
+                'customer:id,first_name,last_name,email',
+                'items:id,order_id,product_id,quantity,price_amount,price_currency',
+                'items.product:id,name,slug,sku',
+            ])
             ->allowedFilters([
                 'order_number',
                 'status',
@@ -36,8 +44,9 @@ class OrderRepository extends BaseRepository
                 AllowedFilter::scope('date_to'),
             ])
             ->allowedSorts(['order_number', 'created_at', 'total_amount', 'status'])
-            ->allowedIncludes(['customer', 'items', 'items.product'])
-            ->paginate($filters['per_page'] ?? config('settings.pagination.per_page', 15))
+            ->allowedIncludes(['customer', 'items', 'items.product', 'shippingAddress', 'billingAddress'])
+            ->defaultSort('-created_at')
+            ->paginate($perPage)
             ->appends($filters);
     }
 
@@ -46,10 +55,15 @@ class OrderRepository extends BaseRepository
      */
     public function findOne(int|string $orderNumberOrId): ?Order
     {
-        return $this->model
-            ->where('id', $orderNumberOrId)
-            ->orWhere('order_number', $orderNumberOrId)
-            ->firstOrFail();
+        $cacheKey = "order:{$orderNumberOrId}";
+
+        return $this->cacheQuery($cacheKey, function () use ($orderNumberOrId) {
+            return $this->model
+                ->with(['customer', 'items.product', 'shippingAddress', 'billingAddress'])
+                ->where('id', $orderNumberOrId)
+                ->orWhere('order_number', $orderNumberOrId)
+                ->firstOrFail();
+        });
     }
 
     /**
@@ -63,7 +77,7 @@ class OrderRepository extends BaseRepository
         }
 
         $order = $this->model->create($data);
-        $this->clearCache();
+        $this->clearModelCache();
 
         return $order;
     }
@@ -75,9 +89,9 @@ class OrderRepository extends BaseRepository
     {
         $order = $this->findOrFail($id);
         $order->update($data);
-        $this->clearCache();
+        $this->clearModelCache();
 
-        return $order->fresh();
+        return $order->fresh(['customer', 'items.product']);
     }
 
     /**
@@ -87,7 +101,7 @@ class OrderRepository extends BaseRepository
     {
         $order = $this->findOrFail($id);
         $deleted = $order->delete();
-        $this->clearCache();
+        $this->clearModelCache();
 
         return $deleted;
     }

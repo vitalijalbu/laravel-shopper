@@ -143,6 +143,7 @@ class CartinoServiceProvider extends ServiceProvider
         $router->aliasMiddleware('cp', \Cartino\Http\Middleware\ControlPanelMiddleware::class);
         $router->aliasMiddleware('cartino.inertia', \Cartino\Http\Middleware\HandleInertiaRequests::class);
         $router->aliasMiddleware('cartino.auth', \Cartino\Http\Middleware\Authenticate::class);
+        $router->aliasMiddleware('cartino.performance', \Cartino\Http\Middleware\MonitorQueryPerformance::class);
 
         // Register policies
         $this->registerPolicies();
@@ -208,6 +209,7 @@ class CartinoServiceProvider extends ServiceProvider
         $policies = [
             \Cartino\Models\Address::class => \Cartino\Policies\AddressPolicy::class,
             \Cartino\Models\AnalyticsEvent::class => \Cartino\Policies\AnalyticsEventPolicy::class,
+            \Cartino\Models\ApiKey::class => \Cartino\Policies\ApiKeyPolicy::class,
             \Cartino\Models\App::class => \Cartino\Policies\AppPolicy::class,
             \Cartino\Models\AppApiToken::class => \Cartino\Policies\AppApiTokenPolicy::class,
             \Cartino\Models\AppInstallation::class => \Cartino\Policies\AppInstallationPolicy::class,

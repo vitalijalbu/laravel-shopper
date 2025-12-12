@@ -3,6 +3,7 @@
 namespace Cartino\Repositories;
 
 use Cartino\Contracts\RepositoryInterface;
+use Cartino\Traits\OptimizesQueries;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Category;
 use Illuminate\Database\Eloquent\Model;
@@ -11,6 +12,8 @@ use Illuminate\Support\Facades\Cache;
 
 abstract class BaseRepository implements RepositoryInterface
 {
+    use OptimizesQueries;
+
     protected Model $model;
 
     protected Builder $query;

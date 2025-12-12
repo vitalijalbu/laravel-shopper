@@ -25,7 +25,15 @@ class CustomerRepository extends BaseRepository
      */
     public function findAll(array $filters = []): LengthAwarePaginator
     {
+        $perPage = $filters['per_page'] ?? config('settings.pagination.per_page', 15);
+
         return QueryBuilder::for(Customer::class)
+            ->select('customers.*')
+            ->with([
+                'customerGroup:id,name,discount_percentage',
+                'fidelityCard:id,customer_id,card_number,points',
+            ])
+            ->withCount('orders')
             ->allowedFilters([
                 'first_name',
                 'last_name',
@@ -36,7 +44,8 @@ class CustomerRepository extends BaseRepository
             ])
             ->allowedSorts(['first_name', 'last_name', 'email', 'created_at'])
             ->allowedIncludes(['customerGroup', 'fidelityCard', 'orders', 'addresses'])
-            ->paginate($filters['per_page'] ?? config('settings.pagination.per_page', 15))
+            ->defaultSort('-created_at')
+            ->paginate($perPage)
             ->appends($filters);
     }
 
@@ -45,10 +54,16 @@ class CustomerRepository extends BaseRepository
      */
     public function findOne(int|string $emailOrId): ?Customer
     {
-        return $this->model
-            ->where('id', $emailOrId)
-            ->orWhere('email', $emailOrId)
-            ->firstOrFail();
+        $cacheKey = "customer:{$emailOrId}";
+
+        return $this->cacheQuery($cacheKey, function () use ($emailOrId) {
+            return $this->model
+                ->with(['customerGroup', 'fidelityCard', 'addresses'])
+                ->withCount('orders')
+                ->where('id', $emailOrId)
+                ->orWhere('email', $emailOrId)
+                ->firstOrFail();
+        });
     }
 
     /**
@@ -57,7 +72,7 @@ class CustomerRepository extends BaseRepository
     public function createOne(array $data): Customer
     {
         $customer = $this->model->create($data);
-        $this->clearCache();
+        $this->clearModelCache();
 
         return $customer;
     }
@@ -69,9 +84,9 @@ class CustomerRepository extends BaseRepository
     {
         $customer = $this->findOrFail($id);
         $customer->update($data);
-        $this->clearCache();
+        $this->clearModelCache();
 
-        return $customer->fresh();
+        return $customer->fresh(['customerGroup', 'fidelityCard']);
     }
 
     /**

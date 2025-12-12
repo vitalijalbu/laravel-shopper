@@ -24,10 +24,26 @@ class ProductRepository extends BaseRepository
     public function findAll(array $filters = []): LengthAwarePaginator
     {
         $dynamicIncludes = Arr::get($filters, 'includes', []);
+        $perPage = $filters['per_page'] ?? config('settings.pagination.per_page', 15);
+
+        // Relazioni ottimizzate di default
+        $defaultIncludes = ['brand:id,name,slug', 'productType:id,name'];
 
         return QueryBuilder::for(Product::class)
-            ->allowedFilters(['name', 'sku', 'status', 'slug'])
-            ->allowedSorts(['name', 'created_at', 'status', 'price_amount'])
+            ->select([
+                'products.*',
+                // Aggiungi subquery per conteggi invece di withCount per performance
+            ])
+            ->allowedFilters([
+                'name',
+                'sku',
+                'status',
+                'slug',
+                AllowedFilter::exact('brand_id'),
+                AllowedFilter::exact('product_type_id'),
+                AllowedFilter::scope('price_between'),
+            ])
+            ->allowedSorts(['name', 'created_at', 'status', 'price_amount', 'stock_quantity'])
             ->allowedIncludes([
                 'brand',
                 'productType',
@@ -35,9 +51,12 @@ class ProductRepository extends BaseRepository
                 'collections',
                 'tags',
                 'variants',
+                'media',
                 ...$dynamicIncludes,
             ])
-            ->paginate($filters['per_page'] ?? config('settings.pagination.per_page'))
+            ->defaultSort('-created_at')
+            ->with($defaultIncludes)
+            ->paginate($perPage)
             ->appends($filters);
     }
 
@@ -46,19 +65,19 @@ class ProductRepository extends BaseRepository
      */
     public function findOne(int|string $slugOrId): ?Product
     {
-        return $this->model
-            ->where('id', $slugOrId)
-            ->orWhere('slug', $slugOrId)
-            ->firstOrFail();
+        $cacheKey = "product:{$slugOrId}";
+
+        return $this->cacheQuery($cacheKey, function () use ($slugOrId) {
+            return $this->model
+                ->with(['brand', 'productType', 'variants', 'media', 'categories'])
+                ->where('id', $slugOrId)
+                ->orWhere('slug', $slugOrId)
+                ->firstOrFail();
+        });
     }
 
     /**
-     * Create one
-     */
-    public function createOne(array $data): Product
-    {
-        $product = $this->model->create($data);
-        $this->clearCache();
+     * Create oneModelCache();
 
         return $product;
     }
@@ -70,9 +89,9 @@ class ProductRepository extends BaseRepository
     {
         $product = $this->findOrFail($id);
         $product->update($data);
-        $this->clearCache();
+        $this->clearModelCache();
 
-        return $product->fresh();
+        return $product->fresh(['brand', 'productType', 'variants']);
     }
 
     /**
@@ -82,7 +101,7 @@ class ProductRepository extends BaseRepository
     {
         $product = $this->findOrFail($id);
         $deleted = $product->delete();
-        $this->clearCache();
+        $this->clearModelCache();
 
         return $deleted;
     }

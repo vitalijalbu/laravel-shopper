@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Cartino\Policies;
 
-use Cartino\Models\GlobalSet;
 use Cartino\Models\User;
 
 class GlobalPolicy

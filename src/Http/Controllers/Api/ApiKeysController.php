@@ -40,7 +40,7 @@ class ApiKeysController extends ApiController
         try {
             // Genera la chiave in chiaro
             $plainKey = ApiKey::generate();
-            
+
             // Crea la API key con hash
             $apiKey = ApiKey::create([
                 'name' => $request->name,
@@ -148,7 +148,7 @@ class ApiKeysController extends ApiController
         try {
             // Genera nuova chiave
             $plainKey = ApiKey::generate();
-            
+
             $apiKey->update([
                 'key' => ApiKey::hash($plainKey),
             ]);
