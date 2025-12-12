@@ -4,8 +4,12 @@ declare(strict_types=1);
 
 namespace Cartino\Enums;
 
+use Cartino\Helpers\EnumSerializable;
+
 enum StockStatus: string
 {
+    use EnumSerializable;
+    
     case InStock = 'in_stock';
     case OutOfStock = 'out_of_stock';
     case OnBackorder = 'on_backorder';

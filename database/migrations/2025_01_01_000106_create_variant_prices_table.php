@@ -34,7 +34,7 @@ return new class extends Migration
             $table->timestamp('ends_at')->nullable();
 
             // Priority (higher = takes precedence)
-            $table->integer('priority')->default(0)->index()->comment('Higher priority prices override lower ones');
+            $table->integer('priority')->default(0)->comment('Higher priority prices override lower ones');
 
             $table->timestamps();
             $table->jsonb('data')->nullable();
@@ -42,9 +42,6 @@ return new class extends Migration
             // Indexes for fast lookups
             $table->index(['product_variant_id', 'site_id', 'customer_group_id', 'min_quantity'], 'idx_variant_context');
             $table->index(['product_variant_id', 'currency', 'starts_at', 'ends_at'], 'idx_variant_schedule');
-            $table->index(['site_id', 'currency']);
-            $table->index(['channel_id', 'currency']);
-            $table->index(['customer_group_id', 'min_quantity']);
             $table->index(['priority', 'starts_at', 'ends_at']);
             $table->index(['catalog_id', 'currency']);
 

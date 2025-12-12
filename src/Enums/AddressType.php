@@ -12,12 +12,14 @@ enum AddressType: string
 
     case BILLING = 'billing';
     case SHIPPING = 'shipping';
+    case BOTH = 'both';
 
     public function label(): string
     {
         return match ($this) {
             self::BILLING => __('cartino::address.type.billing'),
             self::SHIPPING => __('cartino::address.type.shipping'),
+            self::BOTH => __('cartino::address.type.both'),
         };
     }
 

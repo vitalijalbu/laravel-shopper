@@ -50,15 +50,12 @@ return new class extends Migration
 
             $table->unique(['slug', 'site_id']);
             $table->unique(['path', 'site_id']);
-            $table->index(['site_id', 'is_active']);
             $table->index(['parent_id', 'sort_order']);
-            $table->index(['level', 'sort_order']);
             $table->index(['left', 'right']);
             $table->index(['is_active', 'is_visible']);
             $table->index(['is_featured', 'is_active']);
-            $table->index(['include_in_menu', 'is_active']);
-            $table->index(['products_count', 'is_active']);
 
+            // Composite indexes (cover multiple simpler indexes)
             $table->index(['site_id', 'parent_id', 'is_active']);
             $table->index(['level', 'is_active', 'sort_order']);
             $table->index(['is_active', 'include_in_menu', 'sort_order']);

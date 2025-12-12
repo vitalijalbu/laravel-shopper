@@ -143,11 +143,11 @@ return new class extends Migration
         ];
 
         foreach ($tables as $table) {
-            if (Schema::hasTable($table)) {
+            if (Schema::hasTable($table) && !Schema::hasColumn($table, 'data')) {
                 Schema::table($table, function (Blueprint $table) {
                     // Add JSONB field for custom data
                     // This will store schema-defined custom fields as JSON
-                    $table->jsonb('data')->nullable();
+                    $table->jsonb('data')->nullable()->comment('Custom fields data');
 
                     // Add index for better query performance on data field
                     if (config('database.default') === 'pgsql') {

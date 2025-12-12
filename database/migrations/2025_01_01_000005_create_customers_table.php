@@ -34,17 +34,11 @@ return new class extends Migration
             $table->index(['site_id', 'status']);
             $table->index(['last_name', 'first_name']);
             $table->index(['phone', 'site_id']);
-
-            // Additional filter indexes
-            $table->index('gender');
             $table->index('created_at');
-            $table->index('updated_at');
 
             // Composite indexes for common filter combinations
             $table->index(['status', 'created_at']);
             $table->index(['gender', 'status']);
-            $table->index(['date_of_birth', 'status']);
-            $table->index(['email_verified_at', 'status']);
             $table->index(['last_login_at', 'status']);
 
             // Full text search for names (MySQL 5.6+)
