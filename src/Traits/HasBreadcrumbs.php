@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Shopper\Traits;
+namespace Cartino\Traits;
 
 trait HasBreadcrumbs
 {
@@ -59,6 +59,6 @@ trait HasBreadcrumbs
      */
     protected function addDashboardBreadcrumb(): self
     {
-        return $this->addBreadcrumb('Dashboard', 'shopper.dashboard');
+        return $this->addBreadcrumb('Dashboard', 'cartino.dashboard');
     }
 }

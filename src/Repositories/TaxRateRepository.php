@@ -1,10 +1,10 @@
 <?php
 
-namespace Shopper\Repositories;
+namespace Cartino\Repositories;
 
+use Cartino\Models\TaxRate;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Shopper\Models\TaxRate;
 
 class TaxRateRepository extends BaseRepository
 {
@@ -18,7 +18,7 @@ class TaxRateRepository extends BaseRepository
     /**
      * Get paginated tax rates with filters
      */
-    public function getPaginatedWithFilters(array $filters = [], int $perPage = 25): LengthAwarePaginator
+    public function findAll(array $filters = []): LengthAwarePaginator
     {
         $query = $this->model->newQuery();
 
@@ -64,7 +64,7 @@ class TaxRateRepository extends BaseRepository
     /**
      * Get active tax rates for a location
      */
-    public function getActiveForLocation(string $countryCode, ?string $stateCode = null, ?string $postcode = null): \Illuminate\Database\Eloquent\Collection
+    public function getActiveForLocation(string $countryCode, ?string $stateCode = null, ?string $postcode = null): \Illuminate\Database\Eloquent\Category
     {
         $cacheKey = $this->getCacheKey('location', md5($countryCode.'_'.$stateCode.'_'.$postcode));
 
@@ -222,7 +222,7 @@ class TaxRateRepository extends BaseRepository
     /**
      * Get all countries with tax rates
      */
-    public function getCountries(): \Illuminate\Support\Collection
+    public function getCountries(): \Illuminate\Support\Category
     {
         $cacheKey = $this->getCacheKey('countries', 'all');
 
@@ -244,7 +244,7 @@ class TaxRateRepository extends BaseRepository
     /**
      * Get tax zones for dropdown
      */
-    public function getTaxZones(): \Illuminate\Support\Collection
+    public function getTaxZones(): \Illuminate\Support\Category
     {
         $cacheKey = $this->getCacheKey('tax_zones', 'all');
 
@@ -317,7 +317,7 @@ class TaxRateRepository extends BaseRepository
     /**
      * Get applicable tax rates based on conditions
      */
-    public function getApplicableRates(array $conditions = []): \Illuminate\Database\Eloquent\Collection
+    public function getApplicableRates(array $conditions = []): \Illuminate\Database\Eloquent\Category
     {
         $query = $this->model->newQuery()->where('is_active', true);
 

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Shopper\Workflows;
+namespace Cartino\Workflows;
 
 interface WorkflowInterface
 {

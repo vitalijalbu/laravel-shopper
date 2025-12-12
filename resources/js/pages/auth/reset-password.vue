@@ -1,32 +1,9 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center px-6 py-12 lg:px-8">
-    <div class="mx-auto w-full max-w-sm">
-      <!-- Logo -->
-      <div class="text-center mb-8">
-        <img
-          v-if="branding.logo"
-          :src="branding.logo"
-          :alt="app_name"
-          class="h-10 w-auto mx-auto"
-        />
-        <h1 v-else class="text-2xl font-bold text-gray-900 dark:text-white">
-          {{ app_name }}
-        </h1>
-      </div>
-
-      <!-- Header -->
-      <div class="text-center mb-8">
-        <h2
-          class="text-2xl font-bold leading-9 tracking-tight text-gray-900 dark:text-white"
-        >
-          {{ t("shopper::auth.headings.reset_password") }}
-        </h2>
-        <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
-          {{ t("shopper::auth.descriptions.reset_password") }}
-        </p>
-      </div>
-
-      <!-- Reset Form -->
+  <AuthLayout 
+    :title="t('cartino::auth.titles.reset_password')" 
+    v-bind="props"
+  >
+    <!-- Reset Form -->
       <form @submit.prevent="submit" class="space-y-6">
         <!-- Email Field (Hidden) -->
         <input type="hidden" v-model="form.token" />
@@ -37,7 +14,7 @@
           <label
             class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
           >
-            {{ t("shopper::auth.labels.email") }}
+            {{ t("cartino::auth.labels.email") }}
           </label>
           <div class="mt-2">
             <div
@@ -54,14 +31,14 @@
             for="password"
             class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
           >
-            {{ t("shopper::auth.labels.password") }}
+            {{ t("cartino::auth.labels.password") }}
           </label>
           <div class="mt-2">
             <input
               id="password"
               v-model="form.password"
               type="password"
-              :placeholder="t('shopper::auth.placeholders.password')"
+              :placeholder="t('cartino::auth.placeholders.password')"
               required
               autocomplete="new-password"
               autofocus
@@ -84,7 +61,7 @@
             for="password_confirmation"
             class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
           >
-            {{ t("shopper::auth.labels.password_confirmation") }}
+            {{ t("cartino::auth.labels.password_confirmation") }}
           </label>
           <div class="mt-2">
             <input
@@ -92,7 +69,7 @@
               v-model="form.password_confirmation"
               type="password"
               :placeholder="
-                t('shopper::auth.placeholders.password_confirmation')
+                t('cartino::auth.placeholders.password_confirmation')
               "
               required
               autocomplete="new-password"
@@ -139,10 +116,10 @@
                   d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                 />
               </svg>
-              {{ t("shopper::auth.actions.resetting_password") }}
+              {{ t("cartino::auth.actions.resetting_password") }}
             </span>
             <span v-else>
-              {{ t("shopper::auth.labels.reset_password") }}
+              {{ t("cartino::auth.labels.reset_password") }}
             </span>
           </button>
         </div>
@@ -153,36 +130,22 @@
             :href="route('cp.login')"
             class="text-sm font-semibold text-indigo-600 hover:text-indigo-500"
           >
-            {{ t("shopper::auth.labels.back_to_login") }}
+            {{ t("cartino.auth.labels.back_to_login") }}
           </Link>
         </div>
       </form>
-
-      <!-- Language Selector -->
-      <div class="mt-8 text-center" v-if="locales && locales.length > 1">
-        <div class="flex justify-center space-x-4">
-          <button
-            v-for="loc in locales"
-            :key="loc"
-            @click="changeLocale(loc)"
-            :class="[
-              'text-sm font-medium',
-              locale === loc
-                ? 'text-indigo-600'
-                : 'text-gray-500 hover:text-gray-700',
-            ]"
-          >
-            {{ loc.toUpperCase() }}
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
+  </AuthLayout>
 </template>
 
 <script setup>
 import { useForm, Head, Link } from "@inertiajs/vue3";
 import { useTranslations } from "@/composables/useTranslations";
+import AuthLayout from "@/components/auth-layout.vue";
+
+// Auth layout per pagine di autenticazione
+defineOptions({
+  layout: AuthLayout
+});
 
 // Props
 const props = defineProps({
@@ -195,6 +158,11 @@ const props = defineProps({
   branding: Object,
   errors: Object,
 });
+
+// Route helper
+const route = (name, params = {}, absolute = true) => {
+    return window.route ? window.route(name, params, absolute) : '#'
+}
 
 // Composables
 const { t } = useTranslations();

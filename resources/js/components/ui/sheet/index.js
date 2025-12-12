@@ -1,5 +1,0 @@
-export { default as Sheet } from './sheet.vue'
-export { default as SheetHeader } from './sheet-header.vue'
-export { default as SheetFooter } from './sheet-footer.vue'
-export { default as SheetTitle } from './sheet-title.vue'
-export { default as SheetDescription } from './sheet-description.vue'

@@ -1,6 +1,6 @@
 <?php
 
-namespace Shopper\Http\Middleware;
+namespace Cartino\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;

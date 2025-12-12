@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Shopper\Services;
+namespace Cartino\Services;
 
-use Illuminate\Support\Collection;
-use Shopper\Models\ShippingRate;
-use Shopper\Models\ShippingZone;
+use Cartino\Models\ShippingRate;
+use Cartino\Models\ShippingZone;
+use Illuminate\Support\Category;
 
 class ShippingService
 {
@@ -21,7 +21,7 @@ class ShippingService
         float $totalWeight = 0,
         array $productIds = [],
         ?int $marketId = null
-    ): Collection {
+    ): Category {
         // Find matching zones by priority
         $zones = ShippingZone::active()
             ->orderByDesc('priority')

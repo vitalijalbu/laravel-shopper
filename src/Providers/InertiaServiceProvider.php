@@ -1,6 +1,6 @@
 <?php
 
-namespace Shopper\Providers;
+namespace Cartino\Providers;
 
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Lang;
@@ -70,7 +70,7 @@ class InertiaServiceProvider extends ServiceProvider
 
                 return [
                     // Shopper specific translations (load directly)
-                    'shopper' => $loadTranslations('shopper', $locale),
+                    'cartino' => $loadTranslations('cartino', $locale),
 
                     // Core admin translations
                     'admin' => $loadTranslations('admin', $locale),
@@ -93,7 +93,7 @@ class InertiaServiceProvider extends ServiceProvider
                 return [
                     'app_name' => config('app.name'),
                     'app_url' => config('app.url'),
-                    'currency' => config('shopper.currency', 'EUR'),
+                    'currency' => config('cartino.currency', 'EUR'),
                     'timezone' => config('app.timezone'),
                 ];
             },

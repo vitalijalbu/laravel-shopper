@@ -16,11 +16,11 @@ type Query {
     ): [Product!]! @paginate(defaultCount: 20, maxCount: 100)
 
     # Categories/Collections
-    collection(id: ID @eq, handle: String @eq): Collection @find
+    collection(id: ID @eq, handle: String @eq): Category @find
     collections(
         parent: ID
         orderBy: [QueryCollectionsOrderByOrderByClause!] @orderBy
-    ): [Collection!]! @paginate(defaultCount: 20, maxCount: 100)
+    ): [Category!]! @paginate(defaultCount: 20, maxCount: 100)
 
     # Customers
     customer(id: ID @eq, email: String @eq): Customer @find @guard(with: "api")
@@ -86,7 +86,7 @@ type Product {
     updated_at: DateTime!
 
     # Relationships
-    category: Collection @belongsTo
+    category: Category @belongsTo
     brand: Brand @belongsTo
     variants: [ProductVariant!]! @hasMany
     images: [Media!]! @morphMany(relation: "media")
@@ -117,7 +117,7 @@ type ProductVariant {
     images: [Media!]! @morphMany(relation: "media")
 }
 
-type Collection {
+type Category {
     id: ID!
     name: String!
     handle: String!
@@ -128,8 +128,8 @@ type Collection {
     updated_at: DateTime!
 
     # Relationships
-    parent: Collection @belongsTo
-    children: [Collection!]! @hasMany
+    parent: Category @belongsTo
+    children: [Category!]! @hasMany
     products: [Product!]! @belongsToMany
     image: Media @morphOne(relation: "media")
 }

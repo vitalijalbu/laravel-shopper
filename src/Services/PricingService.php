@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Shopper\Services;
+namespace Cartino\Services;
 
-use Shopper\Models\Market;
-use Shopper\Models\ProductVariant;
-use Shopper\Models\VariantPrice;
+use Cartino\Models\Market;
+use Cartino\Models\ProductVariant;
+use Cartino\Models\VariantPrice;
 
 class PricingService
 {
@@ -24,7 +24,7 @@ class PricingService
         $context = [
             'market_id' => $marketId,
             'customer_group_id' => $customerGroupId,
-            'currency' => $currency ?? config('shopper.currency'),
+            'currency' => $currency ?? config('cartino.currency'),
             'quantity' => $quantity,
         ];
 
@@ -69,7 +69,7 @@ class PricingService
         return [
             'price' => $variant->price,
             'compare_at_price' => $variant->compare_at_price,
-            'currency' => $currency ?? config('shopper.currency'),
+            'currency' => $currency ?? config('cartino.currency'),
             'source' => 'base',
         ];
     }
@@ -116,7 +116,7 @@ class PricingService
         $context = [
             'market_id' => $marketId,
             'customer_group_id' => $customerGroupId,
-            'currency' => $currency ?? config('shopper.currency'),
+            'currency' => $currency ?? config('cartino.currency'),
             'quantity' => $quantity,
         ];
 
@@ -153,7 +153,7 @@ class PricingService
                 $results[$variantId] = [
                     'price' => $variant->price,
                     'compare_at_price' => $variant->compare_at_price,
-                    'currency' => $currency ?? config('shopper.currency'),
+                    'currency' => $currency ?? config('cartino.currency'),
                     'source' => 'base',
                 ];
             }

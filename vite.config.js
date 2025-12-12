@@ -12,6 +12,10 @@ export default defineConfig({
     alias: {
       "@": resolve(__dirname, "resources/js"),
       "~": resolve(__dirname, "resources"),
+      // In dev mode, punta al source della UI lib per hot reload
+      ...(isPackageDev && {
+        "@cartino/ui": resolve(__dirname, "../ui/src/index.ts"),
+      }),
     },
   },
   define: {
@@ -21,7 +25,7 @@ export default defineConfig({
   },
   publicDir: false, // Disable public directory copying to avoid recursive issues
   build: {
-    outDir: isPackageDev ? "public/build" : "public/vendor/shopper",
+    outDir: isPackageDev ? "public/build" : "public/vendor/cartino",
     emptyOutDir: true,
     manifest: true,
     rollupOptions: {
@@ -42,7 +46,8 @@ export default defineConfig({
   },
   server: {
     host: "0.0.0.0",
-    port: 5173,
+    port: 3000,
+    strictPort: true, // Fail se porta occupata
     https:
       isDev || isPackageDev
         ? {
@@ -62,6 +67,7 @@ export default defineConfig({
       "axios",
       "lodash-es",
       "@inertiajs/vue3",
+      "@cartino/ui",
     ],
   },
 });

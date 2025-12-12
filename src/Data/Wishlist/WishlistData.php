@@ -1,8 +1,8 @@
 <?php
 
-namespace Shopper\Data\Wishlist;
+namespace Cartino\Data\Wishlist;
 
-use Shopper\Models\Wishlist;
+use Cartino\Models\Wishlist;
 
 class WishlistData
 {

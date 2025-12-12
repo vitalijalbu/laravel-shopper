@@ -1,10 +1,10 @@
 <?php
 
-namespace Shopper\Repositories;
+namespace Cartino\Repositories;
 
+use Cartino\Models\Setting;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Collection;
-use Shopper\Models\Setting;
+use Illuminate\Support\Category;
 
 class SettingsRepository extends BaseRepository
 {
@@ -18,7 +18,7 @@ class SettingsRepository extends BaseRepository
     /**
      * Get all settings grouped by group
      */
-    public function getAllGrouped(): Collection
+    public function getAllGrouped(): Category
     {
         $cacheKey = $this->getCacheKey('all_grouped', 'all');
 
@@ -30,7 +30,7 @@ class SettingsRepository extends BaseRepository
     /**
      * Get settings by group
      */
-    public function getByGroup(string $group): Collection
+    public function getByGroup(string $group): Category
     {
         $cacheKey = $this->getCacheKey('group', $group);
 
@@ -110,7 +110,7 @@ class SettingsRepository extends BaseRepository
     /**
      * Get settings for a specific page (like general, checkout, etc.)
      */
-    public function getSettingsForPage(string $page): Collection
+    public function getSettingsForPage(string $page): Category
     {
         $groupMappings = [
             'general' => ['general', 'store', 'contact'],

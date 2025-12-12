@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Shopper\Services;
+namespace Cartino\Services;
 
-use Illuminate\Support\Collection;
-use Shopper\Models\Customer;
-use Shopper\Models\FidelityCard;
-use Shopper\Models\FidelityTransaction;
-use Shopper\Models\Order;
+use Cartino\Models\Customer;
+use Cartino\Models\FidelityCard;
+use Cartino\Models\FidelityTransaction;
+use Cartino\Models\Order;
+use Illuminate\Support\Category;
 
 class FidelityService
 {
@@ -22,7 +22,7 @@ class FidelityService
      */
     public function isEnabled(): bool
     {
-        return config('shopper.fidelity.enabled', false);
+        return config('cartino.fidelity.enabled', false);
     }
 
     /**
@@ -30,7 +30,7 @@ class FidelityService
      */
     public function arePointsEnabled(): bool
     {
-        return $this->isEnabled() && config('shopper.fidelity.points.enabled', false);
+        return $this->isEnabled() && config('cartino.fidelity.points.enabled', false);
     }
 
     /**
@@ -109,7 +109,7 @@ class FidelityService
      */
     public function calculatePointsForAmount(float $amount, ?string $currency = null): int
     {
-        $config = config('shopper.fidelity.points');
+        $config = config('cartino.fidelity.points');
 
         if (! $config['enabled']) {
             return 0;
@@ -142,7 +142,7 @@ class FidelityService
      */
     public function getPointsValue(int $points): float
     {
-        $rate = config('shopper.fidelity.points.redemption.points_to_currency_rate', 0.01);
+        $rate = config('cartino.fidelity.points.redemption.points_to_currency_rate', 0.01);
 
         return $points * $rate;
     }
@@ -152,7 +152,7 @@ class FidelityService
      */
     public function getPointsForValue(float $value): int
     {
-        $rate = config('shopper.fidelity.points.redemption.points_to_currency_rate', 0.01);
+        $rate = config('cartino.fidelity.points.redemption.points_to_currency_rate', 0.01);
 
         return (int) ceil($value / $rate);
     }
@@ -166,7 +166,7 @@ class FidelityService
             return false;
         }
 
-        $minPoints = config('shopper.fidelity.points.redemption.min_points', 100);
+        $minPoints = config('cartino.fidelity.points.redemption.min_points', 100);
 
         return $card->available_points >= $points && $points >= $minPoints;
     }
@@ -198,7 +198,7 @@ class FidelityService
     /**
      * Ottiene le transazioni recenti
      */
-    public function getRecentTransactions(FidelityCard $card, int $limit = 10): Collection
+    public function getRecentTransactions(FidelityCard $card, int $limit = 10): Category
     {
         return $card->transactions()
             ->orderBy('created_at', 'desc')
@@ -236,7 +236,7 @@ class FidelityService
     /**
      * Ottiene le carte con punti in scadenza
      */
-    public function getCardsWithExpiringPoints(int $days = 30): Collection
+    public function getCardsWithExpiringPoints(int $days = 30): Category
     {
         return FidelityCard::active()
             ->whereHas('transactions', function ($query) use ($days) {
@@ -256,7 +256,7 @@ class FidelityService
      */
     public function getConfiguration(): array
     {
-        return config('shopper.fidelity', []);
+        return config('cartino.fidelity', []);
     }
 
     /**

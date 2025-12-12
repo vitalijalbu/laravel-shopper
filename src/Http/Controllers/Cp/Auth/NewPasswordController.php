@@ -1,7 +1,8 @@
 <?php
 
-namespace Shopper\Http\Controllers\Cp\Auth;
+namespace Cartino\Http\Controllers\CP\Auth;
 
+use Cartino\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -10,7 +11,6 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\Rules;
 use Inertia\Inertia;
 use Inertia\Response;
-use Shopper\Http\Controllers\Controller;
 
 class NewPasswordController extends Controller
 {
@@ -23,13 +23,13 @@ class NewPasswordController extends Controller
             'email' => $request->email,
             'token' => $request->route('token'),
             'locale' => app()->getLocale(),
-            'locales' => config('shopper.locales', ['en', 'it']),
+            'locales' => config('cartino.locales', ['en', 'it']),
             'app_name' => config('app.name'),
-            'cp_name' => config('shopper.cp.name', 'Control Panel'),
+            'cp_name' => config('cartino.cp.name', 'Control Panel'),
             'branding' => [
-                'logo' => config('shopper.cp.branding.logo'),
-                'logo_dark' => config('shopper.cp.branding.logo_dark'),
-                'favicon' => config('shopper.cp.branding.favicon'),
+                'logo' => config('cartino.cp.branding.logo'),
+                'logo_dark' => config('cartino.cp.branding.logo_dark'),
+                'favicon' => config('cartino.cp.branding.favicon'),
             ],
         ]);
     }
@@ -45,11 +45,11 @@ class NewPasswordController extends Controller
             'email' => ['required', 'email'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ], [
-            'email.required' => __('shopper::auth.validation.email_required'),
-            'email.email' => __('shopper::auth.validation.email_invalid'),
-            'password.required' => __('shopper::auth.validation.password_required'),
-            'password.confirmed' => __('shopper::auth.validation.password_confirmed'),
-            'password.min' => __('shopper::auth.validation.password_min'),
+            'email.required' => __('cartino::auth.validation.email_required'),
+            'email.email' => __('cartino::auth.validation.email_invalid'),
+            'password.required' => __('cartino::auth.validation.password_required'),
+            'password.confirmed' => __('cartino::auth.validation.password_confirmed'),
+            'password.min' => __('cartino::auth.validation.password_min'),
         ]);
 
         // Here we will attempt to reset the user's password. If it is successful we
@@ -74,8 +74,8 @@ class NewPasswordController extends Controller
         // the application's home authenticated view. If there is an error we can
         // redirect them back to where they came from with their error message.
         return $status === Password::PASSWORD_RESET
-            ? redirect()->route('shopper.cp.login')->with('status', __('shopper::auth.password_reset_success'))
+            ? redirect()->route('cartino.cp.login')->with('status', __('cartino::auth.password_reset_success'))
             : back()->withInput($request->only('email'))
-                ->withErrors(['email' => __('shopper::auth.password_reset_invalid')]);
+                ->withErrors(['email' => __('cartino::auth.password_reset_invalid')]);
     }
 }

@@ -3,19 +3,19 @@ import { computed, ref, watch } from "vue";
 import { Translator } from "../utils/translator";
 
 export const useLocaleStore = defineStore("locale", () => {
-  // Debug ShopperConfig
-  if (typeof window !== 'undefined' && window.ShopperConfig) {
-    console.log('ShopperConfig loaded:', window.ShopperConfig);
+  // Debug CartinoConfig
+  if (typeof window !== 'undefined' && window.CartinoConfig) {
+    console.log('CartinoConfig loaded:', window.CartinoConfig);
   } else {
-    console.warn('ShopperConfig not found, using defaults');
+    console.warn('CartinoConfig not found, using defaults');
   }
 
   // State
-  const currentLocale = ref(window.ShopperConfig?.locale || "it");
+  const currentLocale = ref(window.CartinoConfig?.locale || "it");
   const availableLocales = ref(
-    window.ShopperConfig?.availableLocales || { en: "English", it: "Italiano" },
+    window.CartinoConfig?.availableLocales || { en: "English", it: "Italiano" },
   );
-  const translations = ref(window.ShopperConfig?.translations || {});
+  const translations = ref(window.CartinoConfig?.translations || {});
   const translator = ref(
     new Translator(translations.value, currentLocale.value),
   );
@@ -51,13 +51,13 @@ export const useLocaleStore = defineStore("locale", () => {
       translator.value.setLocale(locale);
 
       // Persist locale preference
-      localStorage.setItem("shopper_locale", locale);
+      localStorage.setItem("cartino_locale", locale);
 
       // Update document lang attribute
       document.documentElement.lang = locale;
 
       // Send to backend to update user preference
-      if (window.ShopperConfig?.user) {
+      if (window.CartinoConfig?.user) {
         try {
           await fetch("/cp/user/locale", {
             method: "PATCH",
@@ -116,7 +116,7 @@ export const useLocaleStore = defineStore("locale", () => {
 
   // Initialize locale from localStorage or browser
   const initializeLocale = () => {
-    const savedLocale = localStorage.getItem("shopper_locale");
+    const savedLocale = localStorage.getItem("cartino_locale");
 
     if (savedLocale && availableLocales.value[savedLocale]) {
       setLocale(savedLocale).catch(console.warn);

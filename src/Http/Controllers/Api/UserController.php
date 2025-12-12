@@ -1,14 +1,14 @@
 <?php
 
-namespace Shopper\Http\Controllers\Api;
+namespace Cartino\Http\Controllers\Api;
 
+use Cartino\Http\Requests\Api\AssignPermissionRequest;
+use Cartino\Http\Requests\Api\AssignRoleRequest;
+use Cartino\Models\User;
+use Cartino\Traits\ApiResponseTrait;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Shopper\Http\Requests\Api\AssignPermissionRequest;
-use Shopper\Http\Requests\Api\AssignRoleRequest;
-use Shopper\Models\User;
-use Shopper\Traits\ApiResponseTrait;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 

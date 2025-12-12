@@ -1,6 +1,6 @@
 <?php
 
-namespace Shopper\Models;
+namespace Cartino\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -149,7 +149,7 @@ class App extends Model
 
     public function getIsCompatibleAttribute(): bool
     {
-        $shopperVersion = config('shopper.version', '1.0.0');
+        $shopperVersion = config('cartino.version', '1.0.0');
 
         if ($this->min_shopper_version && version_compare($shopperVersion, $this->min_shopper_version, '<')) {
             return false;
@@ -282,7 +282,7 @@ class App extends Model
     private function fireWebhook(string $event, array $data): void
     {
         // TODO: Implement webhook firing logic
-        event(new \Shopper\Events\AppWebhookEvent($this, $event, $data));
+        event(new \Cartino\Events\AppWebhookEvent($this, $event, $data));
     }
 
     // Static methods

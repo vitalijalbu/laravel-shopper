@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Shopper\Workflows\Actions;
+namespace Cartino\Workflows\Actions;
 
-use Shopper\Models\Product;
+use Cartino\Models\Product;
 
 class UpdateProductAction
 {

@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('reference_type')->nullable(); // App\Models\Product, etc.
             $table->unsignedBigInteger('reference_id')->nullable();
             $table->json('data')->nullable(); // custom fields, attributes
-            $table->string('status')->default('active')->index(); // active, inactive, draft
+            $table->string('status')->default('active'); // active, inactive, draft
             $table->boolean('opens_in_new_window')->default(false);
             $table->string('css_class')->nullable();
             $table->integer('sort_order')->default(0);

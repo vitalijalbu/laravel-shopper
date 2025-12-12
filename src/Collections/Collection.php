@@ -1,31 +1,31 @@
 <?php
 
-namespace Shopper\Collections;
+namespace Cartino\Collections;
 
 use ArrayAccess;
+use Cartino\Contracts\Collections\Category as Contract;
+use Cartino\Data\ContainsCascadingData;
+use Cartino\Data\ExistsAsFile;
+use Cartino\Data\HasAugmentedData;
+use Cartino\Events\Collections\CollectionCreated;
+use Cartino\Events\Collections\CollectionCreating;
+use Cartino\Events\Collections\CollectionDeleted;
+use Cartino\Events\Collections\CollectionDeleting;
+use Cartino\Events\Collections\CollectionSaved;
+use Cartino\Events\Collections\CollectionSaving;
+use Cartino\Facades\Blink;
+use Cartino\Facades\Blueprint;
+use Cartino\Facades\Entry;
+use Cartino\Facades\Site;
+use Cartino\Facades\Stache;
+use Cartino\Support\Arr;
+use Cartino\Support\Traits\FluentlyGetsAndSets;
 use Illuminate\Contracts\Support\Arrayable;
-use Shopper\Contracts\Collections\Collection as Contract;
-use Shopper\Data\ContainsCascadingData;
-use Shopper\Data\ExistsAsFile;
-use Shopper\Data\HasAugmentedData;
-use Shopper\Events\Collections\CollectionCreated;
-use Shopper\Events\Collections\CollectionCreating;
-use Shopper\Events\Collections\CollectionDeleted;
-use Shopper\Events\Collections\CollectionDeleting;
-use Shopper\Events\Collections\CollectionSaved;
-use Shopper\Events\Collections\CollectionSaving;
-use Shopper\Facades\Blink;
-use Shopper\Facades\Blueprint;
-use Shopper\Facades\Entry;
-use Shopper\Facades\Site;
-use Shopper\Facades\Stache;
-use Shopper\Support\Arr;
-use Shopper\Support\Traits\FluentlyGetsAndSets;
 use Statamic\Contracts\Data\Augmentable as AugmentableContract;
 
-use function Shopper\trans as __;
+use function Cartino\trans as __;
 
-class Collection implements Arrayable, ArrayAccess, AugmentableContract, Contract
+class Category implements Arrayable, ArrayAccess, AugmentableContract, Contract
 {
     use ContainsCascadingData, ExistsAsFile, FluentlyGetsAndSets, HasAugmentedData;
 
@@ -278,7 +278,7 @@ class Collection implements Arrayable, ArrayAccess, AugmentableContract, Contrac
 
     public function save()
     {
-        $isNew = is_null(Facades\Collection::find($this->id()));
+        $isNew = is_null(Facades\Category::find($this->id()));
 
         $withEvents = $this->withEvents;
         $this->withEvents = true;
@@ -294,7 +294,7 @@ class Collection implements Arrayable, ArrayAccess, AugmentableContract, Contrac
             CollectionSaving::dispatch($this);
         }
 
-        Facades\Collection::save($this);
+        Facades\Category::save($this);
 
         Blink::forget('collection-handles');
         Blink::forget('mounted-collections');
@@ -319,7 +319,7 @@ class Collection implements Arrayable, ArrayAccess, AugmentableContract, Contrac
     {
         CollectionDeleting::dispatch($this);
 
-        Facades\Collection::delete($this);
+        Facades\Category::delete($this);
 
         CollectionDeleted::dispatch($this);
     }
@@ -388,11 +388,11 @@ class Collection implements Arrayable, ArrayAccess, AugmentableContract, Contrac
 
     public function offsetSet($key, $value): void
     {
-        throw new \Exception('Collection is immutable');
+        throw new \Exception('Category is immutable');
     }
 
     public function offsetUnset($key): void
     {
-        throw new \Exception('Collection is immutable');
+        throw new \Exception('Category is immutable');
     }
 }

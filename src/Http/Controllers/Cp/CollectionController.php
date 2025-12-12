@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Shopper\Http\Controllers\CP;
+namespace Cartino\Http\Controllers\CP;
 
+use Cartino\CP\Page;
+use Cartino\Http\Requests\CP\StoreCollectionRequest;
+use Cartino\Http\Requests\CP\UpdateCollectionRequest;
+use Cartino\Http\Resources\CP\CollectionResource;
+use Cartino\Models\Category;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Inertia\Response;
-use Shopper\CP\Page;
-use Shopper\Http\Requests\CP\StoreCollectionRequest;
-use Shopper\Http\Requests\CP\UpdateCollectionRequest;
-use Shopper\Http\Resources\CP\CollectionResource;
-use Shopper\Models\Collection;
 
-class CollectionController extends BaseController
+class CategoriesController extends BaseController
 {
     public function __construct()
     {
@@ -29,22 +29,22 @@ class CollectionController extends BaseController
     public function index(Request $request): Response
     {
         $this->addDashboardBreadcrumb()
-            ->addBreadcrumb('Catalog', 'shopper.catalog')
+            ->addBreadcrumb('Catalog', 'cartino.catalog')
             ->addBreadcrumb('Collections');
 
         $filters = $this->getFilters(['search', 'status', 'collection_type', 'created_at']);
 
-        $collections = Collection::query()
+        $collections = Category::query()
             ->withCount('products')
             ->when($filters, fn ($query) => $this->applyFilters($query, $filters))
             ->orderBy('title')
             ->paginate(request('per_page', 15));
 
         $page = Page::make('Collections')
-            ->primaryAction('Add collection', route('shopper.collections.create'))
+            ->primaryAction('Add collection', route('cartino.collections.create'))
             ->secondaryActions([
-                ['label' => 'Import', 'url' => route('shopper.collections.import')],
-                ['label' => 'Export', 'url' => route('shopper.collections.export')],
+                ['label' => 'Import', 'url' => route('cartino.collections.import')],
+                ['label' => 'Export', 'url' => route('cartino.collections.export')],
             ]);
 
         return $this->inertiaResponse('collections/Index', [
@@ -61,8 +61,8 @@ class CollectionController extends BaseController
     public function create(): Response
     {
         $this->addDashboardBreadcrumb()
-            ->addBreadcrumb('Catalog', 'shopper.catalog')
-            ->addBreadcrumb('Collections', 'shopper.collections.index')
+            ->addBreadcrumb('Catalog', 'cartino.catalog')
+            ->addBreadcrumb('Collections', 'cartino.collections.index')
             ->addBreadcrumb('Add collection');
 
         $page = Page::make('Add collection')
@@ -83,17 +83,17 @@ class CollectionController extends BaseController
      */
     public function store(StoreCollectionRequest $request): JsonResponse
     {
-        $collection = Collection::create($request->validated());
+        $collection = Category::create($request->validated());
 
         $action = $request->input('_action', 'save');
 
         $redirectUrl = match ($action) {
-            'save_continue' => route('shopper.collections.edit', $collection),
-            'save_add_another' => route('shopper.collections.create'),
-            default => route('shopper.collections.index'),
+            'save_continue' => route('cartino.collections.edit', $collection),
+            'save_add_another' => route('cartino.collections.create'),
+            default => route('cartino.collections.index'),
         };
 
-        return $this->successResponse('Collection created successfully', [
+        return $this->successResponse('Category created successfully', [
             'collection' => new CollectionResource($collection),
             'redirect' => $redirectUrl,
         ]);
@@ -102,17 +102,17 @@ class CollectionController extends BaseController
     /**
      * Display collection details.
      */
-    public function show(Collection $collection): Response
+    public function show(Category $collection): Response
     {
         $collection->load(['products' => fn ($query) => $query->limit(10)->latest()]);
 
         $this->addDashboardBreadcrumb()
-            ->addBreadcrumb('Catalog', 'shopper.catalog')
-            ->addBreadcrumb('Collections', 'shopper.collections.index')
+            ->addBreadcrumb('Catalog', 'cartino.catalog')
+            ->addBreadcrumb('Collections', 'cartino.collections.index')
             ->addBreadcrumb($collection->title);
 
         $page = Page::make($collection->title)
-            ->primaryAction('Edit collection', route('shopper.collections.edit', $collection))
+            ->primaryAction('Edit collection', route('cartino.collections.edit', $collection))
             ->secondaryActions([
                 ['label' => 'View in store', 'url' => $collection->url, 'target' => '_blank'],
                 ['label' => 'Duplicate', 'action' => 'duplicate'],
@@ -129,18 +129,18 @@ class CollectionController extends BaseController
     /**
      * Show edit form.
      */
-    public function edit(Collection $collection): Response
+    public function edit(Category $collection): Response
     {
         $this->addDashboardBreadcrumb()
-            ->addBreadcrumb('Catalog', 'shopper.catalog')
-            ->addBreadcrumb('Collections', 'shopper.collections.index')
-            ->addBreadcrumb($collection->title, route('shopper.collections.show', $collection))
+            ->addBreadcrumb('Catalog', 'cartino.catalog')
+            ->addBreadcrumb('Collections', 'cartino.collections.index')
+            ->addBreadcrumb($collection->title, route('cartino.collections.show', $collection))
             ->addBreadcrumb('Edit');
 
         $page = Page::make("Edit {$collection->title}")
             ->primaryAction('Update collection', null, ['form' => 'collection-form'])
             ->secondaryActions([
-                ['label' => 'View collection', 'url' => route('shopper.collections.show', $collection)],
+                ['label' => 'View collection', 'url' => route('cartino.collections.show', $collection)],
                 ['label' => 'View in store', 'url' => $collection->url, 'target' => '_blank'],
                 ['label' => 'Duplicate', 'action' => 'duplicate'],
                 ['label' => 'Delete', 'action' => 'delete', 'destructive' => true],
@@ -162,11 +162,11 @@ class CollectionController extends BaseController
     /**
      * Update collection.
      */
-    public function update(UpdateCollectionRequest $request, Collection $collection): JsonResponse
+    public function update(UpdateCollectionRequest $request, Category $collection): JsonResponse
     {
         $collection->update($request->validated());
 
-        return $this->successResponse('Collection updated successfully', [
+        return $this->successResponse('Category updated successfully', [
             'collection' => new CollectionResource($collection->fresh()),
         ]);
     }
@@ -174,11 +174,11 @@ class CollectionController extends BaseController
     /**
      * Delete collection.
      */
-    public function destroy(Collection $collection): JsonResponse
+    public function destroy(Category $collection): JsonResponse
     {
         $collection->delete();
 
-        return $this->successResponse('Collection deleted successfully');
+        return $this->successResponse('Category deleted successfully');
     }
 
     /**
@@ -196,7 +196,7 @@ class CollectionController extends BaseController
         $ids = $request->input('ids');
 
         return $this->handleBulkOperation($action, $ids, function ($action, $ids) {
-            $collections = Collection::whereIn('id', $ids);
+            $collections = Category::whereIn('id', $ids);
 
             return match ($action) {
                 'publish' => $collections->update(['status' => 'published']),
@@ -210,7 +210,7 @@ class CollectionController extends BaseController
     /**
      * Add products to collection.
      */
-    public function addProducts(Request $request, Collection $collection): JsonResponse
+    public function addProducts(Request $request, Category $collection): JsonResponse
     {
         $request->validate([
             'product_ids' => 'required|array|min:1',
@@ -229,7 +229,7 @@ class CollectionController extends BaseController
     /**
      * Remove products from collection.
      */
-    public function removeProducts(Request $request, Collection $collection): JsonResponse
+    public function removeProducts(Request $request, Category $collection): JsonResponse
     {
         $request->validate([
             'product_ids' => 'required|array|min:1',

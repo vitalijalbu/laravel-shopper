@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('type'); // payment, refund, capture, void
             $table->string('status'); // pending, completed, failed, cancelled
             $table->string('gateway'); // stripe, paypal, manual, etc
-            $table->string('gateway_reference')->nullable()->index(); // external transaction ID
+            $table->string('gateway_reference')->nullable(); // external transaction ID
             $table->decimal('amount', 15, 2);
             $table->char('currency_code', 3);
             $table->jsonb('gateway_data')->nullable(); // raw gateway response

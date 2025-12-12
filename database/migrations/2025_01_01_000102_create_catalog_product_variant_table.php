@@ -26,13 +26,13 @@ return new class extends Migration
             $table->jsonb('quantity_breaks')->nullable()->comment('Array of quantity break rules: [{"quantity": 10, "price": 9.99}, ...]');
 
             // Publishing control at variant level
-            $table->boolean('is_published')->default(true)->index();
+            $table->boolean('is_published')->default(true);
 
             // Timestamps
             $table->timestamps();
 
             // Custom fields data (JSON schema-based)
-            $table->jsonb('data')->nullable()->comment('Custom fields data based on JSON schema');
+            $table->jsonb('data')->nullable();
 
             // Indexes
             $table->unique(['catalog_id', 'product_variant_id']);

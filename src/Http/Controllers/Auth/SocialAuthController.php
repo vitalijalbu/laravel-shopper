@@ -1,7 +1,10 @@
 <?php
 
-namespace Shopper\Http\Controllers\Auth;
+namespace Cartino\Http\Controllers\Auth;
 
+use Cartino\Http\Controllers\Controller;
+use Cartino\Models\SocialAccount;
+use Cartino\Models\User;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -11,9 +14,6 @@ use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 use Laravel\Socialite\Facades\Socialite;
-use Shopper\Http\Controllers\Controller;
-use Shopper\Models\SocialAccount;
-use Shopper\Models\User;
 
 class SocialAuthController extends Controller
 {

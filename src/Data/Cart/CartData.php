@@ -1,9 +1,9 @@
 <?php
 
-namespace Shopper\Data\Cart;
+namespace Cartino\Data\Cart;
 
-use Shopper\Enums\CartStatus;
-use Shopper\Models\Cart;
+use Cartino\Enums\CartStatus;
+use Cartino\Models\Cart;
 
 class CartData
 {

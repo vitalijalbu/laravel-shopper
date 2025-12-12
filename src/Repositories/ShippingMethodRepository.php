@@ -1,11 +1,11 @@
 <?php
 
-namespace Shopper\Repositories;
+namespace Cartino\Repositories;
 
-use Illuminate\Database\Eloquent\Collection;
+use Cartino\Models\ShippingMethod;
+use Illuminate\Database\Eloquent\Category;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Shopper\Models\ShippingMethod;
 
 class ShippingMethodRepository extends BaseRepository
 {
@@ -19,7 +19,7 @@ class ShippingMethodRepository extends BaseRepository
     /**
      * Get paginated shipping methods with filters
      */
-    public function getPaginatedWithFilters(array $filters = [], int $perPage = 25): LengthAwarePaginator
+    public function findAll(array $filters = []): LengthAwarePaginator
     {
         $query = $this->model->newQuery()->with(['zones']);
 
@@ -60,7 +60,7 @@ class ShippingMethodRepository extends BaseRepository
     /**
      * Get enabled shipping methods
      */
-    public function getEnabled(): Collection
+    public function getEnabled(): Category
     {
         $cacheKey = $this->getCacheKey('enabled', '');
 
@@ -75,7 +75,7 @@ class ShippingMethodRepository extends BaseRepository
     /**
      * Get shipping methods available for location
      */
-    public function getAvailableForLocation(string $country, ?string $state = null): Collection
+    public function getAvailableForLocation(string $country, ?string $state = null): Category
     {
         $cacheKey = $this->getCacheKey('location', $country.'_'.$state);
 
@@ -144,7 +144,7 @@ class ShippingMethodRepository extends BaseRepository
     /**
      * Get carriers for filters
      */
-    public function getCarriers(): Collection
+    public function getCarriers(): Category
     {
         return $this->model->select('carrier')
             ->distinct()
@@ -232,7 +232,7 @@ class ShippingMethodRepository extends BaseRepository
     /**
      * Get available shipping zones
      */
-    public function getShippingZones(): \Illuminate\Support\Collection
+    public function getShippingZones(): \Illuminate\Support\Category
     {
         $cacheKey = $this->getCacheKey('shipping_zones', 'all');
 
@@ -254,7 +254,7 @@ class ShippingMethodRepository extends BaseRepository
     /**
      * Get available shipping types
      */
-    public function getShippingTypes(): \Illuminate\Support\Collection
+    public function getShippingTypes(): \Illuminate\Support\Category
     {
         return collect([
             [

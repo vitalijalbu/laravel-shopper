@@ -1,9 +1,13 @@
 <?php
 
-namespace Shopper\Enums;
+namespace Cartino\Enums;
+
+use Cartino\Helpers\EnumSerializable;
 
 enum OrderStatus: string
 {
+    use EnumSerializable;
+    
     case PENDING = 'pending';
     case CONFIRMED = 'confirmed';
     case PROCESSING = 'processing';
@@ -15,13 +19,13 @@ enum OrderStatus: string
     public function label(): string
     {
         return match ($this) {
-            self::PENDING => __('shopper::order.status.pending'),
-            self::CONFIRMED => __('shopper::order.status.confirmed'),
-            self::PROCESSING => __('shopper::order.status.processing'),
-            self::SHIPPED => __('shopper::order.status.shipped'),
-            self::DELIVERED => __('shopper::order.status.delivered'),
-            self::CANCELLED => __('shopper::order.status.cancelled'),
-            self::REFUNDED => __('shopper::order.status.refunded'),
+            self::PENDING => __('cartino::order.status.pending'),
+            self::CONFIRMED => __('cartino::order.status.confirmed'),
+            self::PROCESSING => __('cartino::order.status.processing'),
+            self::SHIPPED => __('cartino::order.status.shipped'),
+            self::DELIVERED => __('cartino::order.status.delivered'),
+            self::CANCELLED => __('cartino::order.status.cancelled'),
+            self::REFUNDED => __('cartino::order.status.refunded'),
         };
     }
 

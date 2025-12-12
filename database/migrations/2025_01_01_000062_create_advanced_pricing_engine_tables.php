@@ -14,14 +14,14 @@ return new class extends Migration
             $table->foreignId('product_id')->constrained()->cascadeOnDelete();
             $table->foreignId('variant_id')->nullable()->constrained('product_variants')->cascadeOnDelete();
             $table->foreignId('customer_group_id')->nullable()->constrained()->nullOnDelete();
-            $table->char('currency_code', 3)->index();
-            $table->integer('min_quantity')->default(1)->index();
+            $table->char('currency_code', 3);
+            $table->integer('min_quantity')->default(1);
             $table->integer('max_quantity')->nullable();
             $table->decimal('price', 15, 2);
             $table->decimal('discount_percentage', 5, 2)->nullable();
-            $table->timestamp('valid_from')->nullable()->index();
-            $table->timestamp('valid_until')->nullable()->index();
-            $table->boolean('is_active')->default(true)->index();
+            $table->timestamp('valid_from')->nullable();
+            $table->timestamp('valid_until')->nullable();
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
 
             $table->index(['product_id', 'customer_group_id', 'min_quantity']);
@@ -32,19 +32,19 @@ return new class extends Migration
         // Dynamic pricing rules engine
         Schema::create('pricing_rules', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('site_id')->nullable()->index();
+            $table->unsignedBigInteger('site_id')->nullable();
             $table->string('name');
             $table->text('description')->nullable();
-            $table->enum('type', ['percentage', 'fixed', 'bulk', 'tiered', 'bogo', 'conditional'])->index();
+            $table->enum('type', ['percentage', 'fixed', 'bulk', 'tiered', 'bogo', 'conditional']);
             $table->jsonb('conditions'); // Complex rule conditions
             $table->jsonb('actions'); // Rule actions to apply
-            $table->integer('priority')->default(0)->index(); // Higher number = higher priority
+            $table->integer('priority')->default(0); // Higher number = higher priority
             $table->integer('usage_limit')->nullable();
             $table->integer('usage_count')->default(0);
-            $table->boolean('is_active')->default(true)->index();
+            $table->boolean('is_active')->default(true);
             $table->boolean('applies_to_all_products')->default(false);
-            $table->timestamp('valid_from')->nullable()->index();
-            $table->timestamp('valid_until')->nullable()->index();
+            $table->timestamp('valid_from')->nullable();
+            $table->timestamp('valid_until')->nullable();
             $table->timestamps();
 
             $table->index(['site_id', 'is_active', 'priority']);
@@ -86,7 +86,7 @@ return new class extends Migration
             $table->decimal('discounted_amount', 15, 2);
             $table->decimal('discount_amount', 15, 2);
             $table->jsonb('applied_products'); // Products affected
-            $table->timestamp('applied_at')->index();
+            $table->timestamp('applied_at');
 
             $table->index(['pricing_rule_id', 'applied_at']);
             $table->index(['customer_id', 'applied_at']);

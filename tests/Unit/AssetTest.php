@@ -2,8 +2,8 @@
 
 namespace Tests\Unit;
 
+use Cartino\Support\Asset;
 use Illuminate\Support\Facades\File;
-use Shopper\Support\Asset;
 use Tests\TestCase;
 
 class AssetTest extends TestCase
@@ -19,28 +19,28 @@ class AssetTest extends TestCase
             ],
         ];
 
-        $manifestPath = public_path('vendor/shopper/.vite/manifest.json');
+        $manifestPath = public_path('vendor/cartino/.vite/manifest.json');
         File::shouldReceive('exists')->with($manifestPath)->andReturn(true);
         File::shouldReceive('get')->with($manifestPath)->andReturn(json_encode($manifestContent));
 
         $url = Asset::url('resources/js/app.js');
 
-        $this->assertEquals(asset('vendor/shopper/assets/app-B0iDKKsX.js'), $url);
+        $this->assertEquals(asset('vendor/cartino/assets/app-B0iDKKsX.js'), $url);
     }
 
     public function test_asset_url_without_manifest()
     {
-        $manifestPath = public_path('vendor/shopper/.vite/manifest.json');
+        $manifestPath = public_path('vendor/cartino/.vite/manifest.json');
         File::shouldReceive('exists')->with($manifestPath)->andReturn(false);
 
         $url = Asset::url('resources/js/app.js');
 
-        $this->assertEquals(asset('vendor/shopper/resources/js/app.js'), $url);
+        $this->assertEquals(asset('vendor/cartino/resources/js/app.js'), $url);
     }
 
     public function test_is_built_returns_true_when_manifest_exists()
     {
-        $manifestPath = public_path('vendor/shopper/.vite/manifest.json');
+        $manifestPath = public_path('vendor/cartino/.vite/manifest.json');
         File::shouldReceive('exists')->with($manifestPath)->andReturn(true);
 
         $this->assertTrue(Asset::isBuilt());
@@ -48,7 +48,7 @@ class AssetTest extends TestCase
 
     public function test_is_built_returns_false_when_manifest_not_exists()
     {
-        $manifestPath = public_path('vendor/shopper/.vite/manifest.json');
+        $manifestPath = public_path('vendor/cartino/.vite/manifest.json');
         File::shouldReceive('exists')->with($manifestPath)->andReturn(false);
 
         $this->assertFalse(Asset::isBuilt());
@@ -69,7 +69,7 @@ class AssetTest extends TestCase
             ],
         ];
 
-        $manifestPath = public_path('vendor/shopper/.vite/manifest.json');
+        $manifestPath = public_path('vendor/cartino/.vite/manifest.json');
         File::shouldReceive('exists')->with($manifestPath)->andReturn(true);
         File::shouldReceive('get')->with($manifestPath)->andReturn(json_encode($manifestContent));
 
@@ -90,7 +90,7 @@ class AssetTest extends TestCase
             ],
         ];
 
-        $manifestPath = public_path('vendor/shopper/.vite/manifest.json');
+        $manifestPath = public_path('vendor/cartino/.vite/manifest.json');
         File::shouldReceive('exists')->with($manifestPath)->andReturn(true);
         File::shouldReceive('get')->with($manifestPath)->andReturn(json_encode($manifestContent));
 

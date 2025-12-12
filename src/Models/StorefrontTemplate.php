@@ -1,12 +1,12 @@
 <?php
 
-namespace Shopper\Models;
+namespace Cartino\Models;
 
+use Cartino\Support\HasSite;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Shopper\Support\HasSite;
 
 class StorefrontTemplate extends Model
 {

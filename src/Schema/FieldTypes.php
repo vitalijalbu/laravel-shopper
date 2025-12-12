@@ -1,6 +1,6 @@
 <?php
 
-namespace Shopper\Schema;
+namespace Cartino\Schema;
 
 class TextFieldType extends FieldType
 {

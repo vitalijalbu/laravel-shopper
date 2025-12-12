@@ -1,14 +1,14 @@
 <?php
 
-namespace Shopper\Http\Controllers\Api\Admin;
+namespace Cartino\Http\Controllers\Api\Admin;
 
+use Cartino\Http\Controllers\Api\ApiController;
+use Cartino\Models\ProductType;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
-use Shopper\Http\Controllers\Api\ApiController;
-use Shopper\Models\ProductType;
 
 class ProductTypeController extends ApiController
 {

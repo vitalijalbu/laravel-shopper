@@ -1,6 +1,6 @@
 <?php
 
-namespace Shopper\Traits;
+namespace Cartino\Traits;
 
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;

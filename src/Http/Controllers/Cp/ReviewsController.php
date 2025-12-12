@@ -1,18 +1,18 @@
 <?php
 
-namespace Shopper\Http\Controllers\Cp;
+namespace Cartino\Http\Controllers\CP;
 
+use Cartino\CP\Page;
+use Cartino\Http\Controllers\Controller;
+use Cartino\Models\Product;
+use Cartino\Models\ProductReview;
+use Cartino\Traits\ApiResponseTrait;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
-use Shopper\CP\Page;
-use Shopper\Http\Controllers\Controller;
-use Shopper\Models\Product;
-use Shopper\Models\ProductReview;
-use Shopper\Traits\ApiResponseTrait;
 
 class ReviewsController extends Controller
 {

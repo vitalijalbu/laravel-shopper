@@ -1,15 +1,15 @@
 <?php
 
-namespace Shopper\Http\Controllers\Cp;
+namespace Cartino\Http\Controllers\CP;
 
+use Cartino\CP\Page;
+use Cartino\Http\Controllers\Controller;
+use Cartino\Http\Requests\StoreProductTypeRequest;
+use Cartino\Http\Requests\UpdateProductTypeRequest;
+use Cartino\Http\Resources\ProductTypeResource;
+use Cartino\Models\ProductType;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Shopper\CP\Page;
-use Shopper\Http\Controllers\Controller;
-use Shopper\Http\Requests\StoreProductTypeRequest;
-use Shopper\Http\Requests\UpdateProductTypeRequest;
-use Shopper\Http\Resources\ProductTypeResource;
-use Shopper\Models\ProductType;
 
 class ProductTypesController extends Controller
 {

@@ -1,8 +1,8 @@
 <?php
 
-namespace Shopper\CP;
+namespace Cartino\CP;
 
-use Illuminate\Support\Collection;
+use Illuminate\Support\Category;
 
 class Dashboard
 {
@@ -53,7 +53,7 @@ class Dashboard
     /**
      * Get all dashboard cards
      */
-    public static function cards(): Collection
+    public static function cards(): Category
     {
         return collect(static::$cards)
             ->sortBy('order')
@@ -63,7 +63,7 @@ class Dashboard
     /**
      * Get all quick actions
      */
-    public static function quickActions(): Collection
+    public static function quickActions(): Category
     {
         return collect(static::$quickActions);
     }
@@ -71,7 +71,7 @@ class Dashboard
     /**
      * Get all metrics
      */
-    public static function metrics(): Collection
+    public static function metrics(): Category
     {
         return collect(static::$metrics)->map(function ($metric) {
             $metric['value'] = is_callable($metric['value'])
@@ -99,7 +99,7 @@ class Dashboard
     /**
      * Get recent orders
      */
-    protected static function getRecentOrders(): Collection
+    protected static function getRecentOrders(): Category
     {
         return collect(); // Will be implemented with Order model
     }

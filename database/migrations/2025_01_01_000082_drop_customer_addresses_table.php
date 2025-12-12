@@ -8,12 +8,12 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::dropIfExists('customer_addresses');
+        Schema::dropIfExists('addresses');
     }
 
     public function down(): void
     {
-        Schema::create('customer_addresses', function (Blueprint $table) {
+        Schema::create('addresses', function (Blueprint $table) {
             $table->id();
             $table->foreignId('customer_id')->constrained('customers')->cascadeOnDelete();
             $table->string('type')->default('shipping');

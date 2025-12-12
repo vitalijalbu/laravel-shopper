@@ -1,11 +1,11 @@
 <?php
 
-namespace Shopper\Http\Requests;
+namespace Cartino\Http\Requests;
 
+use Cartino\Enums\CustomerStatus;
+use Cartino\Enums\Gender;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
-use Shopper\Enums\CustomerStatus;
-use Shopper\Enums\Gender;
 
 class UpdateCustomerRequest extends FormRequest
 {

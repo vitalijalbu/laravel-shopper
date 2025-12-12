@@ -1,19 +1,19 @@
 <?php
 
-namespace Shopper\Http\Controllers\Api;
+namespace Cartino\Http\Controllers\Api;
 
+use Cartino\Http\Requests\Api\StoreChannelRequest;
+use Cartino\Http\Requests\Api\UpdateChannelRequest;
+use Cartino\Http\Resources\ChannelResource;
+use Cartino\Models\Channel;
+use Cartino\Repositories\ChannelRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Shopper\Http\Requests\Api\StoreChannelRequest;
-use Shopper\Http\Requests\Api\UpdateChannelRequest;
-use Shopper\Http\Resources\ChannelResource;
-use Shopper\Models\Channel;
-use Shopper\Repositories\ChannelRepository;
 
 class ChannelController extends ApiController
 {
     public function __construct(
-        private readonly ChannelRepository $channelRepository
+        private readonly ChannelRepository $repository
     ) {}
 
     /**
@@ -21,10 +21,9 @@ class ChannelController extends ApiController
      */
     public function index(Request $request): JsonResponse
     {
-        $filters = $request->only(['search', 'is_default', 'is_active']);
-        $perPage = $request->get('per_page', 25);
+        $filters = $request->all();
 
-        $channels = $this->channelRepository->getPaginatedWithFilters($filters, $perPage);
+        $channels = $this->repository->findAll($filters);
 
         return $this->paginatedResponse($channels);
     }
@@ -35,7 +34,7 @@ class ChannelController extends ApiController
     public function store(StoreChannelRequest $request): JsonResponse
     {
         try {
-            $channel = $this->channelRepository->create($request->validated());
+            $channel = $this->repository->create($request->validated());
 
             return $this->created(new ChannelResource($channel), 'Channel creato con successo');
         } catch (\Exception $e) {
@@ -57,7 +56,7 @@ class ChannelController extends ApiController
     public function update(UpdateChannelRequest $request, Channel $channel): JsonResponse
     {
         try {
-            $updatedChannel = $this->channelRepository->update($channel->id, $request->validated());
+            $updatedChannel = $this->repository->update($channel->id, $request->validated());
 
             return $this->successResponse(new ChannelResource($updatedChannel), 'Channel aggiornato con successo');
         } catch (\Exception $e) {
@@ -71,11 +70,11 @@ class ChannelController extends ApiController
     public function destroy(Channel $channel): JsonResponse
     {
         try {
-            if (! $this->channelRepository->canDelete($channel->id)) {
+            if (! $this->repository->canDelete($channel->id)) {
                 return $this->errorResponse('Impossibile eliminare il channel: è quello di default o ha prodotti/ordini associati', 422);
             }
 
-            $this->channelRepository->delete($channel->id);
+            $this->repository->delete($channel->id);
 
             return $this->successResponse(null, 'Channel eliminato con successo');
         } catch (\Exception $e) {
@@ -89,7 +88,7 @@ class ChannelController extends ApiController
     public function toggleStatus(Channel $channel): JsonResponse
     {
         try {
-            $updatedChannel = $this->channelRepository->toggleStatus($channel->id);
+            $updatedChannel = $this->repository->toggleStatus($channel->id);
 
             return $this->successResponse(new ChannelResource($updatedChannel), 'Stato del channel aggiornato');
         } catch (\Exception $e) {
@@ -103,7 +102,7 @@ class ChannelController extends ApiController
     public function setDefault(Channel $channel): JsonResponse
     {
         try {
-            $updatedChannel = $this->channelRepository->setAsDefault($channel->id);
+            $updatedChannel = $this->repository->setAsDefault($channel->id);
 
             return $this->successResponse(new ChannelResource($updatedChannel), 'Channel impostato come default');
         } catch (\Exception $e) {
@@ -116,7 +115,7 @@ class ChannelController extends ApiController
      */
     public function select(): JsonResponse
     {
-        $channels = $this->channelRepository->getActive();
+        $channels = $this->repository->getActive();
 
         return $this->successResponse($channels->map(fn ($channel) => [
             'id' => $channel->id,
@@ -140,12 +139,12 @@ class ChannelController extends ApiController
         try {
             switch ($action) {
                 case 'activate':
-                    $count = $this->channelRepository->bulkUpdateStatus($ids, true);
+                    $count = $this->repository->bulkUpdateStatus($ids, true);
 
                     return $this->bulkActionResponse('attivazione', $count);
 
                 case 'deactivate':
-                    $count = $this->channelRepository->bulkUpdateStatus($ids, false);
+                    $count = $this->repository->bulkUpdateStatus($ids, false);
 
                     return $this->bulkActionResponse('disattivazione', $count);
 
@@ -154,8 +153,8 @@ class ChannelController extends ApiController
                     $deleted = 0;
 
                     foreach ($ids as $id) {
-                        if ($this->channelRepository->canDelete($id)) {
-                            $this->channelRepository->delete($id);
+                        if ($this->repository->canDelete($id)) {
+                            $this->repository->delete($id);
                             $deleted++;
                         } else {
                             $errors[] = "Channel ID {$id} non può essere eliminato";

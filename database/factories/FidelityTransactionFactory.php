@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Database\Factories\Shopper\Models;
+namespace Database\Factories\Cartino\Models;
 
+use Cartino\Models\FidelityCard;
+use Cartino\Models\FidelityTransaction;
+use Cartino\Models\Order;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Shopper\Models\FidelityCard;
-use Shopper\Models\FidelityTransaction;
-use Shopper\Models\Order;
 
 class FidelityTransactionFactory extends Factory
 {

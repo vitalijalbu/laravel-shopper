@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Shopper\Pricing;
+namespace Cartino\Pricing;
 
-use Illuminate\Support\Collection;
+use Illuminate\Support\Category;
 
 class PriceResult
 {
     public function __construct(
         public float $originalPrice,
         public float $finalPrice,
-        public Collection $appliedRules,
+        public Category $appliedRules,
         public int $quantity = 1
     ) {}
 

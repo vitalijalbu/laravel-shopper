@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Shopper\Pricing;
+namespace Cartino\Pricing;
 
-use Shopper\Models\Customer;
-use Shopper\Models\Product;
-use Shopper\Pricing\Rules\PricingRuleInterface;
+use Cartino\Models\Customer;
+use Cartino\Models\Product;
+use Cartino\Pricing\Rules\PricingRuleInterface;
 
 class DynamicPricingRule implements PricingRuleInterface
 {

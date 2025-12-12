@@ -1,14 +1,14 @@
 <?php
 
-namespace Shopper\Http\Controllers\Api;
+namespace Cartino\Http\Controllers\Api;
 
+use Cartino\Http\Requests\Api\BulkOrderActionRequest;
+use Cartino\Http\Requests\Api\MarkOrderAsShippedRequest;
+use Cartino\Http\Requests\Api\StoreOrderRequest;
+use Cartino\Http\Requests\Api\UpdateOrderRequest;
+use Cartino\Repositories\OrderRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Shopper\Http\Requests\Api\BulkOrderActionRequest;
-use Shopper\Http\Requests\Api\MarkOrderAsShippedRequest;
-use Shopper\Http\Requests\Api\StoreOrderRequest;
-use Shopper\Http\Requests\Api\UpdateOrderRequest;
-use Shopper\Repositories\OrderRepository;
 
 class OrderController extends ApiController
 {
@@ -24,7 +24,7 @@ class OrderController extends ApiController
         $filters = $request->only(['search', 'status', 'payment_status', 'fulfillment_status', 'customer_id', 'date_from', 'date_to']);
         $perPage = $request->get('per_page', 25);
 
-        $orders = $this->orderRepository->getPaginatedWithFilters($filters, $perPage);
+        $orders = $this->orderRepository->findAll($filters, $perPage);
 
         return $this->paginatedResponse($orders);
     }

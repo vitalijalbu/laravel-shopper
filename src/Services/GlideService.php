@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Shopper\Services;
+namespace Cartino\Services;
 
+use Cartino\Models\Asset;
+use Cartino\Models\AssetTransformation;
 use Illuminate\Support\Facades\Storage;
 use League\Glide\Server;
 use League\Glide\ServerFactory;
-use Shopper\Models\Asset;
-use Shopper\Models\AssetTransformation;
 
 class GlideService
 {

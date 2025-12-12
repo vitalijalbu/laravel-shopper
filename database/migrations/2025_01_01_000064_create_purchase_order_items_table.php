@@ -32,7 +32,7 @@ return new class extends Migration
             $table->string('supplier_name')->nullable(); // Product name from supplier
 
             // Receiving tracking
-            $table->string('status')->default('pending')->index(); // pending, partial, received, cancelled
+            $table->string('status')->default('pending'); // pending, partial, received, cancelled
             $table->jsonb('received_batches')->nullable(); // Track multiple receives
             $table->timestamp('first_received_at')->nullable();
             $table->timestamp('fully_received_at')->nullable();

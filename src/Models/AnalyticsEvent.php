@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Shopper\Models;
+namespace Cartino\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;

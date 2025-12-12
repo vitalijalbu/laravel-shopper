@@ -1,9 +1,9 @@
 <?php
 
-namespace Shopper\DataTable;
+namespace Cartino\DataTable;
 
+use Cartino\Models\Customer;
 use Illuminate\Database\Eloquent\Builder;
-use Shopper\Models\Customer;
 
 class CustomerDataTable extends BaseDataTable
 {

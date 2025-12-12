@@ -1,12 +1,12 @@
 <?php
 
-namespace Shopper\Http\Controllers\Cp;
+namespace Cartino\Http\Controllers\CP;
 
+use Cartino\Http\Requests\UserPreferenceRequest;
+use Cartino\Models\UserPreference;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
-use Shopper\Http\Requests\UserPreferenceRequest;
-use Shopper\Models\UserPreference;
 
 class UserPreferenceController extends Controller
 {

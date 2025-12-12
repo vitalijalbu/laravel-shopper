@@ -1,15 +1,15 @@
 <?php
 
-namespace Shopper\Http\Controllers\Cp;
+namespace Cartino\Http\Controllers\CP;
 
+use Cartino\CP\Page;
+use Cartino\Http\Controllers\Controller;
+use Cartino\Models\ShippingMethod;
+use Cartino\Repositories\ShippingMethodRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
-use Shopper\CP\Page;
-use Shopper\Http\Controllers\Controller;
-use Shopper\Models\ShippingMethod;
-use Shopper\Repositories\ShippingMethodRepository;
 
 class ShippingMethodsController extends Controller
 {
@@ -32,7 +32,7 @@ class ShippingMethodsController extends Controller
 
         $filters = $request->only(['search', 'is_enabled', 'type', 'zone', 'sort', 'direction', 'page']);
 
-        $shippingMethods = $this->shippingMethodRepository->getPaginatedWithFilters($filters, 25);
+        $shippingMethods = $this->shippingMethodRepository->findAll($filters, 25);
         $zones = $this->shippingMethodRepository->getShippingZones();
         $types = $this->shippingMethodRepository->getShippingTypes();
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Shopper\Enums;
+namespace Cartino\Enums;
 
 enum StockNotificationStatus: string
 {
@@ -13,11 +13,11 @@ enum StockNotificationStatus: string
     public function label(): string
     {
         return match ($this) {
-            self::PENDING => __('shopper::stock_notification.status.pending'),
-            self::SENDING => __('shopper::stock_notification.status.sending'),
-            self::SENT => __('shopper::stock_notification.status.sent'),
-            self::FAILED => __('shopper::stock_notification.status.failed'),
-            self::CANCELLED => __('shopper::stock_notification.status.cancelled'),
+            self::PENDING => __('cartino::stock_notification.status.pending'),
+            self::SENDING => __('cartino::stock_notification.status.sending'),
+            self::SENT => __('cartino::stock_notification.status.sent'),
+            self::FAILED => __('cartino::stock_notification.status.failed'),
+            self::CANCELLED => __('cartino::stock_notification.status.cancelled'),
         };
     }
 

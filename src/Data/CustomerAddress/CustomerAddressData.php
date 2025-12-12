@@ -1,6 +1,6 @@
 <?php
 
-namespace Shopper\Data\CustomerAddress;
+namespace Cartino\Data\CustomerAddress;
 
 class CustomerAddressData
 {
@@ -23,7 +23,7 @@ class CustomerAddressData
         public ?string $updated_at,
     ) {}
 
-    public static function fromModel(\Shopper\Models\CustomerAddress $address): self
+    public static function fromModel(\Cartino\Models\CustomerAddress $address): self
     {
         return new self(
             id: $address->id,

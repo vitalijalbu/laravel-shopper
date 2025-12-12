@@ -1,8 +1,8 @@
 <?php
 
-namespace Shopper\CP;
+namespace Cartino\CP;
 
-use Illuminate\Support\Collection;
+use Illuminate\Support\Category;
 
 class NavigationSection
 {
@@ -57,9 +57,9 @@ class NavigationSection
     /**
      * Get items for this section
      */
-    public function items(): Collection
+    public function items(): Category
     {
-        return collect(\Shopper\CP\Navigation::$items ?? [])
+        return collect(\Cartino\CP\Navigation::$items ?? [])
             ->filter(fn ($item) => $item->section === $this->name);
     }
 

@@ -1,7 +1,11 @@
 <?php
 
-namespace Shopper\Jobs;
+namespace Cartino\Jobs;
 
+use Cartino\Models\Order;
+use Cartino\Services\CacheService;
+use Cartino\Services\InventoryService;
+use Cartino\Services\NotificationService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -9,10 +13,6 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Shopper\Models\Order;
-use Shopper\Services\CacheService;
-use Shopper\Services\InventoryService;
-use Shopper\Services\NotificationService;
 
 class ProcessOrderJob implements ShouldQueue
 {

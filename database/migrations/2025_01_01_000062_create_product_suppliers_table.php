@@ -30,8 +30,8 @@ return new class extends Migration
             $table->string('barcode')->nullable();
 
             // Status and preferences
-            $table->boolean('is_primary')->default(false)->index(); // Primary supplier for this product
-            $table->string('status')->default('active')->index(); // active, inactive, discontinued
+            $table->boolean('is_primary')->default(false); // Primary supplier for this product
+            $table->string('status')->default('active'); // active, inactive, discontinued
             $table->integer('priority')->default(0); // Sourcing priority
 
             // Quality and delivery tracking

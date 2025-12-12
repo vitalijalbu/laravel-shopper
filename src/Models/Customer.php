@@ -2,8 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Shopper\Models;
+namespace Cartino\Models;
 
+use Cartino\Traits\HasCustomFields;
+use Cartino\Traits\HasOptimizedFilters;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -13,8 +15,6 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Shopper\Traits\HasCustomFields;
-use Shopper\Traits\HasOptimizedFilters;
 
 class Customer extends Authenticatable
 {
@@ -210,7 +210,7 @@ class Customer extends Authenticatable
 
     public function addFidelityPoints(int $points, ?string $reason = null, ?int $orderId = null): ?FidelityTransaction
     {
-        if (! config('shopper.fidelity.enabled')) {
+        if (! config('cartino.fidelity.enabled')) {
             return null;
         }
 
@@ -221,7 +221,7 @@ class Customer extends Authenticatable
 
     public function redeemFidelityPoints(int $points, ?string $reason = null, ?int $orderId = null): ?FidelityTransaction
     {
-        if (! config('shopper.fidelity.enabled') || ! $this->fidelityCard) {
+        if (! config('cartino.fidelity.enabled') || ! $this->fidelityCard) {
             return null;
         }
 
@@ -235,7 +235,7 @@ class Customer extends Authenticatable
 
     public function processOrderForFidelity(Order $order): ?FidelityTransaction
     {
-        if (! config('shopper.fidelity.points.enabled')) {
+        if (! config('cartino.fidelity.points.enabled')) {
             return null;
         }
 

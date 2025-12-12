@@ -14,17 +14,17 @@ return new class extends Migration
             $table->foreignId('order_id')->constrained()->cascadeOnDelete();
             $table->foreignId('location_id')->constrained('inventory_locations')->cascadeOnDelete();
             $table->string('fulfillment_number')->unique(); // FUL-XXXXXX
-            $table->enum('status', ['pending', 'in_progress', 'shipped', 'delivered', 'failed', 'cancelled'])->default('pending')->index();
-            $table->string('tracking_number')->nullable()->index();
+            $table->enum('status', ['pending', 'in_progress', 'shipped', 'delivered', 'failed', 'cancelled'])->default('pending');
+            $table->string('tracking_number')->nullable();
             $table->string('tracking_company')->nullable();
             $table->string('tracking_url')->nullable();
             $table->jsonb('shipping_address');
             $table->decimal('shipping_cost', 15, 2)->default(0);
             $table->string('shipping_method')->nullable();
             $table->text('notes')->nullable();
-            $table->timestamp('shipped_at')->nullable()->index();
+            $table->timestamp('shipped_at')->nullable();
             $table->timestamp('estimated_delivery')->nullable();
-            $table->timestamp('delivered_at')->nullable()->index();
+            $table->timestamp('delivered_at')->nullable();
             $table->jsonb('metadata')->nullable(); // Carrier-specific data
             $table->timestamps();
 
@@ -51,14 +51,14 @@ return new class extends Migration
             $table->foreignId('order_id')->constrained()->cascadeOnDelete();
             $table->foreignId('customer_id')->nullable()->constrained()->nullOnDelete();
             $table->string('return_number')->unique(); // RET-XXXXXX
-            $table->enum('status', ['requested', 'approved', 'rejected', 'in_transit', 'received', 'processed', 'refunded'])->default('requested')->index();
-            $table->enum('reason', ['defective', 'wrong_item', 'not_as_described', 'changed_mind', 'damaged', 'other'])->index();
+            $table->enum('status', ['requested', 'approved', 'rejected', 'in_transit', 'received', 'processed', 'refunded'])->default('requested');
+            $table->enum('reason', ['defective', 'wrong_item', 'not_as_described', 'changed_mind', 'damaged', 'other']);
             $table->text('customer_notes')->nullable();
             $table->text('admin_notes')->nullable();
             $table->decimal('refund_amount', 15, 2)->default(0);
             $table->boolean('restockable')->default(true);
             $table->string('tracking_number')->nullable(); // Return shipping
-            $table->timestamp('requested_at')->index();
+            $table->timestamp('requested_at');
             $table->timestamp('approved_at')->nullable();
             $table->timestamp('received_at')->nullable();
             $table->timestamp('processed_at')->nullable();

@@ -1,11 +1,11 @@
 <?php
 
-namespace Shopper\Repositories;
+namespace Cartino\Repositories;
 
-use Illuminate\Database\Eloquent\Collection;
+use Cartino\Models\StockNotification;
+use Illuminate\Database\Eloquent\Category;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Shopper\Models\StockNotification;
 
 class StockNotificationRepository extends BaseRepository
 {
@@ -19,7 +19,7 @@ class StockNotificationRepository extends BaseRepository
     /**
      * Get paginated stock notifications with filters
      */
-    public function getPaginatedWithFilters(array $filters = [], int $perPage = 25): LengthAwarePaginator
+    public function findAll(array $filters = []): LengthAwarePaginator
     {
         $query = $this->model->newQuery()->with(['customer']);
 
@@ -83,7 +83,7 @@ class StockNotificationRepository extends BaseRepository
     /**
      * Get pending notifications for a product
      */
-    public function getPendingForProduct(string $productType, int $productId, ?array $variantData = null): Collection
+    public function getPendingForProduct(string $productType, int $productId, ?array $variantData = null): Category
     {
         $query = $this->model->where('status', 'pending')
             ->where('product_type', $productType)
@@ -152,7 +152,7 @@ class StockNotificationRepository extends BaseRepository
     /**
      * Get notifications by customer
      */
-    public function getByCustomer(int $customerId, ?string $status = null): Collection
+    public function getByCustomer(int $customerId, ?string $status = null): Category
     {
         $cacheKey = $this->getCacheKey('customer', $customerId.'_'.$status);
 
@@ -228,7 +228,7 @@ class StockNotificationRepository extends BaseRepository
     /**
      * Get top requested products
      */
-    public function getTopRequestedProducts(int $limit = 10, int $days = 30): Collection
+    public function getTopRequestedProducts(int $limit = 10, int $days = 30): Category
     {
         $startDate = now()->subDays($days);
 
@@ -259,7 +259,7 @@ class StockNotificationRepository extends BaseRepository
     /**
      * Get duplicate notifications
      */
-    public function getDuplicates(int $customerId, string $productType, int $productId, ?array $variantData = null): Collection
+    public function getDuplicates(int $customerId, string $productType, int $productId, ?array $variantData = null): Category
     {
         $query = $this->model->where('customer_id', $customerId)
             ->where('product_type', $productType)

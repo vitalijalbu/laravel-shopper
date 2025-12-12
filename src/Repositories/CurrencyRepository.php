@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Shopper\Repositories;
+namespace Cartino\Repositories;
 
-use Illuminate\Database\Eloquent\Collection;
+use Cartino\Models\Currency;
+use Illuminate\Database\Eloquent\Category;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Shopper\Models\Currency;
 
 class CurrencyRepository extends BaseRepository
 {
@@ -18,7 +18,7 @@ class CurrencyRepository extends BaseRepository
         return new Currency;
     }
 
-    public function getPaginatedWithFilters(array $filters = [], int $perPage = 25): LengthAwarePaginator
+    public function findAll(array $filters = []): LengthAwarePaginator
     {
         $query = $this->model->newQuery();
 
@@ -38,7 +38,7 @@ class CurrencyRepository extends BaseRepository
         return $query->orderBy('name')->paginate($perPage);
     }
 
-    public function getEnabled(): Collection
+    public function getEnabled(): Category
     {
         return \Illuminate\Support\Facades\Cache::remember($this->getCacheKey('enabled', 'all'), $this->cacheTtl, function () {
             return $this->model->where('is_enabled', true)->orderBy('name')->get();

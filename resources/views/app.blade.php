@@ -10,23 +10,25 @@
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=inter:400,500,600&display=swap" rel="stylesheet" />
 
-    <!-- Shopper Global Configuration -->
+    <!-- Cartino Global Configuration -->
     <script>
-        window.ShopperConfig = {
-            locale: '{{ app()->getLocale() }}',
-            translations: @json(file_exists(resource_path('lang/' . app()->getLocale() . '/shopper.php')) ? trans('shopper', [], app()->getLocale()) : []),
-            csrf_token: '{{ csrf_token() }}',
-            app_url: '{{ config('app.url') }}',
-            timezone: '{{ config('app.timezone') }}',
-            currency: '{{ config('shopper.currency', 'USD') }}',
+        window.CartinoConfig = {
+            locale: @json(app()->getLocale()),
+            translations: {},
+            csrf_token: @json(csrf_token()),
+            app_url: @json(config('app.url')),
+            timezone: @json(config('app.timezone')),
+            currency: @json(config('cartino.currency', 'EUR')),
         };
     </script>
 
-    @if(\Shopper\Support\Asset::isBuilt())
-        {!! \Shopper\Support\Asset::styles() !!}
-        {!! \Shopper\Support\Asset::scripts() !!}
+    @if(\Cartino\Support\Asset::isBuilt())
+        {!! \Cartino\Support\Asset::styles() !!}
+        {!! \Cartino\Support\Asset::scripts() !!}
     @else
-        @vite(['resources/js/app.js', 'resources/css/app.css'])
+        {{-- In development mode, Vite dev server must be running in the sandbox app (cartino-test) --}}
+        {{-- The sandbox vite.config.js includes '../cartino/resources/js/app.js' as input --}}
+        @vite(['../cartino/resources/js/app.js'])
     @endif
     @inertiaHead
 </head>

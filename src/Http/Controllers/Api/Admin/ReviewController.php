@@ -1,15 +1,15 @@
 <?php
 
-namespace Shopper\Http\Controllers\Api\Admin;
+namespace Cartino\Http\Controllers\Api\Admin;
 
+use Cartino\Http\Controllers\Api\ApiController;
+use Cartino\Models\Product;
+use Cartino\Models\ProductReview;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
-use Shopper\Http\Controllers\Api\ApiController;
-use Shopper\Models\Product;
-use Shopper\Models\ProductReview;
 
 class ReviewController extends ApiController
 {

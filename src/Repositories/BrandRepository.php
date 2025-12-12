@@ -2,12 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Shopper\Repositories;
+namespace Cartino\Repositories;
 
-use Illuminate\Database\Eloquent\Collection;
+use Cartino\Models\Brand;
+use Illuminate\Database\Eloquent\Category;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Shopper\Models\Brand;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class BrandRepository extends BaseRepository
 {
@@ -19,75 +20,26 @@ class BrandRepository extends BaseRepository
     }
 
     /**
-     * Get paginated brands with filters
+     * Get paginated data with filters
      */
-    public function getPaginatedWithFilters(array $filters = [], int $perPage = 25): LengthAwarePaginator
+    public function findAll(array $filters = []): LengthAwarePaginator
     {
-        $query = $this->model->newQuery();
-
-        // Search filter
-        if (! empty($filters['search'])) {
-            $search = $filters['search'];
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                    ->orWhere('slug', 'like', "%{$search}%")
-                    ->orWhere('description', 'like', "%{$search}%");
-            });
-        }
-
-        // Featured filter
-        if (isset($filters['is_featured'])) {
-            $query->where('is_featured', $filters['is_featured']);
-        }
-
-        // Status filter
-        if (! empty($filters['status'])) {
-            $query->where('status', $filters['status']);
-        }
-
-        // Sorting
-        $sortField = $filters['sort'] ?? 'name';
-        $sortDirection = $filters['direction'] ?? 'asc';
-
-        $query->orderBy($sortField, $sortDirection);
-
-        return $query->paginate($perPage);
+        return $query = QueryBuilder::for(Brand::class)
+            ->allowedFilters(['name', 'email'])
+            ->allowedSorts(['name', 'created_at', 'status'])
+            ->paginate($filters['per_page'] ?? config('settings.pagination.per_page'))
+            ->appends($filters);
     }
 
     /**
-     * Get featured brands
+     * Find one by ID or slug
      */
-    public function getFeatured(): Collection
+    public function findOne(int|string $handle): ?Brand
     {
-        $cacheKey = $this->getCacheKey('featured', 'all');
-
-        return \Illuminate\Support\Facades\Cache::remember($cacheKey, $this->cacheTtl, function () {
-            return $this->model->where('is_featured', true)->orderBy('name')->get();
-        });
-    }
-
-    /**
-     * Toggle brand featured status
-     */
-    public function toggleFeatured(int $id): Brand
-    {
-        $brand = $this->findOrFail($id);
-        $brand->update(['is_featured' => ! $brand->is_featured]);
-
-        $this->clearCache();
-
-        return $brand->fresh();
-    }
-
-    /**
-     * Bulk update status
-     */
-    public function bulkUpdateStatus(array $ids, string $status): int
-    {
-        $updated = $this->model->whereIn('id', $ids)->update(['status' => $status]);
-        $this->clearCache();
-
-        return $updated;
+        return $this->model
+            ->where('id', $handle)
+            ->orWhere('slug', $handle)
+            ->firstOrfail();
     }
 
     /**
@@ -104,28 +56,71 @@ class BrandRepository extends BaseRepository
         return $brand->fresh();
     }
 
-    /**
-     * Check if brand can be deleted
-     */
-    public function canDelete(int $id): bool
+    public function createOne(array $data): Brand
     {
-        $brand = $this->find($id);
+        $brand = $this->model->create($data);
 
-        if (! $brand) {
-            return false;
+        $this->clearCache();
+
+        return $brand;
+    }
+
+    public function createMany(array $dataArray): Category
+    {
+        $brands = collect();
+
+        foreach ($dataArray as $data) {
+            $brands->push($this->model->create($data));
         }
 
-        // Check if brand has products
-        return ! $brand->products()->exists();
+        $this->clearCache();
+
+        return $brands;
+    }
+
+    public function updateOne(int $id, array $data): Brand
+    {
+        $brand = $this->findOrFail($id);
+        $brand->update($data);
+
+        $this->clearCache();
+
+        return $brand->fresh();
+    }
+
+    public function updateMany(array $ids, array $data): int
+    {
+        $updated = $this->model->whereIn('id', $ids)->update($data);
+
+        $this->clearCache();
+
+        return $updated;
+    }
+
+    public function deleteOne(int $id): bool
+    {
+        $brand = $this->findOrFail($id);
+        $result = $brand->delete();
+
+        $this->clearCache();
+
+        return $result;
+    }
+
+    public function deleteMany(array $ids): int
+    {
+        $deleted = $this->model->whereIn('id', $ids)->delete();
+
+        $this->clearCache();
+
+        return $deleted;
     }
 
     /**
-     * Get brand products
+     * Find brands by IDs
      */
-    public function getBrandProducts(int $brandId): Collection
+    public function findByIds(array $ids): Category
     {
-        $brand = $this->find($brandId);
-
-        return $brand ? $brand->products : collect();
+        return $this->model->whereIn('id', $ids)->get();
     }
 }

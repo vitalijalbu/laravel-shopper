@@ -1,10 +1,10 @@
 <?php
 
-namespace Shopper\Http\Controllers\Api;
+namespace Cartino\Http\Controllers\Api;
 
+use Cartino\Repositories\TaxRateRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Shopper\Repositories\TaxRateRepository;
 
 class TaxRateController extends ApiController
 {
@@ -20,7 +20,7 @@ class TaxRateController extends ApiController
         $filters = $request->only(['search', 'status', 'type', 'country']);
         $perPage = $request->get('per_page', 25);
 
-        $taxRates = $this->taxRateRepository->getPaginatedWithFilters($filters, $perPage);
+        $taxRates = $this->taxRateRepository->findAll($filters, $perPage);
 
         return response()->json([
             'data' => $taxRates->items(),

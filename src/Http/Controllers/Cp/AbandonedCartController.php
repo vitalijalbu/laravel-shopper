@@ -1,13 +1,13 @@
 <?php
 
-namespace Shopper\Http\Controllers\CP;
+namespace Cartino\Http\Controllers\CP;
 
+use Cartino\Http\Controllers\Controller;
+use Cartino\Models\AbandonedCart;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
-use Shopper\Http\Controllers\Controller;
-use Shopper\Models\AbandonedCart;
 
 class AbandonedCartController extends Controller
 {

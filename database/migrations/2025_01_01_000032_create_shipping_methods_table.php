@@ -21,7 +21,7 @@ return new class extends Migration
             $table->decimal('weight_limit', 8, 2)->nullable(); // kg
             $table->decimal('size_limit', 8, 2)->nullable(); // cm
             $table->boolean('requires_address')->default(true);
-            $table->string('status')->default('active')->index(); // active, inactive, maintenance
+            $table->string('status')->default('active'); // active, inactive, maintenance
             $table->integer('sort_order')->default(0);
             $table->json('configuration')->nullable(); // Carrier-specific settings
             $table->timestamps();

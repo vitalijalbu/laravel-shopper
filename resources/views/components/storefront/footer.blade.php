@@ -135,7 +135,7 @@
                         x-transition
                         class="absolute bottom-full right-0 mb-2 w-32 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5"
                     >
-                        @foreach(config('shopper.locales') as $locale => $label)
+                        @foreach(config('cartino.locales') as $locale => $label)
                             <a
                                 href="{{ route('locale.switch', $locale) }}"
                                 class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 {{ app()->getLocale() === $locale ? 'bg-gray-50 font-medium' : '' }}"

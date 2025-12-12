@@ -1,11 +1,11 @@
 <?php
 
-namespace Shopper\Models;
+namespace Cartino\Models;
 
+use Cartino\Enums\AddressType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Shopper\Enums\AddressType;
 
 class CustomerAddress extends Model
 {

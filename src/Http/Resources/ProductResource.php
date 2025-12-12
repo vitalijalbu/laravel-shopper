@@ -1,6 +1,6 @@
 <?php
 
-namespace Shopper\Http\Resources;
+namespace Cartino\Http\Resources;
 
 use Illuminate\Http\Request;
 

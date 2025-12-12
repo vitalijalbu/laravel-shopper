@@ -1,14 +1,14 @@
 <?php
 
-namespace Shopper\Services;
+namespace Cartino\Services;
 
+use Cartino\Data\Cart\CartData;
+use Cartino\Enums\CartStatus;
+use Cartino\Jobs\SendCartRecoveryEmail;
+use Cartino\Models\Cart;
+use Cartino\Repositories\CartRepository;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
-use Shopper\Data\Cart\CartData;
-use Shopper\Enums\CartStatus;
-use Shopper\Jobs\SendCartRecoveryEmail;
-use Shopper\Models\Cart;
-use Shopper\Repositories\CartRepository;
 
 class CartService
 {
@@ -302,7 +302,7 @@ class CartService
                 'session_id' => $sessionId,
                 'customer_id' => $customerId,
                 'status' => CartStatus::ACTIVE,
-                'currency' => config('shopper.currency', 'EUR'),
+                'currency' => config('cartino.currency', 'EUR'),
                 'last_activity_at' => now(),
             ]);
         } else {
@@ -324,7 +324,7 @@ class CartService
             $cart = $this->repository->create([
                 'customer_id' => $customerId,
                 'status' => CartStatus::ACTIVE,
-                'currency' => config('shopper.currency', 'EUR'),
+                'currency' => config('cartino.currency', 'EUR'),
                 'last_activity_at' => now(),
             ]);
         } else {

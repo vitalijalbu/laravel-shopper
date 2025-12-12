@@ -1,6 +1,6 @@
 <?php
 
-namespace Shopper\DataTable;
+namespace Cartino\DataTable;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Shopper\Http\Requests\Auth;
+namespace Cartino\Http\Requests\Auth;
 
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\Http\FormRequest;
@@ -36,9 +36,9 @@ class LoginRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'email.required' => __('shopper::auth.validation.email_required'),
-            'email.email' => __('shopper::auth.validation.email_invalid'),
-            'password.required' => __('shopper::auth.validation.password_required'),
+            'email.required' => __('cartino::auth.validation.email_required'),
+            'email.email' => __('cartino::auth.validation.email_invalid'),
+            'password.required' => __('cartino::auth.validation.password_required'),
         ];
     }
 

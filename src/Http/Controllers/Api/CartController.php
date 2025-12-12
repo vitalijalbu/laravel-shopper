@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Shopper\Http\Controllers\Api;
+namespace Cartino\Http\Controllers\Api;
 
+use Cartino\Models\Cart;
+use Cartino\Models\Product;
+use Cartino\Models\ProductVariant;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Shopper\Models\Cart;
-use Shopper\Models\Product;
-use Shopper\Models\ProductVariant;
 
 class CartController extends ApiController
 {

@@ -10,18 +10,18 @@ return new class extends Migration
     {
         Schema::create('inventory_locations', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('site_id')->nullable()->index();
+            $table->unsignedBigInteger('site_id')->nullable();
 
-            $table->string('name')->index();
-            $table->string('code', 50)->index();
+            $table->string('name');
+            $table->string('code', 50);
             $table->text('description')->nullable();
 
             $table->jsonb('address');
-            $table->decimal('latitude', 10, 8)->nullable()->index();
-            $table->decimal('longitude', 11, 8)->nullable()->index();
+            $table->decimal('latitude', 10, 8)->nullable();
+            $table->decimal('longitude', 11, 8)->nullable();
 
-            $table->boolean('is_active')->default(true)->index();
-            $table->boolean('is_default')->default(false)->index();
+            $table->boolean('is_active')->default(true);
+            $table->boolean('is_default')->default(false);
             $table->boolean('fulfills_online_orders')->default(true);
             $table->boolean('is_legacy')->default(false);
 
@@ -32,14 +32,14 @@ return new class extends Migration
             $table->jsonb('operating_hours')->nullable();
             $table->string('timezone')->default('UTC');
 
-            $table->integer('priority')->default(0)->index();
+            $table->integer('priority')->default(0);
             $table->boolean('track_inventory')->default(true);
             $table->boolean('continues_selling_when_out_of_stock')->default(false);
 
             $table->timestamps();
             $table->softDeletes();
 
-            $table->jsonb('data')->nullable()->comment('Custom fields data based on JSON schema');
+            $table->jsonb('data')->nullable();
 
             $table->unique(['code', 'site_id']);
             $table->index(['site_id', 'is_active']);
@@ -55,9 +55,9 @@ return new class extends Migration
             $table->foreignId('location_id')->constrained('inventory_locations')->cascadeOnDelete();
             $table->foreignId('product_variant_id')->constrained('product_variants')->cascadeOnDelete();
 
-            $table->integer('quantity')->default(0)->index();
-            $table->integer('reserved_quantity')->default(0)->index();
-            $table->integer('available_quantity')->storedAs('quantity - reserved_quantity')->index();
+            $table->integer('quantity')->default(0);
+            $table->integer('reserved_quantity')->default(0);
+            $table->integer('available_quantity')->storedAs('quantity - reserved_quantity');
 
             $table->integer('incoming_quantity')->default(0);
             $table->integer('committed_quantity')->default(0);
@@ -101,14 +101,14 @@ return new class extends Migration
             $table->enum('type', [
                 'sale', 'return', 'adjustment', 'transfer_in', 'transfer_out',
                 'restock', 'shrinkage', 'damage', 'correction', 'initial',
-            ])->index();
+            ]);
 
             $table->integer('quantity_change');
             $table->integer('quantity_before');
             $table->integer('quantity_after');
 
             $table->nullableMorphs('reference');
-            $table->string('reference_number')->nullable()->index();
+            $table->string('reference_number')->nullable();
 
             $table->decimal('unit_cost', 15, 4)->nullable();
             $table->decimal('total_cost', 15, 4)->nullable();
@@ -122,12 +122,7 @@ return new class extends Migration
             $table->index(['location_id', 'type', 'created_at']);
             $table->index(['product_variant_id', 'type', 'created_at']);
             $table->index(['type', 'created_at']);
-            $table->index(['reference_type', 'reference_id']);
-            $table->index(['reference_number']);
             $table->index(['user_id', 'created_at']);
-            $table->index(['created_at', 'type']);
-
-            $table->index(['location_id', 'product_variant_id', 'created_at']);
             $table->index(['type', 'quantity_change', 'created_at']);
         });
     }

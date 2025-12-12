@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Shopper\Http\Resources;
+namespace Cartino\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * @mixin \Shopper\Models\Catalog
+ * @mixin \Cartino\Models\Catalog
  */
 class CatalogResource extends JsonResource
 {

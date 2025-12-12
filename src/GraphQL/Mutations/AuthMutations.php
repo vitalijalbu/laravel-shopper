@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Shopper\GraphQL\Mutations;
+namespace Cartino\GraphQL\Mutations;
 
+use Cartino\Models\Customer;
 use Illuminate\Support\Facades\Hash;
-use Shopper\Models\Customer;
 
 class AuthMutations
 {

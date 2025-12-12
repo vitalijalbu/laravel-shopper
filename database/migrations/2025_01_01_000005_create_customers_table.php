@@ -10,25 +10,25 @@ return new class extends Migration
     {
         Schema::create('customers', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id')->nullable()->index();
-            $table->unsignedBigInteger('site_id')->nullable()->index();
-            $table->string('first_name')->index();
-            $table->string('last_name')->index();
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->unsignedBigInteger('site_id')->nullable();
+            $table->string('first_name');
+            $table->string('last_name');
             $table->string('email');
-            $table->timestamp('email_verified_at')->nullable()->index();
+            $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->string('phone', 20)->nullable()->index();
-            $table->date('date_of_birth')->nullable()->index();
+            $table->string('phone', 20)->nullable();
+            $table->date('date_of_birth')->nullable();
             $table->string('gender')->nullable();
-            $table->string('status')->default('active')->index();
-            $table->timestamp('last_login_at')->nullable()->index();
+            $table->string('status')->default('active');
+            $table->timestamp('last_login_at')->nullable();
             $table->string('last_login_ip', 45)->nullable();
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();
 
             // Custom fields data (JSON schema-based)
-            $table->jsonb('data')->nullable()->comment('Custom fields data based on JSON schema');
+            $table->jsonb('data')->nullable();
 
             $table->unique(['email', 'site_id']);
             $table->index(['site_id', 'status']);

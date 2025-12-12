@@ -1,10 +1,10 @@
 openapi: 3.0.0
 info:
-  title: Laravel Shopper API
-  description: Complete e-commerce API for Laravel Shopper
+  title: Cartino API
+  description: Complete e-commerce API for Cartino
   version: 1.0.0
   contact:
-    name: Laravel Shopper Team
+    name: Cartino Team
     url: https://laravelshopper.dev
     email: support@laravelshopper.dev
   license:
@@ -12,11 +12,11 @@ info:
     url: https://opensource.org/licenses/MIT
 
 servers:
-  - url: https://api.example.com/api/shopper
+  - url: https://api.example.com/api/cartino
     description: Production server
-  - url: https://staging-api.example.com/api/shopper
+  - url: https://staging-api.example.com/api/cartino
     description: Staging server
-  - url: http://localhost:8000/api/shopper
+  - url: http://localhost:8000/api/cartino
     description: Development server
 
 security:
@@ -438,7 +438,7 @@ components:
             collections:
               type: array
               items:
-                $ref: '#/components/schemas/Collection'
+                $ref: '#/components/schemas/Category'
             variants:
               type: array
               items:
@@ -482,7 +482,7 @@ components:
           nullable: true
           example: "Apple Inc. products"
 
-    Collection:
+    Category:
       type: object
       properties:
         id:

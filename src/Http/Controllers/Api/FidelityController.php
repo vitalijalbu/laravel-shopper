@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Shopper\Http\Controllers\Api;
+namespace Cartino\Http\Controllers\Api;
 
+use Cartino\Services\FidelityService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Shopper\Services\FidelityService;
 
 class FidelityController extends ApiController
 {

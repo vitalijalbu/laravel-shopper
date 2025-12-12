@@ -1,11 +1,11 @@
 <?php
 
-namespace Shopper\Http\Controllers\Api;
+namespace Cartino\Http\Controllers\Api;
 
+use Cartino\Models\Currency;
+use Cartino\Repositories\CurrencyRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Shopper\Models\Currency;
-use Shopper\Repositories\CurrencyRepository;
 
 class CurrencyController extends ApiController
 {
@@ -21,7 +21,7 @@ class CurrencyController extends ApiController
         $filters = $request->only(['search', 'is_enabled']);
         $perPage = $request->get('per_page', 25);
 
-        $currencies = $this->currencyRepository->getPaginatedWithFilters($filters, $perPage);
+        $currencies = $this->currencyRepository->findAll($filters, $perPage);
 
         return $this->paginatedResponse($currencies);
     }

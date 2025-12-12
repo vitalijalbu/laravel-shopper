@@ -11,35 +11,35 @@ return new class extends Migration
         Schema::create('addresses', function (Blueprint $table) {
             $table->id();
             $table->morphs('addressable');
-            $table->enum('type', ['billing', 'shipping', 'both'])->default('shipping')->index();
+            $table->enum('type', ['billing', 'shipping', 'both'])->default('shipping');
             $table->string('label')->nullable(); // "Home", "Office", "Warehouse", etc.
-            $table->string('first_name')->index();
-            $table->string('last_name')->index();
-            $table->string('company')->nullable()->index();
-            $table->string('address_line_1')->index();
+            $table->string('first_name');
+            $table->string('last_name');
+            $table->string('company')->nullable();
+            $table->string('address_line_1');
             $table->string('address_line_2')->nullable();
-            $table->string('city')->index();
-            $table->string('state')->nullable()->index();
-            $table->string('postal_code')->nullable()->index();
+            $table->string('city');
+            $table->string('state')->nullable();
+            $table->string('postal_code')->nullable();
             $table->foreignId('country_id')->constrained()->cascadeOnDelete();
-            $table->string('phone', 20)->nullable()->index();
-            $table->string('email')->nullable()->index();
+            $table->string('phone', 20)->nullable();
+            $table->string('email')->nullable();
 
             // Geocoding fields (Shopify/Shopware style)
-            $table->decimal('latitude', 10, 8)->nullable()->index();
-            $table->decimal('longitude', 11, 8)->nullable()->index();
+            $table->decimal('latitude', 10, 8)->nullable();
+            $table->decimal('longitude', 11, 8)->nullable();
             $table->string('formatted_address')->nullable();
             $table->string('place_id')->nullable(); // Google Places ID
 
             // Validation
-            $table->boolean('is_validated')->default(false)->index();
+            $table->boolean('is_validated')->default(false);
             $table->timestamp('validated_at')->nullable();
             $table->string('validation_source')->nullable(); // google, ups, usps, manual
 
             // Default address
-            $table->boolean('is_default')->default(false)->index();
-            $table->boolean('is_default_billing')->default(false)->index();
-            $table->boolean('is_default_shipping')->default(false)->index();
+            $table->boolean('is_default')->default(false);
+            $table->boolean('is_default_billing')->default(false);
+            $table->boolean('is_default_shipping')->default(false);
 
             // Additional metadata
             $table->jsonb('metadata')->nullable()->comment('Additional address data');

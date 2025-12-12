@@ -17,9 +17,9 @@ return new class extends Migration
             $table->unsignedInteger('total_earned')->default(0);
             $table->unsignedInteger('total_redeemed')->default(0);
             $table->decimal('total_spent_amount', 10, 2)->default(0);
-            $table->boolean('is_active')->default(true)->index();
-            $table->timestamp('issued_at')->index();
-            $table->timestamp('last_activity_at')->nullable()->index();
+            $table->boolean('is_active')->default(true);
+            $table->timestamp('issued_at');
+            $table->timestamp('last_activity_at')->nullable();
             $table->json('meta')->nullable();
             $table->timestamps();
 

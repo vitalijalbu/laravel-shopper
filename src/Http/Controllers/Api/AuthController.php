@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Shopper\Http\Controllers\Api;
+namespace Cartino\Http\Controllers\Api;
 
+use Cartino\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
-use Shopper\Http\Controllers\Controller;
 
 class AuthController extends Controller
 {
@@ -19,7 +19,7 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
 
-        $userModel = config('shopper.auth.model', 'App\\Models\\User');
+        $userModel = config('cartino.auth.model', 'App\\Models\\User');
         $user = $userModel::where('email', $request->email)->first();
 
         if (! $user || ! Hash::check($request->password, $user->password)) {
@@ -28,7 +28,7 @@ class AuthController extends Controller
             ]);
         }
 
-        $token = $user->createToken('shopper-api')->plainTextToken;
+        $token = $user->createToken('cartino-api')->plainTextToken;
 
         return response()->json([
             'user' => $user,
@@ -44,7 +44,7 @@ class AuthController extends Controller
             'password' => 'required|string|min:8|confirmed',
         ]);
 
-        $userModel = config('shopper.auth.model', 'App\\Models\\User');
+        $userModel = config('cartino.auth.model', 'App\\Models\\User');
 
         $user = $userModel::create([
             'name' => $request->name,
@@ -52,7 +52,7 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        $token = $user->createToken('shopper-api')->plainTextToken;
+        $token = $user->createToken('cartino-api')->plainTextToken;
 
         return response()->json([
             'user' => $user,

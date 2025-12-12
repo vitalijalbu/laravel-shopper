@@ -10,28 +10,28 @@ return new class extends Migration
     {
         Schema::create('collections', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('site_id')->nullable()->index();
-            $table->unsignedBigInteger('channel_id')->index();
-            $table->string('title')->index();
-            $table->string('slug')->index();
-            $table->string('handle')->nullable()->index();
+            $table->unsignedBigInteger('site_id')->nullable();
+            $table->unsignedBigInteger('channel_id');
+            $table->string('title');
+            $table->string('slug');
+            $table->string('handle')->nullable();
             $table->text('description')->nullable();
             $table->text('body_html')->nullable();
-            $table->string('collection_type')->default('manual')->index();
+            $table->string('collection_type')->default('manual');
             $table->jsonb('rules')->nullable();
-            $table->string('sort_order')->default('manual')->index();
+            $table->string('sort_order')->default('manual');
             $table->boolean('disjunctive')->default(false);
             $table->string('meta_title')->nullable();
             $table->text('meta_description')->nullable();
             $table->jsonb('seo')->nullable();
-            $table->string('status')->default('draft')->index();
-            $table->timestamp('published_at')->nullable()->index();
-            $table->string('published_scope')->default('web')->index();
+            $table->string('status')->default('draft');
+            $table->timestamp('published_at')->nullable();
+            $table->string('published_scope')->default('web');
             $table->string('template_suffix')->nullable();
 
             $table->timestamps();
             $table->softDeletes();
-            $table->jsonb('data')->nullable()->comment('Custom fields data based on JSON schema');
+            $table->jsonb('data')->nullable();
 
             // Indexes
             $table->unique(['slug', 'site_id']);
@@ -66,8 +66,8 @@ return new class extends Migration
             $table->foreignId('product_id')->constrained('products')->cascadeOnDelete();
 
             // Option Definition
-            $table->string('name')->index(); // Color, Size, Material
-            $table->integer('position')->default(1)->index(); // 1, 2, 3 (max 3 options in Shopify)
+            $table->string('name'); // Color, Size, Material
+            $table->integer('position')->default(1); // 1, 2, 3 (max 3 options in Shopify)
             $table->jsonb('values'); // ["Red", "Blue", "Green"] or ["Small", "Medium", "Large"]
 
             $table->timestamps();
@@ -82,8 +82,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('collection_id')->constrained('collections')->cascadeOnDelete();
             $table->foreignId('product_id')->constrained('products')->cascadeOnDelete();
-            $table->integer('position')->default(0)->index(); // Manual sorting within collection
-            $table->boolean('featured')->default(false)->index(); // Featured in this collection
+            $table->integer('position')->default(0); // Manual sorting within collection
+            $table->boolean('featured')->default(false); // Featured in this collection
             $table->timestamps();
 
             $table->unique(['collection_id', 'product_id']);

@@ -1,10 +1,10 @@
 <?php
 
-namespace Shopper\Repositories;
+namespace Cartino\Repositories;
 
+use Cartino\Models\PaymentMethod;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Shopper\Models\PaymentMethod;
 
 class PaymentMethodRepository extends BaseRepository
 {
@@ -18,7 +18,7 @@ class PaymentMethodRepository extends BaseRepository
     /**
      * Get paginated payment methods with filters
      */
-    public function getPaginatedWithFilters(array $filters = [], int $perPage = 25): LengthAwarePaginator
+    public function findAll(array $filters = []): LengthAwarePaginator
     {
         $query = $this->model->newQuery();
 
@@ -64,7 +64,7 @@ class PaymentMethodRepository extends BaseRepository
     /**
      * Get enabled payment methods ordered by sort order
      */
-    public function getEnabled(): \Illuminate\Database\Eloquent\Collection
+    public function getEnabled(): \Illuminate\Database\Eloquent\Category
     {
         $cacheKey = $this->getCacheKey('enabled', 'all');
 
@@ -76,7 +76,7 @@ class PaymentMethodRepository extends BaseRepository
     /**
      * Get payment methods for a specific currency and country
      */
-    public function getAvailableFor(string $currency, ?string $country = null): \Illuminate\Database\Eloquent\Collection
+    public function getAvailableFor(string $currency, ?string $country = null): \Illuminate\Database\Eloquent\Category
     {
         $cacheKey = $this->getCacheKey('available', md5($currency.'_'.$country));
 

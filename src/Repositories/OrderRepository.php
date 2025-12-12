@@ -1,12 +1,12 @@
 <?php
 
-namespace Shopper\Repositories;
+namespace Cartino\Repositories;
 
+use Cartino\Models\Customer;
+use Cartino\Models\Order;
+use Cartino\Models\Product;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Shopper\Models\Customer;
-use Shopper\Models\Order;
-use Shopper\Models\Product;
 
 class OrderRepository extends BaseRepository
 {
@@ -22,7 +22,7 @@ class OrderRepository extends BaseRepository
     /**
      * Get paginated orders with filters and search
      */
-    public function getPaginatedWithFilters(array $filters = [], int $perPage = 25): LengthAwarePaginator
+    public function findAll(array $filters = []): LengthAwarePaginator
     {
         $query = $this->model->newQuery()
             ->with(['customer', 'items.product']);
@@ -168,7 +168,7 @@ class OrderRepository extends BaseRepository
     /**
      * Get customers for order creation
      */
-    public function getCustomersForSelect(): \Illuminate\Database\Eloquent\Collection
+    public function getCustomersForSelect(): \Illuminate\Database\Eloquent\Category
     {
         return Customer::select('id', 'first_name', 'last_name', 'email')
             ->where('is_active', true)
@@ -179,7 +179,7 @@ class OrderRepository extends BaseRepository
     /**
      * Get products for order creation
      */
-    public function getProductsForSelect(): \Illuminate\Database\Eloquent\Collection
+    public function getProductsForSelect(): \Illuminate\Database\Eloquent\Category
     {
         return Product::select('id', 'name', 'price')
             ->where('is_active', true)

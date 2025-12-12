@@ -2,12 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Shopper\Repositories;
+namespace Cartino\Repositories;
 
-use Illuminate\Database\Eloquent\Collection;
+use Cartino\Models\Channel;
+use Illuminate\Database\Eloquent\Category;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Shopper\Models\Channel;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class ChannelRepository extends BaseRepository
 {
@@ -21,43 +22,19 @@ class ChannelRepository extends BaseRepository
     /**
      * Get paginated channels with filters
      */
-    public function getPaginatedWithFilters(array $filters = [], int $perPage = 25): LengthAwarePaginator
+    public function findAll(array $filters = []): LengthAwarePaginator
     {
-        $query = $this->model->newQuery();
-
-        // Search filter
-        if (! empty($filters['search'])) {
-            $search = $filters['search'];
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                    ->orWhere('slug', 'like', "%{$search}%")
-                    ->orWhere('description', 'like', "%{$search}%");
-            });
-        }
-
-        // Default filter
-        if (isset($filters['is_default'])) {
-            $query->where('is_default', $filters['is_default']);
-        }
-
-        // Active filter
-        if (isset($filters['is_active'])) {
-            $query->where('is_active', $filters['is_active']);
-        }
-
-        // Sorting
-        $sortField = $filters['sort'] ?? 'name';
-        $sortDirection = $filters['direction'] ?? 'asc';
-
-        $query->orderBy($sortField, $sortDirection);
-
-        return $query->paginate($perPage);
+        return $query = QueryBuilder::for(Channel::class)
+            ->allowedFilters(['name', 'email'])
+            ->allowedSorts(['name', 'created_at', 'status'])
+            ->paginate($filters['per_page'] ?? config('settings.pagination.per_page'))
+            ->appends($filters);
     }
 
     /**
      * Get active channels
      */
-    public function getActive(): Collection
+    public function getActive(): Category
     {
         $cacheKey = $this->getCacheKey('active', 'all');
 

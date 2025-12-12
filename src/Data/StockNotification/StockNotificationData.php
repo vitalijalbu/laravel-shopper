@@ -1,6 +1,6 @@
 <?php
 
-namespace Shopper\Data\StockNotification;
+namespace Cartino\Data\StockNotification;
 
 class StockNotificationData
 {
@@ -21,7 +21,7 @@ class StockNotificationData
         public ?string $updated_at,
     ) {}
 
-    public static function fromModel(\Shopper\Models\StockNotification $notification): self
+    public static function fromModel(\Cartino\Models\StockNotification $notification): self
     {
         return new self(
             id: $notification->id,

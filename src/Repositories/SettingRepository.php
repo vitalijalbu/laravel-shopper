@@ -1,11 +1,11 @@
 <?php
 
-namespace Shopper\Repositories;
+namespace Cartino\Repositories;
 
-use Illuminate\Database\Eloquent\Collection;
+use Cartino\Models\Setting;
+use Illuminate\Database\Eloquent\Category;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
-use Shopper\Models\Setting;
 
 class SettingRepository extends BaseRepository
 {
@@ -109,7 +109,7 @@ class SettingRepository extends BaseRepository
     /**
      * Get settings by category prefix
      */
-    public function getByCategory(string $category): Collection
+    public function getByCategory(string $category): Category
     {
         $cacheKey = $this->getCacheKey('category', $category);
 

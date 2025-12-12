@@ -1,9 +1,8 @@
 <?php
 
-namespace Shopper\Services;
+namespace Cartino\Services;
 
 use Closure;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 
 class CacheService
@@ -296,19 +295,19 @@ class CacheService
     {
         // Warm up brands
         $this->rememberBrand('all', function () {
-            return \Shopper\Models\Brand::all();
+            return \Cartino\Models\Brand::all();
         });
 
         // Warm up featured products
         $this->rememberProduct('featured', function () {
-            return \Shopper\Models\Product::where('is_featured', true)
+            return \Cartino\Models\Product::where('is_featured', true)
                 ->with(['brand'])
                 ->get();
         });
 
         // Warm up navigation (using collections instead of categories)
         $this->rememberNavigation('main', function () {
-            return \Shopper\Models\Collection::orderBy('sort_order')->get();
+            return \Cartino\Models\Category::orderBy('sort_order')->get();
         });
     }
 

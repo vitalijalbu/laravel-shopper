@@ -1,14 +1,13 @@
 <?php
 
-namespace Shopper\Http\Controllers\Cp;
+namespace Cartino\Http\Controllers\CP;
 
+use Cartino\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
-use Shopper\Http\Controllers\Controller;
 
 class CollectionsController extends Controller
 {
@@ -290,7 +289,7 @@ class CollectionsController extends Controller
 
         return response()->json([
             'collection' => $collection,
-            'message' => 'Collection created successfully',
+            'message' => 'Category created successfully',
         ], 201);
     }
 
@@ -321,7 +320,7 @@ class CollectionsController extends Controller
 
         return response()->json([
             'collection' => $collection,
-            'message' => 'Collection updated successfully',
+            'message' => 'Category updated successfully',
         ]);
     }
 
@@ -329,7 +328,7 @@ class CollectionsController extends Controller
     {
         // Mock deletion - in real app would delete from database
         return response()->json([
-            'message' => 'Collection deleted successfully',
+            'message' => 'Category deleted successfully',
         ]);
     }
 
@@ -380,7 +379,7 @@ class CollectionsController extends Controller
         return [
             [
                 'id' => 'default',
-                'name' => config('app.name', 'Laravel Shopper'),
+                'name' => config('app.name', 'Cartino'),
                 'url' => config('app.url'),
                 'is_current' => true,
             ],

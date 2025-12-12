@@ -18,9 +18,9 @@ return new class extends Migration
         Schema::create('inventory_items', function (Blueprint $table) {
             $table->id();
             $table->foreignId('product_variant_id')->constrained('product_variants')->cascadeOnDelete();
-            $table->string('sku')->index();
-            $table->string('barcode')->nullable()->index();
-            $table->boolean('tracked')->default(true)->index();
+            $table->string('sku');
+            $table->string('barcode')->nullable();
+            $table->boolean('tracked')->default(true);
             $table->boolean('requires_shipping')->default(true);
             $table->decimal('cost', 15, 2)->nullable();
             $table->string('country_code_of_origin', 2)->nullable();
@@ -39,7 +39,7 @@ return new class extends Migration
             $table->foreignId('inventory_location_id')->constrained('inventory_locations')->cascadeOnDelete();
 
             // Stock quantities
-            $table->integer('available')->default(0)->index(); // Available for sale
+            $table->integer('available')->default(0); // Available for sale
             $table->integer('reserved')->default(0); // Reserved for orders
             $table->integer('incoming')->default(0); // Incoming stock
             $table->integer('damaged')->default(0); // Damaged stock
@@ -64,13 +64,13 @@ return new class extends Migration
             $table->foreignId('inventory_location_id')->constrained('inventory_locations')->cascadeOnDelete();
 
             // Movement details
-            $table->string('type')->index(); // purchase, sale, return, transfer, adjustment, damage
+            $table->string('type'); // purchase, sale, return, transfer, adjustment, damage
             $table->integer('quantity'); // Can be negative
             $table->integer('quantity_before')->default(0);
             $table->integer('quantity_after')->default(0);
 
             // Reference to source
-            $table->string('reference_type')->nullable()->index(); // Order, PurchaseOrder, Transfer, etc.
+            $table->string('reference_type')->nullable(); // Order, PurchaseOrder, Transfer, etc.
             $table->unsignedBigInteger('reference_id')->nullable();
 
             // User who made the movement
@@ -80,7 +80,7 @@ return new class extends Migration
             $table->text('notes')->nullable();
             $table->jsonb('metadata')->nullable();
 
-            $table->timestamp('occurred_at')->index();
+            $table->timestamp('occurred_at');
             $table->timestamps();
 
             $table->index(['inventory_item_id', 'occurred_at']);
@@ -97,10 +97,10 @@ return new class extends Migration
             $table->foreignId('order_line_id')->nullable()->constrained('order_lines')->cascadeOnDelete();
 
             $table->integer('quantity')->default(1);
-            $table->string('status')->default('reserved')->index(); // reserved, fulfilled, cancelled, expired
+            $table->string('status')->default('reserved'); // reserved, fulfilled, cancelled, expired
 
             $table->timestamp('reserved_at');
-            $table->timestamp('expires_at')->nullable()->index();
+            $table->timestamp('expires_at')->nullable();
             $table->timestamp('fulfilled_at')->nullable();
             $table->timestamp('cancelled_at')->nullable();
 
@@ -114,11 +114,11 @@ return new class extends Migration
         // Stock Transfers - Move inventory between locations
         Schema::create('stock_transfers', function (Blueprint $table) {
             $table->id();
-            $table->string('transfer_number')->unique()->index();
+            $table->string('transfer_number')->unique();
             $table->foreignId('from_location_id')->constrained('inventory_locations')->cascadeOnDelete();
             $table->foreignId('to_location_id')->constrained('inventory_locations')->cascadeOnDelete();
 
-            $table->string('status')->default('pending')->index(); // pending, in_transit, received, cancelled
+            $table->string('status')->default('pending'); // pending, in_transit, received, cancelled
 
             $table->foreignId('requested_by')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('approved_by')->nullable()->constrained('users')->nullOnDelete();
@@ -161,9 +161,9 @@ return new class extends Migration
         Schema::create('stock_adjustments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('inventory_location_id')->constrained('inventory_locations')->cascadeOnDelete();
-            $table->string('adjustment_number')->unique()->index();
+            $table->string('adjustment_number')->unique();
 
-            $table->string('reason')->index(); // damage, loss, found, count, correction
+            $table->string('reason'); // damage, loss, found, count, correction
             $table->text('notes')->nullable();
 
             $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();

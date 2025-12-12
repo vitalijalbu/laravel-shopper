@@ -1,6 +1,6 @@
 <?php
 
-namespace Shopper\Services;
+namespace Cartino\Services;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
@@ -19,8 +19,8 @@ class FilterService
 
     public function __construct()
     {
-        $this->cacheTtl = config('shopper.filters.cache.ttl', 3600);
-        $this->cacheEnabled = config('shopper.filters.cache.enabled', true);
+        $this->cacheTtl = config('cartino.filters.cache.ttl', 3600);
+        $this->cacheEnabled = config('cartino.filters.cache.enabled', true);
     }
 
     /**
@@ -63,7 +63,7 @@ class FilterService
      */
     public function clearCache(string $model): void
     {
-        $tags = config('shopper.filters.cache.tags', ['filters']);
+        $tags = config('cartino.filters.cache.tags', ['filters']);
 
         if (Cache::supportsTags()) {
             Cache::tags($tags)->flush();
@@ -123,9 +123,9 @@ class FilterService
     {
         $modelKey = strtolower(class_basename($model));
 
-        return config("shopper.filters.models.{$modelKey}", [
-            'per_page' => config('shopper.filters.pagination.default', 15),
-            'max_per_page' => config('shopper.filters.pagination.max', 100),
+        return config("cartino.filters.models.{$modelKey}", [
+            'per_page' => config('cartino.filters.pagination.default', 15),
+            'max_per_page' => config('cartino.filters.pagination.max', 100),
             'default_sort' => '-created_at',
             'searchable' => ['name'],
             'filterable' => [],
@@ -157,7 +157,7 @@ class FilterService
         $cacheKey = "filter_stats_{$model}";
 
         return Cache::remember($cacheKey, 300, function () use ($model) {
-            $modelClass = "Shopper\\Models\\{$model}";
+            $modelClass = "Cartino\\Models\\{$model}";
 
             if (! class_exists($modelClass)) {
                 return [];

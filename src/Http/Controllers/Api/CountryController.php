@@ -1,11 +1,11 @@
 <?php
 
-namespace Shopper\Http\Controllers\Api;
+namespace Cartino\Http\Controllers\Api;
 
+use Cartino\Models\Country;
+use Cartino\Repositories\CountryRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Shopper\Models\Country;
-use Shopper\Repositories\CountryRepository;
 
 class CountryController extends ApiController
 {
@@ -21,7 +21,7 @@ class CountryController extends ApiController
         $filters = $request->only(['search', 'is_active']);
         $perPage = $request->get('per_page', 50);
 
-        $countries = $this->countryRepository->getPaginatedWithFilters($filters, $perPage);
+        $countries = $this->countryRepository->findAll($filters, $perPage);
 
         return $this->paginatedResponse($countries);
     }
@@ -68,7 +68,7 @@ class CountryController extends ApiController
         $limit = $request->get('limit', 10);
 
         $filters = ['search' => $search, 'is_active' => true];
-        $countries = $this->countryRepository->getPaginatedWithFilters($filters, $limit);
+        $countries = $this->countryRepository->findAll($filters, $limit);
 
         return $this->successResponse($countries->items());
     }

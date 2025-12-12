@@ -1,6 +1,6 @@
 <?php
 
-namespace Shopper\Enums;
+namespace Cartino\Enums;
 
 enum CurrencyType: string
 {

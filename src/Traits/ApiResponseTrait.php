@@ -1,6 +1,6 @@
 <?php
 
-namespace Shopper\Traits;
+namespace Cartino\Traits;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Pagination\LengthAwarePaginator;

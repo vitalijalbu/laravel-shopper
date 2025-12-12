@@ -1,11 +1,11 @@
 <?php
 
-namespace Shopper\Models;
+namespace Cartino\Models;
 
+use Cartino\Enums\CartStatus;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Shopper\Enums\CartStatus;
 
 class Cart extends Model
 {

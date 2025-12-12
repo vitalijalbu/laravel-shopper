@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Shopper\Models;
+namespace Cartino\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -169,7 +169,7 @@ class Asset extends Model
             $params['crop'] = $this->focus_css;
         }
 
-        return app(\Shopper\Services\GlideService::class)->url($this->path, $params);
+        return app(\Cartino\Services\GlideService::class)->url($this->path, $params);
     }
 
     public function responsive(?array $breakpoints = null): array

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Shopper\Http\Requests\CP;
+namespace Cartino\Http\Requests\CP;
 
+use Cartino\Models\Category;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
-use Shopper\Models\Collection;
 
 class UpdateCollectionRequest extends FormRequest
 {
@@ -26,7 +26,7 @@ class UpdateCollectionRequest extends FormRequest
                 'string',
                 'max:255',
                 'regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/',
-                Rule::unique(Collection::class, 'slug')->ignore($collectionId),
+                Rule::unique(Category::class, 'slug')->ignore($collectionId),
             ],
             'description' => ['nullable', 'string', 'max:1000'],
             'status' => ['required', 'string', Rule::in(['published', 'draft'])],

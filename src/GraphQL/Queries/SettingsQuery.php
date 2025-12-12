@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Shopper\GraphQL\Queries;
+namespace Cartino\GraphQL\Queries;
 
 class SettingsQuery
 {

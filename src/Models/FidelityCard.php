@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Shopper\Models;
+namespace Cartino\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -90,7 +90,7 @@ class FidelityCard extends Model
     // Methods
     public static function generateCardNumber(): string
     {
-        $config = config('shopper.fidelity.card');
+        $config = config('cartino.fidelity.card');
         $prefix = $config['prefix'] ?? 'FID';
         $length = $config['length'] ?? 8;
         $separator = $config['separator'] ?? '-';
@@ -142,7 +142,7 @@ class FidelityCard extends Model
 
     public function calculatePointsForAmount(float $amount, ?string $currency = null): int
     {
-        $config = config('shopper.fidelity.points');
+        $config = config('cartino.fidelity.points');
 
         if (! $config['enabled']) {
             return 0;
@@ -159,7 +159,7 @@ class FidelityCard extends Model
 
     public function getTierForAmount(float $totalSpent): float
     {
-        $tiers = config('shopper.fidelity.points.conversion_rules.tiers', [0 => 1]);
+        $tiers = config('cartino.fidelity.points.conversion_rules.tiers', [0 => 1]);
 
         $applicableTier = 1;
         foreach ($tiers as $threshold => $rate) {
@@ -173,7 +173,7 @@ class FidelityCard extends Model
 
     public function getCurrentTier(): array
     {
-        $tiers = config('shopper.fidelity.points.conversion_rules.tiers', [0 => 1]);
+        $tiers = config('cartino.fidelity.points.conversion_rules.tiers', [0 => 1]);
         $currentRate = $this->getTierForAmount($this->total_spent_amount);
 
         foreach ($tiers as $threshold => $rate) {
@@ -190,7 +190,7 @@ class FidelityCard extends Model
 
     public function getNextTier(): ?array
     {
-        $tiers = config('shopper.fidelity.points.conversion_rules.tiers', [0 => 1]);
+        $tiers = config('cartino.fidelity.points.conversion_rules.tiers', [0 => 1]);
         $currentRate = $this->getTierForAmount($this->total_spent_amount);
 
         $nextTier = null;
@@ -210,21 +210,21 @@ class FidelityCard extends Model
 
     public function getPointsValue(): float
     {
-        $rate = config('shopper.fidelity.points.redemption.points_to_currency_rate', 0.01);
+        $rate = config('cartino.fidelity.points.redemption.points_to_currency_rate', 0.01);
 
         return $this->available_points * $rate;
     }
 
     public function canRedeemPoints(int $points): bool
     {
-        $minPoints = config('shopper.fidelity.points.redemption.min_points', 100);
+        $minPoints = config('cartino.fidelity.points.redemption.min_points', 100);
 
         return $this->available_points >= $points && $points >= $minPoints;
     }
 
     protected function calculatePointsExpiration(): ?\DateTime
     {
-        $config = config('shopper.fidelity.points.expiration');
+        $config = config('cartino.fidelity.points.expiration');
 
         if (! $config['enabled']) {
             return null;

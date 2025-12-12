@@ -1,31 +1,31 @@
 <?php
 
-namespace Shopper\Console;
+namespace Cartino\Console;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 
 class InstallCommand extends Command
 {
-    protected $signature = 'shopper:install {--force : Overwrite existing files}';
+    protected $signature = 'cartino:install {--force : Overwrite existing files}';
 
-    protected $description = 'Install Laravel Shopper package';
+    protected $description = 'Install Cartino package';
 
     public function handle(): int
     {
-        $this->info('Installing Laravel Shopper...');
+        $this->info('Installing Cartino...');
 
         // Publish config
         $this->info('Publishing configuration...');
         Artisan::call('vendor:publish', [
-            '--tag' => 'shopper-config',
+            '--tag' => 'cartino-config',
             '--force' => $this->option('force'),
         ]);
 
         // Publish migrations
         $this->info('Publishing migrations...');
         Artisan::call('vendor:publish', [
-            '--tag' => 'shopper-core-migrations',
+            '--tag' => 'cartino-core-migrations',
             '--force' => $this->option('force'),
         ]);
 
@@ -40,7 +40,7 @@ class InstallCommand extends Command
         if ($this->confirm('Would you like to seed the database with sample data?')) {
             $this->info('Seeding database...');
             Artisan::call('db:seed', [
-                '--class' => 'Shopper\\Database\\Seeders\\ShopperSeeder',
+                '--class' => 'Cartino\\Database\\Seeders\\CartinoSeeder',
             ]);
             $this->info('Database seeded.');
         }
@@ -50,19 +50,19 @@ class InstallCommand extends Command
             $this->createAdminUser();
         }
 
-        $this->info('✅ Laravel Shopper has been installed successfully!');
+        $this->info('✅ Cartino has been installed successfully!');
         $this->info('');
         $this->info('Next steps:');
         $this->info('1. Configure your .env file with database settings');
         $this->info('2. Visit /admin to access the admin panel');
-        $this->info('3. Check the documentation at: https://github.com/vitalijalbu/laravel-shopper');
+        $this->info('3. Check the documentation at: https://github.com/vitalijalbu/laravel-cartino');
 
         return self::SUCCESS;
     }
 
     private function createAdminUser(): void
     {
-        $userModel = config('shopper.auth.model', 'App\\Models\\User');
+        $userModel = config('cartino.auth.model', 'App\\Models\\User');
 
         if (! class_exists($userModel)) {
             $this->error("User model {$userModel} not found. Please create it first.");

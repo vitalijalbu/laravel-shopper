@@ -1,6 +1,6 @@
 <?php
 
-namespace Shopper\CP;
+namespace Cartino\CP;
 
 class Page
 {

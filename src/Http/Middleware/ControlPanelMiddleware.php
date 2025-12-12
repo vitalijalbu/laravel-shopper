@@ -1,6 +1,6 @@
 <?php
 
-namespace Shopper\Http\Middleware;
+namespace Cartino\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
@@ -34,7 +34,7 @@ class ControlPanelMiddleware
             Auth::logout();
 
             return redirect()->route('cp.login')
-                ->withErrors(['email' => __('shopper::auth.cp_access_denied')]);
+                ->withErrors(['email' => __('cartino::auth.cp_access_denied')]);
         }
 
         return $next($request);

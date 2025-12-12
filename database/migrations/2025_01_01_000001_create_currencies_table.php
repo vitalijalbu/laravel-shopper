@@ -15,7 +15,7 @@ return new class extends Migration
             $table->string('symbol');
             $table->decimal('rate', 15, 6)->default(1);
             $table->boolean('is_default')->default(false);
-            $table->string('status')->default('active')->index();
+            $table->string('status')->default('active');
             $table->timestamps();
         });
     }

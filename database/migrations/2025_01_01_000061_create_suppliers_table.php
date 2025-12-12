@@ -40,8 +40,8 @@ return new class extends Migration
             $table->string('currency', 3)->default('EUR');
 
             // Status and Settings
-            $table->string('status')->default('active')->index(); // active, inactive, suspended
-            $table->boolean('is_preferred')->default(false)->index();
+            $table->string('status')->default('active'); // active, inactive, suspended
+            $table->boolean('is_preferred')->default(false);
             $table->integer('priority')->default(0); // For sourcing priority
             $table->decimal('minimum_order_amount', 15, 2)->nullable();
             $table->integer('lead_time_days')->nullable(); // Default lead time

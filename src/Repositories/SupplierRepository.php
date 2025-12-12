@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Shopper\Repositories;
+namespace Cartino\Repositories;
 
-use Illuminate\Database\Eloquent\Collection;
+use Cartino\Contracts\SupplierRepositoryInterface;
+use Cartino\Models\Supplier;
+use Illuminate\Database\Eloquent\Category;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Shopper\Contracts\SupplierRepositoryInterface;
-use Shopper\Models\Supplier;
 
 class SupplierRepository extends BaseRepository implements SupplierRepositoryInterface
 {
@@ -24,7 +24,7 @@ class SupplierRepository extends BaseRepository implements SupplierRepositoryInt
     /**
      * Get paginated suppliers with filters
      */
-    public function getPaginatedWithFilters(array $filters = [], int $perPage = 25): LengthAwarePaginator
+    public function findAll(array $filters = []): LengthAwarePaginator
     {
         $query = $this->model->newQuery()->with(['site']);
 
@@ -103,7 +103,7 @@ class SupplierRepository extends BaseRepository implements SupplierRepositoryInt
     /**
      * Get active suppliers
      */
-    public function getActive(): Collection
+    public function getActive(): Category
     {
         $cacheKey = $this->getCacheKey('active', 'all');
 
@@ -115,7 +115,7 @@ class SupplierRepository extends BaseRepository implements SupplierRepositoryInt
     /**
      * Get preferred suppliers
      */
-    public function getPreferred(): Collection
+    public function getPreferred(): Category
     {
         $cacheKey = $this->getCacheKey('preferred', 'all');
 
@@ -127,7 +127,7 @@ class SupplierRepository extends BaseRepository implements SupplierRepositoryInt
     /**
      * Get suppliers by country
      */
-    public function getByCountry(string $countryCode): Collection
+    public function getByCountry(string $countryCode): Category
     {
         $cacheKey = $this->getCacheKey('country', $countryCode);
 
@@ -141,7 +141,7 @@ class SupplierRepository extends BaseRepository implements SupplierRepositoryInt
     /**
      * Get suppliers by priority
      */
-    public function getByPriority(string $priority): Collection
+    public function getByPriority(string $priority): Category
     {
         $cacheKey = $this->getCacheKey('priority', $priority);
 
@@ -155,7 +155,7 @@ class SupplierRepository extends BaseRepository implements SupplierRepositoryInt
     /**
      * Get suppliers by minimum rating
      */
-    public function getByRating(float $minRating): Collection
+    public function getByRating(float $minRating): Category
     {
         $cacheKey = $this->getCacheKey('rating', (string) $minRating);
 
@@ -180,7 +180,7 @@ class SupplierRepository extends BaseRepository implements SupplierRepositoryInt
     /**
      * Get top performing suppliers
      */
-    public function getTopPerformers(int $limit = 10): Collection
+    public function getTopPerformers(int $limit = 10): Category
     {
         $cacheKey = $this->getCacheKey('top_performers', (string) $limit);
 
@@ -222,7 +222,7 @@ class SupplierRepository extends BaseRepository implements SupplierRepositoryInt
     /**
      * Get supplier products
      */
-    public function getSupplierProducts(int $supplierId): Collection
+    public function getSupplierProducts(int $supplierId): Category
     {
         $supplier = $this->find($supplierId);
 
@@ -232,7 +232,7 @@ class SupplierRepository extends BaseRepository implements SupplierRepositoryInt
     /**
      * Get supplier purchase orders
      */
-    public function getSupplierPurchaseOrders(int $supplierId): Collection
+    public function getSupplierPurchaseOrders(int $supplierId): Category
     {
         $supplier = $this->find($supplierId);
 

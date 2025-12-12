@@ -1,10 +1,10 @@
 <?php
 
-namespace Shopper\Models;
+namespace Cartino\Models;
 
+use Cartino\Support\HasSite;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Shopper\Support\HasSite;
 
 class StorefrontSection extends Model
 {

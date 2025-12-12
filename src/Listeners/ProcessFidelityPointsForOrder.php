@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Shopper\Listeners;
+namespace Cartino\Listeners;
 
-use Shopper\Events\OrderStatusChanged;
-use Shopper\Services\FidelityService;
+use Cartino\Events\OrderStatusChanged;
+use Cartino\Services\FidelityService;
 
 class ProcessFidelityPointsForOrder
 {

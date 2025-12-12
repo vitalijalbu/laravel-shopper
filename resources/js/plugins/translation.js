@@ -7,7 +7,7 @@ export const TranslationPlugin = {
   install(app) {
     // Traduzioni di fallback per test
     const fallbackTranslations = {
-      shopper: {
+      cartino: {
         auth: {
           headings: {
             login: "Accedi al Control Panel",

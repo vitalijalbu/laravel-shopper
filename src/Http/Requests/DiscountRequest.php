@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Shopper\Http\Requests;
+namespace Cartino\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;

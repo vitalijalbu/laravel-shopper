@@ -1,16 +1,16 @@
 <?php
 
-namespace Shopper\Http\Controllers\Api\Auth;
+namespace Cartino\Http\Controllers\Api\Auth;
 
+use Cartino\Http\Controllers\Api\ApiController;
+use Cartino\Models\SocialAccount;
+use Cartino\Models\User;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Socialite\Facades\Socialite;
-use Shopper\Http\Controllers\Api\ApiController;
-use Shopper\Models\SocialAccount;
-use Shopper\Models\User;
 
 class SocialAuthApiController extends ApiController
 {

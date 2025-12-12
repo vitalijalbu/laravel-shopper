@@ -1,14 +1,14 @@
 <?php
 
-namespace Shopper\Contracts;
+namespace Cartino\Contracts;
 
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Category;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 interface RepositoryInterface
 {
-    public function all(array $columns = ['*']): Collection;
+    public function all(array $columns = ['*']): Category;
 
     public function paginate(int $perPage = 20, array $columns = ['*']): LengthAwarePaginator;
 
@@ -16,7 +16,7 @@ interface RepositoryInterface
 
     public function findOrFail(int $id, array $columns = ['*']): Model;
 
-    public function findWhere(array $where, array $columns = ['*']): Collection;
+    public function findWhere(array $where, array $columns = ['*']): Category;
 
     public function findWhereFirst(array $where, array $columns = ['*']): ?Model;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Shopper\Http\Requests\CustomerAddress;
+namespace Cartino\Http\Requests\CustomerAddress;
 
 use Illuminate\Foundation\Http\FormRequest;
 

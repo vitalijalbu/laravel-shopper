@@ -1,6 +1,6 @@
 <?php
 
-namespace Shopper\Listeners;
+namespace Cartino\Listeners;
 
 abstract class Listener
 {

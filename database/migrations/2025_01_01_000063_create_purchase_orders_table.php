@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('supplier_reference')->nullable(); // Supplier's order number
 
             // Order details
-            $table->string('status')->default('draft')->index(); // draft, sent, confirmed, partial, completed, cancelled
+            $table->string('status')->default('draft'); // draft, sent, confirmed, partial, completed, cancelled
             $table->date('order_date');
             $table->date('expected_delivery_date')->nullable();
             $table->date('requested_delivery_date')->nullable();

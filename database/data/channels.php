@@ -17,8 +17,8 @@ return [
                 'facebook_pixel_id' => null,
             ],
             'seo' => [
-                'meta_title' => 'Laravel Shopper Store',
-                'meta_description' => 'Modern e-commerce store powered by Laravel Shopper',
+                'meta_title' => 'Cartino Store',
+                'meta_description' => 'Modern e-commerce store powered by Cartino',
                 'meta_keywords' => 'ecommerce, laravel, vue, shopping',
             ],
             'social' => [

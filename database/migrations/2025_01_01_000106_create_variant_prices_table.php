@@ -18,20 +18,20 @@ return new class extends Migration
             $table->foreignId('channel_id')->nullable()->constrained('channels')->cascadeOnDelete();
             $table->foreignId('customer_group_id')->nullable()->constrained('customer_groups')->cascadeOnDelete();
             $table->foreignId('catalog_id')->nullable()->constrained('catalogs')->cascadeOnDelete();
-            $table->string('currency', 3)->index();
+            $table->string('currency', 3);
 
             // Pricing
-            $table->decimal('price', 15, 4)->index();
+            $table->decimal('price', 15, 4);
             $table->decimal('compare_at_price', 15, 4)->nullable();
             $table->decimal('cost', 15, 4)->nullable();
 
             // Tier Pricing (B2B wholesale)
-            $table->integer('min_quantity')->default(1)->index();
+            $table->integer('min_quantity')->default(1);
             $table->integer('max_quantity')->nullable();
 
             // Scheduling
-            $table->timestamp('starts_at')->nullable()->index();
-            $table->timestamp('ends_at')->nullable()->index();
+            $table->timestamp('starts_at')->nullable();
+            $table->timestamp('ends_at')->nullable();
 
             // Priority (higher = takes precedence)
             $table->integer('priority')->default(0)->index()->comment('Higher priority prices override lower ones');
@@ -62,25 +62,25 @@ return new class extends Migration
         // Price Lists (for bulk import/export)
         Schema::create('price_lists', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->index();
+            $table->string('name');
             $table->string('code')->unique();
             $table->text('description')->nullable();
 
             $table->foreignId('site_id')->nullable()->constrained('sites')->cascadeOnDelete();
             $table->foreignId('channel_id')->nullable()->constrained('channels')->cascadeOnDelete();
             $table->foreignId('customer_group_id')->nullable()->constrained('customer_groups')->cascadeOnDelete();
-            $table->string('currency', 3)->index();
+            $table->string('currency', 3);
 
             // Adjustment Rules
             $table->enum('adjustment_type', ['percentage', 'fixed'])->nullable();
             $table->decimal('adjustment_value', 10, 4)->nullable();
 
             // Scheduling
-            $table->timestamp('starts_at')->nullable()->index();
+            $table->timestamp('starts_at')->nullable();
             $table->timestamp('ends_at')->nullable();
 
-            $table->boolean('is_active')->default(true)->index();
-            $table->integer('priority')->default(0)->index();
+            $table->boolean('is_active')->default(true);
+            $table->integer('priority')->default(0);
 
             $table->timestamps();
             $table->softDeletes();

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Shopper\Http\Resources;
+namespace Cartino\Http\Resources;
 
 use Illuminate\Http\Request;
 
@@ -102,8 +102,8 @@ class SupplierResource extends BaseResource
             'supplier' => [
                 'can_edit' => $request->user()?->can('update', $this->resource),
                 'can_delete' => $request->user()?->can('delete', $this->resource),
-                'can_view_purchase_orders' => $request->user()?->can('viewAny', \Shopper\Models\PurchaseOrder::class),
-                'can_manage_products' => $request->user()?->can('viewAny', \Shopper\Models\Product::class),
+                'can_view_purchase_orders' => $request->user()?->can('viewAny', \Cartino\Models\PurchaseOrder::class),
+                'can_manage_products' => $request->user()?->can('viewAny', \Cartino\Models\Product::class),
             ],
         ]);
     }

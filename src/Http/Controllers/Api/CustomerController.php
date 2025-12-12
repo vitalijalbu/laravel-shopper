@@ -1,10 +1,10 @@
 <?php
 
-namespace Shopper\Http\Controllers\Api;
+namespace Cartino\Http\Controllers\Api;
 
+use Cartino\Repositories\CustomerRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Shopper\Repositories\CustomerRepository;
 
 class CustomerController extends ApiController
 {
@@ -20,7 +20,7 @@ class CustomerController extends ApiController
         $filters = $request->only(['search', 'status', 'group_id', 'location']);
         $perPage = $request->get('per_page', 25);
 
-        $customers = $this->customerRepository->getPaginatedWithFilters($filters, $perPage);
+        $customers = $this->customerRepository->findAll($filters, $perPage);
 
         return response()->json([
             'data' => $customers->items(),

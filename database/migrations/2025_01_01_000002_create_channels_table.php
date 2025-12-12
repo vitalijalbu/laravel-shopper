@@ -25,11 +25,11 @@ return new class extends Migration
                 'b2b_portal',    // B2B wholesale portal
                 'social',        // Social commerce (Instagram, Facebook)
                 'api',           // Headless API
-            ])->default('web')->index();
+            ])->default('web');
 
-            $table->string('url')->nullable()->index();
-            $table->boolean('is_default')->default(false)->index();
-            $table->string('status')->default('active')->index();
+            $table->string('url')->nullable();
+            $table->boolean('is_default')->default(false);
+            $table->string('status')->default('active');
 
             // Multi-locale support (array of locale codes)
             $table->jsonb('locales')->nullable()->comment('Supported locales for this channel ["en", "it", "fr"]');

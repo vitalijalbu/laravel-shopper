@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace ExamplePlugin;
 
-use Shopper\Core\Plugin\AbstractPlugin;
+use Cartino\Core\Plugin\AbstractPlugin;
 
 class ExamplePlugin extends AbstractPlugin
 {

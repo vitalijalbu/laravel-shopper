@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Shopper\Events\Collections;
+namespace Cartino\Events\Collections;
 
-use Shopper\Events\Event;
+use Cartino\Events\Event;
 
 class CollectionCreating extends Event
 {

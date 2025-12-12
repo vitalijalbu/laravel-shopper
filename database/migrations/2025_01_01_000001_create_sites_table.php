@@ -11,41 +11,27 @@ return new class extends Migration
         Schema::create('sites', function (Blueprint $table) {
             $table->id();
             $table->string('handle')->unique();
+            $table->boolean('is_default')->default(true);
             $table->string('name');
             $table->text('description')->nullable();
-
-            // URL Configuration
-            $table->string('url')->index();
+            $table->string('url');
             $table->string('domain')->nullable()->unique();
-            $table->jsonb('domains')->nullable()->comment('Multiple domains for this site');
+            $table->string('locale', 10)->index();
+            $table->string('lang', 5);
+            $table->jsonb('countries')->nullable();
+            $table->string('default_currency', 3)->default('EUR')->index();
+            $table->boolean('tax_included_in_prices')->default(false);
+            $table->string('tax_region')->nullable()->index();
+            $table->integer('priority')->default(0)->index();
+            $table->string('status')->default('active');
+            $table->integer('order')->default(0)->index();
 
-            // Localization (default locale + supported locales managed via channels)
-            $table->string('locale', 10)->index()->comment('Default locale fallback');
-            $table->string('lang', 5)->index();
-
-            // Geographic & Market Configuration
-            $table->jsonb('countries')->nullable()->comment('Array of ISO country codes for this market');
-
-            // Currency Configuration
-            $table->string('default_currency', 3)->default('EUR')->index()->comment('Default currency for this site');
-
-            // Tax Configuration
-            $table->boolean('tax_included_in_prices')->default(false)->comment('Prices include tax');
-            $table->string('tax_region')->nullable()->index()->comment('Default tax region (e.g., EU, US, UK)');
-
-            // Priority & Status
-            $table->integer('priority')->default(0)->index()->comment('Higher priority sites for overlapping domains');
-            $table->boolean('is_default')->default(false)->index()->comment('Default site for new sessions');
-            $table->string('status')->default('active')->index();
-            $table->integer('order')->default(0)->index()->comment('Display order in admin');
-
-            // Publishing
-            $table->timestamp('published_at')->nullable()->index();
+            $table->timestamp('published_at')->nullable();
             $table->timestamp('unpublished_at')->nullable();
 
             $table->timestamps();
             $table->softDeletes();
-            $table->jsonb('attributes')->nullable()->comment('Custom metadata');
+            $table->jsonb('attributes')->nullable();
 
             // Indexes
             $table->index(['handle', 'status']);

@@ -1,18 +1,18 @@
 <?php
 
-namespace Shopper\Console;
+namespace Cartino\Console;
 
+use Cartino\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Shopper\Models\User;
 
 class CreateAdminUserCommand extends Command
 {
     /**
      * The name and signature of the console command.
      */
-    protected $signature = 'shopper:admin 
+    protected $signature = 'cartino:admin 
                             {--email= : Admin email address}
                             {--password= : Admin password}
                             {--name= : Admin name}';
@@ -85,7 +85,7 @@ class CreateAdminUserCommand extends Command
                         $this->info('✅ Assigned admin role to user.');
                     } catch (\Exception $e2) {
                         $this->warn('⚠️  Could not assign any role. You may need to run database seeders first.');
-                        $this->info('💡 Run: php artisan db:seed --class=ShopperSeeder');
+                        $this->info('💡 Run: php artisan db:seed --class=CartinoSeeder');
                     }
                 }
             } else {
@@ -112,7 +112,7 @@ class CreateAdminUserCommand extends Command
             $this->info('🎉 You can now login to the Control Panel with these credentials.');
 
             if (! $roles) {
-                $this->info('💡 To enable full role-based permissions, run: php artisan db:seed --class=ShopperSeeder');
+                $this->info('💡 To enable full role-based permissions, run: php artisan db:seed --class=CartinoSeeder');
             }
 
             return Command::SUCCESS;

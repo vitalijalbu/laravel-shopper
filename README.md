@@ -43,14 +43,14 @@ composer require cartinophp/cartino
 
 2. Publish and run migrations:
 ```bash
-php artisan vendor:publish --provider="Shopper\ShopperServiceProvider" --tag="cartino-migrations"
+php artisan vendor:publish --provider="Cartino\CartinoServiceProvider" --tag="cartino-migrations"
 php artisan migrate
 ```
 
 3. Publish OAuth components (optional):
 ```bash
-php artisan vendor:publish --provider="Shopper\ShopperServiceProvider" --tag="shopper-oauth-config"
-php artisan vendor:publish --provider="Shopper\ShopperServiceProvider" --tag="shopper-components"
+php artisan vendor:publish --provider="Cartino\CartinoServiceProvider" --tag="cartino-oauth-config"
+php artisan vendor:publish --provider="Cartino\CartinoServiceProvider" --tag="cartino-components"
 ```
 
 ## OAuth Configuration
@@ -151,27 +151,27 @@ const handleError = (error) => {
 ## 📦 Installation
 
 ```bash
-composer require vitalijalbu/laravel-shopper
+composer require vitalijalbu/laravel-cartino
 ```
 
 ### Publish and Run Migrations
 
 ```bash
-php artisan vendor:publish --provider="Shopper\ShopperServiceProvider" --tag="migrations"
+php artisan vendor:publish --provider="Cartino\CartinoServiceProvider" --tag="migrations"
 php artisan migrate
 ```
 
 ### Publish Assets
 
 ```bash
-php artisan vendor:publish --provider="Shopper\ShopperServiceProvider" --tag="assets"
+php artisan vendor:publish --provider="Cartino\CartinoServiceProvider" --tag="assets"
 npm install && npm run build
 ```
 
 ### Create Admin User
 
 ```bash
-php artisan shopper:install
+php artisan cartino:install
 ```
 
 ## 🎯 Quick Start
@@ -183,7 +183,7 @@ Visit `/cp` to access the Shopify-style control panel.
 ### 2. Create Your First Product
 
 ```php
-use Shopper\Models\Product;
+use Cartino\Models\Product;
 
 $product = Product::create([
     'site_id' => 1,
@@ -198,7 +198,7 @@ $product = Product::create([
 ### 3. Create a Custom Template
 
 ```php
-use Shopper\Models\StorefrontTemplate;
+use Cartino\Models\StorefrontTemplate;
 
 $template = StorefrontTemplate::create([
     'site_id' => 1,
@@ -220,7 +220,7 @@ $template = StorefrontTemplate::create([
 ### 4. Build Custom CP Pages
 
 ```php
-use Shopper\CP\Page;
+use Cartino\CP\Page;
 
 $page = Page::make('My Custom Page')
     ->primaryAction('Save', '/save-url')
@@ -248,7 +248,7 @@ return Inertia::render('CP/CustomPage', [
 ### Creating Sections
 
 ```php
-use Shopper\Models\StorefrontSection;
+use Cartino\Models\StorefrontSection;
 
 $section = StorefrontSection::create([
     'site_id' => 1,
@@ -286,7 +286,7 @@ $section = StorefrontSection::create([
 ### Custom Dashboard Cards
 
 ```php
-use Shopper\CP\Dashboard;
+use Cartino\CP\Dashboard;
 
 Dashboard::card('SalesChart', [
     'title' => 'Sales Overview',
@@ -301,7 +301,7 @@ Dashboard::metric('Total Sales', function () {
 ### Navigation Items
 
 ```php
-use Shopper\CP\Navigation;
+use Cartino\CP\Navigation;
 
 Navigation::section('custom', 'My Section')
     ->order(50);
@@ -317,7 +317,7 @@ Navigation::item('custom.reports')
 ### Extensible Pages
 
 ```php
-use Shopper\CP\Page;
+use Cartino\CP\Page;
 
 $page = Page::make('Advanced Product')
     ->primaryAction('Save Product', null, ['form' => 'product-form'])
@@ -402,13 +402,13 @@ composer test
 Publish the config file:
 
 ```bash
-php artisan vendor:publish --provider="Shopper\ShopperServiceProvider" --tag="config"
+php artisan vendor:publish --provider="Cartino\CartinoServiceProvider" --tag="config"
 ```
 
 ### Key Configuration Options
 
 ```php
-// config/shopper.php
+// config/cartino.php
 return [
     'multi_site' => true,
     'default_currency' => 'USD',
@@ -470,9 +470,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Support
 
-- **Issues**: [GitHub Issues](https://github.com/vitalijalbu/laravel-shopper/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/vitalijalbu/laravel-shopper/discussions)
-- **Documentation**: [Full Documentation](https://laravel-shopper.dev)
+- **Issues**: [GitHub Issues](https://github.com/vitalijalbu/laravel-cartino/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/vitalijalbu/laravel-cartino/discussions)
+- **Documentation**: [Full Documentation](https://laravel-cartino.dev)
 
 ---
 
@@ -488,16 +488,16 @@ php artisan migrate
 
 ```bash
 # Create new Laravel app
-laravel new shopper-test
-cd shopper-test
+laravel new cartino-test
+cd cartino-test
 
 # Install the package
-composer config repositories.local path ../laravel-shopper
-composer require vitalijalbu/laravel-shopper:@dev
+composer config repositories.local path ../laravel-cartino
+composer require vitalijalbu/laravel-cartino:@dev
 
 # Publish and configure
-php artisan vendor:publish --tag="shopper-config"
-php artisan vendor:publish --tag="shopper-assets"
+php artisan vendor:publish --tag="cartino-config"
+php artisan vendor:publish --tag="cartino-assets"
 
 # Install frontend dependencies
 npm install

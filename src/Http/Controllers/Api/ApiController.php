@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Shopper\Http\Controllers\Api;
+namespace Cartino\Http\Controllers\Api;
 
+use Cartino\Http\Controllers\Controller;
+use Cartino\Traits\ApiResponseTrait;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Shopper\Http\Controllers\Controller;
-use Shopper\Traits\ApiResponseTrait;
 
 abstract class ApiController extends Controller
 {

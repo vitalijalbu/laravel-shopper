@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Shopper\Workflows;
+namespace Cartino\Workflows;
 
 abstract class AbstractWorkflow implements WorkflowInterface
 {
@@ -114,6 +114,6 @@ abstract class AbstractWorkflow implements WorkflowInterface
      */
     protected function getActionClass(string $type): string
     {
-        return 'Shopper\\Workflows\\Actions\\'.studly_case($type).'Action';
+        return 'Cartino\\Workflows\\Actions\\'.studly_case($type).'Action';
     }
 }

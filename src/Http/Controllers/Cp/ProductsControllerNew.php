@@ -1,19 +1,19 @@
 <?php
 
-namespace Shopper\Http\Controllers\Cp;
+namespace Cartino\Http\Controllers\CP;
 
+use Cartino\CP\Page;
+use Cartino\Data\ProductDto;
+use Cartino\DataTable\ProductDataTable;
+use Cartino\Http\Controllers\Controller;
+use Cartino\Http\Resources\ProductCollection;
+use Cartino\Http\Resources\ProductResource;
+use Cartino\Models\Brand;
+use Cartino\Models\Category;
+use Cartino\Models\Product;
+use Cartino\Schema\SchemaRepository;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Shopper\CP\Page;
-use Shopper\Data\ProductDto;
-use Shopper\DataTable\ProductDataTable;
-use Shopper\Http\Controllers\Controller;
-use Shopper\Http\Resources\ProductCollection;
-use Shopper\Http\Resources\ProductResource;
-use Shopper\Models\Brand;
-use Shopper\Models\Collection;
-use Shopper\Models\Product;
-use Shopper\Schema\SchemaRepository;
 
 class ProductsController extends Controller
 {
@@ -90,7 +90,7 @@ class ProductsController extends Controller
             'page' => $page->compile(),
 
             'schema' => $schema->toArray(),
-            'categories' => Collection::select('id', 'name')->get(),
+            'categories' => Category::select('id', 'name')->get(),
             'brands' => Brand::select('id', 'name')->get(),
         ]);
     }
@@ -207,7 +207,7 @@ class ProductsController extends Controller
 
             'schema' => $schema->toArray(),
             'product' => new ProductResource($product),
-            'categories' => Collection::select('id', 'name')->get(),
+            'categories' => Category::select('id', 'name')->get(),
             'brands' => Brand::select('id', 'name')->get(),
         ]);
     }

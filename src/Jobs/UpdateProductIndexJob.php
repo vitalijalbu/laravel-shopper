@@ -1,16 +1,16 @@
 <?php
 
-namespace Shopper\Jobs;
+namespace Cartino\Jobs;
 
+use Cartino\Models\Product;
+use Cartino\Services\CacheService;
+use Cartino\Services\SearchService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
-use Shopper\Models\Product;
-use Shopper\Services\CacheService;
-use Shopper\Services\SearchService;
 
 class UpdateProductIndexJob implements ShouldQueue
 {

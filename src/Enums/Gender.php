@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Shopper\Enums;
+namespace Cartino\Enums;
 
 enum Gender: string
 {

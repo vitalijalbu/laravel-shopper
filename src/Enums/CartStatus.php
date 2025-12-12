@@ -1,6 +1,6 @@
 <?php
 
-namespace Shopper\Enums;
+namespace Cartino\Enums;
 
 enum CartStatus: string
 {
@@ -12,10 +12,10 @@ enum CartStatus: string
     public function label(): string
     {
         return match ($this) {
-            self::ACTIVE => __('shopper::cart.status.active'),
-            self::ABANDONED => __('shopper::cart.status.abandoned'),
-            self::CONVERTED => __('shopper::cart.status.converted'),
-            self::EXPIRED => __('shopper::cart.status.expired'),
+            self::ACTIVE => __('cartino::cart.status.active'),
+            self::ABANDONED => __('cartino::cart.status.abandoned'),
+            self::CONVERTED => __('cartino::cart.status.converted'),
+            self::EXPIRED => __('cartino::cart.status.expired'),
         };
     }
 

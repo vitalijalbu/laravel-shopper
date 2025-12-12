@@ -1,6 +1,6 @@
 <?php
 
-namespace Shopper\Http\Requests\Wishlist;
+namespace Cartino\Http\Requests\Wishlist;
 
 use Illuminate\Foundation\Http\FormRequest;
 

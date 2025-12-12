@@ -1,17 +1,23 @@
 <?php
 
-namespace Shopper\Enums;
+declare(strict_types=1);
+
+namespace Cartino\Enums;
+
+use Cartino\Helpers\EnumSerializable;
 
 enum AddressType: string
 {
+    use EnumSerializable;
+
     case BILLING = 'billing';
     case SHIPPING = 'shipping';
 
     public function label(): string
     {
         return match ($this) {
-            self::BILLING => __('shopper::address.type.billing'),
-            self::SHIPPING => __('shopper::address.type.shipping'),
+            self::BILLING => __('cartino::address.type.billing'),
+            self::SHIPPING => __('cartino::address.type.shipping'),
         };
     }
 

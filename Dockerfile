@@ -1,4 +1,4 @@
-# Laravel Shopper - Production Docker Setup
+# Cartino - Production Docker Setup
 FROM php:8.2-fpm-alpine AS base
 
 # Install system dependencies
@@ -60,7 +60,7 @@ COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 RUN php artisan config:cache \
     && php artisan route:cache \
     && php artisan view:cache \
-    && php artisan shopper:optimize --all
+    && php artisan cartino:optimize --all
 
 # Expose port
 EXPOSE 80

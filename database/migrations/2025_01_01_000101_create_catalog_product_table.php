@@ -14,7 +14,7 @@ return new class extends Migration
             $table->foreignId('product_id')->constrained('products')->cascadeOnDelete();
 
             // Product inclusion/exclusion
-            $table->boolean('is_included')->default(true)->index();
+            $table->boolean('is_included')->default(true);
 
             // Fixed pricing (overrides catalog-level adjustments)
             $table->decimal('fixed_price', 10, 4)->nullable();
@@ -29,13 +29,13 @@ return new class extends Migration
             $table->jsonb('quantity_breaks')->nullable()->comment('Array of quantity break rules: [{"quantity": 10, "price": 9.99}, ...]');
 
             // Publishing control at product level
-            $table->boolean('is_published')->default(true)->index();
+            $table->boolean('is_published')->default(true);
 
             // Timestamps
             $table->timestamps();
 
             // Custom fields data (JSON schema-based)
-            $table->jsonb('data')->nullable()->comment('Custom fields data based on JSON schema');
+            $table->jsonb('data')->nullable();
 
             // Indexes
             $table->unique(['catalog_id', 'product_id']);

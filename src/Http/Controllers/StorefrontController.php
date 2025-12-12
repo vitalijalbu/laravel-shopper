@@ -1,12 +1,12 @@
 <?php
 
-namespace Shopper\Http\Controllers;
+namespace Cartino\Http\Controllers;
 
+use Cartino\Models\Category;
+use Cartino\Models\Product;
+use Cartino\Services\TemplateEngine;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Shopper\Models\Collection;
-use Shopper\Models\Product;
-use Shopper\Services\TemplateEngine;
 
 class StorefrontController extends Controller
 {
@@ -22,7 +22,7 @@ class StorefrontController extends Controller
      */
     public function home(Request $request): Response
     {
-        $site = app('laravel-shopper.site');
+        $site = app('laravel-cartino.site');
 
         $content = $this->templateEngine->render(
             'index',
@@ -80,7 +80,7 @@ class StorefrontController extends Controller
      */
     public function categoryIndex(Request $request): Response
     {
-        $categories = Collection::active()
+        $categories = Category::active()
             ->with(['media'])
             ->orderBy('name')
             ->get();
@@ -104,7 +104,7 @@ class StorefrontController extends Controller
      */
     public function categoryShow(Request $request, string $handle): Response
     {
-        $category = Collection::where('handle', $handle)
+        $category = Category::where('handle', $handle)
             ->with(['media', 'products.media'])
             ->active()
             ->firstOrFail();

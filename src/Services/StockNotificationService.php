@@ -1,12 +1,12 @@
 <?php
 
-namespace Shopper\Services;
+namespace Cartino\Services;
 
+use Cartino\Data\StockNotification\StockNotificationData;
+use Cartino\Jobs\SendStockNotificationEmail;
+use Cartino\Models\StockNotification;
+use Cartino\Repositories\StockNotificationRepository;
 use Illuminate\Support\Facades\Log;
-use Shopper\Data\StockNotification\StockNotificationData;
-use Shopper\Jobs\SendStockNotificationEmail;
-use Shopper\Models\StockNotification;
-use Shopper\Repositories\StockNotificationRepository;
 
 class StockNotificationService
 {

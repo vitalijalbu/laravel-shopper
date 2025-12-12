@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Shopper\Http\Controllers\Api;
+namespace Cartino\Http\Controllers\Api;
 
+use Cartino\Http\Resources\AssetContainerResource;
+use Cartino\Models\AssetContainer;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Shopper\Http\Resources\AssetContainerResource;
-use Shopper\Models\AssetContainer;
 
 class AssetContainerController extends Controller
 {

@@ -1,12 +1,12 @@
 <?php
 
-namespace Shopper\Http\Controllers\Api\Admin;
+namespace Cartino\Http\Controllers\Api\Admin;
 
+use Cartino\Http\Controllers\Api\ApiController;
+use Cartino\Services\FilterService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
-use Shopper\Http\Controllers\Api\ApiController;
-use Shopper\Services\FilterService;
 
 class UnifiedResourceController extends ApiController
 {
@@ -56,7 +56,7 @@ class UnifiedResourceController extends ApiController
             ],
             'filters' => $params,
             'config' => [
-                'available_operators' => config('shopper.filters.operators.enabled'),
+                'available_operators' => config('cartino.filters.operators.enabled'),
                 'filterable_fields' => $config['filterable'],
                 'sortable_fields' => $config['sortable'],
                 'searchable_fields' => $config['searchable'],

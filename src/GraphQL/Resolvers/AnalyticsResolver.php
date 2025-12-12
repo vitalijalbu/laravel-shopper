@@ -1,11 +1,11 @@
 <?php
 
-namespace Shopper\GraphQL\Resolvers;
+namespace Cartino\GraphQL\Resolvers;
 
 use Carbon\Carbon;
+use Cartino\Models\AnalyticsEvent;
 use GraphQL\Type\Definition\ResolveInfo;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
-use Shopper\Models\AnalyticsEvent;
 
 class AnalyticsResolver
 {

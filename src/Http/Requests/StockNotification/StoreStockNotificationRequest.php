@@ -1,6 +1,6 @@
 <?php
 
-namespace Shopper\Http\Requests\StockNotification;
+namespace Cartino\Http\Requests\StockNotification;
 
 use Illuminate\Foundation\Http\FormRequest;
 

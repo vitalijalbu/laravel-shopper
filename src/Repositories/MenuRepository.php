@@ -1,11 +1,11 @@
 <?php
 
-namespace Shopper\Repositories;
+namespace Cartino\Repositories;
 
-use Illuminate\Database\Eloquent\Collection;
+use Cartino\Models\Menu;
+use Illuminate\Database\Eloquent\Category;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Shopper\Models\Menu;
 
 class MenuRepository extends BaseRepository
 {
@@ -19,7 +19,7 @@ class MenuRepository extends BaseRepository
     /**
      * Get paginated menus with filters
      */
-    public function getPaginatedWithFilters(array $filters = [], int $perPage = 25): LengthAwarePaginator
+    public function findAll(array $filters = []): LengthAwarePaginator
     {
         $query = $this->model->newQuery()->withCount('allItems');
 
@@ -49,7 +49,7 @@ class MenuRepository extends BaseRepository
     /**
      * Get active menus
      */
-    public function getActive(): Collection
+    public function getActive(): Category
     {
         $cacheKey = $this->getCacheKey('active', 'all');
 
@@ -128,7 +128,7 @@ class MenuRepository extends BaseRepository
             $itemData['menu_id'] = $newMenuId;
             $itemData['parent_id'] = $newParentId;
 
-            $newItem = \Shopper\Models\MenuItem::create($itemData);
+            $newItem = \Cartino\Models\MenuItem::create($itemData);
 
             if ($item->children->isNotEmpty()) {
                 $this->duplicateMenuItems($item->children, $newMenuId, $newItem->id);
@@ -175,7 +175,7 @@ class MenuRepository extends BaseRepository
     /**
      * Get menus for select options
      */
-    public function getForSelect(): Collection
+    public function getForSelect(): Category
     {
         return $this->model->select('id', 'title', 'handle')
             ->where('is_active', true)

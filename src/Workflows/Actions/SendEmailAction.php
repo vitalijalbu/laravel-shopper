@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Shopper\Workflows\Actions;
+namespace Cartino\Workflows\Actions;
 
 use Illuminate\Support\Facades\Mail;
 

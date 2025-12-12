@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Shopper\Http\Controllers\Api\Data;
+namespace Cartino\Http\Controllers\Api\Data;
 
+use Cartino\Enums\OrderStatus;
+use Cartino\Enums\Status;
+use Cartino\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
-use Shopper\Enums\OrderStatus;
-use Shopper\Enums\Status;
-use Shopper\Http\Controllers\Controller;
 
 class StatusController extends Controller
 {

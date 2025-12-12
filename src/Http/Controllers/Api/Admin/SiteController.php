@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Shopper\Http\Controllers\Api\Admin;
+namespace Cartino\Http\Controllers\Api\Admin;
 
+use Cartino\Http\Requests\Admin\SiteRequest;
+use Cartino\Http\Resources\SiteResource;
+use Cartino\Models\Site;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Routing\Controller;
-use Shopper\Http\Requests\Admin\SiteRequest;
-use Shopper\Http\Resources\SiteResource;
-use Shopper\Models\Site;
 
 class SiteController extends Controller
 {

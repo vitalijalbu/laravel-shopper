@@ -14,9 +14,9 @@ return new class extends Migration
             $table->foreignId('parent_id')->nullable()->constrained('pages')->nullOnDelete();
 
             // Page Identity
-            $table->string('title')->index();
-            $table->string('slug')->index();
-            $table->string('handle')->index();
+            $table->string('title');
+            $table->string('slug');
+            $table->string('handle');
             $table->string('template')->nullable(); // blade template to use
             $table->string('layout')->nullable(); // layout wrapper
 
@@ -35,9 +35,9 @@ return new class extends Migration
             $table->jsonb('seo')->nullable()->comment('Additional SEO metadata');
 
             // Publishing
-            $table->enum('status', ['published', 'draft', 'private', 'scheduled'])->default('draft')->index();
-            $table->timestamp('published_at')->nullable()->index();
-            $table->timestamp('scheduled_at')->nullable()->index();
+            $table->enum('status', ['published', 'draft', 'private', 'scheduled'])->default('draft');
+            $table->timestamp('published_at')->nullable();
+            $table->timestamp('scheduled_at')->nullable();
 
             // Author & Editor
             $table->foreignId('author_id')->nullable()->constrained('users')->nullOnDelete();
@@ -47,8 +47,8 @@ return new class extends Migration
             $table->jsonb('data')->nullable()->comment('Custom fields data');
 
             // Hierarchy
-            $table->integer('order')->default(0)->index();
-            $table->integer('depth')->default(0)->index();
+            $table->integer('order')->default(0);
+            $table->integer('depth')->default(0);
 
             $table->timestamps();
             $table->softDeletes();

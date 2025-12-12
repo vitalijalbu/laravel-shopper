@@ -11,12 +11,12 @@ return new class extends Migration
         Schema::create('shipping_zones', function (Blueprint $table) {
             $table->id();
             $table->foreignId('site_id')->nullable()->constrained('sites')->cascadeOnDelete();
-            $table->string('name')->index();
+            $table->string('name');
             $table->text('description')->nullable();
             $table->jsonb('countries'); // Array of country ISO codes
             $table->jsonb('states')->nullable(); // Array of state codes for specific countries
             $table->jsonb('postcodes')->nullable(); // Array of postcode patterns
-            $table->string('status')->default('active')->index();
+            $table->string('status')->default('active');
             $table->jsonb('data')->nullable()->comment('Custom fields data');
             $table->timestamps();
             $table->softDeletes();

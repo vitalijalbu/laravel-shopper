@@ -1,14 +1,14 @@
 <?php
 
-namespace Shopper\Http\Controllers\Api;
+namespace Cartino\Http\Controllers\Api;
 
+use Cartino\Http\Requests\Api\AssignPermissionRequest;
+use Cartino\Http\Requests\Api\StoreUserGroupRequest;
+use Cartino\Http\Requests\Api\UpdateUserGroupRequest;
+use Cartino\Models\UserGroup;
+use Cartino\Traits\ApiResponseTrait;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Shopper\Http\Requests\Api\AssignPermissionRequest;
-use Shopper\Http\Requests\Api\StoreUserGroupRequest;
-use Shopper\Http\Requests\Api\UpdateUserGroupRequest;
-use Shopper\Models\UserGroup;
-use Shopper\Traits\ApiResponseTrait;
 
 class UserGroupController extends ApiController
 {

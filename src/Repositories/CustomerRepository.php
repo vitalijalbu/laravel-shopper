@@ -1,11 +1,11 @@
 <?php
 
-namespace Shopper\Repositories;
+namespace Cartino\Repositories;
 
+use Cartino\Models\Customer;
+use Cartino\Models\CustomerGroup;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Shopper\Models\Customer;
-use Shopper\Models\CustomerGroup;
 
 class CustomerRepository extends BaseRepository
 {
@@ -21,7 +21,7 @@ class CustomerRepository extends BaseRepository
     /**
      * Get paginated customers with filters and search
      */
-    public function getPaginatedWithFilters(array $filters = [], int $perPage = 25): LengthAwarePaginator
+    public function findAll(array $filters = []): LengthAwarePaginator
     {
         $query = $this->model->newQuery()
             ->with(['customerGroup', 'fidelityCard'])
@@ -108,7 +108,7 @@ class CustomerRepository extends BaseRepository
     /**
      * Get customer groups for filters
      */
-    public function getCustomerGroups(): \Illuminate\Database\Eloquent\Collection
+    public function getCustomerGroups(): \Illuminate\Database\Eloquent\Category
     {
         return CustomerGroup::select('id', 'name')->orderBy('name')->get();
     }
@@ -126,7 +126,7 @@ class CustomerRepository extends BaseRepository
     /**
      * Get customers with fidelity statistics
      */
-    public function getWithFidelityStats(array $filters = [], int $perPage = 25): LengthAwarePaginator
+    public function getWithFidelityStats(array $filters = []): LengthAwarePaginator
     {
         $query = $this->model->newQuery()
             ->with(['customerGroup', 'fidelityCard'])
@@ -300,7 +300,7 @@ class CustomerRepository extends BaseRepository
     /**
      * Get customer orders with filters
      */
-    public function getOrders(int $customerId, array $filters = [], int $perPage = 25): LengthAwarePaginator
+    public function getOrders(int $customerId, array $filters = []): LengthAwarePaginator
     {
         $customer = $this->model->find($customerId);
 
@@ -335,7 +335,7 @@ class CustomerRepository extends BaseRepository
     /**
      * Get customer addresses
      */
-    public function getAddresses(int $customerId): \Illuminate\Database\Eloquent\Collection
+    public function getAddresses(int $customerId): \Illuminate\Database\Eloquent\Category
     {
         $cacheKey = $this->getCacheKey('addresses', $customerId);
 

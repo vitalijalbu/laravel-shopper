@@ -2,41 +2,41 @@
 
 declare(strict_types=1);
 
-namespace Shopper\Contracts;
+namespace Cartino\Contracts;
 
+use Cartino\Models\Product;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Collection;
-use Shopper\Models\Product;
+use Illuminate\Database\Eloquent\Category;
 
 interface ProductRepositoryInterface extends RepositoryInterface
 {
     public function findWithRelations(int $id, array $relations = []): ?Product;
 
-    public function searchPaginated(array $filters, int $perPage = 20): LengthAwarePaginator;
+    public function findAll(array $filters, int $perPage = 20): LengthAwarePaginator;
 
     public function createWithRelations(array $data, array $relations = []): Product;
 
-    public function getByCategory(int $categoryId): Collection;
+    public function getByCategory(int $categoryId): Category;
 
-    public function getByBrand(int $brandId): Collection;
+    public function getByBrand(int $brandId): Category;
 
-    public function getByCollection(int $collectionId): Collection;
+    public function getByCollection(int $collectionId): Category;
 
-    public function getPublished(): Collection;
+    public function getPublished(): Category;
 
-    public function getVisible(): Collection;
+    public function getVisible(): Category;
 
-    public function getOnSale(): Collection;
+    public function getOnSale(): Category;
 
-    public function getFeatured(): Collection;
+    public function getFeatured(): Category;
 
-    public function getPopular(int $limit = 10): Collection;
+    public function getPopular(int $limit = 10): Category;
 
-    public function getRelated(Product $product, int $limit = 4): Collection;
+    public function getRelated(Product $product, int $limit = 4): Category;
 
     public function getBySku(string $sku): ?Product;
 
-    public function searchByName(string $name): Collection;
+    public function searchByName(string $name): Category;
 
     public function filterByPrice(int $minPrice, int $maxPrice): static;
 

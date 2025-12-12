@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Shopper\Models;
+namespace Cartino\Models;
 
+use Cartino\Traits\HasCustomFields;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Shopper\Traits\HasCustomFields;
 
 class ProductVariant extends Model
 {

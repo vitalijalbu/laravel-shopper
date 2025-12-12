@@ -1,7 +1,8 @@
 <?php
 
-namespace Shopper\Http\Controllers\Cp\Auth;
+namespace Cartino\Http\Controllers\CP\Auth;
 
+use Cartino\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
@@ -10,7 +11,6 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
-use Shopper\Http\Controllers\Controller;
 
 class PasswordResetLinkController extends Controller
 {
@@ -22,13 +22,13 @@ class PasswordResetLinkController extends Controller
         return Inertia::render('auth/forgot-password', [
             'status' => session('status'),
             'locale' => app()->getLocale(),
-            'locales' => config('shopper.locales', ['en', 'it']),
+            'locales' => config('cartino.locales', ['en', 'it']),
             'app_name' => config('app.name'),
-            'cp_name' => config('shopper.cp.name', 'Control Panel'),
+            'cp_name' => config('cartino.cp.name', 'Control Panel'),
             'branding' => [
-                'logo' => config('shopper.cp.branding.logo'),
-                'logo_dark' => config('shopper.cp.branding.logo_dark'),
-                'favicon' => config('shopper.cp.branding.favicon'),
+                'logo' => config('cartino.cp.branding.logo'),
+                'logo_dark' => config('cartino.cp.branding.logo_dark'),
+                'favicon' => config('cartino.cp.branding.favicon'),
             ],
         ]);
     }
@@ -45,8 +45,8 @@ class PasswordResetLinkController extends Controller
         $request->validate([
             'email' => ['required', 'email'],
         ], [
-            'email.required' => __('shopper::auth.validation.email_required'),
-            'email.email' => __('shopper::auth.validation.email_invalid'),
+            'email.required' => __('cartino::auth.validation.email_required'),
+            'email.email' => __('cartino::auth.validation.email_invalid'),
         ]);
 
         // We will send the password reset link to this user. Once we have attempted
@@ -64,9 +64,9 @@ class PasswordResetLinkController extends Controller
         }
 
         return $status === Password::RESET_LINK_SENT
-            ? back()->with('status', __('shopper::auth.password_reset_sent'))
+            ? back()->with('status', __('cartino::auth.password_reset_sent'))
             : back()->withInput($request->only('email'))
-                ->withErrors(['email' => __('shopper::auth.password_reset_failed')]);
+                ->withErrors(['email' => __('cartino::auth.password_reset_failed')]);
     }
 
     /**
@@ -81,7 +81,7 @@ class PasswordResetLinkController extends Controller
         $seconds = RateLimiter::availableIn($this->throttleKey($request));
 
         throw ValidationException::withMessages([
-            'email' => __('shopper::auth.password_reset_throttle', [
+            'email' => __('cartino::auth.password_reset_throttle', [
                 'seconds' => $seconds,
                 'minutes' => ceil($seconds / 60),
             ]),

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Shopper\Http\Resources\CP;
+namespace Cartino\Http\Resources\CP;
 
+use Cartino\Models\Brand;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Shopper\Models\Brand;
 
 /**
  * @mixin Brand

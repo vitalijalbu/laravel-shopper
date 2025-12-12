@@ -10,13 +10,13 @@ return new class extends Migration
     {
         Schema::create('discounts', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('site_id')->nullable()->index();
+            $table->unsignedBigInteger('site_id')->nullable();
 
-            $table->string('code', 100)->index();
+            $table->string('code', 100);
             $table->string('title')->nullable();
             $table->text('description')->nullable();
 
-            $table->enum('type', ['percentage', 'fixed_amount', 'free_shipping', 'buy_x_get_y'])->index();
+            $table->enum('type', ['percentage', 'fixed_amount', 'free_shipping', 'buy_x_get_y']);
             $table->decimal('value', 15, 2)->nullable();
             $table->decimal('maximum_discount_amount', 15, 2)->nullable();
 
@@ -25,12 +25,12 @@ return new class extends Migration
 
             $table->integer('usage_limit')->nullable();
             $table->integer('usage_limit_per_customer')->nullable();
-            $table->integer('usage_count')->default(0)->index();
+            $table->integer('usage_count')->default(0);
 
-            $table->timestamp('starts_at')->nullable()->index();
-            $table->timestamp('expires_at')->nullable()->index();
+            $table->timestamp('starts_at')->nullable();
+            $table->timestamp('expires_at')->nullable();
 
-            $table->boolean('is_active')->default(true)->index();
+            $table->boolean('is_active')->default(true);
             $table->boolean('once_per_customer')->default(false);
 
             $table->integer('prerequisite_quantity')->nullable();
@@ -52,7 +52,7 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
 
-            $table->jsonb('data')->nullable()->comment('Custom fields data based on JSON schema');
+            $table->jsonb('data')->nullable();
 
             $table->unique(['code', 'site_id']);
             $table->index(['site_id', 'is_active']);
@@ -78,11 +78,11 @@ return new class extends Migration
 
             $table->decimal('discount_amount', 15, 2);
             $table->decimal('cart_total', 15, 2);
-            $table->string('customer_email')->nullable()->index();
+            $table->string('customer_email')->nullable();
 
-            $table->enum('status', ['active', 'used', 'expired', 'cancelled'])->default('active')->index();
+            $table->enum('status', ['active', 'used', 'expired', 'cancelled'])->default('active');
 
-            $table->string('session_id')->nullable()->index();
+            $table->string('session_id')->nullable();
             $table->timestamp('expires_at')->nullable();
 
             $table->timestamps();
@@ -101,7 +101,7 @@ return new class extends Migration
 
         Schema::create('gift_cards', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('site_id')->nullable()->index();
+            $table->unsignedBigInteger('site_id')->nullable();
 
             $table->string('code', 100)->unique();
             $table->string('title')->nullable();
@@ -110,8 +110,8 @@ return new class extends Migration
             $table->decimal('balance', 15, 2);
             $table->decimal('used_amount', 15, 2)->default(0);
 
-            $table->boolean('is_active')->default(true)->index();
-            $table->timestamp('expires_at')->nullable()->index();
+            $table->boolean('is_active')->default(true);
+            $table->timestamp('expires_at')->nullable();
             $table->timestamp('last_used_at')->nullable();
 
             $table->foreignId('customer_id')->nullable()->constrained()->nullOnDelete();
@@ -128,7 +128,7 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
 
-            $table->jsonb('data')->nullable()->comment('Custom fields data based on JSON schema');
+            $table->jsonb('data')->nullable();
 
             $table->index(['site_id', 'is_active']);
             $table->index(['customer_id', 'is_active']);
@@ -155,7 +155,7 @@ return new class extends Migration
             $table->decimal('balance_before', 15, 2);
             $table->decimal('balance_after', 15, 2);
 
-            $table->enum('type', ['purchase', 'usage', 'refund', 'adjustment'])->index();
+            $table->enum('type', ['purchase', 'usage', 'refund', 'adjustment']);
             $table->text('notes')->nullable();
 
             $table->timestamps();

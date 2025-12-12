@@ -1,6 +1,6 @@
 <?php
 
-namespace Shopper\Data;
+namespace Cartino\Data;
 
 use DateTime;
 use Illuminate\Support\Str;

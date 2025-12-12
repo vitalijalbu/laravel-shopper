@@ -1,15 +1,15 @@
 <?php
 
-namespace Shopper\Repositories;
+namespace Cartino\Repositories;
 
-use Illuminate\Database\Eloquent\Collection;
+use Cartino\Models\CustomerAddress;
+use Illuminate\Database\Eloquent\Category;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Shopper\Models\CustomerAddress;
 
 class CustomerAddressRepository extends BaseRepository
 {
-    protected string $cachePrefix = 'customer_addresses';
+    protected string $cachePrefix = 'addresses';
 
     protected function makeModel(): Model
     {
@@ -19,7 +19,7 @@ class CustomerAddressRepository extends BaseRepository
     /**
      * Get paginated addresses with filters
      */
-    public function getPaginatedWithFilters(array $filters = [], int $perPage = 25): LengthAwarePaginator
+    public function findAll(array $filters = []): LengthAwarePaginator
     {
         $query = $this->model->newQuery()->with('customer');
 
@@ -67,7 +67,7 @@ class CustomerAddressRepository extends BaseRepository
     /**
      * Get addresses by customer
      */
-    public function getByCustomer(int $customerId, ?string $type = null): Collection
+    public function getByCustomer(int $customerId, ?string $type = null): Category
     {
         $cacheKey = $this->getCacheKey('customer', $customerId.'_'.$type);
 
@@ -127,7 +127,7 @@ class CustomerAddressRepository extends BaseRepository
     /**
      * Get addresses by country
      */
-    public function getByCountry(string $countryCode): Collection
+    public function getByCountry(string $countryCode): Category
     {
         $cacheKey = $this->getCacheKey('country', $countryCode);
 

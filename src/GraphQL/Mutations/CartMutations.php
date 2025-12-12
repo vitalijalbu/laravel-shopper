@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Shopper\GraphQL\Mutations;
+namespace Cartino\GraphQL\Mutations;
 
-use Shopper\Services\CartService;
+use Cartino\Services\CartService;
 
 class CartMutations
 {

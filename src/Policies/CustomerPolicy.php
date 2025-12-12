@@ -1,10 +1,10 @@
 <?php
 
-namespace Shopper\Policies;
+namespace Cartino\Policies;
 
+use Cartino\Models\Customer;
+use Cartino\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
-use Shopper\Models\Customer;
-use Shopper\Models\User;
 
 class CustomerPolicy
 {

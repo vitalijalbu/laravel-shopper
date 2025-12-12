@@ -15,7 +15,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->string('provider');
             $table->json('config')->nullable();
-            $table->enum('status', ['active', 'inactive', 'maintenance', 'deprecated'])->default('inactive')->index();
+            $table->enum('status', ['active', 'inactive', 'maintenance', 'deprecated'])->default('inactive');
             $table->boolean('is_default')->default(false);
             $table->json('supported_currencies')->nullable();
             $table->string('webhook_url')->nullable();

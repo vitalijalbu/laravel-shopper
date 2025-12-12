@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Shopper\Core\Addon\Events;
+namespace Cartino\Core\Addon\Events;
 
-use Shopper\Core\Addon\AddonInterface;
+use Cartino\Core\Addon\AddonInterface;
 
 class PluginUpdated
 {

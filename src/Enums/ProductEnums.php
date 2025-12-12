@@ -1,68 +1,9 @@
 <?php
 
-namespace Shopper\Enums;
+namespace Cartino\Enums;
 
-enum InventoryLocationType: string
-{
-    case WAREHOUSE = 'warehouse';
-    case STORE = 'store';
-    case DROPSHIP = 'dropship';
-    case VENDOR = 'vendor';
 
-    public function label(): string
-    {
-        return match ($this) {
-            self::WAREHOUSE => 'Warehouse',
-            self::STORE => 'Store',
-            self::DROPSHIP => 'Dropship',
-            self::VENDOR => 'Vendor',
-        };
-    }
-}
 
-enum ProductRelationType: string
-{
-    case UPSELL = 'upsell';
-    case CROSS_SELL = 'cross_sell';
-    case RELATED = 'related';
-    case ALTERNATIVE = 'alternative';
-    case ACCESSORY = 'accessory';
-
-    public function label(): string
-    {
-        return match ($this) {
-            self::UPSELL => 'Upsell',
-            self::CROSS_SELL => 'Cross-sell',
-            self::RELATED => 'Related',
-            self::ALTERNATIVE => 'Alternative',
-            self::ACCESSORY => 'Accessory',
-        };
-    }
-}
-
-enum AttributeType: string
-{
-    case TEXT = 'text';
-    case NUMBER = 'number';
-    case BOOLEAN = 'boolean';
-    case SELECT = 'select';
-    case MULTISELECT = 'multiselect';
-    case COLOR = 'color';
-    case IMAGE = 'image';
-
-    public function label(): string
-    {
-        return match ($this) {
-            self::TEXT => 'Text',
-            self::NUMBER => 'Number',
-            self::BOOLEAN => 'Boolean',
-            self::SELECT => 'Select',
-            self::MULTISELECT => 'Multi-select',
-            self::COLOR => 'Color',
-            self::IMAGE => 'Image',
-        };
-    }
-}
 
 enum PricingRuleType: string
 {
@@ -86,32 +27,7 @@ enum PricingRuleType: string
     }
 }
 
-enum FulfillmentStatus: string
-{
-    case PENDING = 'pending';
-    case IN_PROGRESS = 'in_progress';
-    case SHIPPED = 'shipped';
-    case DELIVERED = 'delivered';
-    case FAILED = 'failed';
-    case CANCELLED = 'cancelled';
 
-    public function label(): string
-    {
-        return match ($this) {
-            self::PENDING => 'Pending',
-            self::IN_PROGRESS => 'In Progress',
-            self::SHIPPED => 'Shipped',
-            self::DELIVERED => 'Delivered',
-            self::FAILED => 'Failed',
-            self::CANCELLED => 'Cancelled',
-        };
-    }
-
-    public function isComplete(): bool
-    {
-        return in_array($this, [self::DELIVERED, self::FAILED, self::CANCELLED]);
-    }
-}
 
 enum ReturnStatus: string
 {

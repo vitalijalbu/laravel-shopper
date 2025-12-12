@@ -1,15 +1,15 @@
 <?php
 
-namespace Shopper\Services;
+namespace Cartino\Services;
 
+use Cartino\Models\Order;
+use Cartino\Models\User;
+use Cartino\Notifications\NewOrderNotification;
+use Cartino\Notifications\OrderConfirmationNotification;
+use Cartino\Notifications\OrderFailureNotification;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
-use Shopper\Models\Order;
-use Shopper\Models\User;
-use Shopper\Notifications\NewOrderNotification;
-use Shopper\Notifications\OrderConfirmationNotification;
-use Shopper\Notifications\OrderFailureNotification;
 
 class NotificationService
 {
@@ -99,7 +99,7 @@ class NotificationService
                 ->get();
 
             foreach ($admins as $admin) {
-                Mail::to($admin->email)->send(new \Shopper\Mail\LowStockAlert($product));
+                Mail::to($admin->email)->send(new \Cartino\Mail\LowStockAlert($product));
             }
 
             Log::info('Low stock alerts sent', [
@@ -122,7 +122,7 @@ class NotificationService
     {
         try {
             if ($cart->customer && $cart->customer->email) {
-                Mail::to($cart->customer->email)->send(new \Shopper\Mail\AbandonedCartReminder($cart));
+                Mail::to($cart->customer->email)->send(new \Cartino\Mail\AbandonedCartReminder($cart));
 
                 Log::info('Abandoned cart reminder sent', [
                     'cart_id' => $cart->id,
@@ -150,7 +150,7 @@ class NotificationService
 
             foreach ($subscribers as $subscriber) {
                 Mail::to($subscriber->email)->send(
-                    new \Shopper\Mail\Newsletter($subject, $content, $subscriber)
+                    new \Cartino\Mail\Newsletter($subject, $content, $subscriber)
                 );
             }
 
@@ -174,7 +174,7 @@ class NotificationService
         try {
             foreach ($subscribers as $subscriber) {
                 Mail::to($subscriber['email'])->send(
-                    new \Shopper\Mail\BackInStockNotification($product, $subscriber)
+                    new \Cartino\Mail\BackInStockNotification($product, $subscriber)
                 );
             }
 

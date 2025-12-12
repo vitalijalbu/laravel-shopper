@@ -1,6 +1,6 @@
 <?php
 
-namespace Shopper\Enums;
+namespace Cartino\Enums;
 
 enum WishlistStatus: string
 {
@@ -11,9 +11,9 @@ enum WishlistStatus: string
     public function label(): string
     {
         return match ($this) {
-            self::ACTIVE => __('shopper::wishlist.status.active'),
-            self::INACTIVE => __('shopper::wishlist.status.inactive'),
-            self::ARCHIVED => __('shopper::wishlist.status.archived'),
+            self::ACTIVE => __('cartino::wishlist.status.active'),
+            self::INACTIVE => __('cartino::wishlist.status.inactive'),
+            self::ARCHIVED => __('cartino::wishlist.status.archived'),
         };
     }
 

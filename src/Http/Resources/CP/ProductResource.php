@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Shopper\Http\Resources\CP;
+namespace Cartino\Http\Resources\CP;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -134,8 +134,8 @@ class ProductResource extends JsonResource
             'image_url' => $this->image_url,
             'thumb_url' => $this->thumb_url,
             'url' => $this->url,
-            'admin_url' => route('shopper.products.show', $this->id),
-            'edit_url' => route('shopper.products.edit', $this->id),
+            'admin_url' => route('cartino.products.show', $this->id),
+            'edit_url' => route('cartino.products.edit', $this->id),
             'has_variants' => $this->type === 'variable',
             'is_published' => $this->status === 'published',
             'is_featured' => $this->featured,

@@ -1,10 +1,10 @@
 <?php
 
-namespace Shopper\Policies;
+namespace Cartino\Policies;
 
+use Cartino\Models\Order;
+use Cartino\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
-use Shopper\Models\Order;
-use Shopper\Models\User;
 
 class OrderPolicy
 {

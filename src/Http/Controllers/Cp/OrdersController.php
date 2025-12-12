@@ -1,15 +1,15 @@
 <?php
 
-namespace Shopper\Http\Controllers\Cp;
+namespace Cartino\Http\Controllers\CP;
 
+use Cartino\CP\Page;
+use Cartino\Http\Controllers\Controller;
+use Cartino\Models\Order;
+use Cartino\Repositories\OrderRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
-use Shopper\CP\Page;
-use Shopper\Http\Controllers\Controller;
-use Shopper\Models\Order;
-use Shopper\Repositories\OrderRepository;
 
 class OrdersController extends Controller
 {
@@ -40,7 +40,7 @@ class OrdersController extends Controller
             'page',
         ]);
 
-        $orders = $this->orderRepository->getPaginatedWithFilters($filters, 25);
+        $orders = $this->orderRepository->findAll($filters, 25);
         $customers = $this->orderRepository->getCustomersForSelect();
         $products = $this->orderRepository->getProductsForSelect();
 

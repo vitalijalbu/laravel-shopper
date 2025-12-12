@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Shopper\Http\Requests\CP;
+namespace Cartino\Http\Requests\CP;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -145,7 +145,7 @@ class StoreOrderRequest extends FormRequest
         $this->merge([
             'status' => $this->input('status', 'pending'),
             'payment_status' => $this->input('payment_status', 'pending'),
-            'currency' => $this->input('currency', config('shopper.currency.default', 'EUR')),
+            'currency' => $this->input('currency', config('cartino.currency.default', 'EUR')),
         ]);
 
         // Generate order number if not provided
@@ -176,7 +176,7 @@ class StoreOrderRequest extends FormRequest
     private function generateOrderNumber(): string
     {
         return 'ORD-'.date('Y').'-'.str_pad(
-            \Shopper\Models\Order::whereYear('created_at', date('Y'))->count() + 1,
+            \Cartino\Models\Order::whereYear('created_at', date('Y'))->count() + 1,
             6,
             '0',
             STR_PAD_LEFT

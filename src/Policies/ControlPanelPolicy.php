@@ -1,6 +1,6 @@
 <?php
 
-namespace Shopper\Policies;
+namespace Cartino\Policies;
 
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Contracts\Auth\Authenticatable;

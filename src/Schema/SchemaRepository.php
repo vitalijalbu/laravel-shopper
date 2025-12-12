@@ -1,8 +1,8 @@
 <?php
 
-namespace Shopper\Schema;
+namespace Cartino\Schema;
 
-use Illuminate\Support\Collection;
+use Illuminate\Support\Category;
 use Illuminate\Support\Facades\File;
 
 class SchemaRepository
@@ -19,7 +19,7 @@ class SchemaRepository
     /**
      * Get collection schema.
      */
-    public function getCollection(string $handle): ?Collection
+    public function getCollection(string $handle): ?Category
     {
         return $this->loadSchema('collections', $handle);
     }
@@ -27,7 +27,7 @@ class SchemaRepository
     /**
      * Get entry schema.
      */
-    public function getEntry(string $collection, string $handle): ?Collection
+    public function getEntry(string $collection, string $handle): ?Category
     {
         return $this->loadSchema("collections/{$collection}/entries", $handle);
     }
@@ -35,7 +35,7 @@ class SchemaRepository
     /**
      * Get fieldset schema.
      */
-    public function getFieldset(string $handle): ?Collection
+    public function getFieldset(string $handle): ?Category
     {
         return $this->loadSchema('fieldsets', $handle);
     }
@@ -43,7 +43,7 @@ class SchemaRepository
     /**
      * Get blueprint schema.
      */
-    public function getBlueprint(string $handle): ?Collection
+    public function getBlueprint(string $handle): ?Category
     {
         return $this->loadSchema('blueprints', $handle);
     }
@@ -51,7 +51,7 @@ class SchemaRepository
     /**
      * Get all collections.
      */
-    public function getAllCollections(): Collection
+    public function getAllCollections(): Category
     {
         $collectionsPath = $this->basePath.'/collections';
 
@@ -69,7 +69,7 @@ class SchemaRepository
     /**
      * Get all fieldsets.
      */
-    public function getAllFieldsets(): Collection
+    public function getAllFieldsets(): Category
     {
         $fieldsetsPath = $this->basePath.'/fieldsets';
 
@@ -127,7 +127,7 @@ class SchemaRepository
     /**
      * Load schema from file system.
      */
-    protected function loadSchema(string $type, string $handle): ?Collection
+    protected function loadSchema(string $type, string $handle): ?Category
     {
         $filePath = $this->getSchemaPath($type, $handle);
 
@@ -148,7 +148,7 @@ class SchemaRepository
     /**
      * Load and parse schema file.
      */
-    protected function loadSchemaFromFile(string $filePath): ?Collection
+    protected function loadSchemaFromFile(string $filePath): ?Category
     {
         try {
             $content = File::get($filePath);

@@ -1,10 +1,10 @@
 <?php
 
-namespace Shopper\Http\Middleware;
+namespace Cartino\Http\Middleware;
 
+use Cartino\Models\Site;
 use Closure;
 use Illuminate\Http\Request;
-use Shopper\Models\Site;
 use Symfony\Component\HttpFoundation\Response;
 
 class HandleSiteContext

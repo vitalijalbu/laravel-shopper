@@ -1,7 +1,9 @@
 <?php
 
-namespace Shopper\Http\Controllers\Cp\Auth;
+namespace Cartino\Http\Controllers\CP\Auth;
 
+use Cartino\Http\Controllers\Controller;
+use Cartino\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -9,8 +11,6 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
-use Shopper\Http\Controllers\Controller;
-use Shopper\Http\Requests\Auth\LoginRequest;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -28,13 +28,13 @@ class AuthenticatedSessionController extends Controller
             'status' => session('status'),
             'canResetPassword' => true,
             'locale' => app()->getLocale(),
-            'locales' => config('shopper.locales', ['en', 'it']),
+            'locales' => config('cartino.locales', ['en', 'it']),
             'app_name' => config('app.name'),
-            'cp_name' => config('shopper.cp.name', 'Control Panel'),
+            'cp_name' => config('cartino.cp.name', 'Control Panel'),
             'branding' => [
-                'logo' => config('shopper.cp.branding.logo'),
-                'logo_dark' => config('shopper.cp.branding.logo_dark'),
-                'favicon' => config('shopper.cp.branding.favicon'),
+                'logo' => config('cartino.cp.branding.logo'),
+                'logo_dark' => config('cartino.cp.branding.logo_dark'),
+                'favicon' => config('cartino.cp.branding.favicon'),
             ],
         ]);
     }
@@ -69,7 +69,7 @@ class AuthenticatedSessionController extends Controller
                 Auth::logout();
 
                 return back()->withErrors([
-                    'email' => __('shopper::auth.cp_access_denied'),
+                    'email' => __('cartino::auth.cp_access_denied'),
                 ]);
             }
 
@@ -132,7 +132,7 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerateToken();
 
         // Clear Inertia user data
-        return redirect()->route('shopper.cp.login')->with('status', __('shopper::auth.logged_out'));
+        return redirect()->route('cartino.cp.login')->with('status', __('cartino::auth.logged_out'));
     }
 
     /**

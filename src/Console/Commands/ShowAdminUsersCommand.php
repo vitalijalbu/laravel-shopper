@@ -1,9 +1,9 @@
 <?php
 
-namespace Shopper\Console\Commands;
+namespace Cartino\Console\Commands;
 
+use Cartino\Models\User;
 use Illuminate\Console\Command;
-use Shopper\Models\User;
 
 class ShowAdminUsersCommand extends Command
 {
@@ -12,7 +12,7 @@ class ShowAdminUsersCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'shopper:show-admin';
+    protected $signature = 'cartino:show-admin';
 
     /**
      * The console command description.
@@ -32,7 +32,7 @@ class ShowAdminUsersCommand extends Command
 
         if ($users->isEmpty()) {
             $this->warn('❌ No users found in the database.');
-            $this->line('   Run the seeder first: php artisan db:seed --class=Shopper\\Database\\Seeders\\ShopperSeeder');
+            $this->line('   Run the seeder first: php artisan db:seed --class=Cartino\\Database\\Seeders\\CartinoSeeder');
 
             return 1;
         }

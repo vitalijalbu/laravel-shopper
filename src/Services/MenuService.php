@@ -1,12 +1,12 @@
 <?php
 
-namespace Shopper\Services;
+namespace Cartino\Services;
 
+use Cartino\Data\Menu\MenuData;
+use Cartino\Data\Menu\MenuItemData;
+use Cartino\Models\Menu;
+use Cartino\Models\MenuItem;
 use Illuminate\Support\Str;
-use Shopper\Data\Menu\MenuData;
-use Shopper\Data\Menu\MenuItemData;
-use Shopper\Models\Menu;
-use Shopper\Models\MenuItem;
 
 class MenuService
 {

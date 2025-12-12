@@ -1,11 +1,11 @@
 <?php
 
-namespace Shopper\Tests;
+namespace Cartino\Tests;
 
+use Cartino\CartinoServiceProvider;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Orchestra\Testbench\Concerns\WithWorkbench;
-use Shopper\ShopperServiceProvider;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -22,7 +22,7 @@ abstract class TestCase extends BaseTestCase
     protected function getPackageProviders($app): array
     {
         return [
-            ShopperServiceProvider::class,
+            CartinoServiceProvider::class,
         ];
     }
 
@@ -35,7 +35,7 @@ abstract class TestCase extends BaseTestCase
             'prefix' => '',
         ]);
 
-        $app['config']->set('shopper.currencies', [
+        $app['config']->set('cartino.currencies', [
             'EUR' => [
                 'name' => 'Euro',
                 'code' => 'EUR',
@@ -45,6 +45,6 @@ abstract class TestCase extends BaseTestCase
             ],
         ]);
 
-        $app['config']->set('shopper.system_locales', ['en', 'it']);
+        $app['config']->set('cartino.system_locales', ['en', 'it']);
     }
 }

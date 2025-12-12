@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Shopper\Http\Controllers\Api\Admin;
+namespace Cartino\Http\Controllers\Api\Admin;
 
+use Cartino\Http\Requests\Admin\ChannelRequest;
+use Cartino\Http\Resources\ChannelResource;
+use Cartino\Models\Channel;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Routing\Controller;
-use Shopper\Http\Requests\Admin\ChannelRequest;
-use Shopper\Http\Resources\ChannelResource;
-use Shopper\Models\Channel;
 
 class ChannelController extends Controller
 {

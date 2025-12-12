@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Shopper\Http\Controllers\CP;
+namespace Cartino\Http\Controllers\CP;
 
+use Cartino\Models\Catalog;
+use Cartino\Models\Site;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
-use Shopper\Models\Catalog;
-use Shopper\Models\Site;
 
 final class SiteController
 {

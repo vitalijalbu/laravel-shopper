@@ -1,11 +1,11 @@
 <?php
 
-namespace Shopper\Services;
+namespace Cartino\Services;
 
-use Illuminate\Support\Collection;
+use Cartino\Models\Site;
+use Cartino\Models\StorefrontTemplate;
+use Illuminate\Support\Category;
 use Illuminate\Support\Facades\View;
-use Shopper\Models\Site;
-use Shopper\Models\StorefrontTemplate;
 
 class TemplateEngine
 {
@@ -13,7 +13,7 @@ class TemplateEngine
 
     public function __construct()
     {
-        $this->currentSite = app('laravel-shopper.site');
+        $this->currentSite = app('laravel-cartino.site');
     }
 
     /**
@@ -30,7 +30,7 @@ class TemplateEngine
         $compiledData = $template->compile();
         $globalSettings = $this->getGlobalSettings();
 
-        return View::make('shopper::storefront.template', [
+        return View::make('cartino::storefront.template', [
             'template' => $compiledData,
             'resource' => $resource,
             'site' => $this->currentSite,
@@ -71,7 +71,7 @@ class TemplateEngine
             }
         }
 
-        // 3. Collection/Category specific template
+        // 3. Category/Category specific template
         if ($resource && method_exists($resource, 'getCategory')) {
             $category = $resource->getCategory();
 
@@ -117,7 +117,7 @@ class TemplateEngine
     /**
      * Get available templates for a resource type
      */
-    public function getAvailableTemplates(string $resourceType): Collection
+    public function getAvailableTemplates(string $resourceType): Category
     {
         return StorefrontTemplate::where('site_id', $this->currentSite->id)
             ->where('type', $resourceType)
@@ -139,7 +139,7 @@ class TemplateEngine
         $compiledData = $template->compile();
         $globalSettings = $this->getGlobalSettings();
 
-        return View::make('shopper::storefront.template', [
+        return View::make('cartino::storefront.template', [
             'template' => $compiledData,
             'resource' => (object) $sampleData,
             'site' => $this->currentSite,

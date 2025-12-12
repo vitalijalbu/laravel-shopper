@@ -1,13 +1,13 @@
 <?php
 
-namespace Shopper\Repositories;
+namespace Cartino\Repositories;
 
+use Cartino\Contracts\RepositoryInterface;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Category;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Cache;
-use Shopper\Contracts\RepositoryInterface;
 
 abstract class BaseRepository implements RepositoryInterface
 {
@@ -29,7 +29,7 @@ abstract class BaseRepository implements RepositoryInterface
 
     abstract protected function makeModel(): Model;
 
-    public function all(array $columns = ['*']): Collection
+    public function all(array $columns = ['*']): Category
     {
         $cacheKey = $this->getCacheKey('all', md5(serialize($columns)));
 
@@ -61,7 +61,7 @@ abstract class BaseRepository implements RepositoryInterface
         });
     }
 
-    public function findWhere(array $where, array $columns = ['*']): Collection
+    public function findWhere(array $where, array $columns = ['*']): Category
     {
         $cacheKey = $this->getCacheKey('findWhere', md5(serialize($where)));
 

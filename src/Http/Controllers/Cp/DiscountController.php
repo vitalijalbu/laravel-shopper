@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Shopper\Http\Controllers\CP;
+namespace Cartino\Http\Controllers\CP;
 
+use Cartino\Http\Controllers\Controller;
+use Cartino\Http\Requests\DiscountRequest;
+use Cartino\Models\Discount;
+use Cartino\Services\DiscountService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
-use Shopper\Http\Controllers\Controller;
-use Shopper\Http\Requests\DiscountRequest;
-use Shopper\Models\Discount;
-use Shopper\Services\DiscountService;
 
 class DiscountController extends Controller
 {
@@ -130,8 +130,8 @@ class DiscountController extends Controller
         return [
             'total_discounts' => Discount::count(),
             'active_discounts' => Discount::where('status', 'active')->count(),
-            'total_applications' => \Shopper\Models\DiscountApplication::count(),
-            'total_discount_amount' => \Shopper\Models\DiscountApplication::sum('discount_amount'),
+            'total_applications' => \Cartino\Models\DiscountApplication::count(),
+            'total_discount_amount' => \Cartino\Models\DiscountApplication::sum('discount_amount'),
         ];
     }
 }

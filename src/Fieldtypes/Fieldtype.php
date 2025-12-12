@@ -1,8 +1,8 @@
 <?php
 
-namespace Shopper\Fieldtypes;
+namespace Cartino\Fieldtypes;
 
-use Shopper\Fields\Field;
+use Cartino\Fields\Field;
 
 abstract class Fieldtype
 {

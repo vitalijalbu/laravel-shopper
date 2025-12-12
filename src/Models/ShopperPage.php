@@ -1,11 +1,11 @@
 <?php
 
-namespace Shopper\Models;
+namespace Cartino\Models;
 
+use Cartino\Support\HasHandle;
+use Cartino\Support\HasSite;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Shopper\Support\HasHandle;
-use Shopper\Support\HasSite;
 
 class ShopperPage extends Model
 {

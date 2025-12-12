@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Shopper\Console\Commands;
+namespace Cartino\Console\Commands;
 
+use Cartino\Services\FidelityService;
 use Illuminate\Console\Command;
-use Shopper\Services\FidelityService;
 
 class ExpireFidelityPoints extends Command
 {
@@ -14,7 +14,7 @@ class ExpireFidelityPoints extends Command
      *
      * @var string
      */
-    protected $signature = 'shopper:expire-fidelity-points 
+    protected $signature = 'cartino:expire-fidelity-points 
                             {--dry-run : Run in dry-run mode to see what would be expired}
                             {--notify : Send notification emails to customers with expiring points}';
 

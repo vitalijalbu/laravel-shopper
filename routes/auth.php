@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
+use Cartino\Http\Controllers\Auth\SocialAuthController;
 use Illuminate\Support\Facades\Route;
-use Shopper\Http\Controllers\Auth\SocialAuthController;
 
 /*
 |--------------------------------------------------------------------------

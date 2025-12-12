@@ -1,6 +1,6 @@
 <?php
 
-namespace Shopper\Http\Requests\AbandonedCart;
+namespace Cartino\Http\Requests\AbandonedCart;
 
 use Illuminate\Foundation\Http\FormRequest;
 

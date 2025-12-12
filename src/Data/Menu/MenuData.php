@@ -1,6 +1,6 @@
 <?php
 
-namespace Shopper\Data\Menu;
+namespace Cartino\Data\Menu;
 
 class MenuData
 {
@@ -15,7 +15,7 @@ class MenuData
         public array $items = [],
     ) {}
 
-    public static function fromModel(\Shopper\Models\Menu $menu): self
+    public static function fromModel(\Cartino\Models\Menu $menu): self
     {
         return new self(
             id: $menu->id,

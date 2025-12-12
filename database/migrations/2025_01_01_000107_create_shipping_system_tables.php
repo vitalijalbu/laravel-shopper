@@ -12,7 +12,7 @@ return new class extends Migration
         Schema::create('shipping_zones', function (Blueprint $table) {
             $table->id();
             $table->foreignId('site_id')->nullable()->constrained('sites')->cascadeOnDelete();
-            $table->string('name')->index();
+            $table->string('name');
             $table->text('description')->nullable();
 
             // Zone Coverage
@@ -21,9 +21,9 @@ return new class extends Migration
             $table->jsonb('postal_codes')->nullable()->comment('Specific postal code ranges');
 
             // Priority (higher zones take precedence for overlapping regions)
-            $table->integer('priority')->default(0)->index();
+            $table->integer('priority')->default(0);
 
-            $table->boolean('is_active')->default(true)->index();
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
             $table->softDeletes();
             $table->jsonb('data')->nullable();
@@ -38,7 +38,7 @@ return new class extends Migration
             $table->foreignId('shipping_zone_id')->constrained('shipping_zones')->cascadeOnDelete();
             $table->foreignId('channel_id')->nullable()->constrained('channels')->cascadeOnDelete();
 
-            $table->string('name')->index();
+            $table->string('name');
             $table->string('code')->unique();
             $table->text('description')->nullable();
 
@@ -49,7 +49,7 @@ return new class extends Migration
                 'weight_based',
                 'price_based',
                 'carrier_calculated',
-            ])->default('flat_rate')->index();
+            ])->default('flat_rate');
 
             // Pricing
             $table->decimal('price', 10, 2);
@@ -71,13 +71,13 @@ return new class extends Migration
             $table->integer('max_delivery_days')->nullable();
 
             // Carrier Integration
-            $table->string('carrier')->nullable()->index();
+            $table->string('carrier')->nullable();
             $table->string('service_code')->nullable();
             $table->jsonb('carrier_settings')->nullable();
 
             // Status
-            $table->boolean('is_active')->default(true)->index();
-            $table->integer('priority')->default(0)->index();
+            $table->boolean('is_active')->default(true);
+            $table->integer('priority')->default(0);
 
             $table->timestamps();
             $table->softDeletes();

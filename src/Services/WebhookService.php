@@ -1,10 +1,10 @@
 <?php
 
-namespace Shopper\Services;
+namespace Cartino\Services;
 
+use Cartino\Jobs\DispatchWebhookJob;
+use Cartino\Models\Webhook;
 use Illuminate\Support\Facades\Log;
-use Shopper\Jobs\DispatchWebhookJob;
-use Shopper\Models\Webhook;
 
 class WebhookService
 {

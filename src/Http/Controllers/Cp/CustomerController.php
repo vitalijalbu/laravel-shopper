@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Shopper\Http\Controllers\CP;
+namespace Cartino\Http\Controllers\CP;
 
+use Cartino\CP\Page;
+use Cartino\Http\Requests\CP\StoreCustomerRequest;
+use Cartino\Http\Resources\CP\CustomerResource;
+use Cartino\Models\Customer;
+use Cartino\Repositories\CustomerRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Inertia\Response;
-use Shopper\CP\Page;
-use Shopper\Http\Requests\CP\StoreCustomerRequest;
-use Shopper\Http\Resources\CP\CustomerResource;
-use Shopper\Models\Customer;
-use Shopper\Repositories\CustomerRepository;
 
 class CustomerController extends BaseController
 {
@@ -34,17 +34,17 @@ class CustomerController extends BaseController
 
         $filters = $this->getFilters(['search', 'status', 'customer_group_id', 'created_at']);
 
-        $customers = $this->customerRepository->getPaginatedWithFilters(
+        $customers = $this->customerRepository->findAll(
             $filters,
             request('per_page', 15)
         );
 
         $page = Page::make('Customers')
-            ->primaryAction('Add customer', route('shopper.customers.create'))
+            ->primaryAction('Add customer', route('cartino.customers.create'))
             ->secondaryActions([
-                ['label' => 'Import', 'url' => route('shopper.customers.import')],
-                ['label' => 'Export', 'url' => route('shopper.customers.export')],
-                ['label' => 'Customer groups', 'url' => route('shopper.customer-groups.index')],
+                ['label' => 'Import', 'url' => route('cartino.customers.import')],
+                ['label' => 'Export', 'url' => route('cartino.customers.export')],
+                ['label' => 'Customer groups', 'url' => route('cartino.customer-groups.index')],
             ]);
 
         return $this->inertiaResponse('customers/Index', [
@@ -61,7 +61,7 @@ class CustomerController extends BaseController
     public function create(): Response
     {
         $this->addDashboardBreadcrumb()
-            ->addBreadcrumb('Customers', 'shopper.customers.index')
+            ->addBreadcrumb('Customers', 'cartino.customers.index')
             ->addBreadcrumb('Add customer');
 
         $page = Page::make('Add customer')
@@ -87,9 +87,9 @@ class CustomerController extends BaseController
         $action = $request->input('_action', 'save');
 
         $redirectUrl = match ($action) {
-            'save_continue' => route('shopper.customers.edit', $customer),
-            'save_add_another' => route('shopper.customers.create'),
-            default => route('shopper.customers.index'),
+            'save_continue' => route('cartino.customers.edit', $customer),
+            'save_add_another' => route('cartino.customers.create'),
+            default => route('cartino.customers.index'),
         };
 
         return $this->successResponse('Customer created successfully', [
@@ -108,15 +108,15 @@ class CustomerController extends BaseController
         ]);
 
         $this->addDashboardBreadcrumb()
-            ->addBreadcrumb('Customers', 'shopper.customers.index')
+            ->addBreadcrumb('Customers', 'cartino.customers.index')
             ->addBreadcrumb($customer->full_name);
 
         $page = Page::make($customer->full_name)
-            ->primaryAction('Edit customer', route('shopper.customers.edit', $customer))
+            ->primaryAction('Edit customer', route('cartino.customers.edit', $customer))
             ->secondaryActions([
                 ['label' => 'Send email', 'action' => 'send_email'],
-                ['label' => 'Create order', 'url' => route('shopper.orders.create', ['customer' => $customer->id])],
-                ['label' => 'View orders', 'url' => route('shopper.orders.index', ['customer' => $customer->id])],
+                ['label' => 'Create order', 'url' => route('cartino.orders.create', ['customer' => $customer->id])],
+                ['label' => 'View orders', 'url' => route('cartino.orders.index', ['customer' => $customer->id])],
                 ['label' => 'Delete', 'action' => 'delete', 'destructive' => true],
             ]);
 
@@ -137,16 +137,16 @@ class CustomerController extends BaseController
         ]);
 
         $this->addDashboardBreadcrumb()
-            ->addBreadcrumb('Customers', 'shopper.customers.index')
-            ->addBreadcrumb($customer->full_name, route('shopper.customers.show', $customer))
+            ->addBreadcrumb('Customers', 'cartino.customers.index')
+            ->addBreadcrumb($customer->full_name, route('cartino.customers.show', $customer))
             ->addBreadcrumb('Edit');
 
         $page = Page::make("Edit {$customer->full_name}")
             ->primaryAction('Update customer', null, ['form' => 'customer-form'])
             ->secondaryActions([
-                ['label' => 'View customer', 'url' => route('shopper.customers.show', $customer)],
+                ['label' => 'View customer', 'url' => route('cartino.customers.show', $customer)],
                 ['label' => 'Send email', 'action' => 'send_email'],
-                ['label' => 'Create order', 'url' => route('shopper.orders.create', ['customer' => $customer->id])],
+                ['label' => 'Create order', 'url' => route('cartino.orders.create', ['customer' => $customer->id])],
                 ['label' => 'Delete', 'action' => 'delete', 'destructive' => true],
             ])
             ->tabs([

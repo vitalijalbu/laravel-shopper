@@ -2,31 +2,31 @@
 
 declare(strict_types=1);
 
-namespace Shopper\Contracts;
+namespace Cartino\Contracts;
 
+use Cartino\Models\Supplier;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Collection;
-use Shopper\Models\Supplier;
+use Illuminate\Database\Eloquent\Category;
 
 interface SupplierRepositoryInterface extends RepositoryInterface
 {
-    public function getPaginatedWithFilters(array $filters = [], int $perPage = 25): LengthAwarePaginator;
+    public function findAll(array $filters = []): LengthAwarePaginator;
 
     public function findByCode(string $code): ?Supplier;
 
-    public function getActive(): Collection;
+    public function getActive(): Category;
 
-    public function getPreferred(): Collection;
+    public function getPreferred(): Category;
 
-    public function getByCountry(string $countryCode): Collection;
+    public function getByCountry(string $countryCode): Category;
 
-    public function getByPriority(string $priority): Collection;
+    public function getByPriority(string $priority): Category;
 
-    public function getByRating(float $minRating): Collection;
+    public function getByRating(float $minRating): Category;
 
     public function updateRating(int $id, float $rating): bool;
 
-    public function getTopPerformers(int $limit = 10): Collection;
+    public function getTopPerformers(int $limit = 10): Category;
 
     public function getWithProducts(int $id): ?Supplier;
 
@@ -34,9 +34,9 @@ interface SupplierRepositoryInterface extends RepositoryInterface
 
     public function bulkUpdateStatus(array $ids, string $status): int;
 
-    public function getSupplierProducts(int $supplierId): Collection;
+    public function getSupplierProducts(int $supplierId): Category;
 
-    public function getSupplierPurchaseOrders(int $supplierId): Collection;
+    public function getSupplierPurchaseOrders(int $supplierId): Category;
 
     public function calculatePerformanceMetrics(int $id): array;
 

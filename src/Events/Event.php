@@ -1,6 +1,6 @@
 <?php
 
-namespace Shopper\Events;
+namespace Cartino\Events;
 
 abstract class Event
 {

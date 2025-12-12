@@ -1,9 +1,9 @@
 <?php
 
-namespace Shopper\Repositories;
+namespace Cartino\Repositories;
 
+use Cartino\Models\Wishlist;
 use Illuminate\Support\Facades\Cache;
-use Shopper\Models\Wishlist;
 
 class WishlistRepository extends BaseRepository
 {
@@ -169,7 +169,7 @@ class WishlistRepository extends BaseRepository
                 'active_wishlists' => $active,
                 'shared_wishlists' => $shared,
                 'average_items_per_wishlist' => round($avgItems, 2),
-                'total_items' => \Shopper\Models\WishlistItem::count(),
+                'total_items' => \Cartino\Models\WishlistItem::count(),
                 'conversion_rate' => 0, // TODO: Calculate conversion rate
             ];
         });
@@ -194,7 +194,7 @@ class WishlistRepository extends BaseRepository
      */
     public function getPopularItems(int $limit = 10): array
     {
-        return \Shopper\Models\WishlistItem::query()
+        return \Cartino\Models\WishlistItem::query()
             ->selectRaw('product_id, COUNT(*) as wishlist_count')
             ->groupBy('product_id')
             ->orderBy('wishlist_count', 'desc')

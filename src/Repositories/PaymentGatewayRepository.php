@@ -1,11 +1,11 @@
 <?php
 
-namespace Shopper\Repositories;
+namespace Cartino\Repositories;
 
-use Illuminate\Database\Eloquent\Collection;
+use Cartino\Models\PaymentGateway;
+use Illuminate\Database\Eloquent\Category;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Shopper\Models\PaymentGateway;
 
 class PaymentGatewayRepository extends BaseRepository
 {
@@ -19,7 +19,7 @@ class PaymentGatewayRepository extends BaseRepository
     /**
      * Get paginated payment gateways with filters
      */
-    public function getPaginatedWithFilters(array $filters = [], int $perPage = 25): LengthAwarePaginator
+    public function findAll(array $filters = []): LengthAwarePaginator
     {
         $query = $this->model->newQuery();
 
@@ -60,7 +60,7 @@ class PaymentGatewayRepository extends BaseRepository
     /**
      * Get enabled payment gateways
      */
-    public function getEnabled(): Collection
+    public function getEnabled(): Category
     {
         $cacheKey = $this->getCacheKey('enabled', '');
 
@@ -147,7 +147,7 @@ class PaymentGatewayRepository extends BaseRepository
     /**
      * Get providers for filters
      */
-    public function getProviders(): Collection
+    public function getProviders(): Category
     {
         return collect([
             'stripe' => 'Stripe',

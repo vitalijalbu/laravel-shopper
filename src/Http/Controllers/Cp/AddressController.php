@@ -1,14 +1,14 @@
 <?php
 
-namespace Shopper\Http\Controllers\CP;
+namespace Cartino\Http\Controllers\CP;
 
+use Cartino\Http\Controllers\Controller;
+use Cartino\Models\Customer;
+use Cartino\Models\CustomerAddress;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
-use Shopper\Http\Controllers\Controller;
-use Shopper\Models\Customer;
-use Shopper\Models\CustomerAddress;
 
 class AddressController extends Controller
 {

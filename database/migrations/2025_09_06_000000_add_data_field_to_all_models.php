@@ -25,17 +25,17 @@ return new class extends Migration
             $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
 
             // Revision metadata
-            $table->string('action')->index(); // created, updated, published, unpublished, restored
-            $table->string('key')->nullable()->index(); // Unique key for this revision
+            $table->string('action'); // created, updated, published, unpublished, restored
+            $table->string('key')->nullable(); // Unique key for this revision
 
             // Content snapshot
             $table->jsonb('attributes')->comment('Full snapshot of model attributes');
             $table->jsonb('changes')->nullable()->comment('Only changed attributes (delta)');
 
             // Publishing workflow
-            $table->boolean('is_working_copy')->default(false)->index();
-            $table->boolean('is_published')->default(false)->index();
-            $table->timestamp('published_at')->nullable()->index();
+            $table->boolean('is_working_copy')->default(false);
+            $table->boolean('is_published')->default(false);
+            $table->timestamp('published_at')->nullable();
 
             // Metadata
             $table->text('message')->nullable(); // Commit message
@@ -56,12 +56,12 @@ return new class extends Migration
         Schema::create('taxonomies', function (Blueprint $table) {
             $table->id();
             $table->foreignId('site_id')->constrained('sites')->cascadeOnDelete();
-            $table->string('handle')->index();
+            $table->string('handle');
             $table->string('title');
             $table->text('description')->nullable();
             $table->jsonb('data')->nullable()->comment('Custom fields data');
             $table->jsonb('settings')->nullable();
-            $table->boolean('is_active')->default(true)->index();
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
             $table->softDeletes();
 
@@ -73,12 +73,12 @@ return new class extends Migration
             $table->id();
             $table->foreignId('taxonomy_id')->constrained('taxonomies')->cascadeOnDelete();
             $table->foreignId('parent_id')->nullable()->constrained('terms')->nullOnDelete();
-            $table->string('slug')->index();
-            $table->string('title')->index();
+            $table->string('slug');
+            $table->string('title');
             $table->text('description')->nullable();
-            $table->integer('order')->default(0)->index();
+            $table->integer('order')->default(0);
             $table->jsonb('data')->nullable()->comment('Custom fields data');
-            $table->boolean('is_active')->default(true)->index();
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
             $table->softDeletes();
 
@@ -96,7 +96,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('term_id')->constrained('terms')->cascadeOnDelete();
             $table->morphs('termable');
-            $table->integer('order')->default(0)->index();
+            $table->integer('order')->default(0);
             $table->timestamps();
 
             $table->unique(['term_id', 'termable_type', 'termable_id']);
@@ -147,7 +147,7 @@ return new class extends Migration
                 Schema::table($table, function (Blueprint $table) {
                     // Add JSONB field for custom data
                     // This will store schema-defined custom fields as JSON
-                    $table->jsonb('data')->nullable()->comment('Custom fields data based on JSON schema');
+                    $table->jsonb('data')->nullable();
 
                     // Add index for better query performance on data field
                     if (config('database.default') === 'pgsql') {

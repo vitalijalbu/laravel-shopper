@@ -11,24 +11,24 @@ return new class extends Migration
         Schema::create('carts', function (Blueprint $table) {
             $table->id();
             $table->foreignId('site_id')->nullable()->constrained('sites')->cascadeOnDelete();
-            $table->string('session_id')->nullable()->index();
+            $table->string('session_id')->nullable();
             $table->foreignId('customer_id')->nullable()->constrained()->cascadeOnDelete();
-            $table->string('email')->nullable()->index();
-            $table->enum('status', ['active', 'abandoned', 'converted', 'expired'])->default('active')->index();
+            $table->string('email')->nullable();
+            $table->enum('status', ['active', 'abandoned', 'converted', 'expired'])->default('active');
             $table->jsonb('items')->nullable(); // Cart items data
             $table->decimal('subtotal', 15, 2)->default(0);
             $table->decimal('tax_amount', 15, 2)->default(0);
             $table->decimal('shipping_amount', 15, 2)->default(0);
             $table->decimal('discount_amount', 15, 2)->default(0);
-            $table->decimal('total_amount', 15, 2)->default(0)->index();
-            $table->string('currency', 3)->default('EUR')->index();
+            $table->decimal('total_amount', 15, 2)->default(0);
+            $table->string('currency', 3)->default('EUR');
 
             // Abandonment tracking
-            $table->timestamp('last_activity_at')->nullable()->index();
-            $table->timestamp('abandoned_at')->nullable()->index();
+            $table->timestamp('last_activity_at')->nullable();
+            $table->timestamp('abandoned_at')->nullable();
             $table->integer('recovery_emails_sent')->default(0);
             $table->timestamp('last_recovery_email_sent_at')->nullable();
-            $table->boolean('recovered')->default(false)->index();
+            $table->boolean('recovered')->default(false);
             $table->timestamp('recovered_at')->nullable();
 
             // Shipping and billing info

@@ -16,9 +16,9 @@ return new class extends Migration
     {
         Schema::create('asset_containers', function (Blueprint $table) {
             $table->id();
-            $table->string('handle')->unique()->index();
+            $table->string('handle')->unique();
             $table->string('title');
-            $table->string('disk')->index(); // local, s3, cloudinary, etc.
+            $table->string('disk'); // local, s3, cloudinary, etc.
 
             // Permissions
             $table->boolean('allow_uploads')->default(true);
@@ -37,30 +37,28 @@ return new class extends Migration
             $table->jsonb('glide_presets')->nullable()->comment('Preset transformations');
 
             $table->timestamps();
-
-            $table->index('disk');
         });
 
         Schema::create('assets', function (Blueprint $table) {
             $table->id();
 
             // Container reference (not FK to allow flexibility)
-            $table->string('container')->index();
+            $table->string('container');
 
             // Path components (Statamic-style)
-            $table->string('folder')->index(); // products/shoes
-            $table->string('basename')->index(); // image.jpg
-            $table->string('filename')->index(); // image
-            $table->char('extension', 10)->index(); // jpg
-            $table->string('path')->index(); // products/shoes/image.jpg
+            $table->string('folder'); // products/shoes
+            $table->string('basename'); // image.jpg
+            $table->string('filename'); // image
+            $table->char('extension', 10); // jpg
+            $table->string('path'); // products/shoes/image.jpg
 
             // File details
-            $table->string('mime_type', 100)->index(); // image/jpeg, video/mp4, application/pdf
-            $table->unsignedBigInteger('size')->index(); // bytes
+            $table->string('mime_type', 100); // image/jpeg, video/mp4, application/pdf
+            $table->unsignedBigInteger('size'); // bytes
 
             // Image/Video specific
-            $table->unsignedInteger('width')->nullable()->index();
-            $table->unsignedInteger('height')->nullable()->index();
+            $table->unsignedInteger('width')->nullable();
+            $table->unsignedInteger('height')->nullable();
             $table->unsignedInteger('duration')->nullable(); // for videos/audio in seconds
             $table->decimal('aspect_ratio', 8, 4)->nullable();
 
@@ -77,7 +75,7 @@ return new class extends Migration
             $table->foreignId('uploaded_by')->nullable()->constrained('users')->nullOnDelete();
 
             // File hash for deduplication
-            $table->string('hash', 64)->nullable()->index(); // SHA-256
+            $table->string('hash', 64)->nullable(); // SHA-256
 
             $table->timestamps();
             $table->softDeletes();
@@ -85,17 +83,6 @@ return new class extends Migration
             // Unique constraint
             $table->unique(['container', 'path']);
 
-            // Composite indexes for common queries
-            $table->index(['container', 'folder']);
-            $table->index(['container', 'extension']);
-            $table->index(['container', 'mime_type']);
-            $table->index(['mime_type', 'extension']);
-            $table->index(['uploaded_by', 'created_at']);
-            $table->index(['hash', 'size']); // deduplication
-
-            // Media type categorization
-            $table->index(['mime_type', 'width', 'height']); // images
-            $table->index(['mime_type', 'duration']); // videos/audio
         });
 
         // Asset transformations cache (Glide generated images)
@@ -104,32 +91,29 @@ return new class extends Migration
             $table->foreignId('asset_id')->constrained('assets')->cascadeOnDelete();
 
             // Transformation params
-            $table->string('preset')->nullable()->index(); // 'thumbnail', 'large', etc.
+            $table->string('preset')->nullable(); // 'thumbnail', 'large', etc.
             $table->jsonb('params')->comment('Glide transformation parameters');
-            $table->string('params_hash', 64)->index(); // Hash of params for quick lookup
+            $table->string('params_hash', 64); // Hash of params for quick lookup
 
             // Generated file
-            $table->string('path')->index(); // cache/transformations/abc123.jpg
+            $table->string('path'); // cache/transformations/abc123.jpg
             $table->unsignedBigInteger('size');
             $table->unsignedInteger('width')->nullable();
             $table->unsignedInteger('height')->nullable();
 
             // Cache management
-            $table->timestamp('last_accessed_at')->nullable()->index();
+            $table->timestamp('last_accessed_at')->nullable();
             $table->unsignedInteger('access_count')->default(0);
 
             $table->timestamps();
 
-            $table->unique(['asset_id', 'params_hash']);
-            $table->index(['preset', 'asset_id']);
-            $table->index(['last_accessed_at']); // for cleanup
         });
 
         // Folders metadata (optional, for folder-level settings)
         Schema::create('asset_folders', function (Blueprint $table) {
             $table->id();
-            $table->string('container')->index();
-            $table->string('path')->index(); // products/shoes
+            $table->string('container');
+            $table->string('path'); // products/shoes
             $table->string('basename'); // shoes
             $table->foreignId('parent_id')->nullable()->constrained('asset_folders')->nullOnDelete();
 

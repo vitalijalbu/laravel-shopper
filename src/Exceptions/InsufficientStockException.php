@@ -1,6 +1,6 @@
 <?php
 
-namespace Shopper\Exceptions;
+namespace Cartino\Exceptions;
 
 use Exception;
 

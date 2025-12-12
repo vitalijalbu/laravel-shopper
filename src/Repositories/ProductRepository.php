@@ -1,100 +1,44 @@
 <?php
 
-namespace Shopper\Repositories;
+declare(strict_types=1);
 
-use Illuminate\Database\Eloquent\Collection;
+namespace Cartino\Repositories;
+
+use Cartino\Models\Product;
 use Illuminate\Database\Eloquent\Model;
-use Shopper\Contracts\ProductRepositoryInterface;
-use Shopper\Models\Product;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Arr;
+use Spatie\QueryBuilder\QueryBuilder;
 
-class ProductRepository extends BaseRepository implements ProductRepositoryInterface
+class ProductRepository extends BaseRepository
 {
     protected string $cachePrefix = 'products';
 
-    protected int $cacheTtl = 3600; // 1 hour
+    protected int $cacheTtl = 3600;
 
     protected function makeModel(): Model
     {
         return new Product;
     }
 
-    public function findWithRelations(int $id, array $relations = []): ?Product
+
+    public function findAll(array $filters = []): LengthAwarePaginator
     {
-        if (! empty($relations)) {
-            $this->with($relations);
-        }
+        $dynamicIncludes = Arr::get($filters, 'includes', []);
 
-        return $this->find($id);
-    }
-
-    public function searchPaginated(array $filters, int $perPage = 20): \Illuminate\Pagination\LengthAwarePaginator
-    {
-        $query = $this->model->newQuery();
-
-        // Search term
-        if (! empty($filters['search'])) {
-            $searchTerm = $filters['search'];
-            $query->where(function ($q) use ($searchTerm) {
-                $q->where('name', 'like', "%{$searchTerm}%")
-                    ->orWhere('sku', 'like', "%{$searchTerm}%")
-                    ->orWhere('description', 'like', "%{$searchTerm}%");
-            });
-        }
-
-        // Status filter
-        if (! empty($filters['status'])) {
-            $query->where('status', $filters['status']);
-        }
-
-        // Category filter
-        if (! empty($filters['category_id'])) {
-            $query->where('shopper_category_id', $filters['category_id']);
-        }
-
-        // Brand filter
-        if (! empty($filters['brand_id'])) {
-            $query->where('shopper_brand_id', $filters['brand_id']);
-        }
-
-        // Price range filter
-        if (! empty($filters['min_price'])) {
-            $query->where('price_amount', '>=', $filters['min_price']);
-        }
-
-        if (! empty($filters['max_price'])) {
-            $query->where('price_amount', '<=', $filters['max_price']);
-        }
-
-        // Visibility filter
-        if (isset($filters['is_visible'])) {
-            $query->where('is_visible', $filters['is_visible']);
-        }
-
-        // On sale filter
-        if (! empty($filters['on_sale'])) {
-            $query->whereNotNull('sale_price_amount');
-        }
-
-        // Sorting
-        $sortBy = $filters['sort_by'] ?? 'created_at';
-        $sortDirection = $filters['sort_direction'] ?? 'desc';
-
-        switch ($sortBy) {
-            case 'name':
-                $query->orderBy('name', $sortDirection);
-                break;
-            case 'price':
-                $query->orderBy('price_amount', $sortDirection);
-                break;
-            case 'popularity':
-                // Assuming you have a views or orders count
-                $query->orderBy('views_count', $sortDirection);
-                break;
-            default:
-                $query->orderBy('created_at', $sortDirection);
-        }
-
-        return $query->with(['category', 'brand'])->paginate($perPage);
+        return QueryBuilder::for(Product::class)
+            ->allowedFilters(['name', 'email'])
+            ->allowedSorts(['name', 'created_at', 'status'])
+            ->allowedIncludes([
+                'brand',
+                'productType',
+                'categories',
+                'collections',
+                'tags',
+                ...$dynamicIncludes
+            ])
+            ->paginate($filters['per_page'] ?? config('settings.pagination.per_page'))
+            ->appends($filters);
     }
 
     public function createWithRelations(array $data, array $relations = []): Product
@@ -117,53 +61,45 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
         return $product->load(['category', 'brand', 'collections', 'tags']);
     }
 
-    public function getByCategory(int $categoryId): Collection
-    {
-        return $this->findWhere(['shopper_category_id' => $categoryId]);
-    }
+   
 
-    public function getByBrand(int $brandId): Collection
-    {
-        return $this->findWhere(['shopper_brand_id' => $brandId]);
-    }
-
-    public function getByCollection(int $collectionId): Collection
+    public function getByCollection(int $collectionId): Product
     {
         return $this->whereHas('collections', function ($query) use ($collectionId) {
             $query->where('id', $collectionId);
         })->all();
     }
 
-    public function getPublished(): Collection
+    public function getPublished(): Product
     {
         return $this->findWhere(['status' => 'published']);
     }
 
-    public function getVisible(): Collection
+    public function getVisible(): Product
     {
         return $this->findWhere(['is_visible' => true]);
     }
 
-    public function getOnSale(): Collection
+    public function getOnSale(): Product
     {
         return $this->model->whereNotNull('sale_price_amount')
             ->where('sale_price_amount', '>', 0)
             ->get();
     }
 
-    public function getFeatured(): Collection
+    public function getFeatured(): Product
     {
         return $this->findWhere(['is_featured' => true]);
     }
 
-    public function getPopular(int $limit = 10): Collection
+    public function getPopular(int $limit = 10): Product
     {
         return $this->model->orderBy('views_count', 'desc')
             ->limit($limit)
             ->get();
     }
 
-    public function getRelated(Product $product, int $limit = 4): Collection
+    public function getRelated(Product $product, int $limit = 4): Product
     {
         $query = $this->model->where('id', '!=', $product->id);
 
@@ -188,7 +124,7 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
         return $this->findWhereFirst(['sku' => $sku]);
     }
 
-    public function searchByName(string $name): Collection
+    public function searchByName(string $name): Product
     {
         return $this->model->where('name', 'like', "%{$name}%")->get();
     }

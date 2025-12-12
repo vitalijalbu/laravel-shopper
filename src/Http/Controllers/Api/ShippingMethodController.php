@@ -1,10 +1,10 @@
 <?php
 
-namespace Shopper\Http\Controllers\Api;
+namespace Cartino\Http\Controllers\Api;
 
+use Cartino\Repositories\ShippingMethodRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Shopper\Repositories\ShippingMethodRepository;
 
 class ShippingMethodController extends ApiController
 {
@@ -20,7 +20,7 @@ class ShippingMethodController extends ApiController
         $filters = $request->only(['search', 'is_enabled', 'carrier', 'calculation_type']);
         $perPage = $request->get('per_page', 25);
 
-        $shippingMethods = $this->shippingMethodRepository->getPaginatedWithFilters($filters, $perPage);
+        $shippingMethods = $this->shippingMethodRepository->findAll($filters, $perPage);
 
         return response()->json([
             'data' => $shippingMethods->items(),

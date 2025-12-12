@@ -12,11 +12,11 @@ return new class extends Migration
             $table->id();
             $table->foreignId('fidelity_card_id')->constrained()->onDelete('cascade');
             $table->foreignId('order_id')->nullable()->constrained()->onDelete('set null');
-            $table->enum('type', ['earned', 'redeemed', 'expired', 'adjusted'])->index();
+            $table->enum('type', ['earned', 'redeemed', 'expired', 'adjusted']);
             $table->integer('points'); // Can be negative for redemptions/expirations
             $table->text('description')->nullable();
-            $table->timestamp('expires_at')->nullable()->index();
-            $table->boolean('expired')->default(false)->index();
+            $table->timestamp('expires_at')->nullable();
+            $table->boolean('expired')->default(false);
             $table->foreignId('reference_transaction_id')->nullable()->constrained('fidelity_transactions')->onDelete('set null');
             $table->json('meta')->nullable();
             $table->timestamps();

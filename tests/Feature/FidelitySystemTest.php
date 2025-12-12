@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Feature;
 
+use Cartino\Models\Customer;
+use Cartino\Models\FidelityCard;
+use Cartino\Models\FidelityTransaction;
+use Cartino\Models\Order;
+use Cartino\Services\FidelityService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\TestCase as BaseTestCase;
-use Shopper\Models\Customer;
-use Shopper\Models\FidelityCard;
-use Shopper\Models\FidelityTransaction;
-use Shopper\Models\Order;
-use Shopper\Services\FidelityService;
 
 class FidelitySystemTest extends BaseTestCase
 {
@@ -24,8 +24,8 @@ class FidelitySystemTest extends BaseTestCase
         $this->fidelityService = app(FidelityService::class);
 
         // Abilita il sistema di fedeltà per i test
-        config(['shopper.fidelity.enabled' => true]);
-        config(['shopper.fidelity.points.enabled' => true]);
+        config(['cartino.fidelity.enabled' => true]);
+        config(['cartino.fidelity.points.enabled' => true]);
     }
 
     public function test_can_create_fidelity_card_for_customer()

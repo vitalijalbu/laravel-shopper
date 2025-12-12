@@ -1,23 +1,23 @@
 <?php
 
-namespace Shopper\Entries;
+namespace Cartino\Entries;
 
 use ArrayAccess;
 use Carbon\Carbon;
+use Cartino\Contracts\Entries\Entry as Contract;
+use Cartino\Data\ContainsCascadingData;
+use Cartino\Data\ExistsAsFile;
+use Cartino\Data\HasAugmentedData;
+use Cartino\Events\Entries\EntryCreated;
+use Cartino\Events\Entries\EntryCreating;
+use Cartino\Events\Entries\EntryDeleted;
+use Cartino\Events\Entries\EntryDeleting;
+use Cartino\Events\Entries\EntrySaved;
+use Cartino\Events\Entries\EntrySaving;
+use Cartino\Facades\Category;
+use Cartino\Facades\Site;
+use Cartino\Support\Traits\FluentlyGetsAndSets;
 use Illuminate\Contracts\Support\Arrayable;
-use Shopper\Contracts\Entries\Entry as Contract;
-use Shopper\Data\ContainsCascadingData;
-use Shopper\Data\ExistsAsFile;
-use Shopper\Data\HasAugmentedData;
-use Shopper\Events\Entries\EntryCreated;
-use Shopper\Events\Entries\EntryCreating;
-use Shopper\Events\Entries\EntryDeleted;
-use Shopper\Events\Entries\EntryDeleting;
-use Shopper\Events\Entries\EntrySaved;
-use Shopper\Events\Entries\EntrySaving;
-use Shopper\Facades\Collection;
-use Shopper\Facades\Site;
-use Shopper\Support\Traits\FluentlyGetsAndSets;
 
 class Entry implements Arrayable, ArrayAccess, Contract
 {
@@ -82,7 +82,7 @@ class Entry implements Arrayable, ArrayAccess, Contract
             return null;
         }
 
-        return app(\Shopper\Contracts\Routing\UrlBuilder::class)
+        return app(\Cartino\Contracts\Routing\UrlBuilder::class)
             ->content($this)
             ->merge($this->routeData())
             ->build($this->route());
@@ -91,9 +91,9 @@ class Entry implements Arrayable, ArrayAccess, Contract
     public function collection($collection = null)
     {
         if (func_num_args() === 0) {
-            return $this->collection instanceof \Shopper\Collections\Collection
+            return $this->collection instanceof \Cartino\Collections\Category
                 ? $this->collection
-                : Collection::findByHandle($this->collection);
+                : Category::findByHandle($this->collection);
         }
 
         $this->collection = $collection;
@@ -103,7 +103,7 @@ class Entry implements Arrayable, ArrayAccess, Contract
 
     public function collectionHandle()
     {
-        return $this->collection instanceof \Shopper\Collections\Collection
+        return $this->collection instanceof \Cartino\Collections\Category
             ? $this->collection->handle()
             : $this->collection;
     }
@@ -387,7 +387,7 @@ class Entry implements Arrayable, ArrayAccess, Contract
         $this->ensureId();
 
         // Save the entry through the repository
-        app(\Shopper\Contracts\Entries\EntryRepository::class)->save($this);
+        app(\Cartino\Contracts\Entries\EntryRepository::class)->save($this);
 
         if ($withEvents) {
             if ($isNew) {
@@ -408,7 +408,7 @@ class Entry implements Arrayable, ArrayAccess, Contract
     {
         EntryDeleting::dispatch($this);
 
-        app(\Shopper\Contracts\Entries\EntryRepository::class)->delete($this);
+        app(\Cartino\Contracts\Entries\EntryRepository::class)->delete($this);
 
         EntryDeleted::dispatch($this);
     }

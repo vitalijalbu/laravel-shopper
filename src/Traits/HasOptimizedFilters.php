@@ -1,6 +1,6 @@
 <?php
 
-namespace Shopper\Traits;
+namespace Cartino\Traits;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Schema;
@@ -372,8 +372,8 @@ trait HasOptimizedFilters
      */
     public function scopePaginateFilter(Builder $query, array $params = [], ?int $perPage = null): \Illuminate\Contracts\Pagination\LengthAwarePaginator
     {
-        $perPage = $perPage ?? $params['per_page'] ?? config('shopper.filters.pagination.default', 15);
-        $maxPerPage = config('shopper.filters.pagination.max', 100);
+        $perPage = $perPage ?? $params['per_page'] ?? config('cartino.filters.pagination.default', 15);
+        $maxPerPage = config('cartino.filters.pagination.max', 100);
 
         $perPage = min($perPage, $maxPerPage);
 

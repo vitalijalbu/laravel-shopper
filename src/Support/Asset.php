@@ -1,6 +1,6 @@
 <?php
 
-namespace Shopper\Support;
+namespace Cartino\Support;
 
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\HtmlString;
@@ -17,11 +17,11 @@ class Asset
         $manifest = static::getManifest();
 
         if (isset($manifest[$path])) {
-            return asset('vendor/shopper/'.$manifest[$path]['file']);
+            return asset('vendor/cartino/'.$manifest[$path]['file']);
         }
 
         // Fallback to direct path if manifest not found
-        return asset('vendor/shopper/'.ltrim($path, '/'));
+        return asset('vendor/cartino/'.ltrim($path, '/'));
     }
 
     /**
@@ -40,7 +40,7 @@ class Asset
                 foreach ($entry['imports'] as $import) {
                     if (isset($manifest[$import])) {
                         $importFile = $manifest[$import]['file'];
-                        $scripts .= '<link rel="modulepreload" href="'.asset('vendor/shopper/'.$importFile).'">'."\n";
+                        $scripts .= '<link rel="modulepreload" href="'.asset('vendor/cartino/'.$importFile).'">'."\n";
                     }
                 }
             }
@@ -62,7 +62,7 @@ class Asset
 
         if (isset($manifest['resources/js/app.js']['css'])) {
             foreach ($manifest['resources/js/app.js']['css'] as $css) {
-                $styles .= '<link rel="stylesheet" href="'.asset('vendor/shopper/'.$css).'">'."\n";
+                $styles .= '<link rel="stylesheet" href="'.asset('vendor/cartino/'.$css).'">'."\n";
             }
         }
 
@@ -78,7 +78,7 @@ class Asset
             return static::$manifest;
         }
 
-        $manifestPath = public_path('vendor/shopper/.vite/manifest.json');
+        $manifestPath = public_path('vendor/cartino/.vite/manifest.json');
 
         if (! File::exists($manifestPath)) {
             static::$manifest = [];
@@ -96,6 +96,6 @@ class Asset
      */
     public static function isBuilt(): bool
     {
-        return File::exists(public_path('vendor/shopper/.vite/manifest.json'));
+        return File::exists(public_path('vendor/cartino/.vite/manifest.json'));
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Shopper\Fieldtypes;
+namespace Cartino\Fieldtypes;
 
 class Number extends Fieldtype
 {

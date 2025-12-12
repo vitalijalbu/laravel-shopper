@@ -35,15 +35,15 @@ return [
     */
 
     'namespaces' => [
-        'models' => ['Shopper\\Models'],
-        'queries' => 'Shopper\\GraphQL\\Queries',
-        'mutations' => 'Shopper\\GraphQL\\Mutations',
-        'subscriptions' => 'Shopper\\GraphQL\\Subscriptions',
-        'interfaces' => 'Shopper\\GraphQL\\Interfaces',
-        'unions' => 'Shopper\\GraphQL\\Unions',
-        'scalars' => 'Shopper\\GraphQL\\Scalars',
-        'directives' => ['Shopper\\GraphQL\\Directives'],
-        'validators' => ['Shopper\\GraphQL\\Validators'],
+        'models' => ['Cartino\\Models'],
+        'queries' => 'Cartino\\GraphQL\\Queries',
+        'mutations' => 'Cartino\\GraphQL\\Mutations',
+        'subscriptions' => 'Cartino\\GraphQL\\Subscriptions',
+        'interfaces' => 'Cartino\\GraphQL\\Interfaces',
+        'unions' => 'Cartino\\GraphQL\\Unions',
+        'scalars' => 'Cartino\\GraphQL\\Scalars',
+        'directives' => ['Cartino\\GraphQL\\Directives'],
+        'validators' => ['Cartino\\GraphQL\\Validators'],
     ],
 
     /*

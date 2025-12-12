@@ -1,13 +1,13 @@
 <?php
 
-namespace Shopper\Tests\Unit\Models;
+namespace Cartino\Tests\Unit\Models;
 
+use Cartino\Models\Brand;
+use Cartino\Models\Category;
+use Cartino\Models\Category;
+use Cartino\Models\Product;
+use Cartino\Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Shopper\Models\Brand;
-use Shopper\Models\Collection;
-use Shopper\Models\Collection;
-use Shopper\Models\Product;
-use Shopper\Tests\TestCase;
 
 class ProductTest extends TestCase
 {
@@ -81,12 +81,12 @@ class ProductTest extends TestCase
     /** @test */
     public function it_belongs_to_category()
     {
-        $category = Collection::factory()->create();
+        $category = Category::factory()->create();
         $product = Product::factory()->create([
             'shopper_category_id' => $category->id,
         ]);
 
-        $this->assertInstanceOf(Collection::class, $product->category);
+        $this->assertInstanceOf(Category::class, $product->category);
         $this->assertEquals($category->id, $product->category->id);
     }
 
@@ -106,12 +106,12 @@ class ProductTest extends TestCase
     public function it_belongs_to_many_collections()
     {
         $product = Product::factory()->create();
-        $collections = Collection::factory()->count(3)->create();
+        $collections = Category::factory()->count(3)->create();
 
         $product->collections()->attach($collections->pluck('id'));
 
         $this->assertCount(3, $product->collections);
-        $this->assertInstanceOf(Collection::class, $product->collections->first());
+        $this->assertInstanceOf(Category::class, $product->collections->first());
     }
 
     /** @test */

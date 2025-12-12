@@ -1,11 +1,11 @@
 <?php
 
-namespace Shopper\Data;
+namespace Cartino\Data;
 
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
+use Illuminate\Support\Category;
 
 abstract class BaseDto implements Arrayable
 {
@@ -36,7 +36,7 @@ abstract class BaseDto implements Arrayable
     /**
      * Create collection of DTOs.
      */
-    public static function collect(array $items): Collection
+    public static function collect(array $items): Category
     {
         return collect($items)->map(fn ($item) => static::from($item));
     }
@@ -106,7 +106,7 @@ abstract class BaseDto implements Arrayable
         $array = [];
 
         foreach (get_object_vars($this) as $key => $value) {
-            if ($value instanceof Collection) {
+            if ($value instanceof Category) {
                 $array[$key] = $value->toArray();
             } elseif ($value instanceof Arrayable) {
                 $array[$key] = $value->toArray();

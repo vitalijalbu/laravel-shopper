@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Shopper\Http\Controllers\CP;
+namespace Cartino\Http\Controllers\CP;
 
+use Cartino\CP\Navigation;
+use Cartino\CP\Page;
+use Cartino\Http\Requests\CP\StoreProductRequest;
+use Cartino\Http\Resources\CP\ProductResource;
+use Cartino\Models\Brand;
+use Cartino\Models\Category;
+use Cartino\Models\Product;
+use Cartino\Repositories\ProductRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Inertia\Response;
-use Shopper\CP\Navigation;
-use Shopper\CP\Page;
-use Shopper\Http\Requests\CP\StoreProductRequest;
-use Shopper\Http\Resources\CP\ProductResource;
-use Shopper\Models\Brand;
-use Shopper\Models\Collection;
-use Shopper\Models\Product;
-use Shopper\Repositories\ProductRepository;
 
 class ProductController extends BaseController
 {
@@ -47,18 +47,18 @@ class ProductController extends BaseController
             'created_at',
         ]);
 
-        $products = $this->productRepository->searchPaginated(
+        $products = $this->productRepository->findAll(
             $filters,
             request('per_page', 15)
         );
 
         $page = Page::make('Products')
-            ->primaryAction('Add product', route('shopper.products.create'))
+            ->primaryAction('Add product', route('cartino.products.create'))
             ->secondaryActions([
-                ['label' => 'Import', 'url' => route('shopper.products.import')],
-                ['label' => 'Export', 'url' => route('shopper.products.export')],
-                ['label' => 'Collections', 'url' => route('shopper.collections.index')],
-                ['label' => 'Brands', 'url' => route('shopper.brands.index')],
+                ['label' => 'Import', 'url' => route('cartino.products.import')],
+                ['label' => 'Export', 'url' => route('cartino.products.export')],
+                ['label' => 'Collections', 'url' => route('cartino.collections.index')],
+                ['label' => 'Brands', 'url' => route('cartino.brands.index')],
             ]);
 
         return $this->inertiaResponse('products/Index', [
@@ -67,7 +67,7 @@ class ProductController extends BaseController
             'products' => $products->through(fn ($product) => new ProductResource($product)),
             'filters' => $filters,
             'brands' => Brand::select('id', 'name')->get(),
-            'collections' => Collection::select('id', 'name')->get(),
+            'collections' => Category::select('id', 'name')->get(),
         ]);
     }
 
@@ -77,7 +77,7 @@ class ProductController extends BaseController
     public function create(): Response
     {
         $this->addDashboardBreadcrumb()
-            ->addBreadcrumb('Products', 'shopper.products.index')
+            ->addBreadcrumb('Products', 'cartino.products.index')
             ->addBreadcrumb('Add product');
 
         $page = Page::make('Add product')
@@ -101,7 +101,7 @@ class ProductController extends BaseController
             'page' => $page->compile(),
             'navigation' => Navigation::tree(),
             'brands' => Brand::select('id', 'name')->where('status', 'active')->orderBy('name')->get(),
-            'collections' => Collection::select('id', 'name')->where('status', 'active')->orderBy('name')->get(),
+            'collections' => Category::select('id', 'name')->where('status', 'active')->orderBy('name')->get(),
         ]);
     }
 
@@ -125,10 +125,10 @@ class ProductController extends BaseController
         $action = $request->input('_action', 'save');
 
         $redirectUrl = match ($action) {
-            'save_continue' => route('shopper.products.edit', $product),
-            'save_add_another' => route('shopper.products.create'),
-            'save_draft' => route('shopper.products.edit', $product),
-            default => route('shopper.products.index'),
+            'save_continue' => route('cartino.products.edit', $product),
+            'save_add_another' => route('cartino.products.create'),
+            'save_draft' => route('cartino.products.edit', $product),
+            default => route('cartino.products.index'),
         };
 
         return $this->successResponse('Product created successfully', [
@@ -147,15 +147,15 @@ class ProductController extends BaseController
         ]);
 
         $this->addDashboardBreadcrumb()
-            ->addBreadcrumb('Products', 'shopper.products.index')
+            ->addBreadcrumb('Products', 'cartino.products.index')
             ->addBreadcrumb($product->name);
 
         $page = Page::make($product->name)
-            ->primaryAction('Edit product', route('shopper.products.edit', $product))
+            ->primaryAction('Edit product', route('cartino.products.edit', $product))
             ->secondaryActions([
                 ['label' => 'Duplicate', 'action' => 'duplicate'],
                 ['label' => 'View in storefront', 'url' => $product->url, 'external' => true],
-                ['label' => 'Create variant', 'url' => route('shopper.product-variants.create', $product)],
+                ['label' => 'Create variant', 'url' => route('cartino.product-variants.create', $product)],
                 ['label' => 'Delete', 'action' => 'delete', 'destructive' => true],
             ])
             ->tabs([
@@ -182,14 +182,14 @@ class ProductController extends BaseController
         ]);
 
         $this->addDashboardBreadcrumb()
-            ->addBreadcrumb('Products', 'shopper.products.index')
-            ->addBreadcrumb($product->name, route('shopper.products.show', $product))
+            ->addBreadcrumb('Products', 'cartino.products.index')
+            ->addBreadcrumb($product->name, route('cartino.products.show', $product))
             ->addBreadcrumb('Edit');
 
         $page = Page::make("Edit {$product->name}")
             ->primaryAction('Update product', null, ['form' => 'product-form'])
             ->secondaryActions([
-                ['label' => 'View product', 'url' => route('shopper.products.show', $product)],
+                ['label' => 'View product', 'url' => route('cartino.products.show', $product)],
                 ['label' => 'Duplicate', 'action' => 'duplicate'],
                 ['label' => 'View in storefront', 'url' => $product->url, 'external' => true],
                 ['label' => 'Delete', 'action' => 'delete', 'destructive' => true],
@@ -209,7 +209,7 @@ class ProductController extends BaseController
             'navigation' => Navigation::tree(),
             'product' => new ProductResource($product),
             'brands' => Brand::select('id', 'name')->orderBy('name')->get(),
-            'collections' => Collection::select('id', 'name')->orderBy('name')->get(),
+            'collections' => Category::select('id', 'name')->orderBy('name')->get(),
         ]);
     }
 
@@ -295,7 +295,7 @@ class ProductController extends BaseController
 
         return $this->successResponse('Product duplicated successfully', [
             'product' => new ProductResource($duplicate),
-            'redirect' => route('shopper.products.edit', $duplicate),
+            'redirect' => route('cartino.products.edit', $duplicate),
         ]);
     }
 

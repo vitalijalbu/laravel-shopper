@@ -11,14 +11,14 @@ return new class extends Migration
         Schema::create('menus', function (Blueprint $table) {
             $table->id();
             $table->foreignId('site_id')->nullable()->constrained('sites')->cascadeOnDelete();
-            $table->string('handle')->index();
+            $table->string('handle');
             $table->string('title');
             $table->text('description')->nullable();
-            $table->string('location')->nullable()->index(); // header, footer, sidebar, etc.
+            $table->string('location')->nullable(); // header, footer, sidebar, etc.
             $table->jsonb('settings')->nullable();
             $table->jsonb('data')->nullable()->comment('Custom fields data');
-            $table->boolean('is_active')->default(true)->index();
-            $table->integer('sort_order')->default(0)->index();
+            $table->boolean('is_active')->default(true);
+            $table->integer('sort_order')->default(0);
             $table->timestamps();
             $table->softDeletes();
 

@@ -1,12 +1,12 @@
 <?php
 
-namespace Shopper\Services;
+namespace Cartino\Services;
 
-use Illuminate\Support\Collection;
+use Cartino\Exceptions\InsufficientStockException;
+use Cartino\Models\Order;
+use Cartino\Models\Product;
+use Illuminate\Support\Category;
 use Illuminate\Support\Facades\Log;
-use Shopper\Exceptions\InsufficientStockException;
-use Shopper\Models\Order;
-use Shopper\Models\Product;
 
 class InventoryService
 {
@@ -96,7 +96,7 @@ class InventoryService
     /**
      * Get products with low stock
      */
-    public function getLowStockProducts(): Collection
+    public function getLowStockProducts(): Category
     {
         return Product::where('track_quantity', true)
             ->whereRaw('stock_quantity <= low_stock_threshold')
@@ -107,7 +107,7 @@ class InventoryService
     /**
      * Get out of stock products
      */
-    public function getOutOfStockProducts(): Collection
+    public function getOutOfStockProducts(): Category
     {
         return Product::where('track_quantity', true)
             ->where('stock_quantity', 0)

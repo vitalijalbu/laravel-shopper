@@ -1,39 +1,30 @@
 <?php
 
-namespace Shopper\Http\Controllers\Api;
+namespace Cartino\Http\Controllers\Api;
 
+use Cartino\Http\Resources\ProductResource;
+use Cartino\Models\Product;
+use Cartino\Repositories\ProductRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Shopper\Http\Resources\ProductResource;
-use Shopper\Models\Product;
-use Shopper\Services\FilterService;
 
 class ProductController extends ApiController
 {
     public function __construct(
-        private readonly FilterService $filterService
+        private readonly ProductRepository $repository
     ) {}
 
+    /**
+     * Display a listing of brands
+     */
     public function index(Request $request): JsonResponse
     {
-        // Parse filter parameters
-        $params = $this->filterService->parseRequest($request->all());
+        $request = $request->all();
 
-        // Get products with filters
-        $products = Product::where('status', 'published')
-            ->paginateFilter($params);
+        $data = $this->repository->findAll($request);
 
-        return $this->success([
-            'data' => ProductResource::collection($products->items()),
-            'meta' => [
-                'total' => $products->total(),
-                'per_page' => $products->perPage(),
-                'current_page' => $products->currentPage(),
-                'last_page' => $products->lastPage(),
-            ],
-            'filters' => $params,
-        ]);
+        return $this->paginatedResponse($data);
     }
 
     public function show(Product $product): JsonResource

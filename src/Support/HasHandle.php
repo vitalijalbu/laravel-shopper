@@ -1,6 +1,6 @@
 <?php
 
-namespace Shopper\Support;
+namespace Cartino\Support;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Shopper\Console\Commands;
+namespace Cartino\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
@@ -12,7 +12,7 @@ class InstallShopperCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'shopper:install 
+    protected $signature = 'cartino:install 
                           {--oauth : Install OAuth authentication system}
                           {--force : Overwrite existing files}
                           {--seed : Run database seeders and create sample data}
@@ -25,14 +25,14 @@ class InstallShopperCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Install Laravel Shopper package';
+    protected $description = 'Install Cartino package';
 
     /**
      * Execute the console command.
      */
     public function handle(): int
     {
-        $this->info('🛍️  Installing Laravel Shopper...');
+        $this->info('🛍️  Installing Cartino...');
         $this->newLine();
 
         // Check Laravel version
@@ -85,7 +85,7 @@ class InstallShopperCommand extends Command
         $laravelVersion = app()->version();
 
         if (version_compare($laravelVersion, '11.0', '<')) {
-            $this->error('❌ Laravel Shopper requires Laravel 11.0 or higher.');
+            $this->error('❌ Cartino requires Laravel 11.0 or higher.');
             $this->error("   Current version: {$laravelVersion}");
 
             return false;
@@ -103,13 +103,13 @@ class InstallShopperCommand extends Command
     {
         $this->info('📝 Publishing configuration files...');
 
-        $params = ['--provider' => 'Shopper\ShopperServiceProvider'];
+        $params = ['--provider' => 'Cartino\CartinoServiceProvider'];
 
         if ($this->option('force')) {
             $params['--force'] = true;
         }
 
-        Artisan::call('vendor:publish', array_merge($params, ['--tag' => 'shopper-config']));
+        Artisan::call('vendor:publish', array_merge($params, ['--tag' => 'cartino-config']));
 
         $this->info('✅ Configuration published successfully.');
     }
@@ -121,13 +121,13 @@ class InstallShopperCommand extends Command
     {
         $this->info('🔑 Publishing permissions configuration...');
 
-        $params = ['--provider' => 'Shopper\ShopperServiceProvider'];
+        $params = ['--provider' => 'Cartino\CartinoServiceProvider'];
 
         if ($this->option('force')) {
             $params['--force'] = true;
         }
 
-        Artisan::call('vendor:publish', array_merge($params, ['--tag' => 'shopper-permission-config']));
+        Artisan::call('vendor:publish', array_merge($params, ['--tag' => 'cartino-permission-config']));
 
         $this->info('✅ Permissions configuration published successfully.');
     }
@@ -139,20 +139,20 @@ class InstallShopperCommand extends Command
     {
         $this->info('🔐 Publishing OAuth authentication system...');
 
-        $params = ['--provider' => 'Shopper\ShopperServiceProvider'];
+        $params = ['--provider' => 'Cartino\CartinoServiceProvider'];
 
         if ($this->option('force')) {
             $params['--force'] = true;
         }
 
         // Publish OAuth configuration
-        Artisan::call('vendor:publish', array_merge($params, ['--tag' => 'shopper-oauth-config']));
+        Artisan::call('vendor:publish', array_merge($params, ['--tag' => 'cartino-oauth-config']));
 
         // Publish Vue components
-        Artisan::call('vendor:publish', array_merge($params, ['--tag' => 'shopper-components']));
+        Artisan::call('vendor:publish', array_merge($params, ['--tag' => 'cartino-components']));
 
         // Publish translations
-        Artisan::call('vendor:publish', array_merge($params, ['--tag' => 'shopper-lang']));
+        Artisan::call('vendor:publish', array_merge($params, ['--tag' => 'cartino-lang']));
 
         $this->info('✅ OAuth system published successfully.');
 
@@ -182,19 +182,19 @@ class InstallShopperCommand extends Command
     {
         $this->info('🎨 Publishing assets...');
 
-        $params = ['--provider' => 'Shopper\ShopperServiceProvider'];
+        $params = ['--provider' => 'Cartino\CartinoServiceProvider'];
 
         if ($this->option('force')) {
             $params['--force'] = true;
         }
 
         // Publish source assets
-        Artisan::call('vendor:publish', array_merge($params, ['--tag' => 'shopper-assets']));
-        Artisan::call('vendor:publish', array_merge($params, ['--tag' => 'shopper-views']));
+        Artisan::call('vendor:publish', array_merge($params, ['--tag' => 'cartino-assets']));
+        Artisan::call('vendor:publish', array_merge($params, ['--tag' => 'cartino-views']));
 
         // Build and publish compiled assets
         $this->info('🔨 Building frontend assets...');
-        $result = Artisan::call('shopper:build');
+        $result = Artisan::call('cartino:build');
 
         if ($result === 0) {
             $this->info('✅ Assets built and published successfully.');
@@ -221,7 +221,7 @@ class InstallShopperCommand extends Command
             $this->info('   Seeding roles, permissions, and sample data...');
 
             $exitCode = Artisan::call('db:seed', [
-                '--class' => 'Shopper\\Database\\Seeders\\ShopperSeeder',
+                '--class' => 'Cartino\\Database\\Seeders\\CartinoSeeder',
                 '--force' => true,
             ]);
 
@@ -236,7 +236,7 @@ class InstallShopperCommand extends Command
 
         } catch (\Exception $e) {
             $this->warn('⚠️  Seeder failed: '.$e->getMessage());
-            $this->line('   You can run seeders manually: php artisan db:seed --class=Shopper\\Database\\Seeders\\ShopperSeeder');
+            $this->line('   You can run seeders manually: php artisan db:seed --class=Cartino\\Database\\Seeders\\CartinoSeeder');
         }
     }
 
@@ -248,11 +248,11 @@ class InstallShopperCommand extends Command
         $this->info('👤 Creating admin user...');
 
         try {
-            Artisan::call('shopper:admin');
+            Artisan::call('cartino:admin');
             $this->info('✅ Admin user creation process completed.');
         } catch (\Exception $e) {
             $this->warn('⚠️  Admin user creation failed: '.$e->getMessage());
-            $this->line('   You can create an admin user manually: php artisan shopper:admin');
+            $this->line('   You can create an admin user manually: php artisan cartino:admin');
         }
     }
 
@@ -288,7 +288,7 @@ class InstallShopperCommand extends Command
     protected function displayCompletionMessage(): void
     {
         $this->newLine();
-        $this->info('🎉 Laravel Shopper installation completed successfully!');
+        $this->info('🎉 Cartino installation completed successfully!');
         $this->line('');
 
         // Show what was installed
@@ -321,13 +321,13 @@ class InstallShopperCommand extends Command
 
         if (! $this->option('skip-migrations') && ! $this->option('seed')) {
             $this->line('1. Run migrations: php artisan migrate');
-            $this->line('2. Seed data: php artisan db:seed --class=Shopper\\Database\\Seeders\\ShopperSeeder');
+            $this->line('2. Seed data: php artisan db:seed --class=Cartino\\Database\\Seeders\\CartinoSeeder');
         }
 
         if (! $this->option('admin') && $this->option('seed')) {
             $this->line('• Login with default admin: admin@admin.com / password');
         } elseif (! $this->option('admin')) {
-            $this->line('• Create admin user: php artisan shopper:admin');
+            $this->line('• Create admin user: php artisan cartino:admin');
         }
 
         if ($this->option('oauth')) {
@@ -336,7 +336,7 @@ class InstallShopperCommand extends Command
 
         $this->line('• Access Control Panel at: /cp');
         $this->line('');
-        $this->info('📖 Documentation: https://github.com/vitalijalbu/laravel-shopper');
+        $this->info('📖 Documentation: https://github.com/vitalijalbu/laravel-cartino');
         $this->newLine();
     }
 }

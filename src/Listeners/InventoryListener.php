@@ -1,12 +1,12 @@
 <?php
 
-namespace Shopper\Listeners;
+namespace Cartino\Listeners;
 
-use Shopper\Events\InventoryUpdated;
-use Shopper\Events\OrderCreated;
-use Shopper\Events\OrderStatusChanged;
-use Shopper\Events\ProductCreated;
-use Shopper\Events\ProductUpdated;
+use Cartino\Events\InventoryUpdated;
+use Cartino\Events\OrderCreated;
+use Cartino\Events\OrderStatusChanged;
+use Cartino\Events\ProductCreated;
+use Cartino\Events\ProductUpdated;
 
 class InventoryListener extends Listener
 {

@@ -22,7 +22,7 @@ return new class extends Migration
             $table->json('product_collections')->nullable(); // Collections this applies to
             $table->decimal('min_amount', 10, 2)->nullable(); // Minimum order amount
             $table->decimal('max_amount', 10, 2)->nullable(); // Maximum order amount
-            $table->string('status')->default('active')->index(); // active, inactive, draft
+            $table->string('status')->default('active'); // active, inactive, draft
             $table->date('effective_from')->nullable();
             $table->date('effective_until')->nullable();
             $table->text('description')->nullable();

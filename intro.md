@@ -722,7 +722,7 @@ Pages:
 ├── page.sidebar.middle
 └── page.sidebar.bottom
 
-Collection Lists:
+Category Lists:
 ├── collection.list.toolbar.left
 ├── collection.list.toolbar.right
 ├── collection.list.filters
@@ -753,7 +753,7 @@ Dashboard:
 ### Usare Injection Points nelle Pagine
 
 ```vue
-<!-- Core CMS - Collection List Page -->
+<!-- Core CMS - Category List Page -->
 <template>
   <AdminLayout>
     <div class="page-header">
@@ -1521,7 +1521,7 @@ use Addons\Blog\Models\Post;
 class GenerateSitemapCommand extends Command
 {
     protected $signature = 'blog:sitemap:generate
-                            {--collection=posts : Collection to include}';
+                            {--collection=posts : Category to include}';
 
     protected $description = 'Generate sitemap for blog posts';
 

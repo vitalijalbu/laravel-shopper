@@ -1,8 +1,8 @@
 <?php
 
-namespace Shopper\CP;
+namespace Cartino\CP;
 
-use Illuminate\Support\Collection;
+use Illuminate\Support\Category;
 
 class Navigation
 {
@@ -35,7 +35,7 @@ class Navigation
     /**
      * Get all navigation items
      */
-    public static function items(): Collection
+    public static function items(): Category
     {
         return collect(static::$items)
             ->filter(fn ($item) => $item->canView())
@@ -46,7 +46,7 @@ class Navigation
     /**
      * Get all navigation sections
      */
-    public static function sections(): Collection
+    public static function sections(): Category
     {
         return collect(static::$sections)
             ->map(function ($section) {
@@ -94,7 +94,7 @@ class Navigation
             ->icon('shopping-bag')
             ->url('/cp/orders')
             ->section('orders')
-            ->badge(fn () => \Shopper\Models\Order::pending()->count())
+            ->badge(fn () => \Cartino\Models\Order::pending()->count())
             ->order(1);
 
         static::item('orders.drafts')

@@ -1,7 +1,8 @@
 <?php
 
-namespace Shopper\Jobs;
+namespace Cartino\Jobs;
 
+use Cartino\Models\Webhook;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -9,7 +10,6 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Shopper\Models\Webhook;
 
 class DispatchWebhookJob implements ShouldQueue
 {

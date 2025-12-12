@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Shopper\Services;
+namespace Cartino\Services;
 
-use Illuminate\Database\Eloquent\Collection;
+use Cartino\Models\Customer;
+use Cartino\Models\Discount;
+use Cartino\Models\DiscountApplication;
+use Cartino\Models\Order;
+use Illuminate\Database\Eloquent\Category;
 use Illuminate\Support\Str;
-use Shopper\Models\Customer;
-use Shopper\Models\Discount;
-use Shopper\Models\DiscountApplication;
-use Shopper\Models\Order;
 
 class DiscountService
 {
@@ -211,7 +211,7 @@ class DiscountService
         return $customerUsage < $discount->usage_limit_per_customer;
     }
 
-    public function getActiveDiscounts(): Collection
+    public function getActiveDiscounts(): Category
     {
         return Discount::where('status', 'active')
             ->where(function ($query) {

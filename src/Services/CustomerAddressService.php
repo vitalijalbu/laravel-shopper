@@ -1,10 +1,10 @@
 <?php
 
-namespace Shopper\Services;
+namespace Cartino\Services;
 
-use Shopper\Data\CustomerAddress\CustomerAddressData;
-use Shopper\Models\CustomerAddress;
-use Shopper\Repositories\CustomerAddressRepository;
+use Cartino\Data\CustomerAddress\CustomerAddressData;
+use Cartino\Models\CustomerAddress;
+use Cartino\Repositories\CustomerAddressRepository;
 
 class CustomerAddressService
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Shopper\CP;
+namespace Cartino\CP;
 
 use Illuminate\Support\Facades\Gate;
 

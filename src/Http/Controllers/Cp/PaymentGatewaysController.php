@@ -1,15 +1,15 @@
 <?php
 
-namespace Shopper\Http\Controllers\Cp;
+namespace Cartino\Http\Controllers\CP;
 
+use Cartino\CP\Page;
+use Cartino\Http\Controllers\Controller;
+use Cartino\Models\PaymentGateway;
+use Cartino\Repositories\PaymentGatewayRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
-use Shopper\CP\Page;
-use Shopper\Http\Controllers\Controller;
-use Shopper\Models\PaymentGateway;
-use Shopper\Repositories\PaymentGatewayRepository;
 
 class PaymentGatewaysController extends Controller
 {
@@ -32,7 +32,7 @@ class PaymentGatewaysController extends Controller
 
         $filters = $request->only(['search', 'is_enabled', 'provider', 'test_mode', 'sort', 'direction', 'page']);
 
-        $gateways = $this->paymentGatewayRepository->getPaginatedWithFilters($filters, 25);
+        $gateways = $this->paymentGatewayRepository->findAll($filters, 25);
         $providers = $this->paymentGatewayRepository->getProviders();
 
         return Inertia::render('settings-payment-gateways', [

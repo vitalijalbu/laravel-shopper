@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Shopper\Http\Resources;
+namespace Cartino\Http\Resources;
 
+use Cartino\Models\Brand;
 use Illuminate\Http\Request;
-use Shopper\Models\Brand;
 
 /**
  * @mixin Brand

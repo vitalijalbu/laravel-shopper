@@ -1,13 +1,13 @@
 <?php
 
-namespace Shopper\Http\Controllers\Cp;
+namespace Cartino\Http\Controllers\CP;
 
 use Carbon\Carbon;
+use Cartino\Models\AnalyticsEvent;
+use Cartino\Models\UserPreference;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
-use Shopper\Models\AnalyticsEvent;
-use Shopper\Models\UserPreference;
 
 class AnalyticsController extends Controller
 {

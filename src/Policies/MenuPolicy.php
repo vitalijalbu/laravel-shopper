@@ -1,10 +1,10 @@
 <?php
 
-namespace Shopper\Policies;
+namespace Cartino\Policies;
 
+use Cartino\Models\Menu;
+use Cartino\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
-use Shopper\Models\Menu;
-use Shopper\Models\User;
 
 class MenuPolicy
 {

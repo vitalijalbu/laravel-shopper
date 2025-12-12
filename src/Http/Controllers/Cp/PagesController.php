@@ -1,13 +1,13 @@
 <?php
 
-namespace Shopper\Http\Controllers\Cp;
+namespace Cartino\Http\Controllers\CP;
 
+use Cartino\CP\Page;
+use Cartino\Data\PageDto;
+use Cartino\Http\Controllers\Controller;
+use Cartino\Models\Page as ShopperPage;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Shopper\CP\Page;
-use Shopper\Data\PageDto;
-use Shopper\Http\Controllers\Controller;
-use Shopper\Models\Page as ShopperPage;
 
 class PagesController extends Controller
 {
@@ -84,7 +84,7 @@ class PagesController extends Controller
 
         // Create DTO from validated data
         $pageDto = PageDto::from(array_merge($validated, [
-            'site_id' => app('laravel-shopper.site')->id,
+            'site_id' => app('laravel-cartino.site')->id,
             'author_id' => auth()->id(),
         ]));
 

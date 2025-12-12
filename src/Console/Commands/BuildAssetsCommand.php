@@ -1,6 +1,6 @@
 <?php
 
-namespace Shopper\Console\Commands;
+namespace Cartino\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Process;
@@ -10,12 +10,12 @@ class BuildAssetsCommand extends Command
     /**
      * The name and signature of the console command.
      */
-    protected $signature = 'shopper:build {--dev : Build for development} {--watch : Build and watch for changes}';
+    protected $signature = 'cartino:build {--dev : Build for development} {--watch : Build and watch for changes}';
 
     /**
      * The console command description.
      */
-    protected $description = 'Build Shopper frontend assets and publish them to public/vendor/shopper';
+    protected $description = 'Build Shopper frontend assets and publish them to public/vendor/cartino';
 
     /**
      * Execute the console command.
@@ -52,20 +52,20 @@ class BuildAssetsCommand extends Command
             $this->info('Publishing built assets...');
 
             $this->call('vendor:publish', [
-                '--tag' => 'shopper-assets-built',
+                '--tag' => 'cartino-assets-built',
                 '--force' => true,
             ]);
 
             // Test Asset helper
-            if (\Shopper\Support\Asset::isBuilt()) {
+            if (\Cartino\Support\Asset::isBuilt()) {
                 $this->info('✅ Asset helper confirmed build is ready');
-                $this->info('Main app URL: '.\Shopper\Support\Asset::url('resources/js/app.js'));
+                $this->info('Main app URL: '.\Cartino\Support\Asset::url('resources/js/app.js'));
             } else {
                 $this->warn('⚠️  Asset helper cannot find manifest file');
             }
 
             $this->info('✅ Shopper assets built and published successfully!');
-            $this->info('Assets are now available at: public/vendor/shopper/');
+            $this->info('Assets are now available at: public/vendor/cartino/');
         }
 
         return Command::SUCCESS;

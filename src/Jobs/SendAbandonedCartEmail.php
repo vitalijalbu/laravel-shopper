@@ -1,14 +1,14 @@
 <?php
 
-namespace Shopper\Jobs;
+namespace Cartino\Jobs;
 
+use Cartino\Models\AbandonedCart;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Mail;
-use Shopper\Models\AbandonedCart;
 
 class SendAbandonedCartEmail implements ShouldQueue
 {

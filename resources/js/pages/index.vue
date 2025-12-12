@@ -1,7 +1,7 @@
 <template>
   <div class="dashboard-container">
     <h1 class="dashboard-title">Dashboard</h1>
-    <p class="dashboard-description">Welcome to Laravel Shopper Admin Panel</p>
+    <p class="dashboard-description">Welcome to Cartino Admin Panel</p>
     
     <!-- Dashboard Content -->
     <div class="dashboard-grid">

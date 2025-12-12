@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Shopper\Core\Addon;
+namespace Cartino\Core\Addon;
 
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;

@@ -1,4 +1,4 @@
-title: Collection
+title: Category
 sections:
   main:
     display: Main
@@ -39,7 +39,7 @@ sections:
           instructions: 'Rich text description for collection page'
   
   collection_type:
-    display: 'Collection Type'
+    display: 'Category Type'
     fields:
       -
         handle: collection_type
@@ -135,7 +135,7 @@ sections:
         handle: image
         field:
           type: assets
-          display: 'Collection Image'
+          display: 'Category Image'
           container: collections
           max_files: 1
   

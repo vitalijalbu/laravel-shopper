@@ -1,13 +1,13 @@
 <?php
 
-namespace Shopper\Http\Middleware;
+namespace Cartino\Http\Middleware;
 
+use Cartino\Models\Category;
+use Cartino\Models\Product;
+use Cartino\Models\Site;
+use Cartino\Services\TemplateEngine;
 use Closure;
 use Illuminate\Http\Request;
-use Shopper\Models\Collection;
-use Shopper\Models\Product;
-use Shopper\Models\Site;
-use Shopper\Services\TemplateEngine;
 
 class StorefrontTemplateMiddleware
 {
@@ -27,7 +27,7 @@ class StorefrontTemplateMiddleware
 
         // Set current site in container
         $site = $this->resolveSite($request);
-        app()->singleton('laravel-shopper.site', fn () => $site);
+        app()->singleton('laravel-cartino.site', fn () => $site);
 
         // Auto-assign templates based on route
         $this->assignTemplateForRoute($request);
@@ -106,7 +106,7 @@ class StorefrontTemplateMiddleware
 
         return match ($routeName) {
             'storefront.products.show' => Product::where('handle', $parameters['handle'] ?? $parameters['product'] ?? null)->first(),
-            'storefront.categories.show' => Collection::where('handle', $parameters['handle'] ?? $parameters['category'] ?? null)->first(),
+            'storefront.categories.show' => Category::where('handle', $parameters['handle'] ?? $parameters['category'] ?? null)->first(),
             default => null,
         };
     }

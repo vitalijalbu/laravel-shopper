@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  # Laravel Shopper Application
+  # Cartino Application
   app:
     build:
       context: .
@@ -13,14 +13,14 @@ services:
       - .:/var/www
       - ./storage:/var/www/storage
     networks:
-      - shopper
+      - cartino
     environment:
       - APP_ENV=production
       - APP_DEBUG=false
       - DB_CONNECTION=mysql
       - DB_HOST=mysql
-      - DB_DATABASE=shopper
-      - DB_USERNAME=shopper
+      - DB_DATABASE=cartino
+      - DB_USERNAME=cartino
       - DB_PASSWORD=shopper_password
       - REDIS_HOST=redis
       - CACHE_DRIVER=redis
@@ -43,7 +43,7 @@ services:
       - ./docker/nginx:/etc/nginx/conf.d
       - ./docker/ssl:/etc/nginx/ssl
     networks:
-      - shopper
+      - cartino
     depends_on:
       - app
 
@@ -53,15 +53,15 @@ services:
     container_name: shopper_mysql
     restart: unless-stopped
     environment:
-      - MYSQL_DATABASE=shopper
-      - MYSQL_USER=shopper
+      - MYSQL_DATABASE=cartino
+      - MYSQL_USER=cartino
       - MYSQL_PASSWORD=shopper_password
       - MYSQL_ROOT_PASSWORD=root_password
     volumes:
       - mysql_data:/var/lib/mysql
       - ./docker/mysql:/docker-entrypoint-initdb.d
     networks:
-      - shopper
+      - cartino
     ports:
       - "3306:3306"
 
@@ -74,7 +74,7 @@ services:
       - redis_data:/data
       - ./docker/redis.conf:/etc/redis/redis.conf
     networks:
-      - shopper
+      - cartino
     ports:
       - "6379:6379"
     command: redis-server /etc/redis/redis.conf
@@ -90,13 +90,13 @@ services:
     volumes:
       - .:/var/www
     networks:
-      - shopper
+      - cartino
     environment:
       - APP_ENV=production
       - DB_CONNECTION=mysql
       - DB_HOST=mysql
-      - DB_DATABASE=shopper
-      - DB_USERNAME=shopper
+      - DB_DATABASE=cartino
+      - DB_USERNAME=cartino
       - DB_PASSWORD=shopper_password
       - REDIS_HOST=redis
       - QUEUE_CONNECTION=redis
@@ -116,13 +116,13 @@ services:
     volumes:
       - .:/var/www
     networks:
-      - shopper
+      - cartino
     environment:
       - APP_ENV=production
       - DB_CONNECTION=mysql
       - DB_HOST=mysql
-      - DB_DATABASE=shopper
-      - DB_USERNAME=shopper
+      - DB_DATABASE=cartino
+      - DB_USERNAME=cartino
       - DB_PASSWORD=shopper_password
       - REDIS_HOST=redis
     depends_on:
@@ -148,7 +148,7 @@ services:
     volumes:
       - elasticsearch_data:/usr/share/elasticsearch/data
     networks:
-      - shopper
+      - cartino
     ports:
       - "9200:9200"
       - "9300:9300"
@@ -162,7 +162,7 @@ services:
       - "8025:8025"
       - "1025:1025"
     networks:
-      - shopper
+      - cartino
 
   # PhpMyAdmin (Database Management)
   phpmyadmin:
@@ -171,12 +171,12 @@ services:
     restart: unless-stopped
     environment:
       - PMA_HOST=mysql
-      - PMA_USER=shopper
+      - PMA_USER=cartino
       - PMA_PASSWORD=shopper_password
     ports:
       - "8080:80"
     networks:
-      - shopper
+      - cartino
     depends_on:
       - mysql
 
@@ -190,12 +190,12 @@ services:
     ports:
       - "8081:8081"
     networks:
-      - shopper
+      - cartino
     depends_on:
       - redis
 
 networks:
-  shopper:
+  cartino:
     driver: bridge
 
 volumes:

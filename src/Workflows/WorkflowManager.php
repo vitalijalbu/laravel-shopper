@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Shopper\Workflows;
+namespace Cartino\Workflows;
 
-use Illuminate\Support\Collection;
+use Cartino\Workflows\Events\WorkflowExecuted;
+use Cartino\Workflows\Events\WorkflowFailed;
+use Illuminate\Support\Category;
 use Illuminate\Support\Facades\Event;
-use Shopper\Workflows\Events\WorkflowExecuted;
-use Shopper\Workflows\Events\WorkflowFailed;
 
 class WorkflowManager
 {
-    protected Collection $workflows;
+    protected Category $workflows;
 
     public function __construct()
     {
@@ -26,7 +26,7 @@ class WorkflowManager
     protected function loadWorkflows(): void
     {
         // Load workflows from database
-        $workflows = \Shopper\Models\Workflow::where('is_active', true)->get();
+        $workflows = \Cartino\Models\Workflow::where('is_active', true)->get();
 
         foreach ($workflows as $workflowModel) {
             $workflow = $this->instantiateWorkflow($workflowModel);
@@ -85,7 +85,7 @@ class WorkflowManager
     /**
      * Get all workflows
      */
-    public function all(): Collection
+    public function all(): Category
     {
         return $this->workflows;
     }
@@ -93,7 +93,7 @@ class WorkflowManager
     /**
      * Get workflows by trigger
      */
-    public function getByTrigger(string $trigger): Collection
+    public function getByTrigger(string $trigger): Category
     {
         return $this->workflows->filter(function ($workflow) use ($trigger) {
             return $workflow->getTrigger() === $trigger;
@@ -125,7 +125,7 @@ class WorkflowManager
      */
     protected function logWorkflowExecution(WorkflowInterface $workflow, array $data, bool $result): void
     {
-        \Shopper\Models\WorkflowLog::create([
+        \Cartino\Models\WorkflowLog::create([
             'workflow_id' => $workflow->getId(),
             'trigger' => $workflow->getTrigger(),
             'data' => $data,
@@ -139,7 +139,7 @@ class WorkflowManager
      */
     protected function logWorkflowFailure(WorkflowInterface $workflow, array $data, \Exception $exception): void
     {
-        \Shopper\Models\WorkflowLog::create([
+        \Cartino\Models\WorkflowLog::create([
             'workflow_id' => $workflow->getId(),
             'trigger' => $workflow->getTrigger(),
             'data' => $data,

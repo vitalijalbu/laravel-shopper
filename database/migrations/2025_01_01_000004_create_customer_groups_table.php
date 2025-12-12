@@ -11,21 +11,21 @@ return new class extends Migration
         Schema::create('customer_groups', function (Blueprint $table) {
             $table->id();
             $table->foreignId('site_id')->nullable()->constrained('sites')->cascadeOnDelete();
-            $table->string('name')->index();
-            $table->string('slug')->index();
+            $table->string('name');
+            $table->string('slug');
             $table->text('description')->nullable();
-            $table->boolean('is_default')->default(false)->index();
+            $table->boolean('is_default')->default(false);
 
             // Pricing and discount configuration
             $table->decimal('discount_percentage', 5, 2)->nullable(); // Group-wide discount
-            $table->boolean('tax_exempt')->default(false)->index();
+            $table->boolean('tax_exempt')->default(false);
             $table->jsonb('pricing_rules')->nullable(); // Advanced pricing rules
 
             // Access control
             $table->jsonb('permissions')->nullable(); // What can this group do?
             $table->jsonb('restrictions')->nullable(); // What can't this group do?
 
-            $table->string('status')->default('active')->index();
+            $table->string('status')->default('active');
             $table->jsonb('data')->nullable()->comment('Custom fields data');
             $table->timestamps();
             $table->softDeletes();

@@ -2,24 +2,23 @@
 
 declare(strict_types=1);
 
-namespace Shopper\Core\Addon;
+namespace Cartino\Core\Addon;
 
-use Illuminate\Support\Collection;
+use Cartino\Core\Addon\Events\AddonUninstalled;
+use Cartino\Core\Addon\Events\PluginActivated;
+use Cartino\Core\Addon\Events\PluginDeactivated;
+use Cartino\Core\Addon\Events\PluginInstalled;
+use Cartino\Core\Addon\Events\PluginUpdated;
+use Cartino\Core\Addon\Exceptions\AddonException;
+use Illuminate\Support\Category;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
-use Shopper\Core\Addon\Events\AddonUninstalled;
-use Shopper\Core\Addon\Events\PluginActivated;
-use Shopper\Core\Addon\Events\PluginDeactivated;
-use Shopper\Core\Addon\Events\PluginInstalled;
-use Shopper\Core\Addon\Events\PluginUninstalled;
-use Shopper\Core\Addon\Events\PluginUpdated;
-use Shopper\Core\Addon\Exceptions\AddonException;
 
 class AddonManager
 {
-    protected Collection $addons;
+    protected Category $addons;
 
-    protected Collection $activePlugins;
+    protected Category $activePlugins;
 
     protected string $addonsPath;
 
@@ -105,7 +104,7 @@ class AddonManager
     /**
      * Get all addons
      */
-    public function all(): Collection
+    public function all(): Category
     {
         return $this->addons;
     }
@@ -113,7 +112,7 @@ class AddonManager
     /**
      * Get active addons
      */
-    public function active(): Collection
+    public function active(): Category
     {
         return $this->activePlugins;
     }
@@ -374,7 +373,7 @@ class AddonManager
     /**
      * Get addons that depend on the given plugin
      */
-    protected function getDependents(string $id): Collection
+    protected function getDependents(string $id): Category
     {
         return $this->addons->filter(function (AddonInterface $addon) use ($id) {
             return array_key_exists($id, $addon->getDependencies());
@@ -384,7 +383,7 @@ class AddonManager
     /**
      * Get active addons that depend on the given plugin
      */
-    protected function getActiveDependents(string $id): Collection
+    protected function getActiveDependents(string $id): Category
     {
         return $this->activePlugins->filter(function (AddonInterface $addon) use ($id) {
             return array_key_exists($id, $addon->getDependencies());

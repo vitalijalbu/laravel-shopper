@@ -1,6 +1,6 @@
 <?php
 
-namespace Shopper\Http\Requests\Menu;
+namespace Cartino\Http\Requests\Menu;
 
 use Illuminate\Foundation\Http\FormRequest;
 

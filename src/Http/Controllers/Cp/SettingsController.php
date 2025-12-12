@@ -1,17 +1,17 @@
 <?php
 
-namespace Shopper\Http\Controllers\Cp;
+namespace Cartino\Http\Controllers\CP;
 
+use Cartino\CP\Page;
+use Cartino\Http\Controllers\Controller;
+use Cartino\Repositories\PaymentGatewayRepository;
+use Cartino\Repositories\SettingRepository;
+use Cartino\Repositories\ShippingMethodRepository;
+use Cartino\Repositories\TaxRateRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
-use Shopper\CP\Page;
-use Shopper\Http\Controllers\Controller;
-use Shopper\Repositories\PaymentGatewayRepository;
-use Shopper\Repositories\SettingRepository;
-use Shopper\Repositories\ShippingMethodRepository;
-use Shopper\Repositories\TaxRateRepository;
 
 class SettingsController extends Controller
 {

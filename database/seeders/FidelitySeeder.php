@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
+use Cartino\Models\Customer;
+use Cartino\Models\FidelityCard;
+use Cartino\Models\FidelityTransaction;
 use Illuminate\Database\Seeder;
-use Shopper\Models\Customer;
-use Shopper\Models\FidelityCard;
-use Shopper\Models\FidelityTransaction;
 
 class FidelitySeeder extends Seeder
 {

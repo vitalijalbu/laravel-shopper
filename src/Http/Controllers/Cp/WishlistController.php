@@ -1,17 +1,17 @@
 <?php
 
-namespace Shopper\Http\Controllers\CP;
+namespace Cartino\Http\Controllers\CP;
 
+use Cartino\Data\Wishlist\WishlistData;
+use Cartino\Http\Controllers\Controller;
+use Cartino\Http\Requests\Wishlist\StoreWishlistRequest;
+use Cartino\Http\Requests\Wishlist\UpdateWishlistRequest;
+use Cartino\Models\Wishlist;
+use Cartino\Repositories\WishlistRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
-use Shopper\Data\Wishlist\WishlistData;
-use Shopper\Http\Controllers\Controller;
-use Shopper\Http\Requests\Wishlist\StoreWishlistRequest;
-use Shopper\Http\Requests\Wishlist\UpdateWishlistRequest;
-use Shopper\Models\Wishlist;
-use Shopper\Repositories\WishlistRepository;
 
 class WishlistController extends Controller
 {

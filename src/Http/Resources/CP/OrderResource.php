@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Shopper\Http\Resources\CP;
+namespace Cartino\Http\Resources\CP;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -189,9 +189,9 @@ class OrderResource extends JsonResource
             'can_be_refunded' => $this->can_be_refunded,
 
             // URLs
-            'admin_url' => route('shopper.orders.show', $this->id),
-            'edit_url' => route('shopper.orders.edit', $this->id),
-            'invoice_url' => route('shopper.orders.invoice', $this->id),
+            'admin_url' => route('cartino.orders.show', $this->id),
+            'edit_url' => route('cartino.orders.edit', $this->id),
+            'invoice_url' => route('cartino.orders.invoice', $this->id),
 
             // Shipping info
             'shipping_method_name' => $this->shipping_method_name,

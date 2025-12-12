@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Shopper\Pricing\Rules;
+namespace Cartino\Pricing\Rules;
 
-use Shopper\Models\Customer;
-use Shopper\Models\Product;
+use Cartino\Models\Customer;
+use Cartino\Models\Product;
 
 class CustomerGroupDiscountRule implements PricingRuleInterface
 {

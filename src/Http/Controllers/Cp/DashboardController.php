@@ -2,15 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Shopper\Http\Controllers\Cp;
+namespace Cartino\Http\Controllers\CP;
 
+use Cartino\CP\Page;
+use Cartino\Models\Customer;
+use Cartino\Models\Order;
+use Cartino\Models\Product;
 use Illuminate\Http\Request;
 use Inertia\Response;
-use Shopper\CP\Page;
-use Shopper\Http\Controllers\CP\BaseController;
-use Shopper\Models\Customer;
-use Shopper\Models\Order;
-use Shopper\Models\Product;
 
 class DashboardController extends BaseController
 {
@@ -22,11 +21,11 @@ class DashboardController extends BaseController
         $this->addBreadcrumb('Dashboard');
 
         $page = Page::make('Dashboard')
-            ->primaryAction('Quick order', route('shopper.orders.create'))
+            ->primaryAction('Quick order', route('cartino.orders.create'))
             ->secondaryActions([
-                ['label' => 'Add product', 'url' => route('shopper.products.create')],
-                ['label' => 'Add customer', 'url' => route('shopper.customers.create')],
-                ['label' => 'View reports', 'url' => route('shopper.reports.index')],
+                ['label' => 'Add product', 'url' => route('cartino.products.create')],
+                ['label' => 'Add customer', 'url' => route('cartino.customers.create')],
+                ['label' => 'View reports', 'url' => route('cartino.reports.index')],
             ]);
 
         return $this->inertiaResponse('dashboard/Index', [
@@ -157,7 +156,7 @@ class DashboardController extends BaseController
                     'formatted_total' => number_format($order->total, 2).' €',
                     'status' => $order->status,
                     'created_at' => $order->created_at->format('Y-m-d H:i'),
-                    'url' => route('shopper.orders.show', $order),
+                    'url' => route('cartino.orders.show', $order),
                 ];
             })
             ->toArray();
@@ -180,7 +179,7 @@ class DashboardController extends BaseController
                     'sku' => $product->sku,
                     'stock_quantity' => $product->stock_quantity,
                     'image_url' => $product->image_url,
-                    'url' => route('shopper.products.show', $product),
+                    'url' => route('cartino.products.show', $product),
                 ];
             })
             ->toArray();
@@ -205,7 +204,7 @@ class DashboardController extends BaseController
                     'formatted_price' => number_format($product->price, 2).' €',
                     'image_url' => $product->image_url,
                     'sales' => rand(10, 100), // TODO: Calculate real sales
-                    'url' => route('shopper.products.show', $product),
+                    'url' => route('cartino.products.show', $product),
                 ];
             })
             ->toArray();
@@ -229,7 +228,7 @@ class DashboardController extends BaseController
                 'description' => "Order #{$order->number} from ".
                     ($order->customer?->full_name ?? 'Guest'),
                 'time' => $order->created_at->diffForHumans(),
-                'url' => route('shopper.orders.show', $order),
+                'url' => route('cartino.orders.show', $order),
             ];
         }
 
@@ -243,7 +242,7 @@ class DashboardController extends BaseController
                 'title' => 'New customer registered',
                 'description' => $customer->full_name.' ('.$customer->email.')',
                 'time' => $customer->created_at->diffForHumans(),
-                'url' => route('shopper.customers.show', $customer),
+                'url' => route('cartino.customers.show', $customer),
             ];
         }
 
@@ -257,7 +256,7 @@ class DashboardController extends BaseController
                 'title' => 'Product updated',
                 'description' => $product->name,
                 'time' => $product->updated_at->diffForHumans(),
-                'url' => route('shopper.products.show', $product),
+                'url' => route('cartino.products.show', $product),
             ];
         }
 

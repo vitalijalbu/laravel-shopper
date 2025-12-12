@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Shopper\Http\Requests\CP;
+namespace Cartino\Http\Requests\CP;
 
+use Cartino\Models\Brand;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
-use Shopper\Models\Brand;
 
 class UpdateBrandRequest extends FormRequest
 {

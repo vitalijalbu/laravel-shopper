@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Shopper\Data\Customer;
+namespace Cartino\Data\Customer;
 
-use Shopper\Models\Customer;
+use Cartino\Models\Customer;
 
 class CustomerFidelityData
 {

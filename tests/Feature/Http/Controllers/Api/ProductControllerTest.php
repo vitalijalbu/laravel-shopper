@@ -1,12 +1,12 @@
 <?php
 
-namespace Shopper\Tests\Feature\Http\Controllers\Api;
+namespace Cartino\Tests\Feature\Http\Controllers\Api;
 
 use App\Models\User;
+use Cartino\Models\Product;
+use Cartino\Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Laravel\Sanctum\Sanctum;
-use Shopper\Models\Product;
-use Shopper\Tests\TestCase;
 
 class ProductControllerTest extends TestCase
 {
@@ -30,7 +30,7 @@ class ProductControllerTest extends TestCase
     {
         Product::factory()->count(3)->create();
 
-        $response = $this->getJson('/api/shopper/products');
+        $response = $this->getJson('/api/cartino/products');
 
         $response->assertOk()
             ->assertJsonCount(3, 'data')
@@ -65,7 +65,7 @@ class ProductControllerTest extends TestCase
             'price_amount' => 1999,
         ]);
 
-        $response = $this->getJson("/api/shopper/products/{$product->id}");
+        $response = $this->getJson("/api/cartino/products/{$product->id}");
 
         $response->assertOk()
             ->assertJson([
@@ -92,7 +92,7 @@ class ProductControllerTest extends TestCase
             'seo_description' => 'Description for SEO',
         ];
 
-        $response = $this->postJson('/api/shopper/products', $productData);
+        $response = $this->postJson('/api/cartino/products', $productData);
 
         $response->assertCreated()
             ->assertJsonFragment([
@@ -111,7 +111,7 @@ class ProductControllerTest extends TestCase
     /** @test */
     public function it_validates_required_fields_when_creating_product()
     {
-        $response = $this->postJson('/api/shopper/products', []);
+        $response = $this->postJson('/api/cartino/products', []);
 
         $response->assertStatus(422)
             ->assertJsonValidationErrors(['name', 'sku']);
@@ -130,7 +130,7 @@ class ProductControllerTest extends TestCase
             'price_amount' => 2000,
         ];
 
-        $response = $this->putJson("/api/shopper/products/{$product->id}", $updateData);
+        $response = $this->putJson("/api/cartino/products/{$product->id}", $updateData);
 
         $response->assertOk()
             ->assertJsonFragment([
@@ -150,7 +150,7 @@ class ProductControllerTest extends TestCase
     {
         $product = Product::factory()->create();
 
-        $response = $this->deleteJson("/api/shopper/products/{$product->id}");
+        $response = $this->deleteJson("/api/cartino/products/{$product->id}");
 
         $response->assertNoContent();
 
@@ -166,7 +166,7 @@ class ProductControllerTest extends TestCase
         Product::factory()->create(['name' => 'Samsung Galaxy']);
         Product::factory()->create(['name' => 'iPhone 15']);
 
-        $response = $this->getJson('/api/shopper/products?search=iPhone');
+        $response = $this->getJson('/api/cartino/products?search=iPhone');
 
         $response->assertOk()
             ->assertJsonCount(2, 'data');
@@ -179,7 +179,7 @@ class ProductControllerTest extends TestCase
         Product::factory()->create(['status' => 'draft']);
         Product::factory()->create(['status' => 'published']);
 
-        $response = $this->getJson('/api/shopper/products?status=published');
+        $response = $this->getJson('/api/cartino/products?status=published');
 
         $response->assertOk()
             ->assertJsonCount(2, 'data');
@@ -190,7 +190,7 @@ class ProductControllerTest extends TestCase
     {
         Sanctum::actingAs(null);
 
-        $response = $this->getJson('/api/shopper/products');
+        $response = $this->getJson('/api/cartino/products');
 
         $response->assertUnauthorized();
     }
@@ -204,7 +204,7 @@ class ProductControllerTest extends TestCase
 
         Sanctum::actingAs($user);
 
-        $response = $this->getJson('/api/shopper/products');
+        $response = $this->getJson('/api/cartino/products');
 
         $response->assertForbidden();
     }

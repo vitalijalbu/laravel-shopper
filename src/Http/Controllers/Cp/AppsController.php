@@ -1,13 +1,13 @@
 <?php
 
-namespace Shopper\Http\Controllers\Cp;
+namespace Cartino\Http\Controllers\CP;
 
+use Cartino\CP\Page;
+use Cartino\Http\Controllers\Controller;
+use Cartino\Models\App;
+use Cartino\Models\AppReview;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Shopper\CP\Page;
-use Shopper\Http\Controllers\Controller;
-use Shopper\Models\App;
-use Shopper\Models\AppReview;
 
 class AppsController extends Controller
 {

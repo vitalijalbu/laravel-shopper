@@ -10,12 +10,12 @@ return new class extends Migration
     {
         Schema::create('catalogs', function (Blueprint $table) {
             $table->id();
-            $table->string('title')->index();
+            $table->string('title');
             $table->string('slug')->unique();
             $table->text('description')->nullable();
 
             // Currency settings
-            $table->string('currency', 3)->default('USD')->index();
+            $table->string('currency', 3)->default('USD');
 
             // Price adjustments (applied to all products in catalog)
             $table->enum('adjustment_type', ['percentage', 'fixed_amount'])->nullable();
@@ -27,15 +27,15 @@ return new class extends Migration
             $table->boolean('is_default')->default(false);
 
             // Status and publishing
-            $table->enum('status', ['draft', 'active', 'archived'])->default('draft')->index();
-            $table->timestamp('published_at')->nullable()->index();
+            $table->enum('status', ['draft', 'active', 'archived'])->default('draft');
+            $table->timestamp('published_at')->nullable();
 
             // Timestamps
             $table->timestamps();
             $table->softDeletes();
 
             // Custom fields data (JSON schema-based)
-            $table->jsonb('data')->nullable()->comment('Custom fields data based on JSON schema');
+            $table->jsonb('data')->nullable();
 
             // Indexes
             $table->index(['status', 'published_at']);
@@ -49,13 +49,13 @@ return new class extends Migration
             $table->foreignId('catalog_id')->constrained('catalogs')->cascadeOnDelete();
 
             // Priority for catalog selection (higher = preferred)
-            $table->integer('priority')->default(0)->index();
+            $table->integer('priority')->default(0);
 
             // Is this the default catalog for this site?
-            $table->boolean('is_default')->default(false)->index();
+            $table->boolean('is_default')->default(false);
 
             // Status
-            $table->boolean('is_active')->default(true)->index();
+            $table->boolean('is_active')->default(true);
 
             // Scheduling
             $table->timestamp('starts_at')->nullable();

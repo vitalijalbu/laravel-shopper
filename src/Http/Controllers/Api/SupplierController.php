@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Shopper\Http\Controllers\Api;
+namespace Cartino\Http\Controllers\Api;
 
+use Cartino\Contracts\SupplierRepositoryInterface;
+use Cartino\Http\Requests\Api\StoreSupplierRequest;
+use Cartino\Http\Requests\Api\UpdateSupplierRequest;
+use Cartino\Http\Resources\SupplierCollection;
+use Cartino\Http\Resources\SupplierResource;
+use Cartino\Models\Supplier;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Shopper\Contracts\SupplierRepositoryInterface;
-use Shopper\Http\Requests\Api\StoreSupplierRequest;
-use Shopper\Http\Requests\Api\UpdateSupplierRequest;
-use Shopper\Http\Resources\SupplierCollection;
-use Shopper\Http\Resources\SupplierResource;
-use Shopper\Models\Supplier;
 
 class SupplierController extends ApiController
 {
@@ -39,7 +39,7 @@ class SupplierController extends ApiController
         ]);
 
         $perPage = $request->get('per_page', 25);
-        $suppliers = $this->supplierRepository->getPaginatedWithFilters($filters, $perPage);
+        $suppliers = $this->supplierRepository->findAll($filters, $perPage);
 
         return new SupplierCollection($suppliers);
     }
@@ -328,7 +328,7 @@ class SupplierController extends ApiController
         ]);
 
         try {
-            $suppliers = $this->supplierRepository->getPaginatedWithFilters($filters, 10000);
+            $suppliers = $this->supplierRepository->findAll($filters, 10000);
 
             $exportData = collect($suppliers->items())->map(fn ($supplier) => [
                 'id' => $supplier->id,

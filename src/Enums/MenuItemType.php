@@ -1,9 +1,13 @@
 <?php
 
-namespace Shopper\Enums;
+namespace Cartino\Enums;
+
+use Cartino\Helpers\EnumSerializable;
 
 enum MenuItemType: string
 {
+    use EnumSerializable;
+
     case LINK = 'link';
     case PAGE = 'page';
     case CATEGORY = 'category';
@@ -13,16 +17,13 @@ enum MenuItemType: string
     public function label(): string
     {
         return match ($this) {
-            self::LINK => __('shopper::menu.item_type.link'),
-            self::PAGE => __('shopper::menu.item_type.page'),
-            self::CATEGORY => __('shopper::menu.item_type.category'),
-            self::PRODUCT => __('shopper::menu.item_type.product'),
-            self::CUSTOM => __('shopper::menu.item_type.custom'),
+            self::LINK => __('cartino::menu.item_type.link'),
+            self::PAGE => __('cartino::menu.item_type.page'),
+            self::CATEGORY => __('cartino::menu.item_type.category'),
+            self::PRODUCT => __('cartino::menu.item_type.product'),
+            self::CUSTOM => __('cartino::menu.item_type.custom'),
         };
     }
 
-    public static function values(): array
-    {
-        return array_column(self::cases(), 'value');
-    }
+
 }

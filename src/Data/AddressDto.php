@@ -1,6 +1,6 @@
 <?php
 
-namespace Shopper\Data;
+namespace Cartino\Data;
 
 class AddressDto extends BaseDto
 {

@@ -1,28 +1,28 @@
 <?php
 
-namespace Shopper\Console\Commands;
+namespace Cartino\Console\Commands;
 
+use Cartino\Services\CacheService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
-use Shopper\Services\CacheService;
 
 class OptimizeCommand extends Command
 {
-    protected $signature = 'shopper:optimize 
+    protected $signature = 'cartino:optimize 
                             {--cache : Optimize cache configuration}
                             {--database : Optimize database queries}
                             {--images : Optimize images}
                             {--clear : Clear all optimizations}
                             {--all : Run all optimizations}';
 
-    protected $description = 'Optimize Laravel Shopper for production performance';
+    protected $description = 'Optimize Cartino for production performance';
 
     public function handle(): int
     {
-        $this->info('🚀 Laravel Shopper Performance Optimization');
+        $this->info('🚀 Cartino Performance Optimization');
         $this->newLine();
 
         if ($this->option('clear')) {
@@ -123,8 +123,8 @@ class OptimizeCommand extends Command
     {
         $this->task('Setting up image optimization', function () {
             // Configure image optimization settings
-            $this->info('  - WebP format enabled: '.(Config::get('shopper-performance.images.formats.webp') ? 'Yes' : 'No'));
-            $this->info('  - Image quality: '.Config::get('shopper-performance.images.optimization.quality', 85).'%');
+            $this->info('  - WebP format enabled: '.(Config::get('cartino-performance.images.formats.webp') ? 'Yes' : 'No'));
+            $this->info('  - Image quality: '.Config::get('cartino-performance.images.optimization.quality', 85).'%');
 
             return true;
         });
@@ -230,8 +230,8 @@ class OptimizeCommand extends Command
 
     protected function analyzeSlowQueries(): void
     {
-        if (Config::get('shopper-performance.database.query_log.enabled')) {
-            $threshold = Config::get('shopper-performance.database.query_log.slow_query_threshold', 1000);
+        if (Config::get('cartino-performance.database.query_log.enabled')) {
+            $threshold = Config::get('cartino-performance.database.query_log.slow_query_threshold', 1000);
             $this->info("  - Slow query monitoring enabled (threshold: {$threshold}ms)");
         } else {
             $this->warn('  - Slow query monitoring disabled');
@@ -256,9 +256,9 @@ class OptimizeCommand extends Command
 
         $this->newLine();
         $this->info('Examples:');
-        $this->line('  php artisan shopper:optimize --all');
-        $this->line('  php artisan shopper:optimize --cache --database');
-        $this->line('  php artisan shopper:optimize --clear');
+        $this->line('  php artisan cartino:optimize --all');
+        $this->line('  php artisan cartino:optimize --cache --database');
+        $this->line('  php artisan cartino:optimize --clear');
     }
 
     protected function hasOptions(): bool

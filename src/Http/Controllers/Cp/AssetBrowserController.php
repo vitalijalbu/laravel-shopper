@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Shopper\Http\Controllers\CP;
+namespace Cartino\Http\Controllers\CP;
 
+use Cartino\Models\Asset;
+use Cartino\Models\AssetContainer;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
-use Shopper\Models\Asset;
-use Shopper\Models\AssetContainer;
 
 class AssetBrowserController
 {

@@ -2,22 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Shopper\Http\Controllers\Api;
+namespace Cartino\Http\Controllers\Api;
 
+use Cartino\Http\Requests\DiscountRequest;
+use Cartino\Models\Discount;
+use Cartino\Services\DiscountService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Shopper\Http\Requests\DiscountRequest;
-use Shopper\Models\Discount;
-use Shopper\Services\DiscountService;
 
 class DiscountController extends ApiController
 {
     public function __construct(
         private readonly DiscountService $discountService
-    ) {}
-
-    public function __construct(
-        protected DiscountService $discountService
     ) {}
 
     public function index(Request $request): JsonResponse
@@ -152,12 +148,12 @@ class DiscountController extends ApiController
         $stats = [
             'total_discounts' => Discount::count(),
             'active_discounts' => Discount::where('is_enabled', true)->count(),
-            'total_applications' => \Shopper\Models\DiscountApplication::count(),
-            'total_discount_amount' => \Shopper\Models\DiscountApplication::sum('discount_amount'),
+            'total_applications' => \Cartino\Models\DiscountApplication::count(),
+            'total_discount_amount' => \Cartino\Models\DiscountApplication::sum('discount_amount'),
             'by_type' => Discount::selectRaw('type, COUNT(*) as count')
                 ->groupBy('type')
                 ->pluck('count', 'type'),
-            'recent_activity' => \Shopper\Models\DiscountApplication::with(['discount', 'applicable'])
+            'recent_activity' => \Cartino\Models\DiscountApplication::with(['discount', 'applicable'])
                 ->latest()
                 ->limit(10)
                 ->get(),

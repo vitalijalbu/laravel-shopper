@@ -1,10 +1,10 @@
 <?php
 
-namespace Shopper\Http\Requests\Wishlist;
+namespace Cartino\Http\Requests\Wishlist;
 
+use Cartino\Enums\WishlistStatus;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
-use Shopper\Enums\WishlistStatus;
 
 class StoreWishlistRequest extends FormRequest
 {
@@ -27,15 +27,15 @@ class StoreWishlistRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'customer_id.required' => __('shopper::validation.wishlist.customer_id.required'),
-            'customer_id.exists' => __('shopper::validation.wishlist.customer_id.exists'),
-            'name.required' => __('shopper::validation.wishlist.name.required'),
-            'name.string' => __('shopper::validation.wishlist.name.string'),
-            'name.max' => __('shopper::validation.wishlist.name.max'),
-            'description.string' => __('shopper::validation.wishlist.description.string'),
-            'description.max' => __('shopper::validation.wishlist.description.max'),
-            'status.enum' => __('shopper::validation.wishlist.status.enum'),
-            'is_shared.boolean' => __('shopper::validation.wishlist.is_shared.boolean'),
+            'customer_id.required' => __('cartino::validation.wishlist.customer_id.required'),
+            'customer_id.exists' => __('cartino::validation.wishlist.customer_id.exists'),
+            'name.required' => __('cartino::validation.wishlist.name.required'),
+            'name.string' => __('cartino::validation.wishlist.name.string'),
+            'name.max' => __('cartino::validation.wishlist.name.max'),
+            'description.string' => __('cartino::validation.wishlist.description.string'),
+            'description.max' => __('cartino::validation.wishlist.description.max'),
+            'status.enum' => __('cartino::validation.wishlist.status.enum'),
+            'is_shared.boolean' => __('cartino::validation.wishlist.is_shared.boolean'),
         ];
     }
 }

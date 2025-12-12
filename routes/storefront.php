@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
+use Cartino\Http\Controllers\StorefrontController;
+use Cartino\Http\Middleware\StorefrontTemplateMiddleware;
 use Illuminate\Support\Facades\Route;
-use Shopper\Http\Controllers\StorefrontController;
-use Shopper\Http\Middleware\StorefrontTemplateMiddleware;
 
 // Storefront Routes with Template Support
 Route::middleware([
@@ -26,7 +26,7 @@ Route::middleware([
             ->where('handle', '[a-zA-Z0-9\-_]+');
     });
 
-    // Collection routes
+    // Category routes
     Route::prefix('collections')->name('storefront.collections.')->group(function () {
         Route::get('/', [StorefrontController::class, 'collectionIndex'])
             ->name('index');

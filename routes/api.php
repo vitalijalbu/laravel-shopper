@@ -2,32 +2,32 @@
 
 declare(strict_types=1);
 
+use Cartino\Http\Controllers\Api\AuthController;
+use Cartino\Http\Controllers\Api\BrandsController;
+use Cartino\Http\Controllers\Api\CartController;
+use Cartino\Http\Controllers\Api\CategoriesController;
+use Cartino\Http\Controllers\Api\ChannelController;
+use Cartino\Http\Controllers\Api\CountryController;
+use Cartino\Http\Controllers\Api\CurrencyController;
+use Cartino\Http\Controllers\Api\CustomerController;
+use Cartino\Http\Controllers\Api\Data\StatusController;
+use Cartino\Http\Controllers\Api\DiscountController;
+use Cartino\Http\Controllers\Api\FidelityController;
+use Cartino\Http\Controllers\Api\OrderController;
+use Cartino\Http\Controllers\Api\ProductController;
+use Cartino\Http\Controllers\Api\ShippingMethodController;
+use Cartino\Http\Controllers\Api\SitesController;
+use Cartino\Http\Controllers\Api\TaxRateController;
+use Cartino\Http\Controllers\Api\UserController;
+use Cartino\Http\Controllers\Api\UserGroupController;
 use Illuminate\Support\Facades\Route;
-use Shopper\Http\Controllers\Api\AuthController;
-use Shopper\Http\Controllers\Api\BrandController;
-use Shopper\Http\Controllers\Api\CartController;
-use Shopper\Http\Controllers\Api\ChannelController;
-use Shopper\Http\Controllers\Api\CollectionController;
-use Shopper\Http\Controllers\Api\CountryController;
-use Shopper\Http\Controllers\Api\CurrencyController;
-use Shopper\Http\Controllers\Api\CustomerController;
-use Shopper\Http\Controllers\Api\Data\StatusController;
-use Shopper\Http\Controllers\Api\DiscountController;
-use Shopper\Http\Controllers\Api\FidelityController;
-use Shopper\Http\Controllers\Api\OrderController;
-use Shopper\Http\Controllers\Api\ProductController;
-use Shopper\Http\Controllers\Api\ShippingMethodController;
-use Shopper\Http\Controllers\Api\TaxRateController;
-use Shopper\Http\Controllers\Api\UserController;
-use Shopper\Http\Controllers\Api\UserGroupController;
-use Shopper\Http\Middleware\HandleSiteContext;
 
 /*
 |--------------------------------------------------------------------------
 | API Routes
 |--------------------------------------------------------------------------
 |
-| API routes for Laravel Shopper with support for:
+| API routes for Cartino with support for:
 | - Public product/collection browsing
 | - Authentication (Sanctum)
 | - Cart management
@@ -38,7 +38,7 @@ use Shopper\Http\Middleware\HandleSiteContext;
 
 Route::group([
     'prefix' => 'api',
-    'middleware' => ['api'],
+    'middleware' => ['api', 'force.json'],
 ], function () {
 
     /*
@@ -46,6 +46,27 @@ Route::group([
     | Public Routes (No Authentication Required)
     |--------------------------------------------------------------------------
     */
+    // Brands resource with additional custom methods
+    Route::apiResource('brands', BrandsController::class, [
+        'names' => 'api.brands',
+    ]);
+    Route::apiResource('channels', ChannelController::class, [
+        'names' => 'api.channels',
+    ]);
+    Route::apiResource('products', ProductController::class, [
+        'names' => 'api.products',
+    ]);
+    Route::apiResource('sites', SitesController::class, [
+        'names' => 'api.sites',
+    ]);
+    Route::apiResource('categories', CategoriesController::class, [
+        'names' => 'api.categories',
+    ]);
+
+    // Additional brand operations
+    Route::post('brands/create-many', [BrandsController::class, 'createMany'])->name('api.brands.createMany');
+    Route::put('brands/update-many', [BrandsController::class, 'updateMany'])->name('api.brands.updateMany');
+    Route::delete('brands/destroy-many', [BrandsController::class, 'destroyMany'])->name('api.brands.destroyMany');
 
     // Authentication
     Route::post('/login', [AuthController::class, 'login'])->name('api.login');
@@ -57,53 +78,36 @@ Route::group([
         Route::get('/statuses/{type}', [StatusController::class, 'show'])->name('statuses.show');
     });
 
-    // Public Product Browsing
-    Route::get('/products', [ProductController::class, 'index'])->name('api.products.index');
-    Route::get('/products/{product}', [ProductController::class, 'show'])->name('api.products.show');
-
-    // Public Brand Browsing
-    Route::prefix('brands')->name('api.brands.')->group(function () {
-        Route::get('/', [BrandController::class, 'index'])->name('index');
-        Route::get('/{brand}', [BrandController::class, 'show'])->name('show');
-    });
-
-    // Public Collections Browsing
-    Route::prefix('collections')->name('api.collections.')->group(function () {
-        Route::get('/', [\Shopper\Http\Controllers\Api\CollectionController::class, 'index'])->name('index');
-        Route::get('/{collection}', [\Shopper\Http\Controllers\Api\CollectionController::class, 'show'])->name('show');
-    });
-
     // Public Countries/Currencies
     Route::prefix('countries')->name('api.countries.')->group(function () {
-        Route::get('/', [\Shopper\Http\Controllers\Api\CountryController::class, 'index'])->name('index');
-        Route::get('/{country}', [\Shopper\Http\Controllers\Api\CountryController::class, 'show'])->name('show');
-        Route::get('/{country}/states', [\Shopper\Http\Controllers\Api\CountryController::class, 'states'])->name('states');
-        Route::get('/{country}/cities', [\Shopper\Http\Controllers\Api\CountryController::class, 'cities'])->name('cities');
+        Route::get('/', [\Cartino\Http\Controllers\Api\CountryController::class, 'index'])->name('index');
+        Route::get('/{country}', [\Cartino\Http\Controllers\Api\CountryController::class, 'show'])->name('show');
+        Route::get('/{country}/states', [\Cartino\Http\Controllers\Api\CountryController::class, 'states'])->name('states');
+        Route::get('/{country}/cities', [\Cartino\Http\Controllers\Api\CountryController::class, 'cities'])->name('cities');
     });
 
     Route::prefix('currencies')->name('api.currencies.')->group(function () {
-        Route::get('/', [\Shopper\Http\Controllers\Api\CurrencyController::class, 'index'])->name('index');
-        Route::get('/{currency}', [\Shopper\Http\Controllers\Api\CurrencyController::class, 'show'])->name('show');
-        Route::post('/convert', [\Shopper\Http\Controllers\Api\CurrencyController::class, 'convert'])->name('convert');
+        Route::get('/', [\Cartino\Http\Controllers\Api\CurrencyController::class, 'index'])->name('index');
+        Route::get('/{currency}', [\Cartino\Http\Controllers\Api\CurrencyController::class, 'show'])->name('show');
+        Route::post('/convert', [\Cartino\Http\Controllers\Api\CurrencyController::class, 'convert'])->name('convert');
     });
 
     // Public Shipping Methods
     Route::prefix('shipping-methods')->name('api.shipping-methods.')->group(function () {
-        Route::get('/', [\Shopper\Http\Controllers\Api\ShippingMethodController::class, 'index'])->name('index');
-        Route::post('/calculate', [\Shopper\Http\Controllers\Api\ShippingMethodController::class, 'calculate'])->name('calculate');
+        Route::get('/', [\Cartino\Http\Controllers\Api\ShippingMethodController::class, 'index'])->name('index');
+        Route::post('/calculate', [\Cartino\Http\Controllers\Api\ShippingMethodController::class, 'calculate'])->name('calculate');
     });
 
     // Public Tax Rates
     Route::prefix('tax-rates')->name('api.tax-rates.')->group(function () {
-        Route::get('/', [\Shopper\Http\Controllers\Api\TaxRateController::class, 'index'])->name('index');
-        Route::post('/calculate', [\Shopper\Http\Controllers\Api\TaxRateController::class, 'calculate'])->name('calculate');
+        Route::get('/', [\Cartino\Http\Controllers\Api\TaxRateController::class, 'index'])->name('index');
+        Route::post('/calculate', [\Cartino\Http\Controllers\Api\TaxRateController::class, 'calculate'])->name('calculate');
     });
 
     // Fidelity System Configuration (Public)
     Route::get('/fidelity/configuration', [FidelityController::class, 'configuration'])->name('api.fidelity.configuration');
     Route::post('/fidelity/calculate-points', [FidelityController::class, 'calculatePoints'])->name('api.fidelity.calculate-points');
     Route::post('/fidelity/find-card', [FidelityController::class, 'findByCardNumber'])->name('api.fidelity.find-card');
-    Route::get('/brands/{brand}', [BrandController::class, 'show'])->name('api.brands.show');
 
     /*
     |--------------------------------------------------------------------------
@@ -161,17 +165,7 @@ Route::group([
             Route::post('/estimate-shipping', [CartController::class, 'estimateShipping'])->name('estimate-shipping');
         });
 
-        // Enhanced Product Browsing with Reviews
-        Route::prefix('products')->name('products.')->group(function () {
-            Route::get('/', [ProductController::class, 'index'])->name('public.index');
-            Route::get('/{product}', [ProductController::class, 'show'])->name('public.show');
-            Route::get('/{product}/variants', [ProductController::class, 'variants'])->name('public.variants');
-            Route::get('/{product}/reviews', [ProductController::class, 'reviews'])->name('public.reviews');
-            Route::post('/{product}/reviews', [ProductController::class, 'storeReview'])->name('public.store-review')->middleware('auth:customer');
-            Route::get('/search', [ProductController::class, 'search'])->name('public.search');
-            Route::get('/featured', [ProductController::class, 'featured'])->name('public.featured');
-            Route::get('/bestsellers', [ProductController::class, 'bestsellers'])->name('public.bestsellers');
-        });
+
 
         // Enhanced Fidelity System
         Route::prefix('fidelity')->name('fidelity.')->group(function () {
@@ -206,53 +200,53 @@ Route::group([
 
             // Permission Management
             Route::prefix('permissions')->name('permissions.')->group(function () {
-                Route::get('/', [\Shopper\Http\Controllers\Api\PermissionController::class, 'index'])->name('index');
-                Route::get('/roles/{role}/permissions', [\Shopper\Http\Controllers\Api\PermissionController::class, 'rolePermissions'])->name('role.permissions');
-                Route::put('/roles/{role}/permissions', [\Shopper\Http\Controllers\Api\PermissionController::class, 'updateRolePermissions'])->name('role.update');
-                Route::post('/generate', [\Shopper\Http\Controllers\Api\PermissionController::class, 'generatePermissions'])->name('generate');
-                Route::post('/super-role', [\Shopper\Http\Controllers\Api\PermissionController::class, 'createSuperRole'])->name('super.create');
-                Route::get('/tree', [\Shopper\Http\Controllers\Api\PermissionController::class, 'permissionTree'])->name('tree');
+                Route::get('/', [\Cartino\Http\Controllers\Api\PermissionController::class, 'index'])->name('index');
+                Route::get('/roles/{role}/permissions', [\Cartino\Http\Controllers\Api\PermissionController::class, 'rolePermissions'])->name('role.permissions');
+                Route::put('/roles/{role}/permissions', [\Cartino\Http\Controllers\Api\PermissionController::class, 'updateRolePermissions'])->name('role.update');
+                Route::post('/generate', [\Cartino\Http\Controllers\Api\PermissionController::class, 'generatePermissions'])->name('generate');
+                Route::post('/super-role', [\Cartino\Http\Controllers\Api\PermissionController::class, 'createSuperRole'])->name('super.create');
+                Route::get('/tree', [\Cartino\Http\Controllers\Api\PermissionController::class, 'permissionTree'])->name('tree');
             });
 
             // Role Management
             Route::prefix('roles')->name('roles.')->group(function () {
-                Route::get('/', [\Shopper\Http\Controllers\Api\RoleController::class, 'index'])->name('index');
-                Route::post('/', [\Shopper\Http\Controllers\Api\RoleController::class, 'store'])->name('store');
-                Route::get('/{role}', [\Shopper\Http\Controllers\Api\RoleController::class, 'show'])->name('show');
-                Route::put('/{role}', [\Shopper\Http\Controllers\Api\RoleController::class, 'update'])->name('update');
-                Route::delete('/{role}', [\Shopper\Http\Controllers\Api\RoleController::class, 'destroy'])->name('destroy');
-                Route::post('/{role}/assign-users', [\Shopper\Http\Controllers\Api\RoleController::class, 'assignUsers'])->name('assign.users');
-                Route::post('/{role}/remove-users', [\Shopper\Http\Controllers\Api\RoleController::class, 'removeUsers'])->name('remove.users');
-                Route::post('/{role}/clone', [\Shopper\Http\Controllers\Api\RoleController::class, 'clone'])->name('clone');
-                Route::get('/statistics', [\Shopper\Http\Controllers\Api\RoleController::class, 'statistics'])->name('statistics');
+                Route::get('/', [\Cartino\Http\Controllers\Api\RoleController::class, 'index'])->name('index');
+                Route::post('/', [\Cartino\Http\Controllers\Api\RoleController::class, 'store'])->name('store');
+                Route::get('/{role}', [\Cartino\Http\Controllers\Api\RoleController::class, 'show'])->name('show');
+                Route::put('/{role}', [\Cartino\Http\Controllers\Api\RoleController::class, 'update'])->name('update');
+                Route::delete('/{role}', [\Cartino\Http\Controllers\Api\RoleController::class, 'destroy'])->name('destroy');
+                Route::post('/{role}/assign-users', [\Cartino\Http\Controllers\Api\RoleController::class, 'assignUsers'])->name('assign.users');
+                Route::post('/{role}/remove-users', [\Cartino\Http\Controllers\Api\RoleController::class, 'removeUsers'])->name('remove.users');
+                Route::post('/{role}/clone', [\Cartino\Http\Controllers\Api\RoleController::class, 'clone'])->name('clone');
+                Route::get('/statistics', [\Cartino\Http\Controllers\Api\RoleController::class, 'statistics'])->name('statistics');
             });
 
             // Customer Management
             Route::prefix('customers')->name('customers.')->group(function () {
-                Route::get('/', [\Shopper\Http\Controllers\Api\CustomerController::class, 'index'])->name('index');
-                Route::get('/with-fidelity', [\Shopper\Http\Controllers\Api\CustomerController::class, 'indexWithFidelity'])->name('index-with-fidelity');
-                Route::post('/', [\Shopper\Http\Controllers\Api\CustomerController::class, 'store'])->name('store');
-                Route::get('/{customer}', [\Shopper\Http\Controllers\Api\CustomerController::class, 'show'])->name('show');
-                Route::put('/{customer}', [\Shopper\Http\Controllers\Api\CustomerController::class, 'update'])->name('update');
-                Route::delete('/{customer}', [\Shopper\Http\Controllers\Api\CustomerController::class, 'destroy'])->name('destroy');
-                Route::get('/{customer}/fidelity', [\Shopper\Http\Controllers\Api\CustomerController::class, 'fidelityCard'])->name('fidelity');
-                Route::post('/{customer}/fidelity', [\Shopper\Http\Controllers\Api\CustomerController::class, 'createFidelityCard'])->name('fidelity.create');
-                Route::get('/{customer}/orders', [\Shopper\Http\Controllers\Api\CustomerController::class, 'orders'])->name('orders');
-                Route::get('/{customer}/addresses', [\Shopper\Http\Controllers\Api\CustomerController::class, 'addresses'])->name('addresses');
-                Route::post('/{customer}/addresses', [\Shopper\Http\Controllers\Api\CustomerController::class, 'addAddress'])->name('addresses.add');
-                Route::get('/{customer}/statistics', [\Shopper\Http\Controllers\Api\CustomerController::class, 'statistics'])->name('statistics');
-                Route::post('/bulk', [\Shopper\Http\Controllers\Api\CustomerController::class, 'bulk'])->name('bulk');
+                Route::get('/', [\Cartino\Http\Controllers\Api\CustomerController::class, 'index'])->name('index');
+                Route::get('/with-fidelity', [\Cartino\Http\Controllers\Api\CustomerController::class, 'indexWithFidelity'])->name('index-with-fidelity');
+                Route::post('/', [\Cartino\Http\Controllers\Api\CustomerController::class, 'store'])->name('store');
+                Route::get('/{customer}', [\Cartino\Http\Controllers\Api\CustomerController::class, 'show'])->name('show');
+                Route::put('/{customer}', [\Cartino\Http\Controllers\Api\CustomerController::class, 'update'])->name('update');
+                Route::delete('/{customer}', [\Cartino\Http\Controllers\Api\CustomerController::class, 'destroy'])->name('destroy');
+                Route::get('/{customer}/fidelity', [\Cartino\Http\Controllers\Api\CustomerController::class, 'fidelityCard'])->name('fidelity');
+                Route::post('/{customer}/fidelity', [\Cartino\Http\Controllers\Api\CustomerController::class, 'createFidelityCard'])->name('fidelity.create');
+                Route::get('/{customer}/orders', [\Cartino\Http\Controllers\Api\CustomerController::class, 'orders'])->name('orders');
+                Route::get('/{customer}/addresses', [\Cartino\Http\Controllers\Api\CustomerController::class, 'addresses'])->name('addresses');
+                Route::post('/{customer}/addresses', [\Cartino\Http\Controllers\Api\CustomerController::class, 'addAddress'])->name('addresses.add');
+                Route::get('/{customer}/statistics', [\Cartino\Http\Controllers\Api\CustomerController::class, 'statistics'])->name('statistics');
+                Route::post('/bulk', [\Cartino\Http\Controllers\Api\CustomerController::class, 'bulk'])->name('bulk');
             });
 
             // Fidelity System Management
             Route::prefix('fidelity')->name('fidelity.')->group(function () {
                 Route::post('/redeem-points', [FidelityController::class, 'redeemPoints'])->name('redeem-points');
-                Route::get('/cards', [\Shopper\Http\Controllers\Api\Admin\FidelityAdminController::class, 'index'])->name('cards.index');
-                Route::get('/cards/{card}', [\Shopper\Http\Controllers\Api\Admin\FidelityAdminController::class, 'show'])->name('cards.show');
-                Route::put('/cards/{card}', [\Shopper\Http\Controllers\Api\Admin\FidelityAdminController::class, 'update'])->name('cards.update');
-                Route::post('/cards/{card}/add-points', [\Shopper\Http\Controllers\Api\Admin\FidelityAdminController::class, 'addPoints'])->name('cards.add-points');
-                Route::get('/statistics', [\Shopper\Http\Controllers\Api\Admin\FidelityAdminController::class, 'statistics'])->name('statistics');
-                Route::post('/expire-points', [\Shopper\Http\Controllers\Api\Admin\FidelityAdminController::class, 'expirePoints'])->name('expire-points');
+                Route::get('/cards', [\Cartino\Http\Controllers\Api\Admin\FidelityAdminController::class, 'index'])->name('cards.index');
+                Route::get('/cards/{card}', [\Cartino\Http\Controllers\Api\Admin\FidelityAdminController::class, 'show'])->name('cards.show');
+                Route::put('/cards/{card}', [\Cartino\Http\Controllers\Api\Admin\FidelityAdminController::class, 'update'])->name('cards.update');
+                Route::post('/cards/{card}/add-points', [\Cartino\Http\Controllers\Api\Admin\FidelityAdminController::class, 'addPoints'])->name('cards.add-points');
+                Route::get('/statistics', [\Cartino\Http\Controllers\Api\Admin\FidelityAdminController::class, 'statistics'])->name('statistics');
+                Route::post('/expire-points', [\Cartino\Http\Controllers\Api\Admin\FidelityAdminController::class, 'expirePoints'])->name('expire-points');
             });
 
             // User Group Management
@@ -282,89 +276,27 @@ Route::group([
                 Route::post('/bulk', [UserController::class, 'bulk'])->name('bulk');
             });
 
-            // Brand Management (Admin)
-            Route::prefix('brands')->name('brands.')->group(function () {
-                Route::get('/', [BrandController::class, 'adminIndex'])->name('index');
-                Route::post('/', [BrandController::class, 'store'])->name('store');
-                Route::get('/{brand}', [BrandController::class, 'adminShow'])->name('show');
-                Route::put('/{brand}', [BrandController::class, 'update'])->name('update');
+            // Brand Management (Admin) resource
+            Route::apiResource('brands', BrandsController::class, [
+                'names' => 'api.admin.brands',
+            ]);
 
-                // Sites Management (Admin)
-                Route::prefix('sites')->name('sites.')->group(function () {
-                    Route::get('/', [\Shopper\Http\Controllers\Api\Admin\SiteController::class, 'index'])->name('index');
-                    Route::post('/', [\Shopper\Http\Controllers\Api\Admin\SiteController::class, 'store'])->name('store');
-                    Route::get('/{site}', [\Shopper\Http\Controllers\Api\Admin\SiteController::class, 'show'])->name('show');
-                    Route::put('/{site}', [\Shopper\Http\Controllers\Api\Admin\SiteController::class, 'update'])->name('update');
-                    Route::delete('/{site}', [\Shopper\Http\Controllers\Api\Admin\SiteController::class, 'destroy'])->name('destroy');
-                    Route::post('/{site}/set-default', [\Shopper\Http\Controllers\Api\Admin\SiteController::class, 'setDefault'])->name('set-default');
+            // Additional admin brand operations
+            Route::post('brands/create-many', [BrandsController::class, 'createMany'])->name('api.admin.brands.createMany');
+            Route::put('brands/update-many', [BrandsController::class, 'updateMany'])->name('api.admin.brands.updateMany');
+            Route::delete('brands/destroy-many', [BrandsController::class, 'destroyMany'])->name('api.admin.brands.destroyMany');
 
-                    // Site Catalogs
-                    Route::post('/{site}/catalogs', [\Shopper\Http\Controllers\Api\Admin\SiteController::class, 'attachCatalog'])->name('catalogs.attach');
-                    Route::delete('/{site}/catalogs/{catalog}', [\Shopper\Http\Controllers\Api\Admin\SiteController::class, 'detachCatalog'])->name('catalogs.detach');
-                    Route::put('/{site}/catalogs/{catalog}', [\Shopper\Http\Controllers\Api\Admin\SiteController::class, 'updateCatalogPivot'])->name('catalogs.update');
-                });
+            // Specific bulk operations
+            Route::post('brands/bulk-activate', [BrandsController::class, 'bulkActivate'])->name('api.admin.brands.bulkActivate');
+            Route::post('brands/bulk-deactivate', [BrandsController::class, 'bulkDeactivate'])->name('api.admin.brands.bulkDeactivate');
+            Route::post('brands/bulk-delete', [BrandsController::class, 'bulkDelete'])->name('api.admin.brands.bulkDelete');
+            Route::post('brands/bulk-export', [BrandsController::class, 'bulkExport'])->name('api.admin.brands.bulkExport');
 
-                // Channels Management (Admin)
-                Route::prefix('channels')->name('channels.')->group(function () {
-                    Route::get('/', [\Shopper\Http\Controllers\Api\Admin\ChannelController::class, 'index'])->name('index');
-                    Route::post('/', [\Shopper\Http\Controllers\Api\Admin\ChannelController::class, 'store'])->name('store');
-                    Route::get('/{channel}', [\Shopper\Http\Controllers\Api\Admin\ChannelController::class, 'show'])->name('show');
-                    Route::put('/{channel}', [\Shopper\Http\Controllers\Api\Admin\ChannelController::class, 'update'])->name('update');
-                    Route::delete('/{channel}', [\Shopper\Http\Controllers\Api\Admin\ChannelController::class, 'destroy'])->name('destroy');
-                    Route::post('/{channel}/set-default', [\Shopper\Http\Controllers\Api\Admin\ChannelController::class, 'setDefault'])->name('set-default');
-                });
-                Route::delete('/{brand}', [BrandController::class, 'destroy'])->name('destroy');
-                Route::post('/{brand}/toggle-status', [BrandController::class, 'toggleStatus'])->name('toggle.status');
-                Route::get('/{brand}/products', [BrandController::class, 'products'])->name('products');
-                Route::post('/bulk', [BrandController::class, 'bulk'])->name('bulk');
-            });
+            Route::post('brands/{brand}/toggle-status', [BrandsController::class, 'toggleStatus'])->name('api.admin.brands.toggleStatus');
+            Route::get('brands/{brand}/products', [BrandsController::class, 'products'])->name('api.admin.brands.products');
 
-            // Supplier Management (Admin)
-            Route::prefix('suppliers')->name('suppliers.')->group(function () {
-                Route::get('/select', [\Shopper\Http\Controllers\Api\SupplierController::class, 'select'])->name('select');
-                Route::get('/top-performers', [\Shopper\Http\Controllers\Api\SupplierController::class, 'topPerformers'])->name('top-performers');
-                Route::post('/bulk/activate', [\Shopper\Http\Controllers\Api\SupplierController::class, 'bulkActivate'])->name('bulk.activate');
-                Route::post('/bulk/deactivate', [\Shopper\Http\Controllers\Api\SupplierController::class, 'bulkDeactivate'])->name('bulk.deactivate');
-                Route::post('/bulk/delete', [\Shopper\Http\Controllers\Api\SupplierController::class, 'bulkDelete'])->name('bulk.delete');
-                Route::post('/bulk/export', [\Shopper\Http\Controllers\Api\SupplierController::class, 'bulkExport'])->name('bulk.export');
-                Route::get('/', [\Shopper\Http\Controllers\Api\SupplierController::class, 'index'])->name('index');
-                Route::post('/', [\Shopper\Http\Controllers\Api\SupplierController::class, 'store'])->name('store');
-                Route::get('/{supplier}', [\Shopper\Http\Controllers\Api\SupplierController::class, 'show'])->name('show');
-                Route::put('/{supplier}', [\Shopper\Http\Controllers\Api\SupplierController::class, 'update'])->name('update');
-                Route::delete('/{supplier}', [\Shopper\Http\Controllers\Api\SupplierController::class, 'destroy'])->name('destroy');
-                Route::put('/{supplier}/toggle-status', [\Shopper\Http\Controllers\Api\SupplierController::class, 'toggleStatus'])->name('toggle.status');
-                Route::get('/{supplier}/products', [\Shopper\Http\Controllers\Api\SupplierController::class, 'products'])->name('products');
-                Route::get('/{supplier}/purchase-orders', [\Shopper\Http\Controllers\Api\SupplierController::class, 'purchaseOrders'])->name('purchase-orders');
-                Route::get('/{supplier}/performance', [\Shopper\Http\Controllers\Api\SupplierController::class, 'performance'])->name('performance');
-            });
 
-            // Collection Management (Admin)
-            Route::prefix('collections')->name('collections.')->group(function () {
-                Route::get('/', [CollectionController::class, 'adminIndex'])->name('index');
-                Route::post('/', [CollectionController::class, 'store'])->name('store');
-                Route::get('/{collection}', [CollectionController::class, 'adminShow'])->name('show');
-                Route::put('/{collection}', [CollectionController::class, 'update'])->name('update');
-                Route::delete('/{collection}', [CollectionController::class, 'destroy'])->name('destroy');
-                Route::post('/{collection}/products/attach', [CollectionController::class, 'attachProducts'])->name('products.attach');
-                Route::post('/{collection}/products/detach', [CollectionController::class, 'detachProducts'])->name('products.detach');
-                Route::post('/{collection}/toggle-status', [CollectionController::class, 'toggleStatus'])->name('toggle.status');
-                Route::post('/bulk', [CollectionController::class, 'bulk'])->name('bulk');
-            });
 
-            // Product Management (Admin)
-            Route::prefix('products')->name('products.')->group(function () {
-                Route::get('/', [ProductController::class, 'adminIndex'])->name('index');
-                Route::post('/', [ProductController::class, 'store'])->name('store');
-                Route::get('/{product}', [ProductController::class, 'adminShow'])->name('show');
-                Route::put('/{product}', [ProductController::class, 'update'])->name('update');
-                Route::delete('/{product}', [ProductController::class, 'destroy'])->name('destroy');
-                Route::post('/{product}/toggle-status', [ProductController::class, 'toggleStatus'])->name('toggle.status');
-                Route::post('/{product}/variants', [ProductController::class, 'createVariant'])->name('variants.create');
-                Route::put('/{product}/variants/{variant}', [ProductController::class, 'updateVariant'])->name('variants.update');
-                Route::delete('/{product}/variants/{variant}', [ProductController::class, 'deleteVariant'])->name('variants.delete');
-                Route::post('/{product}/inventory', [ProductController::class, 'updateInventory'])->name('inventory.update');
-                Route::post('/bulk', [ProductController::class, 'bulk'])->name('bulk');
-            });
 
             // Order Management (Admin)
             Route::prefix('orders')->name('orders.')->group(function () {
@@ -381,19 +313,6 @@ Route::group([
                 Route::get('/statistics', [OrderController::class, 'statistics'])->name('statistics');
                 Route::post('/bulk', [OrderController::class, 'bulk'])->name('bulk');
             });
-
-            // Channel Management
-            Route::prefix('channels')->name('channels.')->group(function () {
-                Route::get('/', [ChannelController::class, 'adminIndex'])->name('index');
-                Route::post('/', [ChannelController::class, 'store'])->name('store');
-                Route::get('/{channel}', [ChannelController::class, 'adminShow'])->name('show');
-                Route::put('/{channel}', [ChannelController::class, 'update'])->name('update');
-                Route::delete('/{channel}', [ChannelController::class, 'destroy'])->name('destroy');
-                Route::post('/{channel}/toggle-status', [ChannelController::class, 'toggleStatus'])->name('toggle.status');
-                Route::get('/{channel}/products', [ChannelController::class, 'products'])->name('products');
-                Route::post('/bulk', [ChannelController::class, 'bulk'])->name('bulk');
-            });
-
             // Country Management
             Route::prefix('countries')->name('countries.')->group(function () {
                 Route::get('/', [CountryController::class, 'adminIndex'])->name('index');
@@ -436,7 +355,6 @@ Route::group([
                 Route::delete('/{rate}', [TaxRateController::class, 'destroy'])->name('destroy');
                 Route::post('/{rate}/toggle-status', [TaxRateController::class, 'toggleStatus'])->name('toggle.status');
                 Route::post('/bulk', [TaxRateController::class, 'bulk'])->name('bulk');
-
             });
 
             // Discount Management (Admin)
@@ -455,57 +373,36 @@ Route::group([
 
             // Permission Builder
             Route::prefix('permission-builder')->name('builder.')->group(function () {
-                Route::get('/', [\Shopper\Http\Controllers\Api\PermissionBuilderController::class, 'builder'])->name('index');
-                Route::put('/matrix', [\Shopper\Http\Controllers\Api\PermissionBuilderController::class, 'updateMatrix'])->name('matrix.update');
-                Route::post('/apply-template', [\Shopper\Http\Controllers\Api\PermissionBuilderController::class, 'applyTemplate'])->name('template.apply');
-                Route::post('/generate-resource', [\Shopper\Http\Controllers\Api\PermissionBuilderController::class, 'generateResourcePermissions'])->name('resource.generate');
-                Route::get('/export', [\Shopper\Http\Controllers\Api\PermissionBuilderController::class, 'export'])->name('export');
-                Route::post('/import', [\Shopper\Http\Controllers\Api\PermissionBuilderController::class, 'import'])->name('import');
+                Route::get('/', [\Cartino\Http\Controllers\Api\PermissionBuilderController::class, 'builder'])->name('index');
+                Route::put('/matrix', [\Cartino\Http\Controllers\Api\PermissionBuilderController::class, 'updateMatrix'])->name('matrix.update');
+                Route::post('/apply-template', [\Cartino\Http\Controllers\Api\PermissionBuilderController::class, 'applyTemplate'])->name('template.apply');
+                Route::post('/generate-resource', [\Cartino\Http\Controllers\Api\PermissionBuilderController::class, 'generateResourcePermissions'])->name('resource.generate');
+                Route::get('/export', [\Cartino\Http\Controllers\Api\PermissionBuilderController::class, 'export'])->name('export');
+                Route::post('/import', [\Cartino\Http\Controllers\Api\PermissionBuilderController::class, 'import'])->name('import');
             });
 
             // Asset Container Management
             Route::prefix('asset-containers')->name('asset-containers.')->group(function () {
-                Route::get('/', [\Shopper\Http\Controllers\Api\AssetContainerController::class, 'index'])->name('index');
-                Route::post('/', [\Shopper\Http\Controllers\Api\AssetContainerController::class, 'store'])->name('store');
-                Route::get('/{container}', [\Shopper\Http\Controllers\Api\AssetContainerController::class, 'show'])->name('show');
-                Route::put('/{container}', [\Shopper\Http\Controllers\Api\AssetContainerController::class, 'update'])->name('update');
-                Route::delete('/{container}', [\Shopper\Http\Controllers\Api\AssetContainerController::class, 'destroy'])->name('destroy');
+                Route::get('/', [\Cartino\Http\Controllers\Api\AssetContainerController::class, 'index'])->name('index');
+                Route::post('/', [\Cartino\Http\Controllers\Api\AssetContainerController::class, 'store'])->name('store');
+                Route::get('/{container}', [\Cartino\Http\Controllers\Api\AssetContainerController::class, 'show'])->name('show');
+                Route::put('/{container}', [\Cartino\Http\Controllers\Api\AssetContainerController::class, 'update'])->name('update');
+                Route::delete('/{container}', [\Cartino\Http\Controllers\Api\AssetContainerController::class, 'destroy'])->name('destroy');
             });
 
             // Asset Management
             Route::prefix('assets')->name('assets.')->group(function () {
-                Route::get('/', [\Shopper\Http\Controllers\Api\AssetController::class, 'index'])->name('index');
-                Route::post('/upload', [\Shopper\Http\Controllers\Api\AssetController::class, 'upload'])->name('upload');
-                Route::post('/upload-multiple', [\Shopper\Http\Controllers\Api\AssetController::class, 'uploadMultiple'])->name('upload.multiple');
-                Route::get('/{asset}', [\Shopper\Http\Controllers\Api\AssetController::class, 'show'])->name('show');
-                Route::put('/{asset}', [\Shopper\Http\Controllers\Api\AssetController::class, 'update'])->name('update');
-                Route::delete('/{asset}', [\Shopper\Http\Controllers\Api\AssetController::class, 'destroy'])->name('destroy');
-                Route::post('/{asset}/move', [\Shopper\Http\Controllers\Api\AssetController::class, 'move'])->name('move');
-                Route::post('/{asset}/rename', [\Shopper\Http\Controllers\Api\AssetController::class, 'rename'])->name('rename');
-                Route::get('/{asset}/download', [\Shopper\Http\Controllers\Api\AssetController::class, 'download'])->name('download');
-                Route::post('/bulk-delete', [\Shopper\Http\Controllers\Api\AssetController::class, 'bulkDelete'])->name('bulk.delete');
+                Route::get('/', [\Cartino\Http\Controllers\Api\AssetController::class, 'index'])->name('index');
+                Route::post('/upload', [\Cartino\Http\Controllers\Api\AssetController::class, 'upload'])->name('upload');
+                Route::post('/upload-multiple', [\Cartino\Http\Controllers\Api\AssetController::class, 'uploadMultiple'])->name('upload.multiple');
+                Route::get('/{asset}', [\Cartino\Http\Controllers\Api\AssetController::class, 'show'])->name('show');
+                Route::put('/{asset}', [\Cartino\Http\Controllers\Api\AssetController::class, 'update'])->name('update');
+                Route::delete('/{asset}', [\Cartino\Http\Controllers\Api\AssetController::class, 'destroy'])->name('destroy');
+                Route::post('/{asset}/move', [\Cartino\Http\Controllers\Api\AssetController::class, 'move'])->name('move');
+                Route::post('/{asset}/rename', [\Cartino\Http\Controllers\Api\AssetController::class, 'rename'])->name('rename');
+                Route::get('/{asset}/download', [\Cartino\Http\Controllers\Api\AssetController::class, 'download'])->name('download');
+                Route::post('/bulk-delete', [\Cartino\Http\Controllers\Api\AssetController::class, 'bulkDelete'])->name('bulk.delete');
             });
-        });
-    });
-
-    /*
-    |--------------------------------------------------------------------------
-    | Multi-Site Routes (Site Context)
-    |--------------------------------------------------------------------------
-    */
-
-    Route::prefix('sites/{site}')->middleware([HandleSiteContext::class])->name('api.sites.')->group(function () {
-
-        // Site-specific Products
-        Route::prefix('products')->name('products.')->group(function () {
-            Route::get('/', [ProductController::class, 'index'])->name('index');
-            Route::get('/{product}', [ProductController::class, 'show'])->name('show');
-        });
-
-        // Site-specific Brands
-        Route::prefix('brands')->name('brands.')->group(function () {
-            Route::get('/', [BrandController::class, 'index'])->name('index');
-            Route::get('/{brand}', [BrandController::class, 'show'])->name('show');
         });
     });
 });

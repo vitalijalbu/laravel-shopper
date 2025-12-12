@@ -1,12 +1,12 @@
 <?php
 
-namespace Shopper\Repositories;
+namespace Cartino\Repositories;
 
+use Cartino\Enums\CartStatus;
+use Cartino\Models\Cart;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
-use Shopper\Enums\CartStatus;
-use Shopper\Models\Cart;
 
 class CartRepository extends BaseRepository
 {

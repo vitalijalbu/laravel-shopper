@@ -1,7 +1,7 @@
 <?php
 
-use VitaliJalbu\Shopper\Http\Controllers\Cp\CollectionsController;
-use VitaliJalbu\Shopper\Http\Controllers\Cp\EntriesController;
+use Cartino\Http\Controllers\CP\CollectionsController;
+use Cartino\Http\Controllers\CP\EntriesController;
 
 // Collections Tests
 test('collections index returns collections data', function () {
@@ -42,7 +42,7 @@ test('collections can be searched', function () {
 test('collection can be created', function () {
     $controller = new CollectionsController;
     $request = request()->merge([
-        'title' => 'Test Collection',
+        'title' => 'Test Category',
         'handle' => 'test-collection',
         'description' => 'A test collection',
         'section' => 'custom',
@@ -54,7 +54,7 @@ test('collection can be created', function () {
 
     $data = json_decode($response->getContent(), true);
     expect($data)->toHaveKey('collection');
-    expect($data['collection']['title'])->toBe('Test Collection');
+    expect($data['collection']['title'])->toBe('Test Category');
 });
 
 // Entries Tests

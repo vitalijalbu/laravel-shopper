@@ -1,12 +1,12 @@
 <?php
 
-namespace Shopper\Services;
+namespace Cartino\Services;
 
+use Cartino\Data\AbandonedCart\AbandonedCartData;
+use Cartino\Jobs\SendAbandonedCartEmail;
+use Cartino\Models\AbandonedCart;
+use Cartino\Repositories\AbandonedCartRepository;
 use Illuminate\Support\Carbon;
-use Shopper\Data\AbandonedCart\AbandonedCartData;
-use Shopper\Jobs\SendAbandonedCartEmail;
-use Shopper\Models\AbandonedCart;
-use Shopper\Repositories\AbandonedCartRepository;
 
 class AbandonedCartService
 {

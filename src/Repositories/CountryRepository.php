@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Shopper\Repositories;
+namespace Cartino\Repositories;
 
-use Illuminate\Database\Eloquent\Collection;
+use Cartino\Models\Country;
+use Illuminate\Database\Eloquent\Category;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Shopper\Models\Country;
 
 class CountryRepository extends BaseRepository
 {
@@ -18,7 +18,7 @@ class CountryRepository extends BaseRepository
         return new Country;
     }
 
-    public function getPaginatedWithFilters(array $filters = [], int $perPage = 50): LengthAwarePaginator
+    public function findAll(array $filters = [], int $perPage = 50): LengthAwarePaginator
     {
         $query = $this->model->newQuery();
 
@@ -37,7 +37,7 @@ class CountryRepository extends BaseRepository
         return $query->orderBy('name')->paginate($perPage);
     }
 
-    public function getEnabled(): Collection
+    public function getEnabled(): Category
     {
         return \Illuminate\Support\Facades\Cache::remember($this->getCacheKey('enabled', 'all'), $this->cacheTtl, function () {
             return $this->model->where('is_active', true)->orderBy('name')->get();
@@ -55,7 +55,7 @@ class CountryRepository extends BaseRepository
         });
     }
 
-    public function getRegions(): Collection
+    public function getRegions(): Category
     {
         return \Illuminate\Support\Facades\Cache::remember($this->getCacheKey('regions', 'all'), $this->cacheTtl, function () {
             return $this->model->select('region')

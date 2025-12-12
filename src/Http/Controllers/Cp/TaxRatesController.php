@@ -1,15 +1,15 @@
 <?php
 
-namespace Shopper\Http\Controllers\Cp;
+namespace Cartino\Http\Controllers\CP;
 
+use Cartino\CP\Page;
+use Cartino\Http\Controllers\Controller;
+use Cartino\Models\TaxRate;
+use Cartino\Repositories\TaxRateRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
-use Shopper\CP\Page;
-use Shopper\Http\Controllers\Controller;
-use Shopper\Models\TaxRate;
-use Shopper\Repositories\TaxRateRepository;
 
 class TaxRatesController extends Controller
 {
@@ -32,7 +32,7 @@ class TaxRatesController extends Controller
 
         $filters = $request->only(['search', 'country', 'state', 'is_active', 'sort', 'direction', 'page']);
 
-        $taxRates = $this->taxRateRepository->getPaginatedWithFilters($filters, 25);
+        $taxRates = $this->taxRateRepository->findAll($filters, 25);
         $countries = $this->taxRateRepository->getCountries();
         $taxZones = $this->taxRateRepository->getTaxZones();
 

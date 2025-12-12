@@ -1,11 +1,11 @@
 <?php
 
-namespace Shopper\Http\Controllers\Cp;
+namespace Cartino\Http\Controllers\CP;
 
+use Cartino\Models\Product;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
-use Shopper\Models\Product;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class MediaController extends Controller
@@ -24,7 +24,7 @@ class MediaController extends Controller
             });
         }
 
-        // Collection filter
+        // Category filter
         if ($collection = $request->get('collection')) {
             $query->where('collection_name', $collection);
         }

@@ -1,10 +1,10 @@
 <?php
 
-namespace Shopper\Support;
+namespace Cartino\Support;
 
+use Cartino\Models\Site;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Shopper\Models\Site;
 
 trait HasSite
 {

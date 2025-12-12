@@ -1,8 +1,8 @@
 <?php
 
-namespace Shopper\Schema;
+namespace Cartino\Schema;
 
-use Illuminate\Support\Collection;
+use Illuminate\Support\Category;
 
 class FieldBuilder
 {
@@ -55,7 +55,7 @@ class FieldBuilder
     /**
      * Build fields collection from schema.
      */
-    public function buildFields(array $fieldsConfig): Collection
+    public function buildFields(array $fieldsConfig): Category
     {
         return collect($fieldsConfig)->map(function ($config, $handle) {
             return $this->buildField($handle, $config);
