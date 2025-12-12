@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Cartino\Policies;
 
-use Cartino\Models\VariantPrice;
 use Cartino\Models\User;
+use Cartino\Models\VariantPrice;
 
 class VariantPricePolicy
 {

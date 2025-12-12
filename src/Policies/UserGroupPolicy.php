@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Cartino\Policies;
 
-use Cartino\Models\UserGroup;
 use Cartino\Models\User;
+use Cartino\Models\UserGroup;
 
 class UserGroupPolicy
 {

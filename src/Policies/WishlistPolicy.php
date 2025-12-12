@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Cartino\Policies;
 
-use Cartino\Models\Wishlist;
 use Cartino\Models\User;
+use Cartino\Models\Wishlist;
 
 class WishlistPolicy
 {
