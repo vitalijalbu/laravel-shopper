@@ -1,0 +1,43 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Database\Factories;
+
+use Cartino\Models\Brand;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
+
+class BrandFactory extends Factory
+{
+    protected $model = Brand::class;
+
+    public function definition(): array
+    {
+        $name = $this->faker->unique()->company();
+        $slug = Str::slug($name);
+
+        return [
+            'name' => $name,
+            'slug' => $slug,
+            'description' => $this->faker->paragraph(),
+            'website' => $this->faker->url(),
+            'is_enabled' => $this->faker->boolean(90),
+            'seo' => [
+                'title' => $name,
+                'description' => $this->faker->sentence(),
+                'keywords' => $this->faker->words(5, true),
+            ],
+            'meta' => [
+                'founded' => $this->faker->year(),
+                'country' => $this->faker->country(),
+            ],
+            'data' => null,
+        ];
+    }
+
+    public function enabled(): self
+    {
+        return $this->state(['is_enabled' => true]);
+    }
+}

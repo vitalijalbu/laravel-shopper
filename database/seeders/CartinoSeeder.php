@@ -27,9 +27,23 @@ use Cartino\Models\User;
 use Cartino\Models\VariantPrice;
 use Cartino\Models\Wishlist;
 use Cartino\Models\WishlistItem;
+use Cartino\Models\ProductReview;
+use Cartino\Models\ReviewMedia;
+use Cartino\Models\ReviewVote;
+use Cartino\Models\Discount;
+use Cartino\Models\Transaction;
+use Cartino\Models\Page;
+use Cartino\Models\Menu;
+use Cartino\Models\MenuItem;
+use Cartino\Models\Supplier;
+use Cartino\Models\PurchaseOrder;
+use Cartino\Models\PurchaseOrderItem;
+use Cartino\Models\AnalyticsEvent;
+use Cartino\Models\StockNotification;
+use Cartino\Models\Favorite;
+use Cartino\Models\UserGroup;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
@@ -38,17 +52,13 @@ class CartinoSeeder extends Seeder
 {
     use WithoutModelEvents;
 
-    protected function packageDataPath(string $relativePath): string
-    {
-        return __DIR__ . '/../data/' . ltrim($relativePath, '/');
-    }
-
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        $this->command->info('🌱 Seeding Cartino with multi-site support and rich demo data...');
+        $this->command->info('🌱 Seeding Cartino with MASSIVE multi-site demo data...');
+        $this->command->warn('⚠️  This will create LARGE amounts of data - please be patient!');
 
         DB::transaction(function () {
             $this->seedCoreData();
@@ -56,9 +66,31 @@ class CartinoSeeder extends Seeder
             $this->seedCustomersAndOrders();
         });
 
-        $this->command->info('✅ Cartino multi-site seeding completed!');
-        $this->command->info('📍 Sites created: Main Store (main), Store Italia (it)');
+        $this->command->info('');
+        $this->command->info('✅ ========================================');
+        $this->command->info('✅ Cartino MASSIVE seeding completed!');
+        $this->command->info('✅ ========================================');
+        $this->command->info('');
+        $this->command->info('📊 Data Summary:');
+        $this->command->info('   • Sites: 2');
+        $this->command->info('   • Users: ~26');
+        $this->command->info('   • Currencies: ~11');
+        $this->command->info('   • Countries: ~50');
+        $this->command->info('   • Brands: ~50');
+        $this->command->info('   • Categories: ~80+');
+        $this->command->info('   • Products: ~500 (with 3-5 variants each)');
+        $this->command->info('   • Product Reviews: ~2000+');
+        $this->command->info('   • Customers: ~200');
+        $this->command->info('   • Orders: ~600+');
+        $this->command->info('   • Discounts: ~150');
+        $this->command->info('   • Pages: ~80');
+        $this->command->info('   • Suppliers: ~30');
+        $this->command->info('   • Purchase Orders: ~100+');
+        $this->command->info('   • Analytics Events: ~10,000');
+        $this->command->info('   • Stock Notifications: ~500');
+        $this->command->info('');
         $this->command->info('🔑 Admin login: admin@admin.com / password');
+        $this->command->info('');
     }
 
     /**
@@ -68,52 +100,42 @@ class CartinoSeeder extends Seeder
     {
         $this->command->info('⚙️ Core setup...');
 
-        // Load data from files
-        $currencies = include $this->packageDataPath('currencies.php');
-        $countries = include $this->packageDataPath('countries.php');
-        $channels = include $this->packageDataPath('channels.php');
-        $customerGroups = include $this->packageDataPath('customer_groups.php');
-
-        // Seed Sites first
+        // Seed Sites
         $this->command->info('🌐 Seeding sites...');
-        $sites = [
-            [
-                'handle' => 'main',
-                'name' => 'Main Store',
-                'url' => 'http://localhost',
-                'locale' => 'en_US',
-                'lang' => 'en',
-                'attributes' => [],
-                'order' => 1,
-                'is_enabled' => true,
-            ],
-            [
-                'handle' => 'it',
-                'name' => 'Store Italia',
-                'url' => 'http://localhost/it',
-                'locale' => 'it_IT',
-                'lang' => 'it',
-                'attributes' => [],
-                'order' => 2,
-                'is_enabled' => true,
-            ],
-        ];
+        $mainSite = Site::factory()->state([
+            'handle' => 'main',
+            'name' => 'Main Store',
+            'locale' => 'en_US',
+            'lang' => 'en',
+            'is_default' => true,
+            'status' => 'active',
+            'order' => 1,
+        ])->create();
 
-        foreach ($sites as $site) {
-            Site::firstOrCreate(['handle' => $site['handle']], $site);
-        }
+        Site::factory()->state([
+            'handle' => 'it',
+            'name' => 'Store Italia',
+            'locale' => 'it_IT',
+            'lang' => 'it',
+            'status' => 'active',
+            'order' => 2,
+        ])->create();
 
         // Seed currencies
         $this->command->info('💰 Seeding currencies...');
-        foreach ($currencies as $currency) {
-            Currency::firstOrCreate(['code' => $currency['code']], $currency);
-        }
+        Currency::factory()->state([
+            'code' => 'EUR',
+            'name' => 'Euro',
+            'symbol' => '€',
+            'is_default' => true,
+            'rate' => 1.0000,
+        ])->create();
+
+        Currency::factory()->count(10)->create();
 
         // Seed countries
         $this->command->info('🌍 Seeding countries...');
-        foreach ($countries as $country) {
-            Country::firstOrCreate(['code' => $country['code']], $country);
-        }
+        Country::factory()->count(50)->create();
 
         // Create permissions and roles
         $this->command->info('🔑 Creating permissions and roles...');
@@ -121,15 +143,7 @@ class CartinoSeeder extends Seeder
 
         // Create default admin user
         $this->command->info('👤 Creating admin user...');
-        $user = User::firstOrCreate(
-            ['email' => 'admin@admin.com'],
-            [
-                'name' => 'Admin User',
-                'email' => 'admin@admin.com',
-                'email_verified_at' => now(),
-                'password' => Hash::make('password'),
-            ]
-        );
+        $user = User::factory()->admin()->create();
 
         // Assign super-admin role to user
         if (! $user->hasRole('super-admin')) {
@@ -137,152 +151,103 @@ class CartinoSeeder extends Seeder
             $this->command->info('✅ Assigned super-admin role to admin user');
         }
 
-        // Get main site
-        $mainSite = Site::where('handle', 'main')->first();
+        // Create additional users
+        $this->command->info('👥 Creating additional users...');
+        User::factory()->count(25)->create();
+
+        // User groups
+        $this->command->info('👥 Seeding user groups...');
+        UserGroup::factory()->count(8)->create();
 
         // Seed channels
         $this->command->info('📺 Seeding channels...');
-        foreach ($channels as $channel) {
-            $payload = [
-                'site_id' => $mainSite->id,
-                'name' => $channel['name'],
-                'slug' => $channel['slug'],
-                'description' => $channel['description'] ?? null,
-                'type' => $channel['type'] ?? 'web',
-                'url' => $channel['url'] ?? null,
-                'is_default' => $channel['is_default'] ?? false,
-                'status' => ($channel['is_enabled'] ?? true) ? 'active' : 'inactive',
-                'locales' => $channel['locales'] ?? ['en', 'it'],
-                'currencies' => $channel['currencies'] ?? ['EUR'],
-                'settings' => $channel['settings'] ?? null,
-            ];
+        Channel::factory()->state([
+            'site_id' => $mainSite->id,
+            'slug' => 'default',
+            'name' => 'Default Channel',
+            'is_default' => true,
+            'status' => 'active',
+        ])->create();
 
-            Channel::updateOrCreate(['slug' => $payload['slug']], $payload);
-        }
+        Channel::factory()->count(5)->state([
+            'site_id' => $mainSite->id,
+        ])->create();
 
         // Seed customer groups
         $this->command->info('👥 Seeding customer groups...');
-        foreach ($customerGroups as $group) {
-            CustomerGroup::firstOrCreate(['name' => $group['name']], $group);
-        }
+        CustomerGroup::factory()->default()->create();
+        CustomerGroup::factory()->count(10)->create();
 
-        // Seed basic brands
+        // Seed brands
         $this->command->info('🏷️ Seeding brands...');
-        $brands = [
-            ['name' => 'Generic', 'slug' => 'generic', 'description' => 'Generic brand for unbranded products'],
-            ['name' => 'Premium', 'slug' => 'premium', 'description' => 'Premium quality products'],
-            ['name' => 'Budget', 'slug' => 'budget', 'description' => 'Budget-friendly products'],
-        ];
-
-        foreach ($brands as $brand) {
-            Brand::firstOrCreate(['slug' => $brand['slug']], $brand);
-        }
+        Brand::factory()->count(500)->enabled()->create();
 
         // Seed product types
         $this->command->info('📦 Seeding product types...');
-        $productTypes = [
-            ['name' => 'Physical', 'slug' => 'physical', 'description' => 'Physical products that require shipping'],
-            ['name' => 'Digital', 'slug' => 'digital', 'description' => 'Digital products (downloads)'],
-            ['name' => 'Service', 'slug' => 'service', 'description' => 'Service-based products'],
-        ];
+        ProductType::factory()->state(['name' => 'Physical', 'slug' => 'physical', 'status' => 'active'])->create();
+        ProductType::factory()->state(['name' => 'Digital', 'slug' => 'digital', 'status' => 'active'])->create();
+        ProductType::factory()->count(10)->active()->create();
 
-        foreach ($productTypes as $type) {
-            ProductType::firstOrCreate(['slug' => $type['slug']], $type);
-        }
-
-        // Basic settings
+        // Settings
         $this->command->info('⚙️ Seeding settings...');
-        $settings = [
-            'site_name' => 'Cartino Multi-Site',
-            'site_description' => 'Complete e-commerce platform with Statamic CMS architecture and multi-site support',
-            'admin_email' => 'admin@admin.com',
-            'timezone' => 'Europe/Rome',
-            'date_format' => 'Y-m-d',
-            'time_format' => 'H:i',
-            'currency_format' => '{{amount}} {{symbol}}',
-            'pagination_limit' => 25,
-            'enable_reviews' => true,
-            'enable_wishlists' => true,
-            'enable_inventory' => true,
-            'enable_seo' => true,
-            'enable_analytics' => true,
-            'enable_multisite' => true,
-            'default_site' => 'main',
-            'maintenance_mode' => false,
-            'allow_guest_checkout' => true,
-            'require_email_verification' => false,
-            'enable_multi_currency' => true,
-            'enable_multi_language' => true,
-        ];
-
-        foreach ($settings as $key => $value) {
-            Setting::firstOrCreate(['key' => $key], [
-                'key' => $key,
-                'value' => is_bool($value) ? ($value ? '1' : '0') : (string) $value,
-                'type' => is_bool($value) ? 'boolean' : 'string',
-            ]);
-        }
+        Setting::factory()->count(50)->create();
 
         // Shipping zones and rates
         $this->command->info('🚚 Seeding shipping zones & rates...');
-        $zone = ShippingZone::factory()->state([
+        $zones = ShippingZone::factory()->count(10)->state([
             'site_id' => $mainSite->id,
-            'countries' => ['IT', 'FR', 'DE', 'ES'],
         ])->create();
 
-        ShippingRate::factory()->count(2)->state([
-            'shipping_zone_id' => $zone->id,
-            'channel_id' => Channel::where('slug', 'default')->value('id'),
-        ])->create();
+        foreach ($zones as $zone) {
+            ShippingRate::factory()->count(5)->state([
+                'shipping_zone_id' => $zone->id,
+                'channel_id' => Channel::where('slug', 'default')->value('id'),
+            ])->create();
+        }
 
         // Taxes
         $this->command->info('🧾 Seeding tax rates...');
-        TaxRate::factory()->state([
-            'name' => 'VAT 22%',
-            'code' => 'VAT_IT',
-            'rate' => 0.22,
-            'countries' => ['IT'],
-        ])->create();
+        TaxRate::factory()->count(20)->create();
 
         // Payment methods
         $this->command->info('💳 Seeding payment methods...');
-        DB::table('payment_methods')->updateOrInsert(
-            ['slug' => 'stripe-card'],
-            [
-                'name' => 'Stripe Card',
+        DB::table('payment_methods')->insert(
+            \Database\Factories\PaymentMethodFactory::new()->state([
+                'slug' => 'stripe-card',
                 'provider' => 'stripe',
-                'description' => 'Pay with credit card via Stripe',
-                'configuration' => json_encode(['mode' => 'test']),
                 'status' => 'active',
-                'is_test_mode' => true,
-                'fixed_fee' => 0.30,
-                'percentage_fee' => 0.0290,
-                'supported_currencies' => json_encode(['EUR', 'USD', 'GBP']),
-                'supported_countries' => json_encode(['IT', 'FR', 'DE', 'ES', 'US']),
-                'sort_order' => 1,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]
+            ])->raw()
         );
 
-        DB::table('payment_methods')->updateOrInsert(
-            ['slug' => 'paypal'],
-            [
-                'name' => 'PayPal',
+        DB::table('payment_methods')->insert(
+            \Database\Factories\PaymentMethodFactory::new()->state([
+                'slug' => 'paypal',
                 'provider' => 'paypal',
-                'description' => 'Checkout with PayPal',
-                'configuration' => json_encode(['mode' => 'sandbox']),
                 'status' => 'active',
-                'is_test_mode' => true,
-                'fixed_fee' => 0.35,
-                'percentage_fee' => 0.0340,
-                'supported_currencies' => json_encode(['EUR', 'USD', 'GBP']),
-                'supported_countries' => json_encode(['IT', 'FR', 'DE', 'ES', 'US']),
-                'sort_order' => 2,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]
+            ])->raw()
         );
+
+        // Discounts
+        $this->command->info('🎟️ Seeding discounts...');
+        Discount::factory()->count(100)->create();
+        Discount::factory()->count(50)->active()->create();
+
+        // Pages
+        $this->command->info('📄 Seeding pages...');
+        Page::factory()->count(50)->create();
+        Page::factory()->count(30)->published()->create();
+
+        // Menus
+        $this->command->info('🗂️ Seeding menus...');
+        $menus = Menu::factory()->count(5)->create();
+        
+        foreach ($menus as $menu) {
+            MenuItem::factory()->count(10)->state(['menu_id' => $menu->id])->create();
+        }
+
+        // Suppliers
+        $this->command->info('🏭 Seeding suppliers...');
+        Supplier::factory()->count(30)->active()->create();
     }
 
     /**
@@ -293,112 +258,167 @@ class CartinoSeeder extends Seeder
         $this->command->info('🛍️ Building demo catalog...');
         $mainSite = Site::where('handle', 'main')->firstOrFail();
 
-        // Categories with a simple nested-set structure
-        $categoriesData = [
-            ['name' => 'Men', 'slug' => 'men', 'left' => 1, 'right' => 6],
-            ['name' => 'Clothing', 'slug' => 'clothing', 'parent_slug' => 'men', 'left' => 2, 'right' => 3],
-            ['name' => 'Shoes', 'slug' => 'shoes', 'parent_slug' => 'men', 'left' => 4, 'right' => 5],
-            ['name' => 'Women', 'slug' => 'women', 'left' => 7, 'right' => 12],
-            ['name' => 'Dresses', 'slug' => 'dresses', 'parent_slug' => 'women', 'left' => 8, 'right' => 9],
-            ['name' => 'Sneakers', 'slug' => 'sneakers', 'parent_slug' => 'women', 'left' => 10, 'right' => 11],
+        // Categories with factory
+        $this->command->info('📂 Seeding categories...');
+        $categories = collect();
+
+        // Create root categories
+        $rootCategories = [
+            ['name' => 'Men', 'slug' => 'men', 'left' => 1, 'right' => 20],
+            ['name' => 'Women', 'slug' => 'women', 'left' => 21, 'right' => 40],
+            ['name' => 'Kids', 'slug' => 'kids', 'left' => 41, 'right' => 60],
+            ['name' => 'Electronics', 'slug' => 'electronics', 'left' => 61, 'right' => 80],
+            ['name' => 'Home & Garden', 'slug' => 'home-garden', 'left' => 81, 'right' => 100],
         ];
 
-        $categories = collect();
-        foreach ($categoriesData as $data) {
-            $parent = null;
-            if (isset($data['parent_slug'])) {
-                $parent = $categories->firstWhere('slug', $data['parent_slug']);
-            }
+        foreach ($rootCategories as $rootData) {
+            $rootCat = Category::factory()->state([
+                'site_id' => $mainSite->id,
+                'name' => $rootData['name'],
+                'slug' => $rootData['slug'],
+                'parent_id' => null,
+                'level' => 0,
+                'left' => $rootData['left'],
+                'right' => $rootData['right'],
+            ])->create();
+            $categories->push($rootCat);
 
-            $category = Category::unguarded(function () use ($mainSite, $parent, $data) {
-                return \Database\Factories\CategoryFactory::new()->create([
+            // Create subcategories for each root category
+            for ($i = 0; $i < 5; $i++) {
+                $subCat = Category::factory()->state([
                     'site_id' => $mainSite->id,
-                    'parent_id' => $parent?->id,
-                    'level' => $parent ? $parent->level + 1 : 0,
-                    'path' => $parent ? $parent->path.'/'.$data['slug'] : $data['slug'],
-                    'left' => $data['left'],
-                    'right' => $data['right'],
-                    'name' => $data['name'],
-                    'slug' => $data['slug'],
-                    'description' => 'Category '.$data['name'],
-                    'short_description' => 'Short '.$data['name'],
-                    'sort_order' => 0,
-                    'is_featured' => false,
-                    'is_active' => true,
-                    'is_visible' => true,
-                    'include_in_menu' => true,
-                    'include_in_search' => true,
-                    'products_count' => 0,
-                ]);
-            });
-
-            $categories->push($category);
+                    'parent_id' => $rootCat->id,
+                    'level' => 1,
+                    'path' => $rootData['slug'] . '/' . fake()->slug(2),
+                ])->create();
+                $categories->push($subCat);
+            }
         }
 
-        // Products with variants and advanced prices
+        // Create even more categories
+        Category::factory()->count(50)->state([
+            'site_id' => $mainSite->id,
+        ])->create()->each(fn($cat) => $categories->push($cat));
+
+        $this->command->info('✅ Categories created: ' . $categories->count());
+
+        // Products with variants using factory - MASSIVE QUANTITY
+        $this->command->info('🛍️ Seeding MASSIVE product catalog...');
+        $this->command->info('⏳ This will take a while... creating 500 products with variants...');
+        
         $products = collect();
+        $batchSize = 100;
+        $totalProducts = 5000;
 
-        for ($i = 0; $i < 16; $i++) {
-            $product = Product::factory()->forSite($mainSite->id)->create();
+        for ($batch = 0; $batch < ($totalProducts / $batchSize); $batch++) {
+            $this->command->info("📦 Processing batch " . ($batch + 1) . " of " . ($totalProducts / $batchSize));
+            
+            for ($i = 0; $i < $batchSize; $i++) {
+                $product = Product::factory()->state([
+                    'site_id' => $mainSite->id,
+                ])->create();
 
-            // Two options per product
-            ProductOption::factory()->create([
-                'product_id' => $product->id,
-                'name' => 'Color',
-                'position' => 1,
-                'values' => ['Red', 'Blue', 'Green'],
-            ]);
-
-            ProductOption::factory()->create([
-                'product_id' => $product->id,
-                'name' => 'Size',
-                'position' => 2,
-                'values' => ['S', 'M', 'L'],
-            ]);
-
-            $variants = ProductVariant::factory()
-                ->count(3)
-                ->state([
+                // Product options using factory
+                ProductOption::factory()->count(2)->state([
                     'product_id' => $product->id,
-                    'site_id' => $product->site_id,
-                ])
-                ->create();
+                ])->create();
 
-            // Attach categories (random two)
-            $chosenCategories = $categories->random(2);
-            foreach ($chosenCategories as $cat) {
-                DB::table('category_product')->updateOrInsert([
-                    'category_id' => $cat->id,
-                    'product_id' => $product->id,
-                ], [
-                    'sort_order' => 0,
-                    'is_primary' => false,
-                    'created_at' => now(),
-                    'updated_at' => now(),
+                // Variants using factory (3-5 variants per product)
+                $variantCount = rand(3, 5);
+                $variants = ProductVariant::factory()
+                    ->count($variantCount)
+                    ->state([
+                        'product_id' => $product->id,
+                        'site_id' => $product->site_id,
+                    ])
+                    ->create();
+
+                // Attach random categories (1-3 per product)
+                $numCategories = rand(1, min(3, $categories->count()));
+                $chosenCategories = $categories->random($numCategories);
+                
+                foreach ($chosenCategories as $cat) {
+                    DB::table('category_product')->insert([
+                        'category_id' => $cat->id,
+                        'product_id' => $product->id,
+                        'sort_order' => 0,
+                        'is_primary' => false,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]);
+                }
+
+                // Variant prices using factory
+                foreach ($variants as $variant) {
+                    VariantPrice::factory()->state([
+                        'product_variant_id' => $variant->id,
+                        'site_id' => $product->site_id,
+                        'price' => $variant->price,
+                    ])->create();
+                }
+
+                // Update product price range
+                $product->update([
+                    'default_variant_id' => $variants->first()->id,
+                    'variants_count' => $variants->count(),
+                    'price_min' => $variants->min('price'),
+                    'price_max' => $variants->max('price'),
                 ]);
+
+                $products->push($product);
             }
-
-            // Variant prices
-            foreach ($variants as $variant) {
-                VariantPrice::factory()->create([
-                    'product_variant_id' => $variant->id,
-                    'site_id' => $product->site_id,
-                    'price' => $variant->price,
-                ]);
-            }
-
-            // Update product price range and default variant
-            $product->update([
-                'default_variant_id' => $variants->first()->id,
-                'variants_count' => $variants->count(),
-                'price_min' => $variants->min('price'),
-                'price_max' => $variants->max('price'),
-            ]);
-
-            $products->push($product);
         }
 
-        $this->command->info('🛒 Products with variants and prices seeded: '.$products->count());
+        $this->command->info('✅ Products with variants seeded: ' . $products->count());
+
+        // Product Reviews - MASSIVE
+        $this->command->info('⭐ Seeding product reviews...');
+        $productIds = $products->pluck('id')->toArray();
+        
+        foreach (array_slice($productIds, 0, 200) as $productId) {
+            $reviewCount = rand(2, 15);
+            $reviews = ProductReview::factory()->count($reviewCount)->state([
+                'product_id' => $productId,
+            ])->approved()->create();
+
+            // Add media to some reviews
+            foreach ($reviews->take(rand(1, 3)) as $review) {
+                ReviewMedia::factory()->count(rand(1, 3))->state([
+                    'product_review_id' => $review->id,
+                ])->create();
+            }
+
+            // Add votes to reviews
+            foreach ($reviews as $review) {
+                ReviewVote::factory()->count(rand(0, 20))->state([
+                    'product_review_id' => $review->id,
+                ])->create();
+            }
+        }
+
+        // Purchase Orders & Suppliers
+        $this->command->info('📋 Seeding purchase orders...');
+        $suppliers = Supplier::all();
+        
+        foreach ($suppliers->take(20) as $supplier) {
+            $pos = PurchaseOrder::factory()->count(rand(2, 8))->state([
+                'supplier_id' => $supplier->id,
+            ])->create();
+
+            foreach ($pos as $po) {
+                PurchaseOrderItem::factory()->count(rand(5, 15))->state([
+                    'purchase_order_id' => $po->id,
+                ])->create();
+            }
+        }
+
+        // Stock Notifications
+        $this->command->info('🔔 Seeding stock notifications...');
+        StockNotification::factory()->count(500)->create();
+
+        // Analytics Events
+        $this->command->info('📊 Seeding analytics events...');
+        AnalyticsEvent::factory()->count(10000)->create();
     }
 
     /**
@@ -406,53 +426,72 @@ class CartinoSeeder extends Seeder
      */
     protected function seedCustomersAndOrders(): void
     {
-        $this->command->info('👥 Generating customers, carts, and orders...');
+        $this->command->info('👥 Generating MASSIVE customer and order data...');
         $mainSite = Site::where('handle', 'main')->firstOrFail();
-        $currency = Currency::where('code', 'EUR')->firstOrFail();
+        $currency = Currency::where('code', 'EUR')->first() ?? Currency::factory()->state(['code' => 'EUR'])->create();
 
-        // Pull products/variants for associations
-        $products = Product::with('variants')->get();
+        // Get products with variants
+        $products = Product::with('variants')->limit(100)->get();
 
-        $customers = Customer::factory()->count(8)->state([
+        // Create MASSIVE amount of customers
+        $this->command->info('👥 Creating 200 customers...');
+        $customers = Customer::factory()->count(200)->state([
             'site_id' => $mainSite->id,
             'status' => 'active',
         ])->create();
 
-        foreach ($customers as $customer) {
-            // Address
-            Address::factory()->create([
+        $this->command->info('🛒 Processing customer data (carts, wishlists, orders)...');
+        
+        foreach ($customers as $index => $customer) {
+            if ($index % 20 === 0) {
+                $this->command->info("  Processing customer " . ($index + 1) . " of " . $customers->count());
+            }
+
+            // Address using factory (1-3 addresses per customer)
+            Address::factory()->count(rand(1, 3))->state([
                 'addressable_type' => Customer::class,
                 'addressable_id' => $customer->id,
-            ]);
+            ])->create();
 
-            // Wishlist
+            // Wishlist using factory
             $wishlist = Wishlist::factory()->state([
                 'customer_id' => $customer->id,
             ])->create();
 
-            WishlistItem::factory()->count(3)->create([
+            // Wishlist items using factory (3-15 items)
+            $wishlistItemCount = rand(3, 15);
+            WishlistItem::factory()->count($wishlistItemCount)->state([
                 'wishlist_id' => $wishlist->id,
                 'product_id' => $products->random()->id,
-            ]);
+            ])->create();
 
-            // Cart with lines
-            $cart = Cart::factory()->withCustomer($customer)->create([
+            // Favorites
+            Favorite::factory()->count(rand(5, 20))->state([
+                'customer_id' => $customer->id,
+            ])->create();
+
+            // Cart with lines using factory
+            $cart = Cart::factory()->state([
+                'customer_id' => $customer->id,
                 'status' => 'active',
                 'currency' => 'EUR',
-            ]);
+            ])->create();
 
-            $lineVariants = $products->flatMap(fn ($p) => $p->variants)->shuffle()->take(2);
+            $lineCount = rand(1, 8);
+            $lineVariants = $products->flatMap(fn ($p) => $p->variants)->shuffle()->take($lineCount);
             $totals = ['subtotal' => 0, 'tax' => 0, 'shipping' => 5];
 
             foreach ($lineVariants as $variant) {
-                $line = CartLine::factory()->create([
+                $quantity = rand(1, 5);
+                $line = CartLine::factory()->state([
                     'cart_id' => $cart->id,
                     'product_id' => $variant->product_id,
                     'product_variant_id' => $variant->id,
                     'unit_price' => $variant->price,
-                    'quantity' => 1,
-                    'line_total' => $variant->price,
-                ]);
+                    'quantity' => $quantity,
+                    'line_total' => $variant->price * $quantity,
+                ])->create();
+                
                 $totals['subtotal'] += $line->line_total;
             }
 
@@ -464,52 +503,74 @@ class CartinoSeeder extends Seeder
                 'items' => null,
             ]);
 
-            // Order with lines
-            $order = Order::factory()->forCustomer($customer)->create([
-                'site_id' => $mainSite->id,
-                'currency_id' => $currency->id,
-                'shipping_address' => $cart->shipping_address ?? [],
-                'billing_address' => $cart->billing_address ?? [],
-            ]);
+            // Create multiple orders per customer (1-5 orders)
+            $orderCount = rand(1, 5);
+            
+            for ($o = 0; $o < $orderCount; $o++) {
+                $order = Order::factory()->state([
+                    'customer_id' => $customer->id,
+                    'site_id' => $mainSite->id,
+                    'currency_id' => $currency->id,
+                    'shipping_address' => $cart->shipping_address ?? [],
+                    'billing_address' => $cart->billing_address ?? [],
+                ])->create();
 
-            $orderSubtotal = 0;
-            foreach ($lineVariants as $variant) {
-                $line = OrderLine::factory()->forVariant($variant, $order)->create();
-                $orderSubtotal += $line->line_total;
+                $orderLineCount = rand(1, 10);
+                $orderLineVariants = $products->flatMap(fn ($p) => $p->variants)->shuffle()->take($orderLineCount);
+                $orderSubtotal = 0;
+                
+                foreach ($orderLineVariants as $variant) {
+                    $line = OrderLine::factory()->state([
+                        'order_id' => $order->id,
+                        'product_id' => $variant->product_id,
+                        'product_variant_id' => $variant->id,
+                    ])->create();
+                    
+                    $orderSubtotal += $line->line_total;
+                }
+
+                $orderTax = round($orderSubtotal * 0.22, 2);
+                $orderShipping = rand(0, 20);
+
+                $order->update([
+                    'subtotal' => $orderSubtotal,
+                    'tax_total' => $orderTax,
+                    'shipping_total' => $orderShipping,
+                    'total' => $orderSubtotal + $orderTax + $orderShipping,
+                ]);
+
+                // Transactions for orders
+                Transaction::factory()->count(rand(1, 2))->state([
+                    'order_id' => $order->id,
+                ])->successful()->create();
             }
 
-            $orderTax = round($orderSubtotal * 0.22, 2);
-            $orderShipping = 5;
+            // Fidelity card using factory
+            $card = $customer->fidelityCard()->create(
+                \Database\Factories\FidelityCardFactory::new()->state([
+                    'total_points' => rand(100, 5000),
+                    'available_points' => rand(50, 3000),
+                    'total_earned' => rand(500, 10000),
+                    'total_redeemed' => rand(0, 2000),
+                    'is_active' => true,
+                    'issued_at' => now()->subMonths(rand(1, 24)),
+                ])->raw()
+            );
 
-            $order->update([
-                'subtotal' => $orderSubtotal,
-                'tax_total' => $orderTax,
-                'shipping_total' => $orderShipping,
-                'total' => $orderSubtotal + $orderTax + $orderShipping,
-            ]);
-
-            // Fidelity data
-            $card = $customer->fidelityCard()->create([
-                'total_points' => 500,
-                'available_points' => 300,
-                'total_earned' => 500,
-                'total_redeemed' => 200,
-                'total_spent_amount' => $order->total,
-                'is_active' => true,
-                'issued_at' => now()->subMonth(),
-            ]);
-
-            $card->transactions()->create([
-                'order_id' => $order->id,
-                'type' => 'earned',
-                'points' => 200,
-                'description' => 'Points from '.$order->order_number,
-                'expires_at' => now()->addYear(),
-            ]);
+            // Multiple fidelity transactions per customer
+            for ($t = 0; $t < rand(5, 20); $t++) {
+                $card->transactions()->create(
+                    \Database\Factories\FidelityTransactionFactory::new()->state([
+                        'type' => fake()->randomElement(['earned', 'redeemed', 'expired']),
+                        'points' => rand(10, 500),
+                        'expires_at' => fake()->boolean(70) ? now()->addYear() : null,
+                    ])->raw()
+                );
+            }
         }
 
-        $this->command->info('👥 Customers seeded: '.$customers->count());
-        $this->command->info('🧾 Orders seeded: '.$customers->count());
+        $this->command->info('✅ Customers seeded: ' . $customers->count());
+        $this->command->info('✅ Total orders created: ~' . ($customers->count() * 3));
     }
 
     /**
