@@ -13,6 +13,26 @@ class OrderLineFactory extends Factory
 {
     protected $model = \Cartino\Models\OrderLine::class;
 
+    /**
+     * Provide default attribute values for an OrderLine factory instance.
+     *
+     * The returned array contains attributes used to create an OrderLine, including factory closures
+     * for related models (`order_id`, `product_id`), placeholder/nullable fields, generated product
+     * metadata, pricing, quantity, and the computed `line_total`.
+     *
+     * @return array{
+     *     order_id: (\Closure)|\Illuminate\Database\Eloquent\Factories\Factory,
+     *     product_id: (\Closure)|\Illuminate\Database\Eloquent\Factories\Factory,
+     *     product_variant_id: null|int,
+     *     product_name: string,
+     *     product_sku: string,
+     *     product_options: null|array,
+     *     quantity: int,
+     *     unit_price: float,
+     *     line_total: float,
+     *     meta: null|array
+     * }
+     */
     public function definition(): array
     {
         $quantity = $this->faker->numberBetween(1, 3);
@@ -32,6 +52,13 @@ class OrderLineFactory extends Factory
         ];
     }
 
+    /**
+     * Configure the factory to create an OrderLine tied to the given product variant and order.
+     *
+     * @param \Cartino\Models\ProductVariant $variant The product variant to use for product fields and pricing.
+     * @param \Cartino\Models\Order $order The order to which the generated order line will belong.
+     * @return static The factory instance configured with the variant's product/product variant IDs, title, SKU, price, a quantity of 1, and the corresponding line total for the specified order.
+     */
     public function forVariant(ProductVariant $variant, Order $order): static
     {
         return $this->state(fn () => [

@@ -12,6 +12,21 @@ class WishlistItemFactory extends Factory
 {
     protected $model = \Cartino\Models\WishlistItem::class;
 
+    /**
+     * Provide default attribute values for a WishlistItem model instance.
+     *
+     * @return array{
+     *     wishlist_id: \Illuminate\Database\Eloquent\Factories\Factory|\Cartino\Models\Wishlist,
+     *     product_type: string,
+     *     product_id: \Illuminate\Database\Eloquent\Factories\Factory|\Cartino\Models\Product,
+     *     product_handle: string|null,
+     *     product_data: array|null,
+     *     variant_data: array|null,
+     *     quantity: int,
+     *     price_at_time: float,
+     *     note: string|null
+     * }
+     */
     public function definition(): array
     {
         return [

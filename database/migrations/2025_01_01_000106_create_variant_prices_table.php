@@ -6,6 +6,16 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Create database tables for variant pricing, price lists, and price list items with their columns, constraints, and indexes.
+     *
+     * Creates:
+     * - variant_prices: stores contextual and scheduled prices for product variants (includes currency, price/cost fields, tiering, schedule, priority, jsonb data), with foreign keys that cascade on delete and multiple indexes for context, schedule and resolution (including idx_price_resolution).
+     * - price_lists: defines bulk price list metadata and adjustment rules (adjustment_type/value, schedule, is_active, priority), includes soft deletes and indexes for active/priority and site/channel/customer_group.
+     * - price_list_items: maps price_list entries to product variants with pricing and min_quantity; enforces a unique composite constraint named `price_list_items_uq` on (price_list_id, product_variant_id, min_quantity) and an index on product_variant_id.
+     *
+     * @return void
+     */
     public function up(): void
     {
         // Advanced Pricing Table - Hierarchical with fallbacks

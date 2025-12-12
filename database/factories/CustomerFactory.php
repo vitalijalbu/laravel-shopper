@@ -13,6 +13,11 @@ class CustomerFactory extends Factory
 {
     protected $model = Customer::class;
 
+    /**
+     * Define default attribute values for a Customer factory.
+     *
+     * @return array An associative array of attributes suitable for creating a Customer model instance.
+     */
     public function definition(): array
     {
         $first = $this->faker->firstName();
@@ -35,6 +40,11 @@ class CustomerFactory extends Factory
         ];
     }
 
+    /**
+     * Configure the factory to produce a customer with an inactive status.
+     *
+     * @return static The factory instance configured to set `status` to 'inactive'.
+     */
     public function inactive(): static
     {
         return $this->state(fn () => ['status' => 'inactive']);

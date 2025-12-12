@@ -7,14 +7,10 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-     * Run the migrations.
+     * Create revision and taxonomy structures and extend core tables with a JSONB `data` column for dynamic fields.
      *
-     * Adds a `data` JSONB field to all custom models for dynamic field management.
-     * This implements a Statamic-like system where custom fields are defined via JSON schemas
-     * and stored in the `data` column, allowing flexible content management without
-     * database schema changes.
-     *
-     * Also creates revisions table for content versioning (Statamic/Shopify style).
+     * Creates the revisions, taxonomies, terms, and termables tables to support content versioning and taxonomy management,
+     * and adds a nullable `data` JSONB column to existing core business tables to store schema-defined custom fields (with a database-appropriate index when available).
      */
     public function up(): void
     {

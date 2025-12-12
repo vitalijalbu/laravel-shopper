@@ -15,6 +15,18 @@ class ProductFactory extends Factory
 {
     protected $model = Product::class;
 
+    /**
+     * Provide default attribute values for a Product model instance created by the factory.
+     *
+     * The returned array contains all model attributes used to create a Product, including generated
+     * text fields (title, slug, handle, excerpt, description), relationship IDs, product metadata,
+     * option templates, tags, publication info, and counts/price placeholders.
+     *
+     * Note: `brand_id` and `product_type_id` are lazy closures that resolve to a random existing ID
+     * at factory invocation time; `published_at` is set to now minus a random 1–30 days.
+     *
+     * @return array<string, mixed> Associative array of Product attributes suitable for model creation.
+     */
     public function definition(): array
     {
         $title = $this->faker->unique()->productName();
@@ -49,11 +61,22 @@ class ProductFactory extends Factory
         ];
     }
 
+    /**
+     * Configure the factory to assign a specific site ID to created products.
+     *
+     * @param int $siteId The site ID to assign.
+     * @return static A factory instance that will set `site_id` to the given value.
+     */
     public function forSite(int $siteId): static
     {
         return $this->state(fn () => ['site_id' => $siteId]);
     }
 
+    /**
+     * Configure the factory to produce a product with its `product_type` set to "digital".
+     *
+     * @return static A factory instance configured with `product_type` = "digital".
+     */
     public function digital(): static
     {
         return $this->state(fn () => ['product_type' => 'digital']);

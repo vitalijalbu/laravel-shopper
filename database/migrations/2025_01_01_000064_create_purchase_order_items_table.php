@@ -6,6 +6,15 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Create the purchase_order_items table with its columns, constraints, indexes, timestamps, and soft deletes.
+     *
+     * The table stores order-line details for purchase orders, including references to purchase_orders, products,
+     * and product_variants; SKU, name, description, quantities, pricing (unit and total), currency, and supplier info;
+     * receiving and status tracking (received batches, timestamps, status), quality-control fields, and inspection flag.
+     * Foreign key behaviors: purchase_order_id -> cascade on delete; product_id and product_variant_id -> restrict on delete.
+     * Adds composite and conditional indexes for common lookup patterns.
+     */
     public function up(): void
     {
         Schema::create('purchase_order_items', function (Blueprint $table) {

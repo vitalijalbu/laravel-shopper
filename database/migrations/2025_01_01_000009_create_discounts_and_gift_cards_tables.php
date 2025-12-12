@@ -6,6 +6,14 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Create database tables required for discounts and gift card functionality.
+     *
+     * Defines the `discounts`, `discount_usages`, `gift_cards`, and `gift_card_usages`
+     * tables, including their columns, indexes, and relevant foreign key relationships
+     * (for example, `site_id` references `sites.id` with cascade on delete and several
+     * constrained foreignIds to `users`, `customers`, and the discounts/gift_cards tables).
+     */
     public function up(): void
     {
         Schema::create('discounts', function (Blueprint $table) {

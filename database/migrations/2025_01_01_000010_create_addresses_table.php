@@ -6,6 +6,14 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Create the `addresses` table with schema, constraints, indexes, and soft delete/timestamps.
+     *
+     * Defines columns for polymorphic relations, name/contact/company, multi-line address, geolocation,
+     * validation metadata, default-address flags, JSON metadata, and notes. Adds a foreign key to
+     * `countries` that cascades on delete, common and composite indexes for lookup patterns, and a
+     * named full-text index on selected text columns when the default database driver is MySQL.
+     */
     public function up(): void
     {
         Schema::create('addresses', function (Blueprint $table) {

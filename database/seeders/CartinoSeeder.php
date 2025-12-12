@@ -38,13 +38,23 @@ class CartinoSeeder extends Seeder
 {
     use WithoutModelEvents;
 
+    /**
+     * Resolve an absolute path inside the package's data directory.
+     *
+     * @param string $relativePath Path relative to the package's data directory (may start with '/').
+     * @return string Absolute filesystem path to the requested data file.
+     */
     protected function packageDataPath(string $relativePath): string
     {
         return __DIR__ . '/../data/' . ltrim($relativePath, '/');
     }
 
     /**
-     * Run the database seeds.
+     * Seed the application's database with core, catalog, and customer/order demo data.
+     *
+     * Executes the seeding stages (core configuration, demo catalog, and customers/orders)
+     * inside a single database transaction so the operation is atomic. Outputs progress
+     * and completion messages to the seeder console.
      */
     public function run(): void
     {
@@ -62,7 +72,10 @@ class CartinoSeeder extends Seeder
     }
 
     /**
-     * Seed base configuration (sites, currencies, permissions, settings...)
+     * Seed core application configuration and reference data for a multi-site installation.
+     *
+     * Seeds sites, currencies, countries, channels, customer groups, brands, product types,
+     * settings, shipping zones and rates, tax rates, payment methods, permissions, and a default admin user.
      */
     protected function seedCoreData(): void
     {
@@ -286,8 +299,12 @@ class CartinoSeeder extends Seeder
     }
 
     /**
-     * Seed catalog data: categories, products, variants, prices, wishlists.
-     */
+         * Seed the demo catalog for the main site.
+         *
+         * Creates a small nested-set category tree, generates products with two product options
+         * (Color and Size), creates three variants per product, writes variant prices, and
+         * attaches each product to two random categories.
+         */
     protected function seedDemoCatalog(): void
     {
         $this->command->info('🛍️ Building demo catalog...');
@@ -402,8 +419,11 @@ class CartinoSeeder extends Seeder
     }
 
     /**
-     * Seed customers, carts, wishlists, orders.
-     */
+         * Populate the main site with demo customers and their associated data.
+         *
+         * Creates active customers and, for each: an address, a wishlist with items, an active cart with line items and computed totals,
+         * a corresponding order with order lines and totals, and a fidelity card with a transaction. Uses the main site and EUR currency.
+         */
     protected function seedCustomersAndOrders(): void
     {
         $this->command->info('👥 Generating customers, carts, and orders...');

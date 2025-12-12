@@ -14,6 +14,17 @@ class OrderFactory extends Factory
 {
     protected $model = Order::class;
 
+    /**
+     * Generate attribute values for a new Order model instance.
+     *
+     * Returns an associative array of attributes suitable for creating an Order,
+     * including site and currency ids, a unique order_number, optional customer
+     * information, computed monetary totals (subtotal, tax_total, shipping_total,
+     * discount_total, total), statuses (order, payment, fulfillment), payment and
+     * shipping details, nullable timestamps and other meta fields.
+     *
+     * @return array<string,mixed> Associative array of Order attributes.
+     */
     public function definition(): array
     {
         $subtotal = $this->faker->randomFloat(2, 20, 500);
@@ -50,6 +61,14 @@ class OrderFactory extends Factory
         ];
     }
 
+    /**
+     * Configure the factory to produce orders associated with the given customer.
+     *
+     * Sets the generated order's `customer_id`, `customer_email`, and `site_id` to the provided customer's values.
+     *
+     * @param Customer $customer The customer to associate with generated orders.
+     * @return static The factory instance scoped to the specified customer.
+     */
     public function forCustomer(Customer $customer): static
     {
         return $this->state(fn () => [

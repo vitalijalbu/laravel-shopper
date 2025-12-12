@@ -12,6 +12,28 @@ class TaxRateFactory extends Factory
 {
     protected $model = TaxRate::class;
 
+    /**
+     * Provide default attribute values for creating a TaxRate model instance.
+     *
+     * @return array{
+     *     name: string,
+     *     code: string,
+     *     rate: float,
+     *     type: string,
+     *     is_compound: bool,
+     *     is_inclusive: bool,
+     *     countries: string[],
+     *     states: null|array,
+     *     postcodes: null|array,
+     *     product_collections: null|array,
+     *     min_amount: null|float,
+     *     max_amount: null|float,
+     *     status: string,
+     *     effective_from: \Illuminate\Support\Carbon,
+     *     effective_until: null|\Illuminate\Support\Carbon,
+     *     description: string
+     * } Associative array of default attributes used to create a TaxRate.
+     */
     public function definition(): array
     {
         $code = Str::upper($this->faker->lexify('TAX???'));

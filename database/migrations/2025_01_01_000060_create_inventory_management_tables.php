@@ -7,10 +7,13 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-     * Run the migrations.
+     * Create database schema for an advanced multi-location inventory management system.
      *
-     * Advanced inventory management inspired by Shopify, Shopware, and Medusa.
-     * Multi-location inventory tracking, stock movements, and reservations.
+     * Defines tables to track inventory items, per-location levels, historical stock movements,
+     * reservations, inter-location transfers (and transfer items), and manual stock adjustments
+     * (and adjustment items). Each table includes indexes and foreign-key relationships to
+     * support querying, lifecycle states, and referential integrity across locations, orders,
+     * users, and product variants.
      */
     public function up(): void
     {

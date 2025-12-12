@@ -12,6 +12,11 @@ class AddressFactory extends Factory
 {
     protected $model = Address::class;
 
+    /**
+     * Provide default attribute values for creating an Address model instance.
+     *
+     * @return array<string,mixed> Associative array of Address attributes to default values (uses Faker for names, company, address, contact and coordinates); keys include `addressable_type`, `addressable_id`, `type`, `label`, `first_name`, `last_name`, `company`, `address_line_1`, `address_line_2`, `city`, `state`, `postal_code`, `country_id`, `phone`, `email`, `latitude`, `longitude`, `formatted_address`, `place_id`, `is_validated`, `validated_at`, `validation_source`, `is_default`, `is_default_billing`, `is_default_shipping`, `metadata`, and `notes`.
+     */
     public function definition(): array
     {
         return [

@@ -15,6 +15,31 @@ class VariantPriceFactory extends Factory
 {
     protected $model = VariantPrice::class;
 
+    /**
+     * Provide default attribute values for creating a VariantPrice model instance.
+     *
+     * Returns an associative array of attributes used by the factory to create a VariantPrice,
+     * including related model references, currency and pricing fields, quantity limits,
+     * active period, priority, and optional metadata.
+     *
+     * @return array{
+     *   product_variant_id: (\Closure|ProductVariant::class),
+     *   site_id: int|null,
+     *   channel_id: int|null,
+     *   customer_group_id: int|null,
+     *   catalog_id: null,
+     *   currency: string,
+     *   price: float,
+     *   compare_at_price: null,
+     *   cost: float,
+     *   min_quantity: int,
+     *   max_quantity: null,
+     *   starts_at: \Illuminate\Support\Carbon,
+     *   ends_at: null,
+     *   priority: int,
+     *   data: null
+     * }
+     */
     public function definition(): array
     {
         return [

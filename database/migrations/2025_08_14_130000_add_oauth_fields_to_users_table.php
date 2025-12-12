@@ -7,7 +7,13 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-     * Run the migrations.
+     * Add social authentication support to the database.
+     *
+     * Modifies the `users` table to add provider-related columns (`provider`, `provider_id`, `provider_token`,
+     * `provider_refresh_token`, `avatar`), makes `email_verified_at` and `password` nullable, and creates an index
+     * on (`provider`, `provider_id`). Creates the `user_social_accounts` table to store multiple social accounts per user,
+     * with `user_id` (foreign key, cascade on delete), `provider`, `provider_id`, optional tokens and provider data,
+     * timestamps, a unique constraint on (`provider`, `provider_id`), and an index on (`user_id`, `provider`).
      */
     public function up(): void
     {

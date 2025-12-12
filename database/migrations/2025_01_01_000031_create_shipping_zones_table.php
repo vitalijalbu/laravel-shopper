@@ -6,6 +6,15 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Create database tables, indexes, and constraints for shipping zones, shipping rates, rate tiers, and product exclusions.
+     *
+     * Creates:
+     * - shipping_zones: geographic zones with coverage, priority, status, timestamps, soft deletes, and custom data.
+     * - shipping_rates: methods tied to zones with pricing, calculation method, weight/price conditions, carrier settings, indexes, timestamps, soft deletes, and custom data.
+     * - shipping_rate_tiers: tiered pricing entries for rates with indexed range columns.
+     * - shipping_rate_product_exclusions: product exclusions for rates with a named unique constraint.
+     */
     public function up(): void
     {
         // Shipping Zones (Geographic regions with shipping rules)
