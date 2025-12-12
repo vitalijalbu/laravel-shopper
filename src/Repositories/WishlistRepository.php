@@ -19,6 +19,71 @@ class WishlistRepository extends BaseRepository
     /**
      * Get paginated wishlists with filters
      */
+    public function findAll(array $filters = []): \Illuminate\Pagination\LengthAwarePaginator
+    {
+        return \Spatie\QueryBuilder\QueryBuilder::for(Wishlist::class)
+            ->allowedFilters([
+                'name',
+                \Spatie\QueryBuilder\AllowedFilter::exact('customer_id'),
+                \Spatie\QueryBuilder\AllowedFilter::exact('status'),
+            ])
+            ->allowedSorts(['name', 'created_at'])
+            ->allowedIncludes(['customer', 'items', 'items.product'])
+            ->paginate($filters['per_page'] ?? config('settings.pagination.per_page', 15))
+            ->appends($filters);
+    }
+
+    /**
+     * Find one by ID
+     */
+    public function findOne(int $id): ?Wishlist
+    {
+        return $this->model->findOrFail($id);
+    }
+
+    /**
+     * Create one
+     */
+    public function createOne(array $data): Wishlist
+    {
+        $wishlist = $this->model->create($data);
+        $this->clearCache();
+        return $wishlist;
+    }
+
+    /**
+     * Update one
+     */
+    public function updateOne(int $id, array $data): Wishlist
+    {
+        $wishlist = $this->findOrFail($id);
+        $wishlist->update($data);
+        $this->clearCache();
+        return $wishlist->fresh();
+    }
+
+    /**
+     * Delete one
+     */
+    public function deleteOne(int $id): bool
+    {
+        $wishlist = $this->findOrFail($id);
+        $deleted = $wishlist->delete();
+        $this->clearCache();
+        return $deleted;
+    }
+
+    /**
+     * Check if can delete
+     */
+    public function canDelete(int $id): bool
+    {
+        return true; // Wishlists can always be deleted
+    }
+
+    /**
+     * Get paginated (legacy method - to be deprecated)
+     */
     public function getPaginated(array $filters = [], int $perPage = 15)
     {
         $query = $this->model->query()->with(['customer']);

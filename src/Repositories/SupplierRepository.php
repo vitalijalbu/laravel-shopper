@@ -6,9 +6,11 @@ namespace Cartino\Repositories;
 
 use Cartino\Contracts\SupplierRepositoryInterface;
 use Cartino\Models\Supplier;
-use Illuminate\Database\Eloquent\Category;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class SupplierRepository extends BaseRepository implements SupplierRepositoryInterface
 {
@@ -26,66 +28,83 @@ class SupplierRepository extends BaseRepository implements SupplierRepositoryInt
      */
     public function findAll(array $filters = []): LengthAwarePaginator
     {
-        $query = $this->model->newQuery()->with(['site']);
+        return QueryBuilder::for(Supplier::class)
+            ->allowedFilters([
+                'name',
+                'code',
+                'email',
+                'status',
+                AllowedFilter::exact('country_code'),
+                AllowedFilter::exact('is_preferred'),
+            ])
+            ->allowedSorts(['name', 'code', 'created_at', 'rating'])
+            ->allowedIncludes(['site', 'purchaseOrders'])
+            ->paginate($filters['per_page'] ?? config('settings.pagination.per_page', 15))
+            ->appends($filters);
+    }
 
-        // Search filter
-        if (! empty($filters['search'])) {
-            $search = $filters['search'];
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                    ->orWhere('code', 'like', "%{$search}%")
-                    ->orWhere('email', 'like', "%{$search}%")
-                    ->orWhere('contact_person', 'like', "%{$search}%")
-                    ->orWhere('phone', 'like', "%{$search}%");
-            });
-        }
+    /**
+     * Find one by ID or code
+     */
+    public function findOne(int|string $codeOrId): ?Supplier
+    {
+        return $this->model
+            ->where('id', $codeOrId)
+            ->orWhere('code', $codeOrId)
+            ->firstOrFail();
+    }
 
-        // Status filter
-        if (! empty($filters['status'])) {
-            $query->where('status', $filters['status']);
-        }
+    /**
+     * Create one
+     */
+    public function createOne(array $data): Supplier
+    {
+        $supplier = $this->model->create($data);
+        $this->clearCache();
+        return $supplier;
+    }
 
-        // Country filter
-        if (! empty($filters['country_code'])) {
-            $query->where('country_code', $filters['country_code']);
-        }
+    /**
+     * Update one
+     */
+    public function updateOne(int $id, array $data): Supplier
+    {
+        $supplier = $this->findOrFail($id);
+        $supplier->update($data);
+        $this->clearCache();
+        return $supplier->fresh();
+    }
 
-        // Priority filter
-        if (! empty($filters['priority'])) {
-            $query->where('priority', $filters['priority']);
-        }
+    /**
+     * Delete one
+     */
+    public function deleteOne(int $id): bool
+    {
+        $supplier = $this->findOrFail($id);
+        $deleted = $supplier->delete();
+        $this->clearCache();
+        return $deleted;
+    }
 
-        // Rating filter
-        if (! empty($filters['min_rating'])) {
-            $query->where('rating', '>=', $filters['min_rating']);
-        }
+    /**
+     * Check if can delete
+     */
+    public function canDelete(int $id): bool
+    {
+        $supplier = $this->findOrFail($id);
+        return !$supplier->purchaseOrders()->exists();
+    }
 
-        // Preferred filter
-        if (isset($filters['is_preferred'])) {
-            $query->where('is_preferred', $filters['is_preferred']);
-        }
-
-        // Verified filter
-        if (isset($filters['is_verified'])) {
-            $query->where('is_verified', $filters['is_verified']);
-        }
-
-        // Date range filters
-        if (! empty($filters['created_from'])) {
-            $query->whereDate('created_at', '>=', $filters['created_from']);
-        }
-
-        if (! empty($filters['created_to'])) {
-            $query->whereDate('created_at', '<=', $filters['created_to']);
-        }
-
-        // Sorting
-        $sortField = $filters['sort'] ?? 'name';
-        $sortDirection = $filters['direction'] ?? 'asc';
-
-        $query->orderBy($sortField, $sortDirection);
-
-        return $query->paginate($perPage);
+    /**
+     * Toggle supplier status
+     */
+    public function toggleStatus(int $id): Supplier
+    {
+        $supplier = $this->findOrFail($id);
+        $newStatus = $supplier->status === 'active' ? 'inactive' : 'active';
+        $supplier->update(['status' => $newStatus]);
+        $this->clearCache();
+        return $supplier->fresh();
     }
 
     /**
@@ -280,37 +299,6 @@ class SupplierRepository extends BaseRepository implements SupplierRepositoryInt
             'average_order_value' => round($totalValue / $totalOrders, 2),
         ];
     }
-
-    /**
-     * Toggle supplier status
-     */
-    public function toggleStatus(int $id): Supplier
-    {
-        $supplier = $this->findOrFail($id);
-        $newStatus = $supplier->status === 'active' ? 'inactive' : 'active';
-        $supplier->update(['status' => $newStatus]);
-
-        $this->clearCache();
-
-        return $supplier->fresh();
-    }
-
-    /**
-     * Check if supplier can be deleted
-     */
-    public function canDelete(int $id): bool
-    {
-        $supplier = $this->find($id);
-
-        if (! $supplier) {
-            return false;
-        }
-
-        // Check if supplier has products
-        if ($supplier->products()->exists()) {
-            return false;
-        }
-
         // Check if supplier has purchase orders
         if ($supplier->purchaseOrders()->exists()) {
             return false;

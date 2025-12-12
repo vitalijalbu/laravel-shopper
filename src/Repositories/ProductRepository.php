@@ -27,18 +27,83 @@ class ProductRepository extends BaseRepository
         $dynamicIncludes = Arr::get($filters, 'includes', []);
 
         return QueryBuilder::for(Product::class)
-            ->allowedFilters(['name', 'email'])
-            ->allowedSorts(['name', 'created_at', 'status'])
+            ->allowedFilters(['name', 'sku', 'status', 'slug'])
+            ->allowedSorts(['name', 'created_at', 'status', 'price_amount'])
             ->allowedIncludes([
                 'brand',
                 'productType',
                 'categories',
                 'collections',
                 'tags',
+                'variants',
                 ...$dynamicIncludes
             ])
             ->paginate($filters['per_page'] ?? config('settings.pagination.per_page'))
             ->appends($filters);
+    }
+
+    /**
+     * Find one by ID or slug
+     */
+    public function findOne(int|string $slugOrId): ?Product
+    {
+        return $this->model
+            ->where('id', $slugOrId)
+            ->orWhere('slug', $slugOrId)
+            ->firstOrFail();
+    }
+
+    /**
+     * Create one
+     */
+    public function createOne(array $data): Product
+    {
+        $product = $this->model->create($data);
+        $this->clearCache();
+        return $product;
+    }
+
+    /**
+     * Update one
+     */
+    public function updateOne(int $id, array $data): Product
+    {
+        $product = $this->findOrFail($id);
+        $product->update($data);
+        $this->clearCache();
+        return $product->fresh();
+    }
+
+    /**
+     * Delete one
+     */
+    public function deleteOne(int $id): bool
+    {
+        $product = $this->findOrFail($id);
+        $deleted = $product->delete();
+        $this->clearCache();
+        return $deleted;
+    }
+
+    /**
+     * Check if can delete
+     */
+    public function canDelete(int $id): bool
+    {
+        $product = $this->findOrFail($id);
+        return !$product->variants()->exists() && !$product->orderLines()->exists();
+    }
+
+    /**
+     * Toggle product status
+     */
+    public function toggleStatus(int $id): Product
+    {
+        $product = $this->findOrFail($id);
+        $newStatus = $product->status === 'published' ? 'draft' : 'published';
+        $product->update(['status' => $newStatus]);
+        $this->clearCache();
+        return $product->fresh();
     }
 
     public function createWithRelations(array $data, array $relations = []): Product
@@ -167,22 +232,6 @@ class ProductRepository extends BaseRepository
 
         return $this;
     }
-
-    public function canDelete(int $id): bool
-    {
-        $product = $this->find($id);
-
-        if (! $product) {
-            return false;
-        }
-
-        // Check if product has orders
-        if ($product->orders()->exists()) {
-            return false;
-        }
-
-        // Check if product has variants
-        if ($product->variants()->exists()) {
             return false;
         }
 

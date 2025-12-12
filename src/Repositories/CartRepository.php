@@ -14,13 +14,79 @@ class CartRepository extends BaseRepository
 
     protected int $cacheTtl = 3600; // 1 hour
 
-    public function model(): string
+    protected function makeModel(): \Illuminate\Database\Eloquent\Model
     {
-        return Cart::class;
+        return new Cart;
     }
 
     /**
      * Get paginated carts with filters
+     */
+    public function findAll(array $filters = []): \Illuminate\Pagination\LengthAwarePaginator
+    {
+        return \Spatie\QueryBuilder\QueryBuilder::for(Cart::class)
+            ->allowedFilters([
+                'session_id',
+                'email',
+                \Spatie\QueryBuilder\AllowedFilter::exact('customer_id'),
+                \Spatie\QueryBuilder\AllowedFilter::exact('status'),
+            ])
+            ->allowedSorts(['created_at', 'total_amount', 'abandoned_at'])
+            ->allowedIncludes(['customer', 'items', 'items.product'])
+            ->paginate($filters['per_page'] ?? config('settings.pagination.per_page', 15))
+            ->appends($filters);
+    }
+
+    /**
+     * Find one by ID
+     */
+    public function findOne(int $id): ?Cart
+    {
+        return $this->model->findOrFail($id);
+    }
+
+    /**
+     * Create one
+     */
+    public function createOne(array $data): Cart
+    {
+        $cart = $this->model->create($data);
+        $this->clearCache();
+        return $cart;
+    }
+
+    /**
+     * Update one
+     */
+    public function updateOne(int $id, array $data): Cart
+    {
+        $cart = $this->findOrFail($id);
+        $cart->update($data);
+        $this->clearCache();
+        return $cart->fresh();
+    }
+
+    /**
+     * Delete one
+     */
+    public function deleteOne(int $id): bool
+    {
+        $cart = $this->findOrFail($id);
+        $deleted = $cart->delete();
+        $this->clearCache();
+        return $deleted;
+    }
+
+    /**
+     * Check if can delete
+     */
+    public function canDelete(int $id): bool
+    {
+        return true; // Carts can always be deleted
+    }
+
+    /**
+     * Get paginated (legacy method - to be deprecated)
      */
     public function getPaginated(array $filters = [], int $perPage = 15)
     {

@@ -17,6 +17,69 @@ class SettingRepository extends BaseRepository
     }
 
     /**
+     * Get all settings paginated
+     */
+    public function findAll(array $filters = []): \Illuminate\Pagination\LengthAwarePaginator
+    {
+        return \Spatie\QueryBuilder\QueryBuilder::for(Setting::class)
+            ->allowedFilters(['key', 'group'])
+            ->allowedSorts(['key', 'created_at'])
+            ->paginate($filters['per_page'] ?? config('settings.pagination.per_page', 15))
+            ->appends($filters);
+    }
+
+    /**
+     * Find one by ID or key
+     */
+    public function findOne(int|string $keyOrId): ?Setting
+    {
+        return $this->model
+            ->where('id', $keyOrId)
+            ->orWhere('key', $keyOrId)
+            ->firstOrFail();
+    }
+
+    /**
+     * Create one
+     */
+    public function createOne(array $data): Setting
+    {
+        $setting = $this->model->create($data);
+        $this->clearCache();
+        return $setting;
+    }
+
+    /**
+     * Update one
+     */
+    public function updateOne(int $id, array $data): Setting
+    {
+        $setting = $this->findOrFail($id);
+        $setting->update($data);
+        $this->clearCache();
+        return $setting->fresh();
+    }
+
+    /**
+     * Delete one
+     */
+    public function deleteOne(int $id): bool
+    {
+        $setting = $this->findOrFail($id);
+        $deleted = $setting->delete();
+        $this->clearCache();
+        return $deleted;
+    }
+
+    /**
+     * Check if can delete
+     */
+    public function canDelete(int $id): bool
+    {
+        return true; // Settings can always be deleted
+    }
+
+    /**
      * Get setting value by key
      */
     public function get(string $key, $default = null)

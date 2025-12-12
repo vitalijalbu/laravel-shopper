@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Cartino\Repositories;
 
 use Cartino\Models\Customer;
@@ -24,48 +26,76 @@ class OrderRepository extends BaseRepository
      */
     public function findAll(array $filters = []): LengthAwarePaginator
     {
-        $query = $this->model->newQuery()
-            ->with(['customer', 'items.product']);
+        return QueryBuilder::for(Order::class)
+            ->allowedFilters([
+                'order_number',
+                'status',
+                'payment_status',
+                AllowedFilter::exact('customer_id'),
+                AllowedFilter::scope('date_from'),
+                AllowedFilter::scope('date_to'),
+            ])
+            ->allowedSorts(['order_number', 'created_at', 'total_amount', 'status'])
+            ->allowedIncludes(['customer', 'items', 'items.product'])
+            ->paginate($filters['per_page'] ?? config('settings.pagination.per_page', 15))
+            ->appends($filters);
+    }
 
-        // Search filter
-        if (! empty($filters['search'])) {
-            $search = $filters['search'];
-            $query->where(function ($q) use ($search) {
-                $q->where('order_number', 'like', "%{$search}%")
-                    ->orWhereHas('customer', function ($customerQuery) use ($search) {
-                        $customerQuery->where('first_name', 'like', "%{$search}%")
-                            ->orWhere('last_name', 'like', "%{$search}%")
-                            ->orWhere('email', 'like', "%{$search}%");
-                    });
-            });
+    /**
+     * Find one by ID or order number
+     */
+    public function findOne(int|string $orderNumberOrId): ?Order
+    {
+        return $this->model
+            ->where('id', $orderNumberOrId)
+            ->orWhere('order_number', $orderNumberOrId)
+            ->firstOrFail();
+    }
+
+    /**
+     * Create one
+     */
+    public function createOne(array $data): Order
+    {
+        // Generate order number if not provided
+        if (empty($data['order_number'])) {
+            $data['order_number'] = $this->generateOrderNumber();
         }
 
-        // Status filter
-        if (! empty($filters['status'])) {
-            $query->where('status', $filters['status']);
-        }
+        $order = $this->model->create($data);
+        $this->clearCache();
+        return $order;
+    }
 
-        // Payment status filter
-        if (! empty($filters['payment_status'])) {
-            $query->where('payment_status', $filters['payment_status']);
-        }
+    /**
+     * Update one
+     */
+    public function updateOne(int $id, array $data): Order
+    {
+        $order = $this->findOrFail($id);
+        $order->update($data);
+        $this->clearCache();
+        return $order->fresh();
+    }
 
-        // Date range filters
-        if (! empty($filters['date_from'])) {
-            $query->whereDate('created_at', '>=', $filters['date_from']);
-        }
+    /**
+     * Delete one
+     */
+    public function deleteOne(int $id): bool
+    {
+        $order = $this->findOrFail($id);
+        $deleted = $order->delete();
+        $this->clearCache();
+        return $deleted;
+    }
 
-        if (! empty($filters['date_to'])) {
-            $query->whereDate('created_at', '<=', $filters['date_to']);
-        }
-
-        // Sorting
-        $sortField = $filters['sort'] ?? 'created_at';
-        $sortDirection = $filters['direction'] ?? 'desc';
-
-        $query->orderBy($sortField, $sortDirection);
-
-        return $query->paginate($perPage);
+    /**
+     * Check if can delete
+     */
+    public function canDelete(int $id): bool
+    {
+        $order = $this->findOrFail($id);
+        return in_array($order->status, ['draft', 'cancelled']);
     }
 
     /**

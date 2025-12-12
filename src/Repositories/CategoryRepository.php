@@ -21,10 +21,75 @@ final class CategoryRepository extends BaseRepository
     public function findAll(array $filters = []): LengthAwarePaginator
     {
         return $query = QueryBuilder::for(Category::class)
-            ->allowedFilters(['name', 'email'])
+            ->allowedFilters(['name', 'slug', 'status'])
             ->allowedSorts(['name', 'created_at', 'status'])
+            ->allowedIncludes(['parent', 'children', 'products'])
             ->paginate($filters['per_page'] ?? config('settings.pagination.per_page'))
             ->appends($filters);
+    }
+
+    /**
+     * Find one by ID or slug
+     */
+    public function findOne(int|string $slugOrId): ?Category
+    {
+        return $this->model
+            ->where('id', $slugOrId)
+            ->orWhere('slug', $slugOrId)
+            ->firstOrFail();
+    }
+
+    /**
+     * Create one
+     */
+    public function createOne(array $data): Category
+    {
+        $category = $this->model->create($data);
+        $this->clearCache();
+        return $category;
+    }
+
+    /**
+     * Update one
+     */
+    public function updateOne(int $id, array $data): Category
+    {
+        $category = $this->findOrFail($id);
+        $category->update($data);
+        $this->clearCache();
+        return $category->fresh();
+    }
+
+    /**
+     * Delete one
+     */
+    public function deleteOne(int $id): bool
+    {
+        $category = $this->findOrFail($id);
+        $deleted = $category->delete();
+        $this->clearCache();
+        return $deleted;
+    }
+
+    /**
+     * Check if can delete
+     */
+    public function canDelete(int $id): bool
+    {
+        $category = $this->findOrFail($id);
+        return !$category->products()->exists() && !$category->children()->exists();
+    }
+
+    /**
+     * Toggle category status
+     */
+    public function toggleStatus(int $id): Category
+    {
+        $category = $this->findOrFail($id);
+        $newStatus = $category->is_visible ? false : true;
+        $category->update(['is_visible' => $newStatus]);
+        $this->clearCache();
+        return $category->fresh();
     }
 
     public function findWithProducts(int $id): ?Category

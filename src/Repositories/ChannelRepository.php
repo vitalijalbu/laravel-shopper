@@ -25,10 +25,54 @@ class ChannelRepository extends BaseRepository
     public function findAll(array $filters = []): LengthAwarePaginator
     {
         return $query = QueryBuilder::for(Channel::class)
-            ->allowedFilters(['name', 'email'])
-            ->allowedSorts(['name', 'created_at', 'status'])
+            ->allowedFilters(['name', 'slug', 'is_active'])
+            ->allowedSorts(['name', 'created_at'])
+            ->allowedIncludes(['site'])
             ->paginate($filters['per_page'] ?? config('settings.pagination.per_page'))
             ->appends($filters);
+    }
+
+    /**
+     * Find one by ID or slug
+     */
+    public function findOne(int|string $slugOrId): ?Channel
+    {
+        return $this->model
+            ->where('id', $slugOrId)
+            ->orWhere('slug', $slugOrId)
+            ->firstOrFail();
+    }
+
+    /**
+     * Create one
+     */
+    public function createOne(array $data): Channel
+    {
+        $channel = $this->model->create($data);
+        $this->clearCache();
+        return $channel;
+    }
+
+    /**
+     * Update one
+     */
+    public function updateOne(int $id, array $data): Channel
+    {
+        $channel = $this->findOrFail($id);
+        $channel->update($data);
+        $this->clearCache();
+        return $channel->fresh();
+    }
+
+    /**
+     * Delete one
+     */
+    public function deleteOne(int $id): bool
+    {
+        $channel = $this->findOrFail($id);
+        $deleted = $channel->delete();
+        $this->clearCache();
+        return $deleted;
     }
 
     /**

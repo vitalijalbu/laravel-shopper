@@ -21,29 +21,75 @@ class MenuRepository extends BaseRepository
      */
     public function findAll(array $filters = []): LengthAwarePaginator
     {
-        $query = $this->model->newQuery()->withCount('allItems');
+        return \Spatie\QueryBuilder\QueryBuilder::for(Menu::class)
+            ->allowedFilters(['title', 'handle', 'is_active'])
+            ->allowedSorts(['title', 'sort_order', 'created_at'])
+            ->allowedIncludes(['items'])
+            ->withCount('allItems')
+            ->paginate($filters['per_page'] ?? config('settings.pagination.per_page', 15))
+            ->appends($filters);
+    }
 
-        // Search filter
-        if (! empty($filters['search'])) {
-            $search = $filters['search'];
-            $query->where(function ($q) use ($search) {
-                $q->where('title', 'like', "%{$search}%")
-                    ->orWhere('handle', 'like', "%{$search}%")
-                    ->orWhere('description', 'like', "%{$search}%");
-            });
-        }
+    /**
+     * Find one by ID or handle
+     */
+    public function findOne(int|string $handleOrId): ?Menu
+    {
+        return $this->model
+            ->where('id', $handleOrId)
+            ->orWhere('handle', $handleOrId)
+            ->firstOrFail();
+    }
 
-        // Status filter
-        if (isset($filters['is_active'])) {
-            $query->where('is_active', $filters['is_active']);
-        }
+    /**
+     * Create one
+     */
+    public function createOne(array $data): Menu
+    {
+        $menu = $this->model->create($data);
+        $this->clearCache();
+        return $menu;
+    }
 
-        // Sorting
-        $sortField = $filters['sort'] ?? 'sort_order';
-        $sortDirection = $filters['direction'] ?? 'asc';
-        $query->orderBy($sortField, $sortDirection);
+    /**
+     * Update one
+     */
+    public function updateOne(int $id, array $data): Menu
+    {
+        $menu = $this->findOrFail($id);
+        $menu->update($data);
+        $this->clearCache();
+        return $menu->fresh();
+    }
 
-        return $query->paginate($perPage);
+    /**
+     * Delete one
+     */
+    public function deleteOne(int $id): bool
+    {
+        $menu = $this->findOrFail($id);
+        $deleted = $menu->delete();
+        $this->clearCache();
+        return $deleted;
+    }
+
+    /**
+     * Check if can delete
+     */
+    public function canDelete(int $id): bool
+    {
+        return true; // Menus can always be deleted
+    }
+
+    /**
+     * Toggle menu status
+     */
+    public function toggleStatus(int $id): Menu
+    {
+        $menu = $this->findOrFail($id);
+        $menu->update(['is_active' => !$menu->is_active]);
+        $this->clearCache();
+        return $menu->fresh();
     }
 
     /**
@@ -156,26 +202,9 @@ class MenuRepository extends BaseRepository
     }
 
     /**
-     * Toggle menu status
-     */
-    public function toggleStatus(int $id): ?Menu
-    {
-        $menu = $this->find($id);
-
-        if (! $menu) {
-            return null;
-        }
-
-        $menu->update(['is_active' => ! $menu->is_active]);
-        $this->clearCache();
-
-        return $menu->fresh();
-    }
-
-    /**
      * Get menus for select options
      */
-    public function getForSelect(): Category
+    public function getForSelect(): \Illuminate\Support\Collection
     {
         return $this->model->select('id', 'title', 'handle')
             ->where('is_active', true)

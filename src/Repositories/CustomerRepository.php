@@ -6,6 +6,8 @@ use Cartino\Models\Customer;
 use Cartino\Models\CustomerGroup;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class CustomerRepository extends BaseRepository
 {
@@ -23,86 +25,82 @@ class CustomerRepository extends BaseRepository
      */
     public function findAll(array $filters = []): LengthAwarePaginator
     {
-        $query = $this->model->newQuery()
-            ->with(['customerGroup', 'fidelityCard'])
-            ->withCount(['orders'])
-            ->withSum('orders', 'total_amount');
+        return QueryBuilder::for(Customer::class)
+            ->allowedFilters([
+                'first_name',
+                'last_name',
+                'email',
+                'phone_number',
+                AllowedFilter::exact('customer_group_id'),
+                AllowedFilter::exact('is_active'),
+            ])
+            ->allowedSorts(['first_name', 'last_name', 'email', 'created_at'])
+            ->allowedIncludes(['customerGroup', 'fidelityCard', 'orders', 'addresses'])
+            ->paginate($filters['per_page'] ?? config('settings.pagination.per_page', 15))
+            ->appends($filters);
+    }
 
-        // Search filter
-        if (! empty($filters['search'])) {
-            $search = $filters['search'];
-            $query->where(function ($q) use ($search) {
-                $q->where('first_name', 'like', "%{$search}%")
-                    ->orWhere('last_name', 'like', "%{$search}%")
-                    ->orWhere('email', 'like', "%{$search}%")
-                    ->orWhere('phone_number', 'like', "%{$search}%")
-                    ->orWhereHas('fidelityCard', function ($fq) use ($search) {
-                        $fq->where('card_number', 'like', "%{$search}%");
-                    });
-            });
-        }
-
-        // Status filter
-        if (! empty($filters['status'])) {
-            $isActive = $filters['status'] === 'active';
-            $query->where('is_active', $isActive);
-        }
-
-        // Customer group filter
-        if (! empty($filters['customer_group_id'])) {
-            $query->where('customer_group_id', $filters['customer_group_id']);
-        }
-
-        // Sorting
-        $sortField = $filters['sort'] ?? 'created_at';
-        $sortDirection = $filters['direction'] ?? 'desc';
-
-        // Handle special sort fields
-        if ($sortField === 'total_spent') {
-            $query->orderBy('orders_sum_total_amount', $sortDirection);
-        } elseif ($sortField === 'orders_count') {
-            $query->orderBy('orders_count', $sortDirection);
-        } else {
-            $query->orderBy($sortField, $sortDirection);
-        }
-
-        return $query->paginate($perPage);
+    /**
+     * Find one by ID or email
+     */
+    public function findOne(int|string $emailOrId): ?Customer
+    {
+        return $this->model
+            ->where('id', $emailOrId)
+            ->orWhere('email', $emailOrId)
+            ->firstOrFail();
     }
 
     /**
      * Create a new customer
      */
-    public function create(array $data): Customer
+    public function createOne(array $data): Customer
     {
-        // Clear cache
+        $customer = $this->model->create($data);
         $this->clearCache();
-
-        return $this->model->create($data);
+        return $customer;
     }
 
     /**
      * Update customer
      */
-    public function update(int $id, array $attributes): Model
+    public function updateOne(int $id, array $data): Customer
     {
-        // Clear cache
+        $customer = $this->findOrFail($id);
+        $customer->update($data);
         $this->clearCache();
-
-        $customer = $this->model->find($id);
-        $customer->update($attributes);
-
-        return $customer;
+        return $customer->fresh();
     }
 
     /**
      * Delete customer
      */
-    public function delete(int $id): bool
+    public function deleteOne(int $id): bool
     {
-        // Clear cache
+        $customer = $this->findOrFail($id);
+        $deleted = $customer->delete();
         $this->clearCache();
+        return $deleted;
+    }
 
-        return $this->model->find($id)->delete();
+    /**
+     * Check if can delete
+     */
+    public function canDelete(int $id): bool
+    {
+        $customer = $this->findOrFail($id);
+        return !$customer->orders()->exists();
+    }
+
+    /**
+     * Toggle customer active status
+     */
+    public function toggleStatus(int $id): Customer
+    {
+        $customer = $this->findOrFail($id);
+        $customer->update(['is_active' => !$customer->is_active]);
+        $this->clearCache();
+        return $customer->fresh();
     }
 
     /**
@@ -236,16 +234,6 @@ class CustomerRepository extends BaseRepository
         $query = $this->model->with($relations);
 
         return $query->find($id);
-    }
-
-    /**
-     * Check if customer can be deleted
-     */
-    public function canDelete(int $id): bool
-    {
-        $customer = $this->model->find($id);
-
-        return $customer && ! $customer->orders()->exists();
     }
 
     /**

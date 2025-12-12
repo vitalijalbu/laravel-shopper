@@ -20,45 +20,78 @@ class TaxRateRepository extends BaseRepository
      */
     public function findAll(array $filters = []): LengthAwarePaginator
     {
-        $query = $this->model->newQuery();
+        return \Spatie\QueryBuilder\QueryBuilder::for(TaxRate::class)
+            ->allowedFilters([
+                'name',
+                'code',
+                'type',
+                \Spatie\QueryBuilder\AllowedFilter::exact('is_enabled'),
+            ])
+            ->allowedSorts(['name', 'code', 'rate', 'created_at'])
+            ->paginate($filters['per_page'] ?? config('settings.pagination.per_page', 15))
+            ->appends($filters);
+    }
 
-        // Search filter
-        if (! empty($filters['search'])) {
-            $search = $filters['search'];
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                    ->orWhere('code', 'like', "%{$search}%")
-                    ->orWhere('description', 'like', "%{$search}%");
-            });
-        }
+    /**
+     * Find one by ID or code
+     */
+    public function findOne(int|string $codeOrId): ?TaxRate
+    {
+        return $this->model
+            ->where('id', $codeOrId)
+            ->orWhere('code', $codeOrId)
+            ->firstOrFail();
+    }
 
-        // Status filter
-        if (! empty($filters['status'])) {
-            if ($filters['status'] === 'active') {
-                $query->active();
-            } elseif ($filters['status'] === 'enabled') {
-                $query->enabled();
-            } elseif ($filters['status'] === 'disabled') {
-                $query->where('is_enabled', false);
-            }
-        }
+    /**
+     * Create one
+     */
+    public function createOne(array $data): TaxRate
+    {
+        $taxRate = $this->model->create($data);
+        $this->clearCache();
+        return $taxRate;
+    }
 
-        // Type filter
-        if (! empty($filters['type'])) {
-            $query->where('type', $filters['type']);
-        }
+    /**
+     * Update one
+     */
+    public function updateOne(int $id, array $data): TaxRate
+    {
+        $taxRate = $this->findOrFail($id);
+        $taxRate->update($data);
+        $this->clearCache();
+        return $taxRate->fresh();
+    }
 
-        // Country filter
-        if (! empty($filters['country'])) {
-            $query->whereJsonContains('countries', strtoupper($filters['country']));
-        }
+    /**
+     * Delete one
+     */
+    public function deleteOne(int $id): bool
+    {
+        $taxRate = $this->findOrFail($id);
+        $deleted = $taxRate->delete();
+        $this->clearCache();
+        return $deleted;
+    }
 
-        // Sorting
-        $sortField = $filters['sort'] ?? 'name';
-        $sortDirection = $filters['direction'] ?? 'asc';
-        $query->orderBy($sortField, $sortDirection);
+    /**
+     * Check if can delete
+     */
+    public function canDelete(int $id): bool
+    {
+        return true; // Tax rates can always be deleted
+    }
 
-        return $query->paginate($perPage);
+    /**
+     * Toggle tax rate status
+     */
+    public function toggleStatus(int $id): TaxRate
+    {
+        $taxRate = $this->findOrFail($id);
+        $taxRate->update(['is_enabled' => !$taxRate->is_enabled]);
+        $this->clearCache();
+        return $taxRate->fresh();
     }
 
     /**
@@ -244,7 +277,7 @@ class TaxRateRepository extends BaseRepository
     /**
      * Get tax zones for dropdown
      */
-    public function getTaxZones(): \Illuminate\Support\Category
+    public function getTaxZones(): \Illuminate\Support\Collection
     {
         $cacheKey = $this->getCacheKey('tax_zones', 'all');
 
@@ -256,25 +289,6 @@ class TaxRateRepository extends BaseRepository
             ]);
         });
     }
-
-    /**
-     * Toggle tax rate status
-     */
-    public function toggleStatus(int $id): ?TaxRate
-    {
-        $taxRate = $this->model->find($id);
-
-        if (! $taxRate) {
-            return null;
-        }
-
-        $taxRate->update([
-            'is_active' => ! $taxRate->is_active,
-        ]);
-
-        $this->clearCache();
-
-        return $taxRate->fresh();
     }
 
     /**

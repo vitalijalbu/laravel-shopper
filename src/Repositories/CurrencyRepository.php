@@ -20,22 +20,74 @@ class CurrencyRepository extends BaseRepository
 
     public function findAll(array $filters = []): LengthAwarePaginator
     {
-        $query = $this->model->newQuery();
+        return \Spatie\QueryBuilder\QueryBuilder::for(Currency::class)
+            ->allowedFilters(['name', 'code', 'symbol', 'is_enabled'])
+            ->allowedSorts(['name', 'code', 'created_at'])
+            ->paginate($filters['per_page'] ?? config('settings.pagination.per_page', 15))
+            ->appends($filters);
+    }
 
-        if (! empty($filters['search'])) {
-            $search = $filters['search'];
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                    ->orWhere('code', 'like', "%{$search}%")
-                    ->orWhere('symbol', 'like', "%{$search}%");
-            });
-        }
+    /**
+     * Find one by ID or code
+     */
+    public function findOne(int|string $codeOrId): ?Currency
+    {
+        return $this->model
+            ->where('id', $codeOrId)
+            ->orWhere('code', $codeOrId)
+            ->firstOrFail();
+    }
 
-        if (isset($filters['is_enabled'])) {
-            $query->where('is_enabled', $filters['is_enabled']);
-        }
+    /**
+     * Create one
+     */
+    public function createOne(array $data): Currency
+    {
+        $currency = $this->model->create($data);
+        $this->clearCache();
+        return $currency;
+    }
 
-        return $query->orderBy('name')->paginate($perPage);
+    /**
+     * Update one
+     */
+    public function updateOne(int $id, array $data): Currency
+    {
+        $currency = $this->findOrFail($id);
+        $currency->update($data);
+        $this->clearCache();
+        return $currency->fresh();
+    }
+
+    /**
+     * Delete one
+     */
+    public function deleteOne(int $id): bool
+    {
+        $currency = $this->findOrFail($id);
+        $deleted = $currency->delete();
+        $this->clearCache();
+        return $deleted;
+    }
+
+    /**
+     * Check if can delete
+     */
+    public function canDelete(int $id): bool
+    {
+        $currency = $this->findOrFail($id);
+        return !$currency->is_default;
+    }
+
+    /**
+     * Toggle status
+     */
+    public function toggleStatus(int $id): Currency
+    {
+        $currency = $this->findOrFail($id);
+        $currency->update(['is_enabled' => !$currency->is_enabled]);
+        $this->clearCache();
+        return $currency->fresh();
     }
 
     public function getEnabled(): Category
