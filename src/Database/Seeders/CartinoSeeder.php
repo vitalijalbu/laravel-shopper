@@ -398,7 +398,7 @@ class CartinoSeeder extends Seeder
 
         $products = collect();
         $batchSize = 500; // Larger batches for better performance
-        $totalProducts = 5000;
+        $totalProducts = 500;
         $totalBatches = (int) ceil($totalProducts / $batchSize);
 
         $this->command->getOutput()->progressStart($totalProducts);
@@ -448,6 +448,12 @@ class CartinoSeeder extends Seeder
                         'product_id' => $product->id,
                         'site_id' => $product->site_id,
                     ])->raw();
+                    // Ensure JSON fields are properly encoded for batch insert
+                    foreach (['options', 'data', 'dimensions'] as $jsonKey) {
+                        if (array_key_exists($jsonKey, $variantData) && is_array($variantData[$jsonKey])) {
+                            $variantData[$jsonKey] = json_encode($variantData[$jsonKey]);
+                        }
+                    }
                     $variantsBatch[] = $variantData;
                     $productVariants[] = $variantData;
                 }

@@ -6,12 +6,15 @@ namespace Cartino\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class VariantPrice extends Model
 {
+    use HasFactory;
     protected $fillable = [
         'product_variant_id',
-        'market_id',
+        'site_id',
+        'channel_id',
         'customer_group_id',
         'catalog_id',
         'currency',
