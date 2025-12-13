@@ -20,8 +20,10 @@ class Order extends Model
     use SoftDeletes;
 
     protected $fillable = [
+        'site_id',
         'order_number',
         'customer_id',
+        'subscription_id',
         'customer_email',
         'customer_details',
         'currency_id',
@@ -118,6 +120,11 @@ class Order extends Model
     public function customer(): BelongsTo
     {
         return $this->belongsTo(Customer::class);
+    }
+
+    public function subscription(): BelongsTo
+    {
+        return $this->belongsTo(Subscription::class);
     }
 
     public function currency(): BelongsTo

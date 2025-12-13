@@ -76,7 +76,7 @@ class CartinoSeeder extends Seeder
         $this->command->info('   • Products: 500 (with ~2000 variants)');
         $this->command->info('   • Customers: 100 (with 100-200 addresses)');
         $this->command->info('   • Subscriptions: ~40-60 (active recurring billing)');
-        $this->command->info('   • Orders: ~100 (with ~300 order lines)');
+        $this->command->info('   • Orders: ~200-250 (regular + subscription billing)');
         $this->command->info('   • Couriers: 10');
         $this->command->info('   • Suppliers: 30');
         $this->command->info('   • Shipping Zones: 10 (with 50 rates)');
@@ -658,8 +658,58 @@ class CartinoSeeder extends Seeder
 
         $this->command->info('✅ Subscriptions seeded: '.$subscriptionCount);
 
-        // Create orders for customers
-        $this->command->info('📦 Creating orders...');
+        // Create subscription orders (recurring billing)
+        $this->command->info('📦 Creating subscription orders (recurring billing)...');
+        $subscriptionOrderCount = 0;
+        $subscriptions = \Cartino\Models\Subscription::all();
+
+        foreach ($subscriptions as $subscription) {
+            // Create 1-3 billing orders for each subscription
+            $numBillingOrders = rand(1, 3);
+
+            for ($b = 0; $b < $numBillingOrders; $b++) {
+                $order = Order::factory()->state([
+                    'customer_id' => $subscription->customer_id,
+                    'subscription_id' => $subscription->id,
+                    'site_id' => $subscription->site_id,
+                    'currency_id' => $subscription->currency_id,
+                ])->create();
+
+                // Create order line for subscription product
+                $quantity = 1; // subscriptions are usually quantity 1
+                $unitPrice = $subscription->price;
+                $lineTotal = $unitPrice * $quantity;
+
+                OrderLine::factory()->state([
+                    'order_id' => $order->id,
+                    'product_id' => $subscription->product_id,
+                    'product_variant_id' => $subscription->product_variant_id,
+                    'product_name' => $subscription->product->title ?? 'Subscription Product',
+                    'product_sku' => $subscription->variant->sku ?? 'SUB-SKU',
+                    'quantity' => $quantity,
+                    'unit_price' => $unitPrice,
+                    'line_total' => $lineTotal,
+                ])->create();
+
+                // Update order totals
+                $taxTotal = round($lineTotal * 0.22, 2);
+                $shippingTotal = 0; // subscriptions usually don't have shipping
+
+                $order->update([
+                    'subtotal' => $lineTotal,
+                    'tax_total' => $taxTotal,
+                    'shipping_total' => $shippingTotal,
+                    'total' => $lineTotal + $taxTotal + $shippingTotal,
+                ]);
+
+                $subscriptionOrderCount++;
+            }
+        }
+
+        $this->command->info('✅ Subscription orders seeded: '.$subscriptionOrderCount);
+
+        // Create regular orders for customers
+        $this->command->info('📦 Creating regular orders...');
         $orderCount = 0;
 
         foreach ($customers->take(50) as $customer) {
