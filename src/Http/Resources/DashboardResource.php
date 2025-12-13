@@ -14,16 +14,18 @@ class DashboardResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $data = is_array($this->resource) ? $this->resource : (array) $this->resource;
+
         return [
-            'period' => $this->resource['period'],
+            'period' => $data['period'] ?? null,
             'sales' => [
-                'total_revenue' => round($this->resource['sales']['total_revenue'], 2),
-                'total_orders' => $this->resource['sales']['total_orders'],
-                'average_order_value' => round($this->resource['sales']['average_order_value'], 2),
-                'total_items_sold' => $this->resource['sales']['total_items_sold'],
+                'total_revenue' => round($data['sales']['total_revenue'] ?? 0, 2),
+                'total_orders' => $data['sales']['total_orders'] ?? 0,
+                'average_order_value' => round($data['sales']['average_order_value'] ?? 0, 2),
+                'total_items_sold' => $data['sales']['total_items_sold'] ?? 0,
             ],
-            'customers' => $this->resource['customers'],
-            'products' => $this->resource['products'],
+            'customers' => $data['customers'] ?? [],
+            'products' => $data['products'] ?? [],
         ];
     }
 }

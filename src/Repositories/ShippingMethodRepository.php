@@ -3,9 +3,9 @@
 namespace Cartino\Repositories;
 
 use Cartino\Models\ShippingMethod;
-use Illuminate\Database\Eloquent\Category;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class ShippingMethodRepository extends BaseRepository
 {
@@ -23,71 +23,23 @@ class ShippingMethodRepository extends BaseRepository
     {
         $query = $this->model->newQuery()->with(['zones']);
 
-        // Search filter
-        if (! empty($filters['search'])) {
-            $search = $filters['search'];
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                    ->orWhere('description', 'like', "%{$search}%")
-                    ->orWhere('carrier', 'like', "%{$search}%");
-            });
-        }
-
-        // Status filter
-        if (isset($filters['is_enabled'])) {
-            $query->where('is_enabled', $filters['is_enabled']);
-        }
-
-        // Carrier filter
-        if (! empty($filters['carrier'])) {
-            $query->where('carrier', $filters['carrier']);
-        }
-
-        // Calculation type filter
-        if (! empty($filters['calculation_type'])) {
-            $query->where('calculation_type', $filters['calculation_type']);
-        }
-
-        // Sorting
-        $sortField = $filters['sort'] ?? 'sort_order';
-        $sortDirection = $filters['direction'] ?? 'asc';
-
-        $query->orderBy($sortField, $sortDirection);
-
-        return $query->paginate($perPage);
+        return $query = QueryBuilder::for(ShippingMethod::class)
+            ->allowedFilters(['name'])
+            ->allowedSorts(['name', 'created_at', 'status'])
+            ->paginate($filters['per_page'] ?? config('settings.pagination.per_page'))
+            ->appends($filters);
     }
 
     /**
      * Get enabled shipping methods
      */
-    public function getEnabled(): Category
+    public function getEnabled(): ShippingMethod
     {
         $cacheKey = $this->getCacheKey('enabled', '');
 
         return \Illuminate\Support\Facades\Cache::remember($cacheKey, $this->cacheTtl, function () {
             return $this->model->with(['zones'])
                 ->where('is_enabled', true)
-                ->orderBy('sort_order')
-                ->get();
-        });
-    }
-
-    /**
-     * Get shipping methods available for location
-     */
-    public function getAvailableForLocation(string $country, ?string $state = null): Category
-    {
-        $cacheKey = $this->getCacheKey('location', $country.'_'.$state);
-
-        return \Illuminate\Support\Facades\Cache::remember($cacheKey, $this->cacheTtl, function () use ($country, $state) {
-            return $this->model->with(['zones'])
-                ->where('is_enabled', true)
-                ->whereHas('zones', function ($query) use ($country, $state) {
-                    $query->where('countries', 'like', "%{$country}%");
-                    if ($state) {
-                        $query->orWhere('states', 'like', "%{$state}%");
-                    }
-                })
                 ->orderBy('sort_order')
                 ->get();
         });
@@ -144,7 +96,7 @@ class ShippingMethodRepository extends BaseRepository
     /**
      * Get carriers for filters
      */
-    public function getCarriers(): Category
+    public function getCarriers(): ShippingMethod
     {
         return $this->model->select('carrier')
             ->distinct()
@@ -165,26 +117,6 @@ class ShippingMethodRepository extends BaseRepository
             'item_count' => 'Basato sul numero di articoli',
             'free_over_amount' => 'Gratuito sopra un importo',
         ];
-    }
-
-    /**
-     * Toggle shipping method status
-     */
-    public function toggleStatus(int $id): ?ShippingMethod
-    {
-        $shippingMethod = $this->model->find($id);
-
-        if (! $shippingMethod) {
-            return null;
-        }
-
-        $shippingMethod->update([
-            'is_enabled' => ! $shippingMethod->is_enabled,
-        ]);
-
-        $this->clearCache();
-
-        return $shippingMethod->fresh();
     }
 
     /**
@@ -232,7 +164,7 @@ class ShippingMethodRepository extends BaseRepository
     /**
      * Get available shipping zones
      */
-    public function getShippingZones(): \Illuminate\Support\Category
+    public function getShippingZones(): \Illuminate\Support\ShippingMethod
     {
         $cacheKey = $this->getCacheKey('shipping_zones', 'all');
 
@@ -254,7 +186,7 @@ class ShippingMethodRepository extends BaseRepository
     /**
      * Get available shipping types
      */
-    public function getShippingTypes(): \Illuminate\Support\Category
+    public function getShippingTypes(): \Illuminate\Support\ShippingMethod
     {
         return collect([
             [

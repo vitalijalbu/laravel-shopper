@@ -15,19 +15,17 @@ return new class extends Migration
             $table->string('first_name');
             $table->string('last_name');
             $table->string('email');
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
             $table->string('phone', 20)->nullable();
             $table->date('date_of_birth')->nullable();
             $table->string('gender')->nullable();
             $table->string('status')->default('active');
             $table->timestamp('last_login_at')->nullable();
-            $table->string('last_login_ip', 45)->nullable();
+            $table->decimal('total_spent', 15, 2)->default(0);
+            $table->integer('total_orders')->default(0);
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();
 
-            // Custom fields data (JSON schema-based)
             $table->jsonb('data')->nullable();
 
             $table->unique(['email', 'site_id']);

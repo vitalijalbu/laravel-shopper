@@ -14,23 +14,28 @@ class SalesReportResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $data = is_array($this->resource) ? $this->resource : (array) $this->resource;
+
+        $mappedData = collect($data['data'] ?? [])->map(function ($item) {
+            $itemArray = is_array($item) ? $item : (array) $item;
+            return [
+                'period' => $itemArray['period'] ?? null,
+                'orders_count' => $itemArray['orders_count'] ?? 0,
+                'revenue' => round($itemArray['revenue'] ?? 0, 2),
+                'average_order_value' => round($itemArray['average_order_value'] ?? 0, 2),
+                'items_sold' => $itemArray['items_sold'] ?? 0,
+            ];
+        });
+
         return [
-            'period' => $this->resource['period'],
+            'period' => $data['period'] ?? null,
             'summary' => [
-                'total_revenue' => round($this->resource['summary']['total_revenue'], 2),
-                'total_orders' => $this->resource['summary']['total_orders'],
-                'average_order_value' => round($this->resource['summary']['average_order_value'], 2),
-                'total_items_sold' => $this->resource['summary']['total_items_sold'],
+                'total_revenue' => round($data['summary']['total_revenue'] ?? 0, 2),
+                'total_orders' => $data['summary']['total_orders'] ?? 0,
+                'average_order_value' => round($data['summary']['average_order_value'] ?? 0, 2),
+                'total_items_sold' => $data['summary']['total_items_sold'] ?? 0,
             ],
-            'data' => $this->resource['data']->map(function ($item) {
-                return [
-                    'period' => $item->period,
-                    'orders_count' => $item->orders_count,
-                    'revenue' => round($item->revenue, 2),
-                    'average_order_value' => round($item->average_order_value, 2),
-                    'items_sold' => $item->items_sold,
-                ];
-            }),
+            'data' => $mappedData,
         ];
     }
 }

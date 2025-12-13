@@ -14,23 +14,28 @@ class CustomersReportResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $data = is_array($this->resource) ? $this->resource : (array) $this->resource;
+
+        $topCustomers = collect($data['top_customers'] ?? [])->map(function ($customer) {
+            $customerArray = is_array($customer) ? $customer : (array) $customer;
+            return [
+                'id' => $customerArray['id'] ?? null,
+                'name' => $customerArray['name'] ?? null,
+                'email' => $customerArray['email'] ?? null,
+                'orders_count' => $customerArray['orders_count'] ?? 0,
+                'total_spent' => round($customerArray['total_spent'] ?? 0, 2),
+            ];
+        });
+
         return [
-            'period' => $this->resource['period'],
+            'period' => $data['period'] ?? null,
             'summary' => [
-                'new_customers' => $this->resource['summary']['new_customers'],
-                'total_customers' => $this->resource['summary']['total_customers'],
-                'average_ltv' => round($this->resource['summary']['average_ltv'], 2),
+                'new_customers' => $data['summary']['new_customers'] ?? 0,
+                'total_customers' => $data['summary']['total_customers'] ?? 0,
+                'average_ltv' => round($data['summary']['average_ltv'] ?? 0, 2),
             ],
-            'new_customers_timeline' => $this->resource['new_customers_timeline'],
-            'top_customers' => $this->resource['top_customers']->map(function ($customer) {
-                return [
-                    'id' => $customer['id'],
-                    'name' => $customer['name'],
-                    'email' => $customer['email'],
-                    'orders_count' => $customer['orders_count'],
-                    'total_spent' => round($customer['total_spent'], 2),
-                ];
-            }),
+            'new_customers_timeline' => $data['new_customers_timeline'] ?? [],
+            'top_customers' => $topCustomers,
         ];
     }
 }

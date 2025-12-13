@@ -58,7 +58,6 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
 
-            // Custom fields data (JSON schema-based)
             $table->jsonb('data')->nullable();
 
             // Indexes

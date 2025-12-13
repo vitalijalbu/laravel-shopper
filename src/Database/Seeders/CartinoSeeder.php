@@ -101,13 +101,13 @@ class CartinoSeeder extends Seeder
         $mainSite = Site::firstOrCreate(
             ['handle' => 'main'],
             [
-            'handle' => 'main',
-            'name' => 'Main Store',
-            'locale' => 'en_US',
-            'lang' => 'en',
-            'is_default' => true,
-            'status' => 'active',
-            'order' => 1,
+                'handle' => 'main',
+                'name' => 'Main Store',
+                'locale' => 'en_US',
+                'lang' => 'en',
+                'is_default' => true,
+                'status' => 'active',
+                'order' => 1,
             ]
         );
 
@@ -590,6 +590,7 @@ class CartinoSeeder extends Seeder
         // Sandbox-friendly: seed only customers if table & factory exist
         if (! \Schema::hasTable('customers') || ! class_exists(\Cartino\Database\Factories\CustomerFactory::class)) {
             $this->command->info('⏭️ Skipping customers (table or factory missing)');
+
             return;
         }
 
@@ -609,6 +610,7 @@ class CartinoSeeder extends Seeder
 
         // In sandbox, stop after customers to avoid missing factories/tables
         $this->command->info('✅ Customers seeded: '.$customers->count());
+
         return;
 
         foreach ($customers as $index => $customer) {

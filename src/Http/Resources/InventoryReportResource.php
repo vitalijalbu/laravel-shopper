@@ -14,31 +14,39 @@ class InventoryReportResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $data = is_array($this->resource) ? $this->resource : (array) $this->resource;
+
+        $lowStockProducts = collect($data['low_stock_products'] ?? [])->map(function ($product) {
+            $productArray = is_array($product) ? $product : (array) $product;
+            return [
+                'id' => $productArray['id'] ?? null,
+                'name' => $productArray['name'] ?? null,
+                'sku' => $productArray['sku'] ?? null,
+                'stock_quantity' => $productArray['stock_quantity'] ?? 0,
+                'price_amount' => round($productArray['price_amount'] ?? 0, 2),
+            ];
+        });
+
+        $outOfStockProducts = collect($data['out_of_stock_products'] ?? [])->map(function ($product) {
+            $productArray = is_array($product) ? $product : (array) $product;
+            return [
+                'id' => $productArray['id'] ?? null,
+                'name' => $productArray['name'] ?? null,
+                'sku' => $productArray['sku'] ?? null,
+                'price_amount' => round($productArray['price_amount'] ?? 0, 2),
+            ];
+        });
+
         return [
             'summary' => [
-                'total_products' => $this->resource['summary']['total_products'],
-                'in_stock' => $this->resource['summary']['in_stock'],
-                'low_stock' => $this->resource['summary']['low_stock'],
-                'out_of_stock' => $this->resource['summary']['out_of_stock'],
-                'total_inventory_value' => round($this->resource['summary']['total_inventory_value'], 2),
+                'total_products' => $data['summary']['total_products'] ?? 0,
+                'in_stock' => $data['summary']['in_stock'] ?? 0,
+                'low_stock' => $data['summary']['low_stock'] ?? 0,
+                'out_of_stock' => $data['summary']['out_of_stock'] ?? 0,
+                'total_inventory_value' => round($data['summary']['total_inventory_value'] ?? 0, 2),
             ],
-            'low_stock_products' => $this->resource['low_stock_products']->map(function ($product) {
-                return [
-                    'id' => $product->id,
-                    'name' => $product->name,
-                    'sku' => $product->sku,
-                    'stock_quantity' => $product->stock_quantity,
-                    'price_amount' => round($product->price_amount, 2),
-                ];
-            }),
-            'out_of_stock_products' => $this->resource['out_of_stock_products']->map(function ($product) {
-                return [
-                    'id' => $product->id,
-                    'name' => $product->name,
-                    'sku' => $product->sku,
-                    'price_amount' => round($product->price_amount, 2),
-                ];
-            }),
+            'low_stock_products' => $lowStockProducts,
+            'out_of_stock_products' => $outOfStockProducts,
         ];
     }
 }

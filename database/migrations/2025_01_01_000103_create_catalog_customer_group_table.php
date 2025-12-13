@@ -26,7 +26,6 @@ return new class extends Migration
             // Timestamps
             $table->timestamps();
 
-            // Custom fields data (JSON schema-based)
             $table->jsonb('data')->nullable();
 
             // Indexes

@@ -9,6 +9,8 @@ use Cartino\Models\Order;
 use Cartino\Models\Product;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class OrderRepository extends BaseRepository
 {
@@ -29,7 +31,6 @@ class OrderRepository extends BaseRepository
         $perPage = $filters['per_page'] ?? config('settings.pagination.per_page', 15);
 
         return QueryBuilder::for(Order::class)
-            ->select('orders.*')
             ->with([
                 'customer:id,first_name,last_name,email',
                 'items:id,order_id,product_id,quantity,price_amount,price_currency',

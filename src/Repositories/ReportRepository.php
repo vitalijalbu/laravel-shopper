@@ -18,11 +18,11 @@ class ReportRepository
     public function getSalesBatch(\DateTime $from, \DateTime $to): array
     {
         $result = DB::selectOne("
-            SELECT 
-                COALESCE(SUM(total_amount), 0) as total_revenue,
+            SELECT
+                COALESCE(SUM(total), 0) as total_revenue,
                 COUNT(*) as total_orders,
-                COALESCE(AVG(total_amount), 0) as average_order_value,
-                COALESCE(SUM(items_count), 0) as total_items_sold
+                COALESCE(AVG(total), 0) as average_order_value,
+                COALESCE(SUM((SELECT SUM(quantity) FROM order_lines WHERE order_lines.order_id = orders.id)), 0) as total_items_sold
             FROM orders
             WHERE created_at BETWEEN ? AND ?
             AND status != 'cancelled'
@@ -73,12 +73,14 @@ class ReportRepository
      */
     public function getProductCounts(): array
     {
+        // Note: inventory is managed at variant level
         $result = DB::selectOne('
-            SELECT 
-                COUNT(*) as total_products,
-                SUM(CASE WHEN stock_quantity < 10 AND stock_quantity > 0 THEN 1 ELSE 0 END) as low_stock_products,
-                SUM(CASE WHEN stock_quantity = 0 THEN 1 ELSE 0 END) as out_of_stock_products
-            FROM products
+            SELECT
+                COUNT(DISTINCT p.id) as total_products,
+                SUM(CASE WHEN pv.inventory_quantity < 10 AND pv.inventory_quantity > 0 THEN 1 ELSE 0 END) as low_stock_products,
+                SUM(CASE WHEN pv.inventory_quantity = 0 THEN 1 ELSE 0 END) as out_of_stock_products
+            FROM products p
+            LEFT JOIN product_variants pv ON p.id = pv.product_id
         ');
 
         return [
@@ -95,7 +97,7 @@ class ReportRepository
     {
         return Order::whereBetween('created_at', [$from, $to])
             ->where('status', '!=', 'cancelled')
-            ->sum('total_amount') ?? 0;
+            ->sum('total') ?? 0;
     }
 
     /**
@@ -115,7 +117,7 @@ class ReportRepository
     {
         return Order::whereBetween('created_at', [$from, $to])
             ->where('status', '!=', 'cancelled')
-            ->avg('total_amount') ?? 0;
+            ->avg('total') ?? 0;
     }
 
     /**
@@ -164,15 +166,17 @@ class ReportRepository
         $dateFormat = $this->getDateFormat($groupBy);
 
         $results = DB::select("
-            SELECT 
-                DATE_FORMAT(created_at, '{$dateFormat}') as period,
+            SELECT
+                DATE_FORMAT(orders.created_at, '{$dateFormat}') as period,
                 COUNT(*) as orders_count,
-                COALESCE(SUM(total_amount), 0) as revenue,
-                COALESCE(AVG(total_amount), 0) as average_order_value,
-                COALESCE(SUM(items_count), 0) as items_sold
+                COALESCE(SUM(orders.total), 0) as revenue,
+                COALESCE(AVG(orders.total), 0) as average_order_value,
+                COALESCE(SUM(
+                    (SELECT SUM(quantity) FROM order_lines WHERE order_lines.order_id = orders.id)
+                ), 0) as items_sold
             FROM orders
-            WHERE created_at BETWEEN ? AND ?
-            AND status != 'cancelled'
+            WHERE orders.created_at BETWEEN ? AND ?
+            AND orders.status != 'cancelled'
             GROUP BY period
             ORDER BY period
         ", [$from->format('Y-m-d H:i:s'), $to->format('Y-m-d H:i:s')]);
@@ -215,13 +219,13 @@ class ReportRepository
     public function getTopCustomers(\DateTime $from, \DateTime $to, int $limit = 10): \Illuminate\Support\Collection
     {
         $results = DB::select("
-            SELECT 
+            SELECT
                 c.id,
                 c.first_name,
                 c.last_name,
                 c.email,
                 COUNT(o.id) as orders_count,
-                COALESCE(SUM(o.total_amount), 0) as total_spent
+                COALESCE(SUM(o.total), 0) as total_spent
             FROM customers c
             LEFT JOIN orders o ON c.id = o.customer_id
                 AND o.created_at BETWEEN ? AND ?
@@ -247,18 +251,18 @@ class ReportRepository
     public function getTopSellingProducts(\DateTime $from, \DateTime $to, int $limit = 20): \Illuminate\Support\Collection
     {
         $results = DB::select("
-            SELECT 
+            SELECT
                 p.id,
-                p.name,
-                p.sku,
+                p.title as name,
+                p.handle as sku,
                 COALESCE(SUM(ol.quantity), 0) as units_sold,
-                COALESCE(SUM(ol.subtotal_amount), 0) as revenue
+                COALESCE(SUM(ol.line_total), 0) as revenue
             FROM products p
             INNER JOIN order_lines ol ON p.id = ol.product_id
             INNER JOIN orders o ON ol.order_id = o.id
             WHERE o.created_at BETWEEN ? AND ?
             AND o.status != 'cancelled'
-            GROUP BY p.id, p.name, p.sku
+            GROUP BY p.id, p.title, p.handle
             ORDER BY units_sold DESC
             LIMIT ?
         ", [$from->format('Y-m-d H:i:s'), $to->format('Y-m-d H:i:s'), $limit]);
@@ -278,18 +282,18 @@ class ReportRepository
     public function getTopRevenueProducts(\DateTime $from, \DateTime $to, int $limit = 20): \Illuminate\Support\Collection
     {
         $results = DB::select("
-            SELECT 
+            SELECT
                 p.id,
-                p.name,
-                p.sku,
+                p.title as name,
+                p.handle as sku,
                 COALESCE(SUM(ol.quantity), 0) as units_sold,
-                COALESCE(SUM(ol.subtotal_amount), 0) as revenue
+                COALESCE(SUM(ol.line_total), 0) as revenue
             FROM products p
             INNER JOIN order_lines ol ON p.id = ol.product_id
             INNER JOIN orders o ON ol.order_id = o.id
             WHERE o.created_at BETWEEN ? AND ?
             AND o.status != 'cancelled'
-            GROUP BY p.id, p.name, p.sku
+            GROUP BY p.id, p.title, p.handle
             ORDER BY revenue DESC
             LIMIT ?
         ", [$from->format('Y-m-d H:i:s'), $to->format('Y-m-d H:i:s'), $limit]);
@@ -311,13 +315,13 @@ class ReportRepository
         $dateFormat = $this->getDateFormat($groupBy);
 
         $results = DB::select("
-            SELECT 
+            SELECT
                 DATE_FORMAT(created_at, '{$dateFormat}') as period,
-                COALESCE(SUM(subtotal_amount), 0) as gross_sales,
-                COALESCE(SUM(discount_amount), 0) as discounts,
-                COALESCE(SUM(tax_amount), 0) as taxes,
-                COALESCE(SUM(shipping_amount), 0) as shipping,
-                COALESCE(SUM(total_amount), 0) as net_sales,
+                COALESCE(SUM(subtotal), 0) as gross_sales,
+                COALESCE(SUM(discount_total), 0) as discounts,
+                COALESCE(SUM(tax_total), 0) as taxes,
+                COALESCE(SUM(shipping_total), 0) as shipping,
+                COALESCE(SUM(total), 0) as net_sales,
                 COUNT(*) as orders_count
             FROM orders
             WHERE created_at BETWEEN ? AND ?
@@ -345,7 +349,7 @@ class ReportRepository
         return Order::whereBetween('created_at', [$from, $to])
             ->selectRaw('status')
             ->selectRaw('COUNT(*) as count')
-            ->selectRaw('SUM(total_amount) as total_amount')
+            ->selectRaw('SUM(total) as total_amount')
             ->groupBy('status')
             ->get();
     }
@@ -355,14 +359,16 @@ class ReportRepository
      */
     public function getInventorySummary(int $lowStockThreshold = 10): array
     {
+        // Note: inventory and price are managed at variant level
         $result = DB::selectOne('
-            SELECT 
-                COUNT(*) as total_products,
-                SUM(CASE WHEN stock_quantity > 0 THEN 1 ELSE 0 END) as in_stock,
-                SUM(CASE WHEN stock_quantity > 0 AND stock_quantity <= ? THEN 1 ELSE 0 END) as low_stock,
-                SUM(CASE WHEN stock_quantity = 0 THEN 1 ELSE 0 END) as out_of_stock,
-                COALESCE(SUM(stock_quantity * price_amount), 0) as total_inventory_value
-            FROM products
+            SELECT
+                COUNT(DISTINCT p.id) as total_products,
+                SUM(CASE WHEN pv.inventory_quantity > 0 THEN 1 ELSE 0 END) as in_stock,
+                SUM(CASE WHEN pv.inventory_quantity > 0 AND pv.inventory_quantity <= ? THEN 1 ELSE 0 END) as low_stock,
+                SUM(CASE WHEN pv.inventory_quantity = 0 THEN 1 ELSE 0 END) as out_of_stock,
+                COALESCE(SUM(pv.inventory_quantity * pv.price), 0) as total_inventory_value
+            FROM products p
+            LEFT JOIN product_variants pv ON p.id = pv.product_id
         ', [$lowStockThreshold]);
 
         return [
@@ -379,10 +385,13 @@ class ReportRepository
      */
     public function getLowStockProducts(int $threshold = 10, int $limit = 50): \Illuminate\Support\Collection
     {
-        return Product::where('stock_quantity', '>', 0)
-            ->where('stock_quantity', '<=', $threshold)
-            ->select('id', 'name', 'sku', 'stock_quantity', 'price_amount')
-            ->orderBy('stock_quantity')
+        // Note: inventory and price are managed at variant level
+        return DB::table('products as p')
+            ->join('product_variants as pv', 'p.id', '=', 'pv.product_id')
+            ->where('pv.inventory_quantity', '>', 0)
+            ->where('pv.inventory_quantity', '<=', $threshold)
+            ->select('p.id', 'p.title as name', 'pv.sku', 'pv.inventory_quantity', 'pv.price')
+            ->orderBy('pv.inventory_quantity')
             ->limit($limit)
             ->get();
     }
@@ -392,8 +401,11 @@ class ReportRepository
      */
     public function getOutOfStockProducts(int $limit = 50): \Illuminate\Support\Collection
     {
-        return Product::where('stock_quantity', 0)
-            ->select('id', 'name', 'sku', 'price_amount')
+        // Note: inventory and price are managed at variant level
+        return DB::table('products as p')
+            ->join('product_variants as pv', 'p.id', '=', 'pv.product_id')
+            ->where('pv.inventory_quantity', 0)
+            ->select('p.id', 'p.title as name', 'pv.sku', 'pv.price')
             ->limit($limit)
             ->get();
     }
@@ -405,7 +417,7 @@ class ReportRepository
     {
         return Order::whereBetween('created_at', [$from, $to])
             ->where('status', '!=', 'cancelled')
-            ->select('id', 'order_number', 'customer_id', 'status', 'total_amount', 'created_at')
+            ->select('id', 'order_number', 'customer_id', 'status', 'total', 'created_at')
             ->get()
             ->toArray();
     }
@@ -428,7 +440,7 @@ class ReportRepository
     {
         return Product::select('products.*')
             ->selectRaw('COALESCE(SUM(order_lines.quantity), 0) as units_sold')
-            ->selectRaw('COALESCE(SUM(order_lines.subtotal_amount), 0) as revenue')
+            ->selectRaw('COALESCE(SUM(order_lines.line_total), 0) as revenue')
             ->leftJoin('order_lines', 'products.id', '=', 'order_lines.product_id')
             ->leftJoin('orders', function ($join) use ($from, $to) {
                 $join->on('order_lines.order_id', '=', 'orders.id')
@@ -447,7 +459,7 @@ class ReportRepository
     {
         return Order::whereBetween('created_at', [$from, $to])
             ->where('status', '!=', 'cancelled')
-            ->select('created_at', 'subtotal_amount', 'discount_amount', 'tax_amount', 'shipping_amount', 'total_amount')
+            ->select('created_at', 'subtotal', 'discount_total', 'tax_total', 'shipping_total', 'total')
             ->get()
             ->toArray();
     }
@@ -458,7 +470,7 @@ class ReportRepository
     public function exportOrdersData(\DateTime $from, \DateTime $to): array
     {
         return Order::whereBetween('created_at', [$from, $to])
-            ->with(['customer:id,name,email', 'lines:order_id,product_id,quantity,unit_price_amount'])
+            ->with(['customer:id,first_name,last_name,email', 'lines:order_id,product_id,quantity,unit_price'])
             ->get()
             ->toArray();
     }
