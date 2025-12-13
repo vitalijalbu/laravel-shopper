@@ -15,8 +15,7 @@ return new class extends Migration
             $table->string('slug');
             $table->text('description')->nullable();
             $table->boolean('is_default')->default(false);
-
-            // Pricing and discount configuration
+            $table->boolean('is_enabled')->default(false);
             $table->decimal('discount_percentage', 5, 2)->nullable(); // Group-wide discount
             $table->boolean('tax_exempt')->default(false);
             $table->jsonb('pricing_rules')->nullable(); // Advanced pricing rules
@@ -26,7 +25,7 @@ return new class extends Migration
             $table->jsonb('restrictions')->nullable(); // What can't this group do?
 
             $table->string('status')->default('active');
-            $table->jsonb('data')->nullable()->comment('Custom fields data');
+            $table->jsonb('data')->nullable();
             $table->timestamps();
             $table->softDeletes();
 

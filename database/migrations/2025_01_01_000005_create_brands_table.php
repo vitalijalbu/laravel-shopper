@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('logo')->nullable();
             $table->string('status')->default('active');
             $table->jsonb('seo')->nullable();
-            $table->jsonb('data')->nullable()->comment('Custom fields data');
+            $table->jsonb('data')->nullable();
             $table->timestamps();
             $table->softDeletes();
 

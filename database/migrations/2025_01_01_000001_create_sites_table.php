@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('locale', 10)->index();
             $table->string('lang', 5);
             $table->jsonb('countries')->nullable();
+            $table->boolean('is_enabled')->default(true);
             $table->string('default_currency', 3)->default('EUR')->index();
             $table->boolean('tax_included_in_prices')->default(false);
             $table->string('tax_region')->nullable()->index();

@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('channels', function (Blueprint $table) {
             $table->id();
             $table->foreignId('site_id')->constrained('sites')->cascadeOnDelete();
-
+            $table->boolean('is_enabled')->default(false);
             $table->string('name');
             $table->string('slug')->unique();
             $table->text('description')->nullable();

@@ -16,7 +16,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->string('location')->nullable(); // header, footer, sidebar, etc.
             $table->jsonb('settings')->nullable();
-            $table->jsonb('data')->nullable()->comment('Custom fields data');
+            $table->jsonb('data')->nullable();
             $table->boolean('is_active')->default(true);
             $table->integer('sort_order')->default(0);
             $table->timestamps();

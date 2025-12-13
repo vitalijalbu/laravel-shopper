@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Seeders;
+namespace Cartino\Database\Seeders;
 
 use Cartino\Models\GlobalSet;
 use Illuminate\Database\Seeder;

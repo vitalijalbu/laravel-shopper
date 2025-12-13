@@ -187,4 +187,79 @@ abstract class BaseRepository implements RepositoryInterface
 
         return $this;
     }
+
+    /**
+     * Standard CRUD operations - Override if custom logic needed
+     */
+    public function createOne(array $data): Model
+    {
+        $model = $this->model->create($data);
+        $this->clearCache();
+
+        return $model;
+    }
+
+    public function updateOne(int $id, array $data): Model
+    {
+        $model = $this->findOrFail($id);
+        $model->update($data);
+        $this->clearCache();
+
+        return $model->fresh();
+    }
+
+    public function deleteOne(int $id): bool
+    {
+        $model = $this->findOrFail($id);
+        $deleted = $model->delete();
+        $this->clearCache();
+
+        return $deleted;
+    }
+
+    public function canDelete(int $id): bool
+    {
+        $model = $this->findOrFail($id);
+        $restrictions = $this->getDeleteRestrictions($model);
+
+        return empty($restrictions);
+    }
+
+    /**
+     * Override in child repositories to define relationships that prevent deletion
+     * Example: ['products' => 'Has associated products']
+     */
+    protected function getDeleteRestrictions(Model $model): array
+    {
+        return [];
+    }
+
+    public function toggleStatus(int $id): Model
+    {
+        $model = $this->findOrFail($id);
+        $statusField = $this->getStatusField();
+        $currentStatus = $model->{$statusField};
+        $newStatus = $this->getToggledStatus($currentStatus);
+
+        $model->update([$statusField => $newStatus]);
+        $this->clearCache();
+
+        return $model->fresh();
+    }
+
+    protected function getStatusField(): string
+    {
+        return 'status';
+    }
+
+    protected function getToggledStatus(string $current): string
+    {
+        return match ($current) {
+            'active' => 'inactive',
+            'inactive' => 'active',
+            'published' => 'draft',
+            'draft' => 'published',
+            default => $current,
+        };
+    }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Factories;
+namespace Cartino\Database\Factories;
 
 use Cartino\Models\GlobalSet;
 use Illuminate\Database\Eloquent\Factories\Factory;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Database\Factories;
+namespace Cartino\Database\Factories;
 
 use Cartino\Models\Currency;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -28,7 +28,7 @@ class CurrencyFactory extends Factory
             'rate' => $this->faker->randomFloat(4, 0.5, 2.0),
             'precision' => $this->faker->randomElement([0, 2]),
             'is_default' => false,
-            'is_enabled' => true,
+
         ];
     }
 

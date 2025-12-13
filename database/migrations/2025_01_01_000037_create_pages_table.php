@@ -44,7 +44,7 @@ return new class extends Migration
             $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();
 
             // Custom fields (Statamic-style)
-            $table->jsonb('data')->nullable()->comment('Custom fields data');
+            $table->jsonb('data')->nullable();
 
             // Hierarchy
             $table->integer('order')->default(0);

@@ -11,12 +11,13 @@ return new class extends Migration
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('site_id')->nullable();
+            $table->boolean('is_enabled')->default(true);
 
             $table->foreignId('parent_id')->nullable()->constrained('categories')->nullOnDelete();
             $table->integer('level')->default(0);
             $table->string('path', 500)->nullable();
-            $table->integer('left');
-            $table->integer('right');
+            $table->integer('left')->nullable();
+            $table->integer('right')->nullable();
 
             $table->string('name');
             $table->string('slug');

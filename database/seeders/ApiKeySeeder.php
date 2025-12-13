@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Seeders;
+namespace Cartino\Database\Seeders;
 
 use Cartino\Models\ApiKey;
 use Illuminate\Database\Seeder;

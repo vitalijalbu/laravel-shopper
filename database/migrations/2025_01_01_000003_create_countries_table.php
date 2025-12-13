@@ -21,7 +21,8 @@ return new class extends Migration
             $table->boolean('requires_postal_code')->default(true);
             $table->string('postal_code_format')->nullable(); // Regex for validation
             $table->string('status')->default('active');
-            $table->jsonb('metadata')->nullable(); // Additional country data
+            $table->jsonb('metadata')->nullable();
+            $table->boolean('is_enabled')->default(true);
             $table->timestamps();
 
             $table->index(['code', 'status']);

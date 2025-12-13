@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Database\Factories;
+namespace Cartino\Database\Factories;
 
 use Cartino\Models\Brand;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -22,7 +22,6 @@ class BrandFactory extends Factory
             'slug' => $slug,
             'description' => $this->faker->paragraph(),
             'website' => $this->faker->url(),
-            'is_enabled' => $this->faker->boolean(90),
             'seo' => [
                 'title' => $name,
                 'description' => $this->faker->sentence(),
@@ -34,10 +33,5 @@ class BrandFactory extends Factory
             ],
             'data' => null,
         ];
-    }
-
-    public function enabled(): self
-    {
-        return $this->state(['is_enabled' => true]);
     }
 }

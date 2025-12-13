@@ -26,7 +26,7 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
             $table->timestamps();
             $table->softDeletes();
-            $table->jsonb('data')->nullable()->comment('Custom fields data');
+            $table->jsonb('data')->nullable();
 
             $table->index(['site_id', 'is_active']);
             $table->index(['priority', 'is_active']);
@@ -81,7 +81,7 @@ return new class extends Migration
 
             $table->timestamps();
             $table->softDeletes();
-            $table->jsonb('data')->nullable()->comment('Custom fields data');
+            $table->jsonb('data')->nullable();
 
             $table->index(['shipping_zone_id', 'is_active']);
             $table->index(['calculation_method', 'is_active']);

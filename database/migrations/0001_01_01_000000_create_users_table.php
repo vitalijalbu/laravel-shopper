@@ -30,7 +30,7 @@ return new class extends Migration
             $table->string('timezone')->default('UTC');
             $table->jsonb('preferences')->nullable()->comment('UI and notification preferences');
             $table->unsignedBigInteger('default_site_id')->nullable();
-            $table->jsonb('data')->nullable()->comment('Custom fields data');
+            $table->jsonb('data')->nullable();
             $table->string('api_key')->nullable()->unique();
             $table->jsonb('oauth_providers')->nullable()->comment('Connected OAuth providers');
             $table->rememberToken();

@@ -59,7 +59,7 @@ return new class extends Migration
             $table->string('handle');
             $table->string('title');
             $table->text('description')->nullable();
-            $table->jsonb('data')->nullable()->comment('Custom fields data');
+            $table->jsonb('data')->nullable();
             $table->jsonb('settings')->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamps();
@@ -77,7 +77,7 @@ return new class extends Migration
             $table->string('title');
             $table->text('description')->nullable();
             $table->integer('order')->default(0);
-            $table->jsonb('data')->nullable()->comment('Custom fields data');
+            $table->jsonb('data')->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamps();
             $table->softDeletes();
@@ -147,7 +147,7 @@ return new class extends Migration
                 Schema::table($table, function (Blueprint $table) {
                     // Add JSONB field for custom data
                     // This will store schema-defined custom fields as JSON
-                    $table->jsonb('data')->nullable()->comment('Custom fields data');
+                    $table->jsonb('data')->nullable();
 
                     // Add index for better query performance on data field
                     if (config('database.default') === 'pgsql') {

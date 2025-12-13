@@ -15,7 +15,8 @@ return new class extends Migration
             $table->string('slug');
             $table->text('description')->nullable();
             $table->string('status')->default('active');
-            $table->jsonb('data')->nullable()->comment('Custom fields data');
+            $table->jsonb('data')->nullable();
+            $table->boolean('is_enabled')->default(true);
             $table->timestamps();
             $table->softDeletes();
 

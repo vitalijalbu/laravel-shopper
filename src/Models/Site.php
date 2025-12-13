@@ -3,6 +3,8 @@
 namespace Cartino\Models;
 
 use Cartino\Support\HasHandle;
+use Cartino\Database\Factories\SiteFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -10,6 +12,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Site extends Model
 {
+    use HasFactory;
     use HasHandle;
     use SoftDeletes;
 
@@ -47,7 +50,15 @@ class Site extends Model
         'attributes' => 'array',
     ];
 
-    // Relationships
+    /**
+     * Create a new factory instance for the model.
+    /**
+     * Create a new factory instance for the model.
+     */
+    protected static function newFactory(): SiteFactory
+    {
+        return SiteFactory::new();
+    }
 
     public function channels(): HasMany
     {

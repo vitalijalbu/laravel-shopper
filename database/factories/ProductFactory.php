@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Database\Factories;
+namespace Cartino\Database\Factories;
 
 use Cartino\Models\Brand;
 use Cartino\Models\Product;

@@ -79,6 +79,11 @@ class CartinoServiceProvider extends ServiceProvider
         // Load migrations
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
 
+        // Load model factories for package models
+        if (method_exists($this, 'loadFactoriesFrom')) {
+            $this->loadFactoriesFrom(__DIR__.'/../database/factories');
+        }
+
         // Load translations
         $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'cartino');
 

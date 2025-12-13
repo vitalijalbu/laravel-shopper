@@ -62,10 +62,10 @@ class Category extends Model
 
     public function products(): BelongsToMany
     {
-        return $this->belongsToMany(Product::class, 'collection_products')
+        return $this->belongsToMany(Product::class, 'category_products')
             ->withPivot(['position', 'featured'])
             ->withTimestamps()
-            ->orderBy('collection_products.position');
+            ->orderBy('category_products.position');
     }
 
     // Scopes

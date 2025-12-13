@@ -35,7 +35,7 @@ return new class extends Migration
             $table->jsonb('shipping_address')->nullable();
             $table->jsonb('billing_address')->nullable();
             $table->jsonb('metadata')->nullable();
-            $table->jsonb('data')->nullable()->comment('Custom fields data');
+            $table->jsonb('data')->nullable();
 
             $table->timestamps();
             $table->softDeletes();

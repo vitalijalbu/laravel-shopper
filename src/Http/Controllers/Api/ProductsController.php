@@ -4,97 +4,34 @@ declare(strict_types=1);
 
 namespace Cartino\Http\Controllers\Api;
 
-use Cartino\Http\Requests\Api\StoreProductRequest;
-use Cartino\Http\Requests\Api\UpdateProductRequest;
+use Cartino\Http\Controllers\Api\Concerns\HasCrudActions;
 use Cartino\Http\Resources\ProductResource;
-use Cartino\Models\Product;
 use Cartino\Repositories\ProductRepository;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class ProductsController extends ApiController
 {
+    use HasCrudActions;
+
     public function __construct(
         private readonly ProductRepository $repository
     ) {}
 
-    /**
-     * Display a listing of products
-     */
-    public function index(Request $request): JsonResponse
+    protected function repository(): ProductRepository
     {
-        $data = $this->repository->findAll($request->all());
-
-        return $this->paginatedResponse($data);
+        return $this->repository;
     }
 
-    /**
-     * Display the specified product
-     */
-    public function show(int|string $handle): JsonResponse
+    protected function resourceClass(): string
     {
-        $data = $this->repository->findOne($handle);
-
-        return $this->successResponse(new ProductResource($data));
+        return ProductResource::class;
     }
 
-    /**
-     * Store a newly created product
-     */
-    public function store(StoreProductRequest $request): JsonResponse
+    protected function entityName(): string
     {
-        try {
-            $product = $this->repository->createOne($request->validated());
-
-            return $this->created(new ProductResource($product), 'Product creato con successo');
-        } catch (\Exception $e) {
-            return $this->errorResponse('Errore nella creazione del product: '.$e->getMessage());
-        }
+        return 'Prodotto';
     }
 
-    /**
-     * Update the specified product
-     */
-    public function update(UpdateProductRequest $request, Product $product): JsonResponse
-    {
-        try {
-            $updatedProduct = $this->repository->updateOne($product->id, $request->validated());
-
-            return $this->successResponse(new ProductResource($updatedProduct), 'Product aggiornato con successo');
-        } catch (\Exception $e) {
-            return $this->errorResponse('Errore nell\'aggiornamento del product: '.$e->getMessage());
-        }
-    }
-
-    /**
-     * Remove the specified product
-     */
-    public function destroy(Product $product): JsonResponse
-    {
-        try {
-            if (! $this->repository->canDelete($product->id)) {
-                return $this->errorResponse('Impossibile eliminare il product: ha relazioni attive', 422);
-            }
-
-            $this->repository->deleteOne($product->id);
-
-            return $this->successResponse(null, 'Product eliminato con successo');
-        } catch (\Exception $e) {
-            return $this->errorResponse('Errore nell\'eliminazione del product: '.$e->getMessage());
-        }
-    }
-
-    /**
-     * Toggle product status
-     */
-    public function toggleStatus(Product $product): JsonResponse
-    {
-        try {
-            $updatedProduct = $this->repository->toggleStatus($product->id);
-
-            return $this->successResponse(new ProductResource($updatedProduct), 'Stato del product aggiornato');
-        } catch (\Exception $e) {
-            return $this->errorResponse('Errore nel cambio stato: '.$e->getMessage());
-        }
-    }
+    // All CRUD methods (index, show, store, update, destroy, toggleStatus)
+    // are now inherited from HasCrudActions trait!
+    // Add only custom methods here if needed.
 }

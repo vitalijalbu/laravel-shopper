@@ -20,6 +20,7 @@ use Cartino\Http\Controllers\Api\SitesController;
 use Cartino\Http\Controllers\Api\TaxRateController;
 use Cartino\Http\Controllers\Api\UserController;
 use Cartino\Http\Controllers\Api\UserGroupController;
+use Cartino\Models\PaymentMethod;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -61,6 +62,9 @@ Route::group([
     ]);
     Route::apiResource('categories', CategoriesController::class, [
         'names' => 'api.categories',
+    ]); 
+    Route::apiResource('payment-methods', PaymentMethodsController::class, [
+        'names' => 'api.payment-methods',
     ]);
 
     // Additional brand operations

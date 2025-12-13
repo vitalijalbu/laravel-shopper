@@ -78,7 +78,7 @@ return new class extends Migration
         });
 
         // Many-to-many relationship between collections and products
-        Schema::create('collection_products', function (Blueprint $table) {
+        Schema::create('category_products', function (Blueprint $table) {
             $table->id();
             $table->foreignId('collection_id')->constrained('collections')->cascadeOnDelete();
             $table->foreignId('product_id')->constrained('products')->cascadeOnDelete();
@@ -95,7 +95,7 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('collection_products');
+        Schema::dropIfExists('category_products');
         Schema::dropIfExists('product_options');
         Schema::dropIfExists('collections');
     }
