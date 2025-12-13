@@ -29,7 +29,7 @@ class AnalyticsEvent extends Model
 
     public function __construct(array $attributes = [])
     {
-        $this->table = shopper_table('analytics_events');
+        $this->table = 'analytics_events';
         parent::__construct($attributes);
     }
 

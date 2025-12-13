@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Cartino\Http\Controllers\Api\AuthController;
 use Cartino\Http\Controllers\Api\BrandsController;
+use Cartino\Http\Controllers\Api\AddressesController;
 use Cartino\Http\Controllers\Api\CartController;
 use Cartino\Http\Controllers\Api\CategoriesController;
 use Cartino\Http\Controllers\Api\ChannelController;
@@ -18,6 +19,7 @@ use Cartino\Http\Controllers\Api\FidelityController;
 use Cartino\Http\Controllers\Api\OrderController;
 use Cartino\Http\Controllers\Api\PaymentMethodsController;
 use Cartino\Http\Controllers\Api\ProductController;
+use Cartino\Http\Controllers\Api\ProductTypesController;
 use Cartino\Http\Controllers\Api\ShippingMethodController;
 use Cartino\Http\Controllers\Api\SitesController;
 use Cartino\Http\Controllers\Api\SuppliersController;
@@ -54,11 +56,17 @@ Route::group([
     Route::apiResource('brands', BrandsController::class, [
         'names' => 'api.brands',
     ]);
+    Route::apiResource('addresses', AddressesController::class, [
+        'names' => 'api.addresses',
+    ]);
     Route::apiResource('channels', ChannelController::class, [
         'names' => 'api.channels',
     ]);
     Route::apiResource('products', ProductController::class, [
         'names' => 'api.products',
+    ]);
+    Route::apiResource('product-types', ProductTypesController::class, [
+        'names' => 'api.product-types',
     ]);
     Route::apiResource('sites', SitesController::class, [
         'names' => 'api.sites',
@@ -77,7 +85,7 @@ Route::group([
     ]);
     Route::apiResource('suppliers', SuppliersController::class, [
         'names' => 'api.suppliers',
-    ]); 
+    ]);
     Route::apiResource('discounts', DiscountsController::class, [
         'names' => 'api.discounts',
     ]);

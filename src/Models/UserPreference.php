@@ -22,7 +22,7 @@ class UserPreference extends Model
 
     public function __construct(array $attributes = [])
     {
-        $this->table = shopper_table('user_preferences');
+        $this->table = 'user_preferences';
         parent::__construct($attributes);
     }
 
