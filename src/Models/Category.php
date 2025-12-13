@@ -96,7 +96,7 @@ class Category extends Model
     // Accessors
     public function getUrlAttribute(): string
     {
-        return "/collections/{$this->handle}";
+        return "/categories/{$this->handle}";
     }
 
     public function getImageUrlAttribute(): ?string
