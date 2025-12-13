@@ -18,6 +18,7 @@ class CustomersReportResource extends JsonResource
 
         $topCustomers = collect($data['top_customers'] ?? [])->map(function ($customer) {
             $customerArray = is_array($customer) ? $customer : (array) $customer;
+
             return [
                 'id' => $customerArray['id'] ?? null,
                 'name' => $customerArray['name'] ?? null,

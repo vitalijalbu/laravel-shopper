@@ -18,6 +18,7 @@ class ProductsReportResource extends JsonResource
 
         $topSelling = collect($data['top_selling'] ?? [])->map(function ($product) {
             $productArray = is_array($product) ? $product : (array) $product;
+
             return [
                 'id' => $productArray['id'] ?? null,
                 'name' => $productArray['name'] ?? null,
@@ -32,6 +33,7 @@ class ProductsReportResource extends JsonResource
             $productArray = is_array($product) ? $product : (array) $product;
             $unitsSold = $productArray['units_sold'] ?? 0;
             $revenue = $productArray['revenue'] ?? 0;
+
             return [
                 'id' => $productArray['id'] ?? null,
                 'name' => $productArray['name'] ?? null,

@@ -18,6 +18,7 @@ class SalesReportResource extends JsonResource
 
         $mappedData = collect($data['data'] ?? [])->map(function ($item) {
             $itemArray = is_array($item) ? $item : (array) $item;
+
             return [
                 'period' => $itemArray['period'] ?? null,
                 'orders_count' => $itemArray['orders_count'] ?? 0,

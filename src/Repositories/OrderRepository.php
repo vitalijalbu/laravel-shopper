@@ -14,7 +14,7 @@ use Spatie\QueryBuilder\QueryBuilder;
 
 class OrderRepository extends BaseRepository
 {
-    protected array $with = ['customer', 'items', 'items.product'];
+    protected array $with = ['customer'];
 
     protected string $cachePrefix = 'orders';
 
@@ -32,9 +32,8 @@ class OrderRepository extends BaseRepository
 
         return QueryBuilder::for(Order::class)
             ->with([
-                'customer:id,first_name,last_name,email',
-                'items:id,order_id,product_id,quantity,price_amount,price_currency',
-                'items.product:id,name,slug,sku',
+                'customer',
+                'lines',
             ])
             ->allowedFilters([
                 'order_number',
@@ -45,7 +44,7 @@ class OrderRepository extends BaseRepository
                 AllowedFilter::scope('date_to'),
             ])
             ->allowedSorts(['order_number', 'created_at', 'total_amount', 'status'])
-            ->allowedIncludes(['customer', 'items', 'items.product', 'shippingAddress', 'billingAddress'])
+            ->allowedIncludes(['customer', 'lines', 'lines.product', 'shipping_address', 'billing_address'])
             ->defaultSort('-created_at')
             ->paginate($perPage)
             ->appends($filters);

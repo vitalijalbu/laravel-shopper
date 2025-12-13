@@ -109,5 +109,4 @@ class BrandsController extends ApiController
 
         return $this->successResponse($products);
     }
-
 }

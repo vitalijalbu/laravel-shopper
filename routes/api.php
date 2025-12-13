@@ -100,6 +100,10 @@ Route::group([
         'names' => 'api.couriers',
     ]);
 
+    // Subscriptions resource (public read access)
+    Route::get('subscriptions', [\Cartino\Http\Controllers\Api\SubscriptionsController::class, 'index'])->name('api.subscriptions.index');
+    Route::get('subscriptions/{subscription}', [\Cartino\Http\Controllers\Api\SubscriptionsController::class, 'show'])->name('api.subscriptions.show');
+
     // Authentication
     Route::post('/login', [AuthController::class, 'login'])->name('api.login');
     Route::post('/register', [AuthController::class, 'register'])->name('api.register');
@@ -302,6 +306,19 @@ Route::group([
     Route::post('couriers/{courier}/toggle-enabled', [CouriersController::class, 'toggleEnabled'])->name('api.couriers.toggleEnabled');
     Route::get('couriers/{courier}/orders', [CouriersController::class, 'orders'])->name('api.couriers.orders');
     Route::get('couriers/enabled', [CouriersController::class, 'enabled'])->name('api.couriers.enabled');
+
+    // Subscription Management (Admin)
+    Route::apiResource('subscriptions', \Cartino\Http\Controllers\Api\SubscriptionsController::class, [
+        'names' => 'api.subscriptions',
+    ]);
+
+    // Additional admin subscription operations
+    Route::post('subscriptions/{subscription}/pause', [\Cartino\Http\Controllers\Api\SubscriptionsController::class, 'pause'])->name('api.subscriptions.pause');
+    Route::post('subscriptions/{subscription}/resume', [\Cartino\Http\Controllers\Api\SubscriptionsController::class, 'resume'])->name('api.subscriptions.resume');
+    Route::post('subscriptions/{subscription}/cancel', [\Cartino\Http\Controllers\Api\SubscriptionsController::class, 'cancel'])->name('api.subscriptions.cancel');
+    Route::get('subscriptions/{subscription}/orders', [\Cartino\Http\Controllers\Api\SubscriptionsController::class, 'orders'])->name('api.subscriptions.orders');
+    Route::get('subscriptions/active', [\Cartino\Http\Controllers\Api\SubscriptionsController::class, 'active'])->name('api.subscriptions.active');
+    Route::get('subscriptions/due-for-billing', [\Cartino\Http\Controllers\Api\SubscriptionsController::class, 'dueForBilling'])->name('api.subscriptions.due-for-billing');
 
     // Order Management (Admin)
     Route::prefix('orders')->name('orders.')->group(function () {

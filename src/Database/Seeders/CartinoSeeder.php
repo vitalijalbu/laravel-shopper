@@ -68,21 +68,24 @@ class CartinoSeeder extends Seeder
         $this->command->info('');
         $this->command->info('📊 Data Summary:');
         $this->command->info('   • Sites: 2');
-        $this->command->info('   • Users: ~26');
-        $this->command->info('   • Currencies: ~11');
-        $this->command->info('   • Countries: ~50');
-        $this->command->info('   • Brands: ~50');
-        $this->command->info('   • Categories: ~80+');
-        $this->command->info('   • Products: ~500 (with 3-5 variants each)');
-        $this->command->info('   • Product Reviews: ~2000+');
-        $this->command->info('   • Customers: ~200');
-        $this->command->info('   • Orders: ~600+');
-        $this->command->info('   • Discounts: ~150');
-        $this->command->info('   • Pages: ~80');
-        $this->command->info('   • Suppliers: ~30');
-        $this->command->info('   • Purchase Orders: ~100+');
-        $this->command->info('   • Analytics Events: ~10,000');
-        $this->command->info('   • Stock Notifications: ~500');
+        $this->command->info('   • Users: 26');
+        $this->command->info('   • Currencies: 11');
+        $this->command->info('   • Countries: 50');
+        $this->command->info('   • Brands: 50');
+        $this->command->info('   • Categories: 80');
+        $this->command->info('   • Products: 500 (with ~2000 variants)');
+        $this->command->info('   • Customers: 100 (with 100-200 addresses)');
+        $this->command->info('   • Subscriptions: ~40-60 (active recurring billing)');
+        $this->command->info('   • Orders: ~100 (with ~300 order lines)');
+        $this->command->info('   • Couriers: 10');
+        $this->command->info('   • Suppliers: 30');
+        $this->command->info('   • Shipping Zones: 10 (with 50 rates)');
+        $this->command->info('   • Discounts: 10');
+        $this->command->info('   • Tax Rates: 200');
+        $this->command->info('   • Settings: 50');
+        $this->command->info('   • User Groups: 18');
+        $this->command->info('   • Customer Groups: 11');
+        $this->command->info('   • Menus: 5 (with 50 menu items)');
         $this->command->info('');
         $this->command->info('🔑 Admin login: admin@admin.com / password');
         $this->command->info('');
@@ -103,6 +106,7 @@ class CartinoSeeder extends Seeder
             [
                 'handle' => 'main',
                 'name' => 'Main Store',
+                'url' => 'https://main.test',
                 'locale' => 'en_US',
                 'lang' => 'en',
                 'is_default' => true,
@@ -116,6 +120,7 @@ class CartinoSeeder extends Seeder
             [
                 'handle' => 'it',
                 'name' => 'Store Italia',
+                'url' => 'https://it.test',
                 'locale' => 'it_IT',
                 'lang' => 'it',
                 'status' => 'active',
@@ -162,7 +167,11 @@ class CartinoSeeder extends Seeder
 
         // Seed countries
         $this->command->info('🌍 Seeding countries...');
-        Country::factory()->count(50)->create();
+        if (Country::count() === 0) {
+            Country::factory()->count(50)->create();
+        } else {
+            $this->command->info('  ⏭️  Countries already seeded, skipping...');
+        }
 
         // Create permissions and roles
         $this->command->info('🔑 Creating permissions and roles...');
@@ -207,7 +216,7 @@ class CartinoSeeder extends Seeder
 
         // Seed brands
         $this->command->info('🏷️ Seeding brands...');
-        Brand::factory()->count(500)->create();
+        Brand::factory()->count(50)->create();
 
         // Seed product types
         $this->command->info('📦 Seeding product types...');
@@ -343,6 +352,10 @@ class CartinoSeeder extends Seeder
         // Suppliers
         $this->command->info('🏭 Seeding suppliers...');
         Supplier::factory()->count(30)->active()->create();
+
+        // Couriers
+        $this->command->info('🚚 Seeding couriers...');
+        \Cartino\Models\Courier::factory()->count(10)->create();
     }
 
     /**
@@ -598,18 +611,110 @@ class CartinoSeeder extends Seeder
         $mainSite = Site::where('handle', 'main')->firstOrFail();
         $currency = Currency::where('code', 'EUR')->first() ?? Currency::factory()->state(['code' => 'EUR'])->create();
 
-        // Get products with variants (optional, not used in minimal mode)
-        // $products = Product::with('variants')->limit(100)->get();
+        // Get products with variants
+        $products = Product::with('variants')->limit(100)->get();
 
-        // Create MASSIVE amount of customers
+        // Create customers
         $this->command->info('👥 Creating 100 customers...');
         $customers = Customer::factory()->count(100)->state([
             'site_id' => $mainSite->id,
             'status' => 'active',
         ])->create();
 
-        // In sandbox, stop after customers to avoid missing factories/tables
         $this->command->info('✅ Customers seeded: '.$customers->count());
+
+        // Create addresses for customers
+        $this->command->info('📍 Creating customer addresses...');
+        foreach ($customers as $customer) {
+            Address::factory()->count(rand(1, 2))->state([
+                'addressable_type' => Customer::class,
+                'addressable_id' => $customer->id,
+            ])->create();
+        }
+
+        // Create subscriptions for some customers
+        $this->command->info('🔄 Creating subscriptions...');
+        $subscriptionCount = 0;
+        foreach ($customers->take(30) as $customer) {
+            // Create 1-2 subscriptions per customer (30% of customers)
+            $numSubscriptions = rand(1, 2);
+
+            for ($s = 0; $s < $numSubscriptions; $s++) {
+                $product = $products->random();
+                $variant = $product->variants->random();
+
+                \Cartino\Models\Subscription::factory()->state([
+                    'site_id' => $mainSite->id,
+                    'customer_id' => $customer->id,
+                    'product_id' => $product->id,
+                    'product_variant_id' => $variant->id,
+                    'currency_id' => $currency->id,
+                    'price' => $variant->price ?? rand(10, 100),
+                ])->create();
+
+                $subscriptionCount++;
+            }
+        }
+
+        $this->command->info('✅ Subscriptions seeded: '.$subscriptionCount);
+
+        // Create orders for customers
+        $this->command->info('📦 Creating orders...');
+        $orderCount = 0;
+
+        foreach ($customers->take(50) as $customer) {
+            // Create 1-3 orders per customer
+            $numOrders = rand(1, 3);
+
+            for ($o = 0; $o < $numOrders; $o++) {
+                $order = Order::factory()->state([
+                    'customer_id' => $customer->id,
+                    'site_id' => $mainSite->id,
+                    'currency_id' => $currency->id,
+                ])->create();
+
+                // Create 1-5 order lines per order
+                $numLines = rand(1, 5);
+                $orderSubtotal = 0;
+
+                for ($l = 0; $l < $numLines; $l++) {
+                    $product = $products->random();
+                    $variant = $product->variants->random();
+
+                    $quantity = rand(1, 3);
+                    $unitPrice = $variant->price ?? rand(10, 100);
+                    $lineTotal = $unitPrice * $quantity;
+
+                    OrderLine::factory()->state([
+                        'order_id' => $order->id,
+                        'product_id' => $product->id,
+                        'product_variant_id' => $variant->id,
+                        'product_name' => $product->title,
+                        'product_sku' => $variant->sku,
+                        'quantity' => $quantity,
+                        'unit_price' => $unitPrice,
+                        'line_total' => $lineTotal,
+                    ])->create();
+
+                    $orderSubtotal += $lineTotal;
+                }
+
+                // Update order totals
+                $taxTotal = round($orderSubtotal * 0.22, 2);
+                $shippingTotal = rand(0, 10);
+
+                $order->update([
+                    'subtotal' => $orderSubtotal,
+                    'tax_total' => $taxTotal,
+                    'shipping_total' => $shippingTotal,
+                    'total' => $orderSubtotal + $taxTotal + $shippingTotal,
+                ]);
+
+                $orderCount++;
+            }
+        }
+
+        $this->command->info('✅ Orders seeded: '.$orderCount);
 
         return;
 

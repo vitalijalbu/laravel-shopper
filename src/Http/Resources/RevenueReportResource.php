@@ -18,6 +18,7 @@ class RevenueReportResource extends JsonResource
 
         $timeline = collect($data['timeline'] ?? [])->map(function ($item) {
             $itemArray = is_array($item) ? $item : (array) $item;
+
             return [
                 'period' => $itemArray['period'] ?? null,
                 'gross_sales' => round($itemArray['gross_sales'] ?? 0, 2),

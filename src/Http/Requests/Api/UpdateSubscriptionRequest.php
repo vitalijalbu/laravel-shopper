@@ -1,0 +1,31 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Cartino\Http\Requests\Api;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+class UpdateSubscriptionRequest extends FormRequest
+{
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    public function rules(): array
+    {
+        return [
+            'product_id' => ['sometimes', 'integer', 'exists:products,id'],
+            'product_variant_id' => ['sometimes', 'nullable', 'integer', 'exists:product_variants,id'],
+            'billing_interval' => ['sometimes', 'string', 'in:day,week,month,year'],
+            'billing_interval_count' => ['sometimes', 'integer', 'min:1', 'max:365'],
+            'price' => ['sometimes', 'numeric', 'min:0'],
+            'payment_method' => ['sometimes', 'nullable', 'string', 'max:255'],
+            'payment_details' => ['sometimes', 'nullable', 'array'],
+            'metadata' => ['sometimes', 'nullable', 'array'],
+            'notes' => ['sometimes', 'nullable', 'string'],
+            'data' => ['sometimes', 'nullable', 'array'],
+        ];
+    }
+}

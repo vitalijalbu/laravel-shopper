@@ -18,6 +18,7 @@ class InventoryReportResource extends JsonResource
 
         $lowStockProducts = collect($data['low_stock_products'] ?? [])->map(function ($product) {
             $productArray = is_array($product) ? $product : (array) $product;
+
             return [
                 'id' => $productArray['id'] ?? null,
                 'name' => $productArray['name'] ?? null,
@@ -29,6 +30,7 @@ class InventoryReportResource extends JsonResource
 
         $outOfStockProducts = collect($data['out_of_stock_products'] ?? [])->map(function ($product) {
             $productArray = is_array($product) ? $product : (array) $product;
+
             return [
                 'id' => $productArray['id'] ?? null,
                 'name' => $productArray['name'] ?? null,
