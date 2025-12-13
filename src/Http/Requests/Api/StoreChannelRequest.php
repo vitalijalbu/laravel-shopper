@@ -10,18 +10,11 @@ class StoreChannelRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true;
+        return $this->user()?->can('create', \Cartino\Models\Channel::class) ?? false;
     }
 
     public function rules(): array
     {
-        return [
-            'site_id' => ['required', 'integer', 'exists:sites,id'],
-            'name' => ['required', 'string', 'max:255'],
-            'slug' => ['required', 'string', 'max:255', 'unique:channels,slug'],
-            'url' => ['nullable', 'string', 'url'],
-            'is_active' => ['boolean'],
-            'is_default' => ['boolean'],
-        ];
+        return ['name' => ['required', 'string', 'max:255']];
     }
 }

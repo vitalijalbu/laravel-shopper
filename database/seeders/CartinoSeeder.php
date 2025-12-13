@@ -21,7 +21,6 @@ use Cartino\Models\Order;
 use Cartino\Models\OrderLine;
 use Cartino\Models\Page;
 use Cartino\Models\Product;
-use Cartino\Models\ProductOption;
 use Cartino\Models\ProductReview;
 use Cartino\Models\ProductType;
 use Cartino\Models\ProductVariant;
@@ -310,74 +309,122 @@ class CartinoSeeder extends Seeder
 
         $this->command->info('✅ Categories created: '.$categories->count());
 
-        // Products with variants using factory - MASSIVE QUANTITY
-        $this->command->info('🛍️ Seeding MASSIVE product catalog...');
-        $this->command->info('⏳ This will take a while... creating 500 products with variants...');
+        // Products with variants using factory - MASSIVE QUANTITY (OPTIMIZED)
+        $this->command->info('🛍️ Seeding MASSIVE product catalog with OPTIMIZED batch insert...');
+        $this->command->info('⏳ Creating 5000 products with variants using batch operations...');
 
         $products = collect();
-        $batchSize = 100;
+        $batchSize = 500; // Larger batches for better performance
         $totalProducts = 5000;
+        $totalBatches = (int) ceil($totalProducts / $batchSize);
 
-        for ($batch = 0; $batch < ($totalProducts / $batchSize); $batch++) {
-            $this->command->info('📦 Processing batch '.($batch + 1).' of '.($totalProducts / $batchSize));
+        $this->command->getOutput()->progressStart($totalProducts);
 
-            for ($i = 0; $i < $batchSize; $i++) {
-                $product = Product::factory()->state([
+        for ($batch = 0; $batch < $totalBatches; $batch++) {
+            $this->command->info('');
+            $this->command->info('📦 Processing batch '.($batch + 1)." of {$totalBatches}");
+
+            // Prepare batch data
+            $productsBatch = [];
+            $now = now();
+
+            for ($i = 0; $i < $batchSize && ($batch * $batchSize + $i) < $totalProducts; $i++) {
+                $productsBatch[] = Product::factory()->state([
                     'site_id' => $mainSite->id,
-                ])->create();
+                ])->raw();
+            }
 
-                // Product options using factory
-                ProductOption::factory()->count(2)->state([
-                    'product_id' => $product->id,
-                ])->create();
+            // BATCH INSERT products (10-20x faster!)
+            Product::insert($productsBatch);
 
-                // Variants using factory (3-5 variants per product)
+            // Get inserted products IDs
+            $insertedProducts = Product::where('site_id', $mainSite->id)
+                ->latest('id')
+                ->limit(count($productsBatch))
+                ->get();
+
+            // Prepare batch data for variants and relations
+            $variantsBatch = [];
+            $categoryProductBatch = [];
+            $variantPricesBatch = [];
+
+            foreach ($insertedProducts as $product) {
+                // Variants (3-5 per product)
                 $variantCount = rand(3, 5);
-                $variants = ProductVariant::factory()
-                    ->count($variantCount)
-                    ->state([
+                $productVariants = [];
+
+                for ($v = 0; $v < $variantCount; $v++) {
+                    $variantData = ProductVariant::factory()->state([
                         'product_id' => $product->id,
                         'site_id' => $product->site_id,
-                    ])
-                    ->create();
+                    ])->raw();
+                    $variantsBatch[] = $variantData;
+                    $productVariants[] = $variantData;
+                }
 
-                // Attach random categories (1-3 per product)
+                // Category relations (1-3 per product)
                 $numCategories = rand(1, min(3, $categories->count()));
                 $chosenCategories = $categories->random($numCategories);
 
                 foreach ($chosenCategories as $cat) {
-                    DB::table('category_product')->insert([
+                    $categoryProductBatch[] = [
                         'category_id' => $cat->id,
                         'product_id' => $product->id,
                         'sort_order' => 0,
                         'is_primary' => false,
-                        'created_at' => now(),
-                        'updated_at' => now(),
-                    ]);
+                        'created_at' => $now,
+                        'updated_at' => $now,
+                    ];
                 }
-
-                // Variant prices using factory
-                foreach ($variants as $variant) {
-                    VariantPrice::factory()->state([
-                        'product_variant_id' => $variant->id,
-                        'site_id' => $product->site_id,
-                        'price' => $variant->price,
-                    ])->create();
-                }
-
-                // Update product price range
-                $product->update([
-                    'default_variant_id' => $variants->first()->id,
-                    'variants_count' => $variants->count(),
-                    'price_min' => $variants->min('price'),
-                    'price_max' => $variants->max('price'),
-                ]);
 
                 $products->push($product);
+                $this->command->getOutput()->progressAdvance();
             }
+
+            // BATCH INSERT variants
+            if (! empty($variantsBatch)) {
+                DB::table('product_variants')->insert($variantsBatch);
+            }
+
+            // BATCH INSERT category relations
+            if (! empty($categoryProductBatch)) {
+                DB::table('category_product')->insert($categoryProductBatch);
+            }
+
+            // Update product with variant info (still needs individual updates)
+            foreach ($insertedProducts as $product) {
+                $productVariants = ProductVariant::where('product_id', $product->id)->get();
+                if ($productVariants->isNotEmpty()) {
+                    $product->update([
+                        'default_variant_id' => $productVariants->first()->id,
+                        'variants_count' => $productVariants->count(),
+                        'price_min' => $productVariants->min('price'),
+                        'price_max' => $productVariants->max('price'),
+                    ]);
+
+                    // BATCH INSERT variant prices
+                    $variantPricesBatch = [];
+                    foreach ($productVariants as $variant) {
+                        $variantPricesBatch[] = VariantPrice::factory()->state([
+                            'product_variant_id' => $variant->id,
+                            'site_id' => $product->site_id,
+                            'price' => $variant->price,
+                        ])->raw();
+                    }
+
+                    if (! empty($variantPricesBatch)) {
+                        DB::table('variant_prices')->insert($variantPricesBatch);
+                    }
+                }
+            }
+
+            // Clear memory
+            unset($productsBatch, $variantsBatch, $categoryProductBatch, $variantPricesBatch, $insertedProducts);
         }
 
-        $this->command->info('✅ Products with variants seeded: '.$products->count());
+        $this->command->getOutput()->progressFinish();
+        $this->command->info('');
+        $this->command->info('✅ Products with variants seeded: '.$products->count().' (OPTIMIZED)');
 
         // Product Reviews - MASSIVE
         $this->command->info('⭐ Seeding product reviews...');

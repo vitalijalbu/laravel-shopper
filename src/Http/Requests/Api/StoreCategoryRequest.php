@@ -10,21 +10,22 @@ class StoreCategoryRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true;
+        return $this->user()?->can('create', \Cartino\Models\Category::class) ?? false;
     }
 
     public function rules(): array
     {
         return [
             'name' => ['required', 'string', 'max:255'],
-            'slug' => ['nullable', 'string', 'max:255', 'unique:categories,slug'],
-            'parent_id' => ['nullable', 'integer', 'exists:categories,id'],
+            'slug' => ['required', 'string', 'max:255', 'unique:categories,slug'],
             'description' => ['nullable', 'string'],
-            'image_url' => ['nullable', 'string', 'url'],
-            'is_visible' => ['boolean'],
-            'sort_order' => ['nullable', 'integer'],
+            'parent_id' => ['nullable', 'exists:categories,id'],
+            'site_id' => ['required', 'exists:sites,id'],
+            'sort_order' => ['nullable', 'integer', 'min:0'],
+            'is_active' => ['nullable', 'boolean'],
+            'is_visible' => ['nullable', 'boolean'],
             'meta_title' => ['nullable', 'string', 'max:255'],
-            'meta_description' => ['nullable', 'string'],
+            'meta_description' => ['nullable', 'string', 'max:500'],
         ];
     }
 }

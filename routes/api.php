@@ -206,35 +206,31 @@ Route::group([
                 Route::get('/tree', [\Cartino\Http\Controllers\Api\PermissionController::class, 'permissionTree'])->name('tree');
             });
 
-            // Role Management
-            Route::prefix('roles')->name('roles.')->group(function () {
-                Route::get('/', [\Cartino\Http\Controllers\Api\RoleController::class, 'index'])->name('index');
-                Route::post('/', [\Cartino\Http\Controllers\Api\RoleController::class, 'store'])->name('store');
-                Route::get('/{role}', [\Cartino\Http\Controllers\Api\RoleController::class, 'show'])->name('show');
-                Route::put('/{role}', [\Cartino\Http\Controllers\Api\RoleController::class, 'update'])->name('update');
-                Route::delete('/{role}', [\Cartino\Http\Controllers\Api\RoleController::class, 'destroy'])->name('destroy');
-                Route::post('/{role}/assign-users', [\Cartino\Http\Controllers\Api\RoleController::class, 'assignUsers'])->name('assign.users');
-                Route::post('/{role}/remove-users', [\Cartino\Http\Controllers\Api\RoleController::class, 'removeUsers'])->name('remove.users');
-                Route::post('/{role}/clone', [\Cartino\Http\Controllers\Api\RoleController::class, 'clone'])->name('clone');
-                Route::get('/statistics', [\Cartino\Http\Controllers\Api\RoleController::class, 'statistics'])->name('statistics');
-            });
+            // Role Management (Standardized with apiResource)
+            Route::apiResource('roles', \Cartino\Http\Controllers\Api\RoleController::class, [
+                'names' => 'api.admin.roles',
+            ]);
 
-            // Customer Management
-            Route::prefix('customers')->name('customers.')->group(function () {
-                Route::get('/', [\Cartino\Http\Controllers\Api\CustomerController::class, 'index'])->name('index');
-                Route::get('/with-fidelity', [\Cartino\Http\Controllers\Api\CustomerController::class, 'indexWithFidelity'])->name('index-with-fidelity');
-                Route::post('/', [\Cartino\Http\Controllers\Api\CustomerController::class, 'store'])->name('store');
-                Route::get('/{customer}', [\Cartino\Http\Controllers\Api\CustomerController::class, 'show'])->name('show');
-                Route::put('/{customer}', [\Cartino\Http\Controllers\Api\CustomerController::class, 'update'])->name('update');
-                Route::delete('/{customer}', [\Cartino\Http\Controllers\Api\CustomerController::class, 'destroy'])->name('destroy');
-                Route::get('/{customer}/fidelity', [\Cartino\Http\Controllers\Api\CustomerController::class, 'fidelityCard'])->name('fidelity');
-                Route::post('/{customer}/fidelity', [\Cartino\Http\Controllers\Api\CustomerController::class, 'createFidelityCard'])->name('fidelity.create');
-                Route::get('/{customer}/orders', [\Cartino\Http\Controllers\Api\CustomerController::class, 'orders'])->name('orders');
-                Route::get('/{customer}/addresses', [\Cartino\Http\Controllers\Api\CustomerController::class, 'addresses'])->name('addresses');
-                Route::post('/{customer}/addresses', [\Cartino\Http\Controllers\Api\CustomerController::class, 'addAddress'])->name('addresses.add');
-                Route::get('/{customer}/statistics', [\Cartino\Http\Controllers\Api\CustomerController::class, 'statistics'])->name('statistics');
-                Route::post('/bulk', [\Cartino\Http\Controllers\Api\CustomerController::class, 'bulk'])->name('bulk');
-            });
+            // Custom role actions
+            Route::post('roles/{role}/assign-users', [\Cartino\Http\Controllers\Api\RoleController::class, 'assignUsers'])->name('api.admin.roles.assign.users');
+            Route::post('roles/{role}/remove-users', [\Cartino\Http\Controllers\Api\RoleController::class, 'removeUsers'])->name('api.admin.roles.remove.users');
+            Route::post('roles/{role}/clone', [\Cartino\Http\Controllers\Api\RoleController::class, 'clone'])->name('api.admin.roles.clone');
+            Route::get('roles/statistics', [\Cartino\Http\Controllers\Api\RoleController::class, 'statistics'])->name('api.admin.roles.statistics');
+
+            // Customer Management (Standardized with apiResource)
+            Route::apiResource('customers', \Cartino\Http\Controllers\Api\CustomerController::class, [
+                'names' => 'api.admin.customers',
+            ]);
+
+            // Custom customer actions
+            Route::get('customers/with-fidelity', [\Cartino\Http\Controllers\Api\CustomerController::class, 'indexWithFidelity'])->name('api.admin.customers.index-with-fidelity');
+            Route::get('customers/{customer}/fidelity', [\Cartino\Http\Controllers\Api\CustomerController::class, 'fidelityCard'])->name('api.admin.customers.fidelity');
+            Route::post('customers/{customer}/fidelity', [\Cartino\Http\Controllers\Api\CustomerController::class, 'createFidelityCard'])->name('api.admin.customers.fidelity.create');
+            Route::get('customers/{customer}/orders', [\Cartino\Http\Controllers\Api\CustomerController::class, 'orders'])->name('api.admin.customers.orders');
+            Route::get('customers/{customer}/addresses', [\Cartino\Http\Controllers\Api\CustomerController::class, 'addresses'])->name('api.admin.customers.addresses');
+            Route::post('customers/{customer}/addresses', [\Cartino\Http\Controllers\Api\CustomerController::class, 'addAddress'])->name('api.admin.customers.addresses.add');
+            Route::get('customers/{customer}/statistics', [\Cartino\Http\Controllers\Api\CustomerController::class, 'statistics'])->name('api.admin.customers.statistics');
+            Route::post('customers/bulk', [\Cartino\Http\Controllers\Api\CustomerController::class, 'bulk'])->name('api.admin.customers.bulk');
 
             // Fidelity System Management
             Route::prefix('fidelity')->name('fidelity.')->group(function () {
@@ -247,32 +243,28 @@ Route::group([
                 Route::post('/expire-points', [\Cartino\Http\Controllers\Api\Admin\FidelityAdminController::class, 'expirePoints'])->name('expire-points');
             });
 
-            // User Group Management
-            Route::prefix('user-groups')->name('user-groups.')->group(function () {
-                Route::get('/', [UserGroupController::class, 'index'])->name('index');
-                Route::post('/', [UserGroupController::class, 'store'])->name('store');
-                Route::get('/{group}', [UserGroupController::class, 'show'])->name('show');
-                Route::put('/{group}', [UserGroupController::class, 'update'])->name('update');
-                Route::delete('/{group}', [UserGroupController::class, 'destroy'])->name('destroy');
-                Route::post('/{group}/assign-users', [UserGroupController::class, 'assignUsers'])->name('assign.users');
-                Route::post('/{group}/remove-users', [UserGroupController::class, 'removeUsers'])->name('remove.users');
-                Route::get('/{group}/permissions', [UserGroupController::class, 'permissions'])->name('permissions');
-            });
+            // User Group Management (Standardized with apiResource)
+            Route::apiResource('user-groups', UserGroupController::class, [
+                'names' => 'api.admin.user-groups',
+            ]);
 
-            // User Management
-            Route::prefix('users')->name('users.')->group(function () {
-                Route::get('/', [UserController::class, 'index'])->name('index');
-                Route::post('/', [UserController::class, 'store'])->name('store');
-                Route::get('/{user}', [UserController::class, 'show'])->name('show');
-                Route::put('/{user}', [UserController::class, 'update'])->name('update');
-                Route::delete('/{user}', [UserController::class, 'destroy'])->name('destroy');
-                Route::post('/{user}/activate', [UserController::class, 'activate'])->name('activate');
-                Route::post('/{user}/deactivate', [UserController::class, 'deactivate'])->name('deactivate');
-                Route::post('/{user}/assign-roles', [UserController::class, 'assignRoles'])->name('assign.roles');
-                Route::post('/{user}/assign-permissions', [UserController::class, 'assignPermissions'])->name('assign.permissions');
-                Route::get('/{user}/activity', [UserController::class, 'activity'])->name('activity');
-                Route::post('/bulk', [UserController::class, 'bulk'])->name('bulk');
-            });
+            // Custom user-group actions
+            Route::post('user-groups/{group}/assign-users', [UserGroupController::class, 'assignUsers'])->name('api.admin.user-groups.assign.users');
+            Route::post('user-groups/{group}/remove-users', [UserGroupController::class, 'removeUsers'])->name('api.admin.user-groups.remove.users');
+            Route::get('user-groups/{group}/permissions', [UserGroupController::class, 'permissions'])->name('api.admin.user-groups.permissions');
+
+            // User Management (Standardized with apiResource)
+            Route::apiResource('users', UserController::class, [
+                'names' => 'api.admin.users',
+            ]);
+
+            // Custom user actions
+            Route::post('users/{user}/activate', [UserController::class, 'activate'])->name('api.admin.users.activate');
+            Route::post('users/{user}/deactivate', [UserController::class, 'deactivate'])->name('api.admin.users.deactivate');
+            Route::post('users/{user}/assign-roles', [UserController::class, 'assignRoles'])->name('api.admin.users.assign.roles');
+            Route::post('users/{user}/assign-permissions', [UserController::class, 'assignPermissions'])->name('api.admin.users.assign.permissions');
+            Route::get('users/{user}/activity', [UserController::class, 'activity'])->name('api.admin.users.activity');
+            Route::post('users/bulk', [UserController::class, 'bulk'])->name('api.admin.users.bulk');
 
             // Brand Management (Admin) resource
             Route::apiResource('brands', BrandsController::class, [
@@ -427,6 +419,30 @@ Route::group([
                 Route::post('/{entry}/unpublish', [\Cartino\Http\Controllers\Api\EntriesController::class, 'unpublish'])->name('unpublish');
                 Route::post('/{entry}/schedule', [\Cartino\Http\Controllers\Api\EntriesController::class, 'schedule'])->name('schedule');
                 Route::post('/{entry}/duplicate', [\Cartino\Http\Controllers\Api\EntriesController::class, 'duplicate'])->name('duplicate');
+            });
+
+            // API Keys Management
+            Route::prefix('api-keys')->name('api-keys.')->group(function () {
+                Route::get('/', [\Cartino\Http\Controllers\Api\ApiKeysController::class, 'index'])->name('index');
+                Route::post('/', [\Cartino\Http\Controllers\Api\ApiKeysController::class, 'store'])->name('store');
+                Route::get('/{apiKey}', [\Cartino\Http\Controllers\Api\ApiKeysController::class, 'show'])->name('show');
+                Route::put('/{apiKey}', [\Cartino\Http\Controllers\Api\ApiKeysController::class, 'update'])->name('update');
+                Route::delete('/{apiKey}', [\Cartino\Http\Controllers\Api\ApiKeysController::class, 'destroy'])->name('destroy');
+                Route::post('/{apiKey}/revoke', [\Cartino\Http\Controllers\Api\ApiKeysController::class, 'revoke'])->name('revoke');
+                Route::post('/{apiKey}/activate', [\Cartino\Http\Controllers\Api\ApiKeysController::class, 'activate'])->name('activate');
+                Route::post('/{apiKey}/regenerate', [\Cartino\Http\Controllers\Api\ApiKeysController::class, 'regenerate'])->name('regenerate');
+            });
+
+            // Reports & Analytics
+            Route::prefix('reports')->name('reports.')->group(function () {
+                Route::get('/dashboard', [\Cartino\Http\Controllers\Api\ReportsController::class, 'dashboard'])->name('dashboard');
+                Route::get('/sales', [\Cartino\Http\Controllers\Api\ReportsController::class, 'sales'])->name('sales');
+                Route::get('/customers', [\Cartino\Http\Controllers\Api\ReportsController::class, 'customers'])->name('customers');
+                Route::get('/products', [\Cartino\Http\Controllers\Api\ReportsController::class, 'products'])->name('products');
+                Route::get('/revenue', [\Cartino\Http\Controllers\Api\ReportsController::class, 'revenue'])->name('revenue');
+                Route::get('/inventory', [\Cartino\Http\Controllers\Api\ReportsController::class, 'inventory'])->name('inventory');
+                Route::get('/orders-by-status', [\Cartino\Http\Controllers\Api\ReportsController::class, 'ordersByStatus'])->name('orders-by-status');
+                Route::get('/export', [\Cartino\Http\Controllers\Api\ReportsController::class, 'export'])->name('export');
             });
         });
     });

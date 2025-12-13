@@ -10,21 +10,13 @@ class UpdateCurrencyRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true;
+        $item = $this->route(strtolower('Currency'));
+
+        return $this->user()?->can('update', $item) ?? false;
     }
 
     public function rules(): array
     {
-        $currencyId = $this->route('currency');
-
-        return [
-            'name' => ['sometimes', 'string', 'max:255'],
-            'code' => ['sometimes', 'string', 'size:3', "unique:currencies,code,{$currencyId}"],
-            'symbol' => ['sometimes', 'string', 'max:10'],
-            'decimal_places' => ['sometimes', 'integer', 'min:0', 'max:4'],
-            'exchange_rate' => ['sometimes', 'numeric', 'min:0'],
-            'is_enabled' => ['boolean'],
-            'is_default' => ['boolean'],
-        ];
+        return ['name' => ['sometimes', 'string', 'max:255']];
     }
 }

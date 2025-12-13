@@ -10,19 +10,13 @@ class UpdateMenuRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true;
+        $item = $this->route(strtolower('Menu'));
+
+        return $this->user()?->can('update', $item) ?? false;
     }
 
     public function rules(): array
     {
-        $menuId = $this->route('menu');
-
-        return [
-            'title' => ['sometimes', 'string', 'max:255'],
-            'handle' => ['sometimes', 'string', 'max:100', "unique:menus,handle,{$menuId}"],
-            'description' => ['nullable', 'string'],
-            'is_active' => ['boolean'],
-            'sort_order' => ['nullable', 'integer'],
-        ];
+        return ['name' => ['sometimes', 'string', 'max:255']];
     }
 }

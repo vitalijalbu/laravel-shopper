@@ -10,19 +10,13 @@ class UpdateChannelRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true;
+        $item = $this->route(strtolower('Channel'));
+
+        return $this->user()?->can('update', $item) ?? false;
     }
 
     public function rules(): array
     {
-        $channelId = $this->route('channel');
-
-        return [
-            'name' => ['sometimes', 'string', 'max:255'],
-            'slug' => ['sometimes', 'string', 'max:255', "unique:channels,slug,{$channelId}"],
-            'url' => ['nullable', 'string', 'url'],
-            'is_active' => ['boolean'],
-            'is_default' => ['boolean'],
-        ];
+        return ['name' => ['sometimes', 'string', 'max:255']];
     }
 }

@@ -10,17 +10,11 @@ class StoreMenuRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true;
+        return $this->user()?->can('create', \Cartino\Models\Menu::class) ?? false;
     }
 
     public function rules(): array
     {
-        return [
-            'title' => ['required', 'string', 'max:255'],
-            'handle' => ['required', 'string', 'max:100', 'unique:menus,handle'],
-            'description' => ['nullable', 'string'],
-            'is_active' => ['boolean'],
-            'sort_order' => ['nullable', 'integer'],
-        ];
+        return ['name' => ['required', 'string', 'max:255']];
     }
 }
