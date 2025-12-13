@@ -13,7 +13,6 @@ use Cartino\Models\Country;
 use Cartino\Models\Currency;
 use Cartino\Models\Customer;
 use Cartino\Models\CustomerGroup;
-use Cartino\Models\Discount;
 use Cartino\Models\Favorite;
 use Cartino\Models\Menu;
 use Cartino\Models\MenuItem;
@@ -28,7 +27,6 @@ use Cartino\Models\PurchaseOrderItem;
 use Cartino\Models\ReviewMedia;
 use Cartino\Models\ReviewVote;
 use Cartino\Models\Setting;
-use Cartino\Models\ShippingRate;
 use Cartino\Models\ShippingZone;
 use Cartino\Models\Site;
 use Cartino\Models\StockNotification;
@@ -43,6 +41,7 @@ use Cartino\Models\WishlistItem;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
@@ -119,17 +118,42 @@ class CartinoSeeder extends Seeder
             'order' => 2,
         ])->create();
 
-        // Seed currencies
+        // Seed currencies (ensure uniqueness by code)
         $this->command->info('💰 Seeding currencies...');
-        Currency::factory()->state([
-            'code' => 'EUR',
-            'name' => 'Euro',
-            'symbol' => '€',
-            'is_default' => true,
-            'rate' => 1.0000,
-        ])->create();
+        Currency::query()->firstOrCreate(
+            ['code' => 'EUR'],
+            [
+                'name' => 'Euro',
+                'symbol' => '€',
+                'is_default' => true,
+                'rate' => 1.0000,
+            ]
+        );
 
-        Currency::factory()->count(10)->create();
+        $uniqueCurrencies = [
+            ['code' => 'USD', 'name' => 'US Dollar', 'symbol' => '$', 'rate' => 1.08],
+            ['code' => 'GBP', 'name' => 'British Pound', 'symbol' => '£', 'rate' => 0.85],
+            ['code' => 'JPY', 'name' => 'Japanese Yen', 'symbol' => '¥', 'rate' => 160.0],
+            ['code' => 'CHF', 'name' => 'Swiss Franc', 'symbol' => 'CHF', 'rate' => 0.95],
+            ['code' => 'AUD', 'name' => 'Australian Dollar', 'symbol' => 'A$', 'rate' => 1.60],
+            ['code' => 'CAD', 'name' => 'Canadian Dollar', 'symbol' => 'C$', 'rate' => 1.45],
+            ['code' => 'SEK', 'name' => 'Swedish Krona', 'symbol' => 'kr', 'rate' => 11.2],
+            ['code' => 'NOK', 'name' => 'Norwegian Krone', 'symbol' => 'kr', 'rate' => 11.5],
+            ['code' => 'DKK', 'name' => 'Danish Krone', 'symbol' => 'kr', 'rate' => 7.45],
+            ['code' => 'PLN', 'name' => 'Polish Złoty', 'symbol' => 'zł', 'rate' => 4.30],
+        ];
+
+        foreach ($uniqueCurrencies as $c) {
+            Currency::query()->firstOrCreate(
+                ['code' => $c['code']],
+                [
+                    'name' => $c['name'],
+                    'symbol' => $c['symbol'],
+                    'rate' => $c['rate'],
+                    'is_default' => false,
+                ]
+            );
+        }
 
         // Seed countries
         $this->command->info('🌍 Seeding countries...');
@@ -178,7 +202,7 @@ class CartinoSeeder extends Seeder
 
         // Seed brands
         $this->command->info('🏷️ Seeding brands...');
-        Brand::factory()->count(500)->enabled()->create();
+        Brand::factory()->count(500)->create();
 
         // Seed product types
         $this->command->info('📦 Seeding product types...');
@@ -192,7 +216,11 @@ class CartinoSeeder extends Seeder
 
         // Globals (like Statamic)
         $this->command->info('🌐 Seeding globals...');
-        $this->call(GlobalSeeder::class);
+        if (class_exists(\Cartino\Database\Seeders\GlobalSeeder::class)) {
+            $this->call(\Cartino\Database\Seeders\GlobalSeeder::class);
+        } else {
+            $this->command->warn('  Skipping GlobalSeeder (class not found)');
+        }
 
         // Shipping zones and rates
         $this->command->info('🚚 Seeding shipping zones & rates...');
@@ -201,10 +229,12 @@ class CartinoSeeder extends Seeder
         ])->create();
 
         foreach ($zones as $zone) {
-            ShippingRate::factory()->count(5)->state([
-                'shipping_zone_id' => $zone->id,
-                'channel_id' => Channel::where('slug', 'default')->value('id'),
-            ])->create();
+            \Cartino\Database\Factories\ShippingRateFactory::new()
+                ->count(5)
+                ->state([
+                    'shipping_zone_id' => $zone->id,
+                    'channel_id' => Channel::where('slug', 'default')->value('id'),
+                ])->create();
         }
 
         // Taxes
@@ -213,30 +243,89 @@ class CartinoSeeder extends Seeder
 
         // Payment methods
         $this->command->info('💳 Seeding payment methods...');
-        DB::table('payment_methods')->insert(
-            \Cartino\Database\Factories\PaymentMethodFactory::new()->state([
-                'slug' => 'stripe-card',
-                'provider' => 'stripe',
-                'status' => 'active',
-            ])->raw()
-        );
+        DB::table('payment_methods')->insert([
+            'name' => 'Stripe Card',
+            'slug' => 'stripe-card',
+            'provider' => 'stripe',
+            'description' => 'Stripe card payments',
+            'configuration' => json_encode(['mode' => 'test']),
+            'status' => 'active',
+            'is_test_mode' => true,
+            'fixed_fee' => 0,
+            'percentage_fee' => 0.029,
+            'supported_currencies' => json_encode(['EUR', 'USD']),
+            'supported_countries' => json_encode(['IT', 'US', 'DE']),
+            'sort_order' => 1,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
 
-        DB::table('payment_methods')->insert(
-            \Cartino\Database\Factories\PaymentMethodFactory::new()->state([
-                'slug' => 'paypal',
-                'provider' => 'paypal',
-                'status' => 'active',
-            ])->raw()
-        );
+        DB::table('payment_methods')->insert([
+            'name' => 'PayPal',
+            'slug' => 'paypal',
+            'provider' => 'paypal',
+            'description' => 'PayPal payments',
+            'configuration' => json_encode(['mode' => 'test']),
+            'status' => 'active',
+            'is_test_mode' => true,
+            'fixed_fee' => 0,
+            'percentage_fee' => 0.03,
+            'supported_currencies' => json_encode(['EUR', 'USD']),
+            'supported_countries' => json_encode(['IT', 'US', 'DE']),
+            'sort_order' => 2,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
 
         // Discounts
         $this->command->info('🎟️ Seeding discounts...');
-        Discount::factory()->count(100)->create();
-        Discount::factory()->count(500)->active()->create();
+        $seedDiscount = function (array $d) {
+            DB::table('discounts')->insert([
+                'site_id' => null,
+                'code' => $d['code'],
+                'title' => $d['title'],
+                'description' => $d['description'],
+                'type' => $d['type'],
+                'value' => $d['value'],
+                'maximum_discount_amount' => $d['maximum_discount_amount'] ?? null,
+                'minimum_amount' => $d['minimum_amount'] ?? null,
+                'usage_limit' => $d['usage_limit'] ?? null,
+                'usage_limit_per_customer' => $d['usage_limit_per_customer'] ?? null,
+                'usage_count' => 0,
+                'starts_at' => now()->subWeek(),
+                'expires_at' => null,
+                'is_active' => true,
+                'target_type' => 'all',
+                'target_selection' => null,
+                'customer_eligibility' => 'all',
+                'customer_selection' => null,
+                'shipping_countries' => null,
+                'exclude_shipping_rates' => false,
+                'created_by' => null,
+                'admin_notes' => null,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        };
+        foreach (range(1, 10) as $i) {
+            $seedDiscount([
+                'code' => strtoupper(Str::random(4)).'-'.rand(1000, 9999),
+                'title' => 'Promo '.$i,
+                'description' => 'Generic discount '.$i,
+                'type' => 'percentage',
+                'value' => 10,
+                'maximum_discount_amount' => null,
+                'minimum_amount' => null,
+            ]);
+        }
 
         // Entries (like Statamic Collections)
         $this->command->info('📝 Seeding entries...');
-        $this->call(EntrySeeder::class);
+        if (class_exists(\Cartino\Database\Seeders\EntrySeeder::class)) {
+            $this->call(\Cartino\Database\Seeders\EntrySeeder::class);
+        } else {
+            $this->command->warn('  Skipping EntrySeeder (class not found)');
+        }
 
         // Menus
         $this->command->info('🗂️ Seeding menus...');
@@ -323,13 +412,20 @@ class CartinoSeeder extends Seeder
             $now = now();
 
             for ($i = 0; $i < $batchSize && ($batch * $batchSize + $i) < $totalProducts; $i++) {
-                $productsBatch[] = Product::factory()->state([
+                $raw = Product::factory()->state([
                     'site_id' => $mainSite->id,
                 ])->raw();
+                // Ensure JSON fields are properly encoded for batch insert
+                foreach (['options', 'tags', 'data', 'seo'] as $jsonKey) {
+                    if (array_key_exists($jsonKey, $raw) && is_array($raw[$jsonKey])) {
+                        $raw[$jsonKey] = json_encode($raw[$jsonKey]);
+                    }
+                }
+                $productsBatch[] = $raw;
             }
 
             // BATCH INSERT products (10-20x faster!)
-            Product::insert($productsBatch);
+            \DB::table('products')->insert($productsBatch);
 
             // Get inserted products IDs
             $insertedProducts = Product::where('site_id', $mainSite->id)
@@ -701,10 +797,17 @@ class CartinoSeeder extends Seeder
 
         // Create permissions
         $createdPermissions = 0;
+        $guard = config('auth.defaults.guard', 'web');
         foreach ($permissions as $name => $description) {
             $permission = Permission::firstOrCreate(
-                ['name' => $name, 'guard_name' => ''],
-                ['name' => $name, 'guard_name' => '']
+                [
+                    'name' => $name,
+                    'guard_name' => $guard,
+                ],
+                [
+                    'name' => $name,
+                    'guard_name' => $guard,
+                ]
             );
             $createdPermissions++;
         }
@@ -764,12 +867,20 @@ class CartinoSeeder extends Seeder
         $createdRoles = 0;
         foreach ($roles as $roleName => $roleData) {
             $role = Role::firstOrCreate(
-                ['name' => $roleName, 'guard_name' => ''],
-                ['name' => $roleName, 'guard_name' => '']
+                [
+                    'name' => $roleName,
+                    'guard_name' => $guard,
+                ],
+                [
+                    'name' => $roleName,
+                    'guard_name' => $guard,
+                ]
             );
 
             // Sync permissions
-            $availablePermissions = Permission::whereIn('name', $roleData['permissions'])->get();
+            $availablePermissions = Permission::where('guard_name', $guard)
+                ->whereIn('name', $roleData['permissions'])
+                ->get();
             $role->syncPermissions($availablePermissions);
 
             $createdRoles++;

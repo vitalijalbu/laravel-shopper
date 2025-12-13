@@ -18,11 +18,16 @@ class MenuItemFactory extends Factory
             'menu_id' => Menu::query()->inRandomOrder()->value('id') ?? Menu::factory(),
             'parent_id' => null,
             'title' => $this->faker->words(2, true),
-            'url' => $this->faker->url(),
-            'target' => $this->faker->randomElement(['_self', '_blank']),
-            'icon' => $this->faker->optional()->word(),
-            'order' => $this->faker->numberBetween(1, 100),
-            'is_active' => $this->faker->boolean(90),
+            'url' => $this->faker->optional()->url(),
+            'type' => $this->faker->randomElement(['link', 'collection', 'entry', 'external']),
+            'reference_type' => null,
+            'reference_id' => null,
+            'data' => [],
+            'status' => 'active',
+            'opens_in_new_window' => $this->faker->boolean(10),
+            'css_class' => $this->faker->optional()->word(),
+            'sort_order' => $this->faker->numberBetween(0, 100),
+            'depth' => 0,
         ];
     }
 }

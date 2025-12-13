@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('global_sets', function (Blueprint $table) {
             $table->id();
-            $table->string('handle')->unique()->comment('Identificatore univoco per il global set');
-            $table->string('title')->comment('Nome visualizzato del global set');
-            $table->json('data')->nullable()->comment('Dati del global set in formato JSON');
+            $table->string('handle')->unique();
+            $table->string('title');
+            $table->json('data')->nullable();
             $table->timestamps();
 
             $table->index('handle');

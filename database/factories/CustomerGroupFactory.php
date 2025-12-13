@@ -14,7 +14,8 @@ class CustomerGroupFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->unique()->randomElement([
+            'site_id' => null,
+            'name' => $this->faker->randomElement([
                 'Retail Customers',
                 'Wholesale',
                 'VIP Members',
@@ -22,13 +23,17 @@ class CustomerGroupFactory extends Factory
                 'Premium Club',
                 'Regular Members',
             ]),
+            'slug' => $this->faker->slug(2),
             'description' => $this->faker->sentence(),
             'is_default' => false,
+            'is_enabled' => true,
             'discount_percentage' => $this->faker->randomFloat(2, 0, 25),
-            'settings' => [
-                'min_order_value' => $this->faker->numberBetween(0, 100),
-                'free_shipping' => $this->faker->boolean(),
-            ],
+            'tax_exempt' => false,
+            'pricing_rules' => null,
+            'permissions' => null,
+            'restrictions' => null,
+            'status' => 'active',
+            'data' => null,
         ];
     }
 

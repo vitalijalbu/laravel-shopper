@@ -42,7 +42,7 @@ return new class extends Migration
             $table->boolean('is_default_shipping')->default(false);
 
             // Additional metadata
-            $table->jsonb('metadata')->nullable()->comment('Additional address data');
+            $table->jsonb('metadata')->nullable();
             $table->text('notes')->nullable();
 
             $table->timestamps();

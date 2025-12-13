@@ -10,17 +10,20 @@ use Cartino\Http\Controllers\Api\ChannelController;
 use Cartino\Http\Controllers\Api\CountryController;
 use Cartino\Http\Controllers\Api\CurrencyController;
 use Cartino\Http\Controllers\Api\CustomerController;
+use Cartino\Http\Controllers\Api\CustomerGroupsController;
 use Cartino\Http\Controllers\Api\Data\StatusController;
 use Cartino\Http\Controllers\Api\DiscountController;
+use Cartino\Http\Controllers\Api\DiscountsController;
 use Cartino\Http\Controllers\Api\FidelityController;
 use Cartino\Http\Controllers\Api\OrderController;
+use Cartino\Http\Controllers\Api\PaymentMethodsController;
 use Cartino\Http\Controllers\Api\ProductController;
 use Cartino\Http\Controllers\Api\ShippingMethodController;
 use Cartino\Http\Controllers\Api\SitesController;
+use Cartino\Http\Controllers\Api\SuppliersController;
 use Cartino\Http\Controllers\Api\TaxRateController;
 use Cartino\Http\Controllers\Api\UserController;
 use Cartino\Http\Controllers\Api\UserGroupController;
-use Cartino\Models\PaymentMethod;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -62,9 +65,21 @@ Route::group([
     ]);
     Route::apiResource('categories', CategoriesController::class, [
         'names' => 'api.categories',
-    ]); 
+    ]);
     Route::apiResource('payment-methods', PaymentMethodsController::class, [
         'names' => 'api.payment-methods',
+    ]);
+    Route::apiResource('customers', CustomerController::class, [
+        'names' => 'api.customers',
+    ]);
+    Route::apiResource('customer-groups', CustomerGroupsController::class, [
+        'names' => 'api.customer-groups',
+    ]);
+    Route::apiResource('suppliers', SuppliersController::class, [
+        'names' => 'api.suppliers',
+    ]); 
+    Route::apiResource('discounts', DiscountsController::class, [
+        'names' => 'api.discounts',
     ]);
 
     // Additional brand operations

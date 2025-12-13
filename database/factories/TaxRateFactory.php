@@ -14,7 +14,7 @@ class TaxRateFactory extends Factory
 
     public function definition(): array
     {
-        $code = Str::upper($this->faker->lexify('TAX???'));
+        $code = 'TAX'.Str::upper(Str::random(5));
 
         return [
             'name' => 'VAT '.$this->faker->numberBetween(10, 25).'%',

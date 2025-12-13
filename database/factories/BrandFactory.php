@@ -18,18 +18,17 @@ class BrandFactory extends Factory
         $slug = Str::slug($name);
 
         return [
+            'site_id' => null,
             'name' => $name,
             'slug' => $slug,
             'description' => $this->faker->paragraph(),
             'website' => $this->faker->url(),
+            'logo' => null,
+            'status' => 'active',
             'seo' => [
                 'title' => $name,
                 'description' => $this->faker->sentence(),
                 'keywords' => $this->faker->words(5, true),
-            ],
-            'meta' => [
-                'founded' => $this->faker->year(),
-                'country' => $this->faker->country(),
             ],
             'data' => null,
         ];

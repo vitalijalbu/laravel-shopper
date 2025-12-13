@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('entries', function (Blueprint $table) {
             $table->id();
-            $table->string('collection')->index()->comment('Nome della collection (pages, blog, products, etc.)');
+            $table->string('collection')->index();
             $table->string('slug')->comment('URL slug dell\'entry');
             $table->string('title')->comment('Titolo dell\'entry');
             $table->json('data')->nullable()->comment('Dati dell\'entry in formato JSON');

@@ -13,28 +13,29 @@ class DiscountFactory extends Factory
 
     public function definition(): array
     {
-        $type = $this->faker->randomElement(['percentage', 'fixed', 'buy_x_get_y', 'free_shipping']);
+        $type = $this->faker->randomElement(['percentage', 'fixed_amount', 'buy_x_get_y', 'free_shipping']);
 
         return [
             'code' => strtoupper($this->faker->unique()->bothify('????-####')),
-            'name' => $this->faker->words(3, true),
+            'title' => $this->faker->words(3, true),
             'description' => $this->faker->sentence(),
             'type' => $type,
-            'value' => $type === 'percentage' ? $this->faker->numberBetween(5, 50) : $this->faker->numberBetween(500, 5000),
-            'min_purchase_amount' => $this->faker->optional()->numberBetween(1000, 10000),
-            'max_discount_amount' => $this->faker->optional()->numberBetween(1000, 5000),
+            'value' => $type === 'percentage' ? $this->faker->randomFloat(2, 1, 50) : $this->faker->randomFloat(2, 1, 100),
+            'minimum_amount' => $this->faker->optional()->randomFloat(2, 10, 500),
+            'maximum_discount_amount' => $this->faker->optional()->randomFloat(2, 10, 200),
             'usage_limit' => $this->faker->optional()->numberBetween(10, 1000),
             'usage_limit_per_customer' => $this->faker->optional()->numberBetween(1, 5),
-            'times_used' => $this->faker->numberBetween(0, 50),
+            'usage_count' => $this->faker->numberBetween(0, 50),
             'starts_at' => $this->faker->dateTimeBetween('-1 month', 'now'),
-            'ends_at' => $this->faker->dateTimeBetween('now', '+6 months'),
-            'status' => $this->faker->randomElement(['active', 'inactive', 'scheduled', 'expired']),
-            'applies_to' => $this->faker->randomElement(['all', 'products', 'categories', 'customers']),
-            'target_selection' => [],
-            'prerequisite_subtotal_range' => null,
-            'prerequisite_quantity_range' => null,
-            'customer_selection' => $this->faker->randomElement(['all', 'prerequisite', 'segment']),
-            'allocation_method' => $this->faker->randomElement(['each', 'across']),
+            'expires_at' => $this->faker->dateTimeBetween('now', '+6 months'),
+            'is_active' => $this->faker->boolean(80),
+            'target_type' => $this->faker->randomElement(['all', 'specific_products', 'specific_collections', 'categories']),
+            'target_selection' => null,
+            'customer_eligibility' => $this->faker->randomElement(['all', 'specific_groups', 'specific_customers']),
+            'customer_selection' => null,
+            'shipping_countries' => null,
+            'exclude_shipping_rates' => false,
+            'admin_notes' => null,
         ];
     }
 

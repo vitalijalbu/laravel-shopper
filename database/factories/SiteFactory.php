@@ -23,7 +23,6 @@ class SiteFactory extends Factory
             'description' => $this->faker->sentence(),
             'url' => $this->faker->url(),
             'domain' => $this->faker->domainName(),
-            'domains' => [$this->faker->domainName()],
             'locale' => $this->faker->locale(),
             'lang' => $this->faker->languageCode(),
             'countries' => $this->faker->randomElements(['IT', 'FR', 'DE', 'ES', 'US'], 2),

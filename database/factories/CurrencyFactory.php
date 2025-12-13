@@ -26,7 +26,6 @@ class CurrencyFactory extends Factory
             'code' => $currencyData['code'],
             'symbol' => $currencyData['symbol'],
             'rate' => $this->faker->randomFloat(4, 0.5, 2.0),
-            'precision' => $this->faker->randomElement([0, 2]),
             'is_default' => false,
 
         ];

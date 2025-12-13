@@ -16,6 +16,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->string('url');
             $table->string('domain')->nullable()->unique();
+            $table->jsonb('domains')->nullable();
             $table->string('locale', 10)->index();
             $table->string('lang', 5);
             $table->jsonb('countries')->nullable();

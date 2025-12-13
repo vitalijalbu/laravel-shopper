@@ -15,8 +15,10 @@ class UserGroupFactory extends Factory
     {
         return [
             'name' => $this->faker->unique()->words(2, true),
-            'handle' => $this->faker->unique()->slug(2),
-            'permissions' => $this->faker->randomElements(['view', 'create', 'edit', 'delete'], $this->faker->numberBetween(1, 4)),
+            'description' => $this->faker->sentence(),
+            'is_active' => true,
+            'is_default' => false,
+            'metadata' => null,
         ];
     }
 }

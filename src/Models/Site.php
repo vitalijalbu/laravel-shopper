@@ -3,7 +3,6 @@
 namespace Cartino\Models;
 
 use Cartino\Support\HasHandle;
-use Cartino\Database\Factories\SiteFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -55,9 +54,19 @@ class Site extends Model
     /**
      * Create a new factory instance for the model.
      */
-    protected static function newFactory(): SiteFactory
+    protected static function newFactory(): \Illuminate\Database\Eloquent\Factories\Factory
     {
-        return SiteFactory::new();
+        // Prefer package factory
+        if (class_exists(\Cartino\Database\Factories\SiteFactory::class)) {
+            return \Cartino\Database\Factories\SiteFactory::new();
+        }
+
+        // Fallback to application factory namespace
+        if (class_exists(\Database\Factories\SiteFactory::class)) {
+            return \Database\Factories\SiteFactory::new();
+        }
+
+        throw new \RuntimeException('SiteFactory not found');
     }
 
     public function channels(): HasMany

@@ -8,9 +8,7 @@ use Cartino\Http\Requests\Api\StorePageRequest;
 use Cartino\Http\Requests\Api\UpdatePageRequest;
 use Cartino\Http\Resources\PageResource;
 use Cartino\Models\Page;
-use Cartino\Repositories\PageRepository;
 use Cartino\Repositories\PaymentMethodRepository;
-
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 

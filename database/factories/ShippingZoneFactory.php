@@ -16,7 +16,7 @@ class ShippingZoneFactory extends Factory
     {
         return [
             'site_id' => Site::query()->inRandomOrder()->value('id'),
-            'name' => 'EU Zone '.$this->faker->unique()->numberBetween(1, 9),
+            'name' => 'EU Zone '.$this->faker->numberBetween(1, 99),
             'description' => $this->faker->sentence(8),
             'countries' => ['IT', 'FR', 'DE', 'ES'],
             'regions' => null,

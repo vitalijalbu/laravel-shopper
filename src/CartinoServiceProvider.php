@@ -79,10 +79,26 @@ class CartinoServiceProvider extends ServiceProvider
         // Load migrations
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
 
-        // Load model factories for package models
-        if (method_exists($this, 'loadFactoriesFrom')) {
-            $this->loadFactoriesFrom(__DIR__.'/../database/factories');
+        // Ensure package factory classes are loaded in consuming apps
+        $factoriesPath = __DIR__.'/../database/factories';
+        if (is_dir($factoriesPath)) {
+            foreach (glob($factoriesPath.'/*.php') as $factoryFile) {
+                require_once $factoryFile;
+            }
         }
+
+        // Configure factory namespace guessing for Cartino models
+        if (class_exists(\Illuminate\Database\Eloquent\Factories\Factory::class)) {
+            \Illuminate\Database\Eloquent\Factories\Factory::guessFactoryNamesUsing(function (string $modelName) {
+                $base = class_basename($modelName);
+
+                return 'Cartino\\Database\\Factories\\'.$base.'Factory';
+            });
+        }
+
+        // Ensure Spatie Permission guard defaults align with app guard
+        $defaultGuard = config('auth.defaults.guard', 'web');
+        config(['permission.defaults.guard' => $defaultGuard]);
 
         // Load translations
         $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'cartino');

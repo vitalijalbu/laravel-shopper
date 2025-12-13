@@ -17,14 +17,17 @@ class ProductFactory extends Factory
 
     public function definition(): array
     {
-        $title = $this->faker->unique()->productName();
-        $slug = Str::slug($title);
+        $title = $this->faker->unique()->words(3, true);
+        // Ensure slug uniqueness across massive batches by appending a short random suffix
+        $slugBase = Str::slug($title);
+        $slug = $slugBase.'-'.Str::lower(Str::random(6));
 
         return [
             'site_id' => Site::query()->inRandomOrder()->value('id'),
             'title' => $title,
             'slug' => $slug,
-            'handle' => Str::slug($slug.'-'.$this->faker->unique()->numberBetween(10, 9999)),
+            // Make handle unique per site reliably
+            'handle' => Str::slug($slugBase.'-'.Str::lower(Str::random(8))),
             'excerpt' => $this->faker->sentence(10),
             'description' => $this->faker->paragraphs(3, true),
             'product_type' => 'physical',
@@ -41,10 +44,6 @@ class ProductFactory extends Factory
             'published_at' => now()->subDays($this->faker->numberBetween(1, 30)),
             'published_scope' => 'web',
             'default_variant_id' => null,
-            'variants_count' => 0,
-            'images_count' => 0,
-            'price_min' => null,
-            'price_max' => null,
             'data' => null,
         ];
     }

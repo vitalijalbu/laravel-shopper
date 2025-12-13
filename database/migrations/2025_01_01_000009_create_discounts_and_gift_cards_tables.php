@@ -73,7 +73,7 @@ return new class extends Migration
         Schema::create('discount_usages', function (Blueprint $table) {
             $table->id();
             $table->foreignId('discount_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('order_id')->nullable()->constrained()->nullOnDelete();
+            $table->unsignedBigInteger('order_id')->nullable();
             $table->foreignId('customer_id')->nullable()->constrained()->nullOnDelete();
 
             $table->decimal('discount_amount', 15, 2);
@@ -99,6 +99,12 @@ return new class extends Migration
             $table->index(['status', 'created_at']);
         });
 
+        if (Schema::hasTable('orders')) {
+            Schema::table('discount_usages', function (Blueprint $table) {
+                $table->foreign('order_id')->references('id')->on('orders')->nullOnDelete();
+            });
+        }
+
         Schema::create('gift_cards', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('site_id')->nullable();
@@ -119,7 +125,7 @@ return new class extends Migration
             $table->string('recipient_name')->nullable();
             $table->text('message')->nullable();
 
-            $table->foreignId('order_id')->nullable()->constrained()->nullOnDelete();
+            $table->unsignedBigInteger('order_id')->nullable();
             $table->foreignId('purchased_by')->nullable()->constrained('customers')->nullOnDelete();
 
             $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
@@ -145,10 +151,16 @@ return new class extends Migration
             $table->foreign('site_id')->references('id')->on('sites')->onDelete('cascade');
         });
 
+        if (Schema::hasTable('orders')) {
+            Schema::table('gift_cards', function (Blueprint $table) {
+                $table->foreign('order_id')->references('id')->on('orders')->nullOnDelete();
+            });
+        }
+
         Schema::create('gift_card_usages', function (Blueprint $table) {
             $table->id();
             $table->foreignId('gift_card_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('order_id')->nullable()->constrained()->nullOnDelete();
+            $table->unsignedBigInteger('order_id')->nullable();
             $table->foreignId('customer_id')->nullable()->constrained()->nullOnDelete();
 
             $table->decimal('amount_used', 15, 2);
@@ -168,6 +180,12 @@ return new class extends Migration
             $table->index(['gift_card_id', 'created_at']);
             $table->index(['type', 'amount_used', 'created_at']);
         });
+
+        if (Schema::hasTable('orders')) {
+            Schema::table('gift_card_usages', function (Blueprint $table) {
+                $table->foreign('order_id')->references('id')->on('orders')->nullOnDelete();
+            });
+        }
     }
 
     public function down(): void

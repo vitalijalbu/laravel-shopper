@@ -13,16 +13,20 @@ class Menu extends Model
     protected $table = 'menus';
 
     protected $fillable = [
+        'site_id',
         'handle',
         'title',
         'description',
+        'location',
         'settings',
+        'data',
         'is_active',
         'sort_order',
     ];
 
     protected $casts = [
         'settings' => 'array',
+        'data' => 'array',
         'is_active' => 'boolean',
     ];
 
