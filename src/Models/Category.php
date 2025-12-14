@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Category extends Model
@@ -60,12 +61,22 @@ class Category extends Model
         return $this->belongsTo(Site::class);
     }
 
+    public function parent(): BelongsTo
+    {
+        return $this->belongsTo(Category::class, 'parent_id');
+    }
+
+    public function children(): HasMany
+    {
+        return $this->hasMany(Category::class, 'parent_id')->orderBy('sort_order');
+    }
+
     public function products(): BelongsToMany
     {
-        return $this->belongsToMany(Product::class, 'category_products')
-            ->withPivot(['position', 'featured'])
+        return $this->belongsToMany(Product::class, 'category_product')
+            ->withPivot(['sort_order', 'is_primary'])
             ->withTimestamps()
-            ->orderBy('category_products.position');
+            ->orderBy('category_product.sort_order');
     }
 
     // Scopes

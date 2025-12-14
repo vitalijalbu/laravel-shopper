@@ -13,7 +13,7 @@ class CategoriesController extends ApiController
     ) {}
 
     /**
-     * Display a listing of brands
+     * Display a listing of categories
      */
     public function index(Request $request): JsonResponse
     {
@@ -22,6 +22,30 @@ class CategoriesController extends ApiController
         $data = $this->repository->findAll($request);
 
         return $this->paginatedResponse($data);
+    }
+
+    /**
+     * Get category tree (root categories with nested children)
+     */
+    public function tree(): JsonResponse
+    {
+        $tree = $this->repository->getTree();
+
+        return response()->json([
+            'data' => \Cartino\Http\Resources\CategoryResource::collection($tree),
+        ]);
+    }
+
+    /**
+     * Get root categories only (with direct children count)
+     */
+    public function root(): JsonResponse
+    {
+        $rootCategories = $this->repository->getRootCategories();
+
+        return response()->json([
+            'data' => \Cartino\Http\Resources\CategoryResource::collection($rootCategories),
+        ]);
     }
 
     /**

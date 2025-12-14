@@ -24,6 +24,7 @@ final class CategoryRepository extends BaseRepository
             ->allowedFilters(['name', 'slug', 'status'])
             ->allowedSorts(['name', 'created_at', 'status'])
             ->allowedIncludes(['parent', 'children', 'products'])
+            ->withCount('children') // Always include children count
             ->paginate($filters['per_page'] ?? config('settings.pagination.per_page'))
             ->appends($filters);
     }
@@ -36,7 +37,42 @@ final class CategoryRepository extends BaseRepository
         return $this->model
             ->where('id', $slugOrId)
             ->orWhere('slug', $slugOrId)
+            ->withCount('children')
             ->firstOrFail();
+    }
+
+    /**
+     * Get all root categories (no parent)
+     */
+    public function getRootCategories(): \Illuminate\Database\Eloquent\Collection
+    {
+        return $this->model
+            ->whereNull('parent_id')
+            ->with(['children' => function ($query) {
+                $query->withCount('children')->orderBy('sort_order');
+            }])
+            ->withCount('children')
+            ->orderBy('sort_order')
+            ->get();
+    }
+
+    /**
+     * Get full category tree (recursive)
+     */
+    public function getTree(): \Illuminate\Database\Eloquent\Collection
+    {
+        return $this->model
+            ->whereNull('parent_id')
+            ->with(['children' => function ($query) {
+                $query->with(['children' => function ($q) {
+                    $q->withCount('children')->orderBy('sort_order');
+                }])
+                ->withCount('children')
+                ->orderBy('sort_order');
+            }])
+            ->withCount('children')
+            ->orderBy('sort_order')
+            ->get();
     }
 
     /**

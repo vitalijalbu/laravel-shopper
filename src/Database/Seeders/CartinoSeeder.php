@@ -33,7 +33,6 @@ use Cartino\Models\TaxRate;
 use Cartino\Models\Transaction;
 use Cartino\Models\User;
 use Cartino\Models\UserGroup;
-use Cartino\Models\VariantPrice;
 use Cartino\Models\Wishlist;
 use Cartino\Models\WishlistItem;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -73,7 +72,10 @@ class CartinoSeeder extends Seeder
         $this->command->info('   • Countries: 50');
         $this->command->info('   • Brands: 50');
         $this->command->info('   • Categories: 80');
+        $this->command->info('   • Product Options: 4 (Color, Size, Material, Style with ~35 values)');
+        $this->command->info('   • Price Lists: 5 (Standard, Wholesale, Tier, 2 Promotional)');
         $this->command->info('   • Products: 500 (with ~2000 variants)');
+        $this->command->info('   • Prices: ~6000-8000 (multi-tier, multi-site pricing)');
         $this->command->info('   • Customers: 100 (with 100-200 addresses)');
         $this->command->info('   • Subscriptions: ~40-60 (active recurring billing)');
         $this->command->info('   • Orders: ~200-250 (regular + subscription billing)');
@@ -366,6 +368,16 @@ class CartinoSeeder extends Seeder
         $this->command->info('🛍️ Building demo catalog...');
         $mainSite = Site::where('handle', 'main')->firstOrFail();
 
+        // Product Options (like WooCommerce attributes)
+        $this->command->info('🎨 Seeding product options...');
+        $productOptions = $this->createProductOptions();
+        $this->command->info('✅ Product options created: '.$productOptions->count());
+
+        // Price Lists (Standard, Wholesale, Promotional)
+        $this->command->info('💰 Seeding price lists...');
+        $priceLists = $this->createPriceLists();
+        $this->command->info('✅ Price lists created: '.$priceLists->count());
+
         // Categories with factory
         $this->command->info('📂 Seeding categories...');
         $categories = collect();
@@ -410,9 +422,13 @@ class CartinoSeeder extends Seeder
 
         $this->command->info('✅ Categories created: '.$categories->count());
 
+        // Get currencies for pricing
+        $currencies = Currency::all();
+        $eurCurrency = $currencies->where('code', 'EUR')->first();
+
         // Products with variants using factory - MASSIVE QUANTITY (OPTIMIZED)
         $this->command->info('🛍️ Seeding MASSIVE product catalog with OPTIMIZED batch insert...');
-        $this->command->info('⏳ Creating 5000 products with variants using batch operations...');
+        $this->command->info('⏳ Creating 500 products with variants using batch operations...');
 
         $products = collect();
         $batchSize = 500; // Larger batches for better performance
@@ -516,18 +532,128 @@ class CartinoSeeder extends Seeder
                         'price_max' => $productVariants->max('price'),
                     ]);
 
-                    // BATCH INSERT variant prices
-                    $variantPricesBatch = [];
+                    // BATCH INSERT prices using new Price model
+                    $pricesBatch = [];
                     foreach ($productVariants as $variant) {
-                        $variantPricesBatch[] = VariantPrice::factory()->state([
+                        $basePrice = (int) ($variant->price * 100); // Convert to cents
+                        $comparePrice = $basePrice > 2000 ? (int) ($basePrice * 1.25) : null;
+                        $costPrice = (int) ($basePrice * 0.6);
+
+                        // Standard retail price (global, no site, no price list)
+                        $pricesBatch[] = [
                             'product_variant_id' => $variant->id,
-                            'site_id' => $product->site_id,
-                            'price' => $variant->price,
-                        ])->raw();
+                            'site_id' => null,
+                            'price_list_id' => null,
+                            'currency' => 'EUR',
+                            'amount' => $basePrice,
+                            'compare_at_amount' => $comparePrice,
+                            'cost_amount' => $costPrice,
+                            'tax_included' => false,
+                            'tax_rate' => 22.0000,
+                            'min_quantity' => 1,
+                            'max_quantity' => null,
+                            'starts_at' => now()->subMonth(),
+                            'ends_at' => null,
+                            'is_active' => true,
+                            'metadata' => json_encode([]),
+                            'created_at' => now(),
+                            'updated_at' => now(),
+                        ];
+
+                        // Site-specific price for main site
+                        $pricesBatch[] = [
+                            'product_variant_id' => $variant->id,
+                            'site_id' => $mainSite->id,
+                            'price_list_id' => null,
+                            'currency' => 'EUR',
+                            'amount' => $basePrice,
+                            'compare_at_amount' => $comparePrice,
+                            'cost_amount' => $costPrice,
+                            'tax_included' => false,
+                            'tax_rate' => 22.0000,
+                            'min_quantity' => 1,
+                            'max_quantity' => null,
+                            'starts_at' => now()->subMonth(),
+                            'ends_at' => null,
+                            'is_active' => true,
+                            'metadata' => json_encode([]),
+                            'created_at' => now(),
+                            'updated_at' => now(),
+                        ];
+
+                        // Wholesale price (15% discount)
+                        $wholesaleList = $priceLists->where('code', 'WHOLESALE')->first();
+                        if ($wholesaleList) {
+                            $pricesBatch[] = [
+                                'product_variant_id' => $variant->id,
+                                'site_id' => null,
+                                'price_list_id' => $wholesaleList->id,
+                                'currency' => 'EUR',
+                                'amount' => (int) ($basePrice * 0.85),
+                                'compare_at_amount' => $basePrice,
+                                'cost_amount' => $costPrice,
+                                'tax_included' => false,
+                                'tax_rate' => 22.0000,
+                                'min_quantity' => 1,
+                                'max_quantity' => null,
+                                'starts_at' => now()->subMonth(),
+                                'ends_at' => null,
+                                'is_active' => true,
+                                'metadata' => json_encode(['discount_percentage' => 15]),
+                                'created_at' => now(),
+                                'updated_at' => now(),
+                            ];
+                        }
+
+                        // Tier pricing (quantity breaks)
+                        $tierList = $priceLists->where('code', 'TIER')->first();
+                        if ($tierList && rand(1, 100) > 70) {
+                            // 10+ items: 10% discount
+                            $pricesBatch[] = [
+                                'product_variant_id' => $variant->id,
+                                'site_id' => null,
+                                'price_list_id' => $tierList->id,
+                                'currency' => 'EUR',
+                                'amount' => (int) ($basePrice * 0.90),
+                                'compare_at_amount' => $basePrice,
+                                'cost_amount' => $costPrice,
+                                'tax_included' => false,
+                                'tax_rate' => 22.0000,
+                                'min_quantity' => 10,
+                                'max_quantity' => 49,
+                                'starts_at' => now()->subMonth(),
+                                'ends_at' => null,
+                                'is_active' => true,
+                                'metadata' => json_encode(['tier' => 1, 'discount_percentage' => 10]),
+                                'created_at' => now(),
+                                'updated_at' => now(),
+                            ];
+
+                            // 50+ items: 20% discount
+                            $pricesBatch[] = [
+                                'product_variant_id' => $variant->id,
+                                'site_id' => null,
+                                'price_list_id' => $tierList->id,
+                                'currency' => 'EUR',
+                                'amount' => (int) ($basePrice * 0.80),
+                                'compare_at_amount' => $basePrice,
+                                'cost_amount' => $costPrice,
+                                'tax_included' => false,
+                                'tax_rate' => 22.0000,
+                                'min_quantity' => 50,
+                                'max_quantity' => null,
+                                'starts_at' => now()->subMonth(),
+                                'ends_at' => null,
+                                'is_active' => true,
+                                'metadata' => json_encode(['tier' => 2, 'discount_percentage' => 20]),
+                                'created_at' => now(),
+                                'updated_at' => now(),
+                            ];
+                        }
                     }
 
-                    if (! empty($variantPricesBatch)) {
-                        DB::table('variant_prices')->insert($variantPricesBatch);
+                    if (! empty($pricesBatch)) {
+                        DB::table('prices')->insert($pricesBatch);
                     }
                 }
             }
@@ -1071,5 +1197,195 @@ class CartinoSeeder extends Seeder
         }
 
         $this->command->info("✅ Roles and permissions setup completed ({$createdRoles} roles, {$createdPermissions} permissions)");
+    }
+
+    /**
+     * Create global product options (like WooCommerce attributes)
+     */
+    protected function createProductOptions(): \Illuminate\Support\Collection
+    {
+        $options = collect();
+
+        // Color option with swatch values
+        $colorOption = \Cartino\Models\ProductOption::create([
+            'name' => 'Color',
+            'slug' => 'color',
+            'type' => 'swatch',
+            'is_global' => true,
+            'use_for_variants' => true,
+            'is_visible' => true,
+            'position' => 1,
+        ]);
+
+        $colors = [
+            ['label' => 'Red', 'value' => 'red', 'color_hex' => '#FF0000'],
+            ['label' => 'Blue', 'value' => 'blue', 'color_hex' => '#0000FF'],
+            ['label' => 'Green', 'value' => 'green', 'color_hex' => '#00FF00'],
+            ['label' => 'Black', 'value' => 'black', 'color_hex' => '#000000'],
+            ['label' => 'White', 'value' => 'white', 'color_hex' => '#FFFFFF'],
+            ['label' => 'Yellow', 'value' => 'yellow', 'color_hex' => '#FFFF00'],
+            ['label' => 'Orange', 'value' => 'orange', 'color_hex' => '#FFA500'],
+            ['label' => 'Purple', 'value' => 'purple', 'color_hex' => '#800080'],
+            ['label' => 'Pink', 'value' => 'pink', 'color_hex' => '#FFC0CB'],
+            ['label' => 'Gray', 'value' => 'gray', 'color_hex' => '#808080'],
+        ];
+
+        foreach ($colors as $index => $color) {
+            \Cartino\Models\ProductOptionValue::create([
+                'product_option_id' => $colorOption->id,
+                'label' => $color['label'],
+                'value' => $color['value'],
+                'color_hex' => $color['color_hex'],
+                'position' => $index + 1,
+            ]);
+        }
+
+        $options->push($colorOption);
+
+        // Size option
+        $sizeOption = \Cartino\Models\ProductOption::create([
+            'name' => 'Size',
+            'slug' => 'size',
+            'type' => 'select',
+            'is_global' => true,
+            'use_for_variants' => true,
+            'is_visible' => true,
+            'position' => 2,
+        ]);
+
+        $sizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL'];
+        foreach ($sizes as $index => $size) {
+            \Cartino\Models\ProductOptionValue::create([
+                'product_option_id' => $sizeOption->id,
+                'label' => $size,
+                'value' => strtolower($size),
+                'position' => $index + 1,
+            ]);
+        }
+
+        $options->push($sizeOption);
+
+        // Material option
+        $materialOption = \Cartino\Models\ProductOption::create([
+            'name' => 'Material',
+            'slug' => 'material',
+            'type' => 'select',
+            'is_global' => true,
+            'use_for_variants' => false,
+            'is_visible' => true,
+            'position' => 3,
+        ]);
+
+        $materials = ['Cotton', 'Polyester', 'Wool', 'Silk', 'Leather', 'Denim', 'Linen'];
+        foreach ($materials as $index => $material) {
+            \Cartino\Models\ProductOptionValue::create([
+                'product_option_id' => $materialOption->id,
+                'label' => $material,
+                'value' => strtolower($material),
+                'position' => $index + 1,
+            ]);
+        }
+
+        $options->push($materialOption);
+
+        // Style option
+        $styleOption = \Cartino\Models\ProductOption::create([
+            'name' => 'Style',
+            'slug' => 'style',
+            'type' => 'radio',
+            'is_global' => true,
+            'use_for_variants' => false,
+            'is_visible' => true,
+            'position' => 4,
+        ]);
+
+        $styles = ['Casual', 'Formal', 'Sport', 'Vintage', 'Modern'];
+        foreach ($styles as $index => $style) {
+            \Cartino\Models\ProductOptionValue::create([
+                'product_option_id' => $styleOption->id,
+                'label' => $style,
+                'value' => strtolower($style),
+                'position' => $index + 1,
+            ]);
+        }
+
+        $options->push($styleOption);
+
+        return $options;
+    }
+
+    /**
+     * Create price lists for different pricing tiers
+     */
+    protected function createPriceLists(): \Illuminate\Support\Collection
+    {
+        $priceLists = collect();
+
+        // Standard retail price list (default)
+        $standardList = \Cartino\Models\PriceList::create([
+            'name' => 'Standard Retail',
+            'code' => 'STANDARD',
+            'type' => 'standard',
+            'priority' => 1,
+            'is_active' => true,
+            'starts_at' => now()->subMonth(),
+            'ends_at' => null,
+            'description' => 'Standard retail pricing for all customers',
+        ]);
+        $priceLists->push($standardList);
+
+        // Wholesale price list
+        $wholesaleList = \Cartino\Models\PriceList::create([
+            'name' => 'Wholesale',
+            'code' => 'WHOLESALE',
+            'type' => 'wholesale',
+            'priority' => 2,
+            'is_active' => true,
+            'starts_at' => now()->subMonth(),
+            'ends_at' => null,
+            'description' => 'Special wholesale pricing for bulk buyers',
+        ]);
+        $priceLists->push($wholesaleList);
+
+        // Black Friday promotional price list
+        $blackFridayList = \Cartino\Models\PriceList::create([
+            'name' => 'Black Friday Sale',
+            'code' => 'BLACKFRIDAY2025',
+            'type' => 'promotional',
+            'priority' => 10,
+            'is_active' => true,
+            'starts_at' => now()->addMonths(11)->startOfDay(),
+            'ends_at' => now()->addMonths(11)->addDays(4)->endOfDay(),
+            'description' => 'Black Friday promotional pricing',
+        ]);
+        $priceLists->push($blackFridayList);
+
+        // Summer Sale promotional price list
+        $summerList = \Cartino\Models\PriceList::create([
+            'name' => 'Summer Sale',
+            'code' => 'SUMMER2025',
+            'type' => 'promotional',
+            'priority' => 9,
+            'is_active' => true,
+            'starts_at' => now()->addMonths(6)->startOfDay(),
+            'ends_at' => now()->addMonths(8)->endOfDay(),
+            'description' => 'Summer seasonal pricing',
+        ]);
+        $priceLists->push($summerList);
+
+        // Tier pricing (quantity breaks)
+        $tierList = \Cartino\Models\PriceList::create([
+            'name' => 'Volume Discounts',
+            'code' => 'TIER',
+            'type' => 'tier',
+            'priority' => 5,
+            'is_active' => true,
+            'starts_at' => now()->subMonth(),
+            'ends_at' => null,
+            'description' => 'Quantity-based tier pricing',
+        ]);
+        $priceLists->push($tierList);
+
+        return $priceLists;
     }
 }

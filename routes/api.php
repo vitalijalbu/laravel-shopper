@@ -76,6 +76,11 @@ Route::group([
     Route::apiResource('sites', SitesController::class, [
         'names' => 'api.sites',
     ]);
+
+    // Categories custom routes (before resource to avoid conflicts)
+    Route::get('categories/tree', [CategoriesController::class, 'tree'])->name('api.categories.tree');
+    Route::get('categories/root', [CategoriesController::class, 'root'])->name('api.categories.root');
+
     Route::apiResource('categories', CategoriesController::class, [
         'names' => 'api.categories',
     ]);
@@ -108,10 +113,29 @@ Route::group([
     Route::post('/login', [AuthController::class, 'login'])->name('api.login');
     Route::post('/register', [AuthController::class, 'register'])->name('api.register');
 
-    // Data Endpoints (Statuses, etc.)
+    // Data Endpoints (Statuses, Dictionaries, etc.)
     Route::prefix('data')->name('api.data.')->group(function () {
+        Route::get('/', [\Cartino\Http\Controllers\Api\Data\DataController::class, 'index'])->name('index');
+
+        // Statuses
         Route::get('/statuses', [StatusController::class, 'index'])->name('statuses.index');
         Route::get('/statuses/{type}', [StatusController::class, 'show'])->name('statuses.show');
+
+        // Dictionaries (extensible reference data) - Public read access
+        Route::get('/dictionaries', [\Cartino\Http\Controllers\Api\Data\DataController::class, 'dictionaries'])->name('dictionaries.index');
+        Route::get('/dictionaries/search', [\Cartino\Http\Controllers\Api\Data\DataController::class, 'searchDictionaries'])->name('dictionaries.search');
+        Route::get('/dictionaries/{handle}', [\Cartino\Http\Controllers\Api\Data\DataController::class, 'dictionary'])->name('dictionaries.show');
+        Route::get('/dictionaries/{handle}/{key}', [\Cartino\Http\Controllers\Api\Data\DataController::class, 'dictionaryItem'])->name('dictionaries.item');
+
+        // Dictionary Items Management (Admin only) - CRUD for custom items
+        Route::prefix('dictionaries/{handle}/items')->name('dictionary-items.')->middleware(['auth:sanctum'])->group(function () {
+            Route::get('/', [\Cartino\Http\Controllers\Api\Data\DictionaryItemsController::class, 'index'])->name('index');
+            Route::post('/', [\Cartino\Http\Controllers\Api\Data\DictionaryItemsController::class, 'store'])->name('store');
+            Route::put('/{id}', [\Cartino\Http\Controllers\Api\Data\DictionaryItemsController::class, 'update'])->name('update');
+            Route::delete('/{id}', [\Cartino\Http\Controllers\Api\Data\DictionaryItemsController::class, 'destroy'])->name('destroy');
+            Route::post('/reorder', [\Cartino\Http\Controllers\Api\Data\DictionaryItemsController::class, 'reorder'])->name('reorder');
+            Route::post('/{id}/toggle', [\Cartino\Http\Controllers\Api\Data\DictionaryItemsController::class, 'toggle'])->name('toggle');
+        });
     });
 
     // Public Countries/Currencies
@@ -133,6 +157,9 @@ Route::group([
         Route::get('/', [\Cartino\Http\Controllers\Api\ShippingMethodController::class, 'index'])->name('index');
         Route::post('/calculate', [\Cartino\Http\Controllers\Api\ShippingMethodController::class, 'calculate'])->name('calculate');
     });
+
+    // Headless Search API - Optimized dynamic search with breadcrumbs and filters
+    Route::post('/search', [\Cartino\Http\Controllers\Api\SearchController::class, 'search'])->name('api.search');
 
     // Public Tax Rates
     Route::prefix('tax-rates')->name('api.tax-rates.')->group(function () {
