@@ -7,6 +7,7 @@ namespace Cartino\Dictionaries;
 class Currencies extends BasicDictionary
 {
     protected string $valueKey = 'code';
+
     protected array $keywords = ['currencies', 'currency', 'money', 'dollar'];
 
     protected function getItemLabel(array $item): string

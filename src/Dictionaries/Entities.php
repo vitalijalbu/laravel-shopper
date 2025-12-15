@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Cartino\Dictionaries;
 
-
 class Entities extends BasicDictionary
 {
     protected string $valueKey = 'model';
+
     protected array $keywords = ['entities', 'entity', 'model', 'data'];
 
     protected function getItemLabel(array $item): string
@@ -60,8 +60,7 @@ class Entities extends BasicDictionary
             'model' => 'PriceList',
             'label' => 'Price List',
         ],
-    ];    
-    
+    ];
 
     protected function getItems(): array
     {

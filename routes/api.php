@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Cartino\Http\Controllers\Api\AddressesController;
+use Cartino\Http\Controllers\Api\AssetController;
 use Cartino\Http\Controllers\Api\AuthController;
 use Cartino\Http\Controllers\Api\BrandsController;
 use Cartino\Http\Controllers\Api\CartController;
@@ -441,16 +442,30 @@ Route::group([
 
     // Asset Management
     Route::prefix('assets')->name('assets.')->group(function () {
-        Route::get('/', [\Cartino\Http\Controllers\Api\AssetController::class, 'index'])->name('index');
+        Route::get('/', [AssetController::class, 'index'])->name('index');
         Route::post('/upload', [\Cartino\Http\Controllers\Api\AssetController::class, 'upload'])->name('upload');
         Route::post('/upload-multiple', [\Cartino\Http\Controllers\Api\AssetController::class, 'uploadMultiple'])->name('upload.multiple');
         Route::get('/{asset}', [\Cartino\Http\Controllers\Api\AssetController::class, 'show'])->name('show');
         Route::put('/{asset}', [\Cartino\Http\Controllers\Api\AssetController::class, 'update'])->name('update');
         Route::delete('/{asset}', [\Cartino\Http\Controllers\Api\AssetController::class, 'destroy'])->name('destroy');
-        Route::post('/{asset}/move', [\Cartino\Http\Controllers\Api\AssetController::class, 'move'])->name('move');
-        Route::post('/{asset}/rename', [\Cartino\Http\Controllers\Api\AssetController::class, 'rename'])->name('rename');
-        Route::get('/{asset}/download', [\Cartino\Http\Controllers\Api\AssetController::class, 'download'])->name('download');
-        Route::post('/bulk-delete', [\Cartino\Http\Controllers\Api\AssetController::class, 'bulkDelete'])->name('bulk.delete');
+        Route::post('/{asset}/move', [AssetController::class, 'move'])->name('move');
+        Route::post('/{asset}/rename', [AssetController::class, 'rename'])->name('rename');
+        Route::get('/{asset}/download', [AssetController::class, 'download'])->name('download');
+        Route::post('/bulk-delete', [AssetController::class, 'bulkDelete'])->name('bulk.delete');
+    });
+
+    // Asset Relations (Polymorphic - Products, Categories, Brands, etc.)
+    // Format: /api/{model_type}/{id}/assets
+    Route::prefix('{model_type}/{model_id}/assets')->name('assetables.')->group(function () {
+        Route::get('/', [\Cartino\Http\Controllers\Api\AssetableController::class, 'index'])->name('index');
+        Route::post('/', [\Cartino\Http\Controllers\Api\AssetableController::class, 'attach'])->name('attach');
+        Route::post('/bulk', [\Cartino\Http\Controllers\Api\AssetableController::class, 'attachBulk'])->name('attach.bulk');
+        Route::put('/sync', [\Cartino\Http\Controllers\Api\AssetableController::class, 'sync'])->name('sync');
+        Route::post('/reorder', [\Cartino\Http\Controllers\Api\AssetableController::class, 'reorder'])->name('reorder');
+        Route::patch('/{asset}', [\Cartino\Http\Controllers\Api\AssetableController::class, 'update'])->name('update');
+        Route::delete('/{asset}', [\Cartino\Http\Controllers\Api\AssetableController::class, 'detach'])->name('detach');
+        Route::delete('/', [\Cartino\Http\Controllers\Api\AssetableController::class, 'detachAll'])->name('detach.all');
+        Route::post('/{asset}/set-primary', [\Cartino\Http\Controllers\Api\AssetableController::class, 'setPrimary'])->name('set-primary');
     });
 
     // Globals Management (like Statamic)

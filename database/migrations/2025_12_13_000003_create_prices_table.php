@@ -8,6 +8,11 @@ return new class extends Migration
 {
     public function up(): void
     {
+        // Drop old pricing tables if they exist (from older migration)
+        Schema::dropIfExists('price_list_items');
+        Schema::dropIfExists('price_lists');
+
+        // Create new improved price_lists table
         Schema::create('price_lists', function (Blueprint $table) {
             $table->id();
             $table->string('name');
@@ -89,5 +94,36 @@ return new class extends Migration
         Schema::dropIfExists('customer_group_price_list');
         Schema::dropIfExists('prices');
         Schema::dropIfExists('price_lists');
+
+        // Recreate old price_lists structure for rollback compatibility
+        Schema::create('price_lists', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('code')->unique();
+            $table->text('description')->nullable();
+            $table->foreignId('site_id')->nullable()->constrained('sites')->cascadeOnDelete();
+            $table->foreignId('channel_id')->nullable()->constrained('channels')->cascadeOnDelete();
+            $table->foreignId('customer_group_id')->nullable()->constrained('customer_groups')->cascadeOnDelete();
+            $table->string('currency', 3);
+            $table->enum('adjustment_type', ['percentage', 'fixed'])->nullable();
+            $table->decimal('adjustment_value', 10, 4)->nullable();
+            $table->timestamp('starts_at')->nullable();
+            $table->timestamp('ends_at')->nullable();
+            $table->boolean('is_active')->default(true);
+            $table->integer('priority')->default(0);
+            $table->timestamps();
+            $table->softDeletes();
+            $table->jsonb('data')->nullable();
+        });
+
+        Schema::create('price_list_items', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('price_list_id')->constrained('price_lists')->cascadeOnDelete();
+            $table->foreignId('product_variant_id')->constrained('product_variants')->cascadeOnDelete();
+            $table->decimal('price', 15, 4);
+            $table->decimal('compare_at_price', 15, 4)->nullable();
+            $table->integer('min_quantity')->default(1);
+            $table->timestamps();
+        });
     }
 };

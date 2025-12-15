@@ -42,7 +42,7 @@ class DictionariesController extends ApiController
             return $this->errorResponse("Dictionary '{$handle}' not found", 404);
         }
 
-        $cacheKey = "dictionary:{$handle}:" . ($request->get('search') ?? 'all');
+        $cacheKey = "dictionary:{$handle}:".($request->get('search') ?? 'all');
 
         $data = Cache::remember($cacheKey, 3600, function () use ($dictionaries, $handle, $request) {
             $dictionary = new $dictionaries[$handle];
@@ -55,7 +55,7 @@ class DictionariesController extends ApiController
                 'title' => $dictionary->title() ?? ucfirst($handle),
                 'keywords' => $dictionary->keywords(),
                 'options' => $dictionary->options($search),
-                'items' => collect($items)->map(fn($item) => [
+                'items' => collect($items)->map(fn ($item) => [
                     'value' => $item->value(),
                     'label' => $item->label(),
                     'extra' => $item->extra(),
@@ -116,7 +116,7 @@ class DictionariesController extends ApiController
             return [
                 'handle' => $handle,
                 'title' => $dictionary->title() ?? ucfirst($handle),
-                'items' => collect($items)->map(fn($item) => [
+                'items' => collect($items)->map(fn ($item) => [
                     'value' => $item->value(),
                     'label' => $item->label(),
                     'extra' => $item->extra(),

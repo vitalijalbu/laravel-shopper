@@ -71,7 +71,7 @@
 import { ref } from 'vue'
 import { useForm, Head, Link } from '@inertiajs/vue3'
 import { useTranslations } from '@/composables/useTranslations'
-import AuthLayout from '@/components/auth-layout.vue'
+import AuthLayout from '@/layouts/auth-layout.vue'
 import { Button } from '@cartino/ui'
 
 // Auth layout per pagine di autenticazione

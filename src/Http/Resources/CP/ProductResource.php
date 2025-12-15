@@ -62,6 +62,10 @@ class ProductResource extends JsonResource
             'published_at' => $this->published_at?->format('Y-m-d H:i:s'),
 
             // Relationships
+            'options' => $this->whenLoaded('options', function () {
+                return \Cartino\Http\Resources\ProductOptionResource::collection($this->options);
+            }),
+
             'brand' => $this->whenLoaded('brand', function () {
                 return [
                     'id' => $this->brand->id,
@@ -126,6 +130,7 @@ class ProductResource extends JsonResource
             }),
 
             // Counts
+            'options_count' => $this->whenCounted('options'),
             'variants_count' => $this->whenCounted('variants'),
             'orders_count' => $this->whenCounted('orders'),
             'collections_count' => $this->whenCounted('collections'),

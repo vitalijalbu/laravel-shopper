@@ -44,7 +44,7 @@ class OrdersController extends Controller
         $customers = $this->orderRepository->getCustomersForSelect();
         $products = $this->orderRepository->getProductsForSelect();
 
-        return Inertia::render('orders-index', [
+        return Inertia::render('orders/index', [
             'page' => $page->compile(),
 
             'orders' => $orders,

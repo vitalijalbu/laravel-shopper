@@ -67,8 +67,8 @@ final class CategoryRepository extends BaseRepository
                 $query->with(['children' => function ($q) {
                     $q->withCount('children')->orderBy('sort_order');
                 }])
-                ->withCount('children')
-                ->orderBy('sort_order');
+                    ->withCount('children')
+                    ->orderBy('sort_order');
             }])
             ->withCount('children')
             ->orderBy('sort_order')

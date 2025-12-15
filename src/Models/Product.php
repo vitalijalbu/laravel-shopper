@@ -6,6 +6,7 @@ namespace Cartino\Models;
 
 use Cartino\Support\HasHandle;
 use Cartino\Support\HasSite;
+use Cartino\Traits\HasAssets;
 use Cartino\Traits\HasCustomFields;
 use Cartino\Traits\HasOptimizedFilters;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -15,18 +16,15 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Spatie\MediaLibrary\HasMedia;
-use Spatie\MediaLibrary\InteractsWithMedia;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class Product extends Model implements HasMedia
+class Product extends Model
 {
+    use HasAssets;
     use HasCustomFields;
     use HasFactory;
     use HasHandle;
     use HasOptimizedFilters;
     use HasSite;
-    use InteractsWithMedia;
     use SoftDeletes;
 
     protected $fillable = [
@@ -58,6 +56,15 @@ class Product extends Model implements HasMedia
         'average_rating',
         'review_count',
         'data',
+        // Product enhancements
+        'min_order_quantity',
+        'order_increment',
+        'is_closeout',
+        'restock_days',
+        'condition',
+        'hs_code',
+        'country_of_origin',
+        'visibility',
     ];
 
     protected $casts = [
@@ -78,6 +85,11 @@ class Product extends Model implements HasMedia
         'published_at' => 'datetime',
         'average_rating' => 'decimal:2',
         'review_count' => 'integer',
+        // Product enhancements
+        'min_order_quantity' => 'integer',
+        'order_increment' => 'integer',
+        'is_closeout' => 'boolean',
+        'restock_days' => 'integer',
     ];
 
     /**
@@ -147,6 +159,37 @@ class Product extends Model implements HasMedia
         'sku',
     ];
 
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+
+        /**
+         * Asset collections configuration
+         */
+        $this->assetCollections = [
+            'images' => [
+                'multiple' => true,
+                'max_files' => 10,
+                'mime_types' => ['image/jpeg', 'image/png', 'image/webp', 'image/gif'],
+            ],
+            'gallery' => [
+                'multiple' => true,
+                'max_files' => 50,
+                'mime_types' => ['image/jpeg', 'image/png', 'image/webp'],
+            ],
+            'documents' => [
+                'multiple' => true,
+                'max_files' => 10,
+                'mime_types' => ['application/pdf', 'application/msword'],
+            ],
+            'videos' => [
+                'multiple' => true,
+                'max_files' => 5,
+                'mime_types' => ['video/mp4', 'video/webm'],
+            ],
+        ];
+    }
+
     public function brand(): BelongsTo
     {
         return $this->belongsTo(Brand::class);
@@ -202,25 +245,187 @@ class Product extends Model implements HasMedia
         return $this->favorites()->where('customer_id', $customer->id)->exists();
     }
 
-    public function registerMediaConversions(?Media $media = null): void
-    {
-        $this->addMediaConversion('thumb')
-            ->width(300)
-            ->height(300)
-            ->sharpen(10);
+    // ========================================
+    // Product Bundles
+    // ========================================
 
-        $this->addMediaConversion('large')
-            ->width(800)
-            ->height(600)
-            ->sharpen(10);
+    /**
+     * Products that are bundled within this product.
+     * Example: "Gaming PC Bundle" contains "Gaming Mouse", "Keyboard", etc.
+     */
+    public function bundles(): BelongsToMany
+    {
+        return $this->belongsToMany(Product::class, 'product_bundles', 'product_id', 'bundled_product_id')
+            ->withPivot(['quantity', 'discount_percent', 'is_optional', 'sort_order'])
+            ->withTimestamps()
+            ->orderBy('product_bundles.sort_order');
     }
 
-    public function registerMediaCollections(): void
+    /**
+     * Products where this product is included as a bundled item.
+     * Example: If "Gaming Mouse" is part of "Gaming PC Bundle", this returns the bundle.
+     */
+    public function bundledIn(): BelongsToMany
     {
-        $this->addMediaCollection('images')
-            ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/webp']);
+        return $this->belongsToMany(Product::class, 'product_bundles', 'bundled_product_id', 'product_id')
+            ->withPivot(['quantity', 'discount_percent', 'is_optional', 'sort_order'])
+            ->withTimestamps();
+    }
 
-        $this->addMediaCollection('gallery')
-            ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/webp']);
+    // ========================================
+    // Product Relations
+    // ========================================
+
+    /**
+     * All product relations (generic method).
+     */
+    protected function relations(): BelongsToMany
+    {
+        return $this->belongsToMany(Product::class, 'product_relations', 'product_id', 'related_product_id')
+            ->withPivot(['type', 'sort_order'])
+            ->withTimestamps()
+            ->orderBy('product_relations.sort_order');
+    }
+
+    /**
+     * Upsell products (higher-priced alternatives).
+     * Example: "Gaming Laptop Pro" for "Gaming Laptop"
+     */
+    public function upsells(): BelongsToMany
+    {
+        return $this->relations()->wherePivot('type', 'upsell');
+    }
+
+    /**
+     * Cross-sell products (complementary items).
+     * Example: "Laptop Bag", "Gaming Mouse" for "Gaming Laptop"
+     */
+    public function crossSells(): BelongsToMany
+    {
+        return $this->relations()->wherePivot('type', 'cross_sell');
+    }
+
+    /**
+     * Related products (similar items).
+     * Example: Other gaming laptops for "Gaming Laptop"
+     */
+    public function relatedProducts(): BelongsToMany
+    {
+        return $this->relations()->wherePivot('type', 'related');
+    }
+
+    /**
+     * Frequently bought together products.
+     * Example: "Laptop Stand", "USB Hub" for "Gaming Laptop"
+     */
+    public function frequentlyBoughtTogether(): BelongsToMany
+    {
+        return $this->relations()->wherePivot('type', 'frequently_bought_together');
+    }
+
+    // ========================================
+    // Inventory & Stock Methods
+    // ========================================
+
+    /**
+     * Check if product can be sold when out of stock.
+     * Based on inventory_policy field (on variants).
+     */
+    public function canSellWhenOutOfStock(): bool
+    {
+        // For products without variants, check allow_out_of_stock_purchases
+        if ($this->variants()->count() === 0) {
+            return (bool) $this->allow_out_of_stock_purchases;
+        }
+
+        // For products with variants, check if any variant allows out of stock purchases
+        return $this->variants()
+            ->where('inventory_policy', 'continue')
+            ->exists();
+    }
+
+    /**
+     * Check if product is currently in stock.
+     */
+    public function isInStock(): bool
+    {
+        // For products without variants
+        if ($this->variants()->count() === 0) {
+            if (! $this->track_quantity) {
+                return true;
+            }
+
+            return $this->stock_quantity > 0 || $this->canSellWhenOutOfStock();
+        }
+
+        // For products with variants, check if any variant is in stock
+        return $this->variants()
+            ->where(function ($query) {
+                $query->where('track_quantity', false)
+                    ->orWhere('inventory_quantity', '>', 0)
+                    ->orWhere('inventory_policy', 'continue');
+            })
+            ->exists();
+    }
+
+    /**
+     * Check if product needs restocking.
+     */
+    public function needsRestock(): bool
+    {
+        // Don't restock closeout items
+        if ($this->is_closeout) {
+            return false;
+        }
+
+        // For products without variants
+        if ($this->variants()->count() === 0) {
+            if (! $this->track_quantity) {
+                return false;
+            }
+
+            $lowStockThreshold = $this->low_stock_threshold ?? 5;
+
+            return $this->stock_quantity <= $lowStockThreshold;
+        }
+
+        // For products with variants, check if any variant needs restock
+        return $this->variants()
+            ->where('track_quantity', true)
+            ->whereRaw('inventory_quantity <= ?', [5])
+            ->exists();
+    }
+
+    /**
+     * Get estimated restock date based on restock_days.
+     */
+    public function estimatedRestockDate(): ?\Carbon\Carbon
+    {
+        if (! $this->needsRestock() || ! $this->restock_days) {
+            return null;
+        }
+
+        return now()->addDays($this->restock_days);
+    }
+
+    /**
+     * Check if quantity is valid for ordering (respects min_order_quantity and order_increment).
+     */
+    public function isValidOrderQuantity(int $quantity): bool
+    {
+        $minQty = $this->min_order_quantity ?? 1;
+        $increment = $this->order_increment ?? 1;
+
+        // Check minimum quantity
+        if ($quantity < $minQty) {
+            return false;
+        }
+
+        // Check increment (quantity must be a multiple of increment)
+        if (($quantity - $minQty) % $increment !== 0) {
+            return false;
+        }
+
+        return true;
     }
 }

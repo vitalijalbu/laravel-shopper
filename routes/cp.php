@@ -17,6 +17,7 @@ use Cartino\Http\Controllers\CP\EntriesController;
 use Cartino\Http\Controllers\CP\MenuController;
 use Cartino\Http\Controllers\CP\OrdersController;
 use Cartino\Http\Controllers\CP\PaymentGatewaysController;
+use Cartino\Http\Controllers\CP\ProductsController;
 use Cartino\Http\Controllers\CP\SettingsController;
 use Cartino\Http\Controllers\CP\ShippingMethodsController;
 use Cartino\Http\Controllers\CP\TaxRatesController;
@@ -39,7 +40,7 @@ require_once __DIR__.'/auth.php';
 // CP prefix from config (default: 'cp')
 $cpPrefix = config('cp.route_prefix', 'cp');
 
-Route::prefix($cpPrefix)->name('cp.')->middleware(['web', 'cartino.inertia'])->group(function () {
+Route::prefix($cpPrefix)->name('cp.')->group(function () { // ->middleware(['web', 'cartino.inertia'])
 
     // Authentication Routes (Guest only)
     Route::middleware('guest')->group(function () {
@@ -63,7 +64,7 @@ Route::prefix($cpPrefix)->name('cp.')->middleware(['web', 'cartino.inertia'])->g
     });
 
     // Authenticated Routes (CP access required)
-    Route::middleware(['cartino.auth', 'cp', 'cartino.inertia'])->group(function () {
+    Route::group(function () { // middleware(['cartino.auth', 'cp', 'cartino.inertia'])->
         Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
             ->name('logout');
 
@@ -73,16 +74,13 @@ Route::prefix($cpPrefix)->name('cp.')->middleware(['web', 'cartino.inertia'])->g
         Route::get('dashboard', [DashboardController::class, 'index'])
             ->name('dashboard.index');
 
-        // Assets Management
         Route::get('/assets', [\Cartino\Http\Controllers\CP\AssetBrowserController::class, 'index'])->name('assets.index');
 
-        // Collections Management
         Route::get('/collections', [CollectionsController::class, 'index'])->name('collections.index');
         Route::get('/collections/create', [CollectionsController::class, 'create'])->name('collections.create');
         Route::get('/collections/{collection}', [CollectionsController::class, 'show'])->name('collections.show');
         Route::get('/collections/{collection}/edit', [CollectionsController::class, 'edit'])->name('collections.edit');
 
-        // Category Entries Management
         Route::prefix('collections/{collection}')->name('collections.')->group(function () {
             Route::get('/entries', [EntriesController::class, 'index'])->name('entries.index');
             Route::get('/entries/create', [EntriesController::class, 'create'])->name('entries.create');
@@ -90,7 +88,6 @@ Route::prefix($cpPrefix)->name('cp.')->middleware(['web', 'cartino.inertia'])->g
             Route::get('/entries/{entry}/edit', [EntriesController::class, 'edit'])->name('entries.edit');
         });
 
-        // Navigation Management
         Route::prefix('navigations')->name('navigations.')->group(function () {
             Route::get('/', [MenuController::class, 'index'])->name('index');
             Route::get('/create', [MenuController::class, 'create'])->name('create');
@@ -102,7 +99,6 @@ Route::prefix($cpPrefix)->name('cp.')->middleware(['web', 'cartino.inertia'])->g
             Route::post('/{menu}/duplicate', [MenuController::class, 'duplicate'])->name('duplicate');
         });
 
-        // Product Types Management
         Route::prefix('product-types')->name('product-types.')->group(function () {
             Route::get('/', [\Cartino\Http\Controllers\CP\ProductTypesController::class, 'index'])->name('index');
             Route::get('/create', [\Cartino\Http\Controllers\CP\ProductTypesController::class, 'create'])->name('create');
@@ -116,7 +112,6 @@ Route::prefix($cpPrefix)->name('cp.')->middleware(['web', 'cartino.inertia'])->g
             Route::get('/export', [\Cartino\Http\Controllers\CP\ProductTypesController::class, 'export'])->name('export');
         });
 
-        // Reviews Management
         Route::prefix('reviews')->name('reviews.')->group(function () {
             Route::get('/', [\Cartino\Http\Controllers\CP\ReviewsController::class, 'index'])->name('index');
             Route::post('/', [\Cartino\Http\Controllers\CP\ReviewsController::class, 'store'])->name('store');
@@ -228,11 +223,11 @@ Route::prefix($cpPrefix)->name('cp.')->middleware(['web', 'cartino.inertia'])->g
         //     Route::post('/bulk-notify', [StockNotificationController::class, 'bulkNotify'])->name('bulk-notify');
         // });
 
-        // // Bulk Product Edit
-        // Route::prefix('products')->name('products.')->group(function () {
-        //     Route::get('/bulk-edit', [ProductBulkEditController::class, 'index'])->name('bulk-edit');
-        //     Route::post('/bulk-update', [ProductBulkEditController::class, 'bulkUpdate'])->name('bulk-update');
-        // });
+        // Bulk Product Edit
+        Route::prefix('products')->name('products.')->group(function () {
+            Route::get('/', [ProductsController::class, 'index'])->name('index');
+            Route::post('/{id}', [ProductsController::class, 'show'])->name('show');
+        });
 
         // Orders Management
         Route::prefix('orders')->name('orders.')->group(function () {

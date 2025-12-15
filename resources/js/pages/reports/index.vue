@@ -1,0 +1,52 @@
+<template>
+  <div class="reports-index">
+    <h1>Reports</h1>
+
+    <div class="debug-props">
+      <h2>Props Data:</h2>
+      <pre>{{ JSON.stringify($page.props, null, 2) }}</pre>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { usePage } from '@inertiajs/vue3';
+
+const props = defineProps({
+  // Add props here based on controller
+});
+</script>
+
+<style scoped>
+.reports-index {
+  padding: 2rem;
+}
+
+h1 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+h2 {
+  font-size: 1.5rem;
+  margin: 1rem 0;
+}
+
+.debug-props {
+  background: #f5f5f5;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-top: 2rem;
+}
+
+pre {
+  background: #1e1e1e;
+  color: #d4d4d4;
+  padding: 1rem;
+  border-radius: 4px;
+  overflow-x: auto;
+  font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+</style>

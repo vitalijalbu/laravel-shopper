@@ -64,7 +64,7 @@ class DataController extends ApiController
             return $this->errorResponse("Dictionary '{$handle}' not found", 404);
         }
 
-        $cacheKey = "dictionary:{$handle}:" . ($request->get('search') ?? 'all');
+        $cacheKey = "dictionary:{$handle}:".($request->get('search') ?? 'all');
 
         $data = Cache::remember($cacheKey, 3600, function () use ($dictionaries, $handle, $request) {
             $dictionary = $this->instantiateDictionary($dictionaries[$handle], $handle);
@@ -77,7 +77,7 @@ class DataController extends ApiController
                 'title' => $dictionary->title() ?? ucfirst($handle),
                 'keywords' => $dictionary->keywords(),
                 'options' => $dictionary->options($search),
-                'items' => collect($items)->map(fn($item) => [
+                'items' => collect($items)->map(fn ($item) => [
                     'value' => $item->value(),
                     'label' => $item->label(),
                     'extra' => $item->extra(),
@@ -141,7 +141,7 @@ class DataController extends ApiController
             return [
                 'handle' => $handle,
                 'title' => $dictionary->title() ?? ucfirst($handle),
-                'items' => collect($items)->map(fn($item) => [
+                'items' => collect($items)->map(fn ($item) => [
                     'value' => $item->value(),
                     'label' => $item->label(),
                     'extra' => $item->extra(),
@@ -197,9 +197,11 @@ class DataController extends ApiController
         if ($this->isExtensible($handle)) {
             $customItems = $this->getCustomItems($handle);
 
-            if (!empty($customItems)) {
-                $dictionary = new class($dictionary, $customItems) extends BasicDictionary {
+            if (! empty($customItems)) {
+                $dictionary = new class($dictionary, $customItems) extends BasicDictionary
+                {
                     private BasicDictionary $baseDictionary;
+
                     private array $customItems;
 
                     public function __construct(BasicDictionary $baseDictionary, array $customItems)
@@ -285,7 +287,7 @@ class DataController extends ApiController
 
         foreach ($dbItems as $dbItem) {
             // Check if value exists in config
-            $existingIndex = $merged->search(fn($item) => $item['value'] === $dbItem['value']);
+            $existingIndex = $merged->search(fn ($item) => $item['value'] === $dbItem['value']);
 
             if ($existingIndex !== false) {
                 // Override config with DB

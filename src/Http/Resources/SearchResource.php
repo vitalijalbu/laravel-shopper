@@ -92,6 +92,6 @@ class SearchResource extends JsonResource
             return $text;
         }
 
-        return mb_substr($text, 0, $length) . '...';
+        return mb_substr($text, 0, $length).'...';
     }
 }

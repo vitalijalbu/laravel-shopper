@@ -44,20 +44,6 @@ createInertiaApp({
     cartinoConfig.translations = cartinoConfig.translations || {};
     app.config.globalProperties.$cartinoConfig = cartinoConfig;
 
-    // Global Components Registration
-    import("@/components/icon.vue").then((module) =>
-      app.component("Icon", module.default),
-    );
-    import("@/components/page.vue").then((module) =>
-      app.component("Page", module.default),
-    );
-    import("@/components/data-table.vue").then((module) =>
-      app.component("DataTable", module.default),
-    );
-    import("@/components/modal.vue").then((module) =>
-      app.component("Modal", module.default),
-    );
-
     // Error Handler
     app.config.errorHandler = (err, vm, info) => {
       console.error("Vue Error:", err, info);

@@ -6,6 +6,7 @@ namespace Cartino\Models;
 
 use Cartino\Support\HasHandle;
 use Cartino\Support\HasSite;
+use Cartino\Traits\HasAssets;
 use Cartino\Traits\HasCustomFields;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -16,6 +17,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Category extends Model
 {
+    use HasAssets;
     use HasCustomFields;
     use HasFactory;
     use HasHandle;
@@ -54,6 +56,27 @@ class Category extends Model
         'url',
         'image_url',
     ];
+
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+
+        /**
+         * Asset collections configuration
+         */
+        $this->assetCollections = [
+            'featured_image' => [
+                'multiple' => false,
+                'max_files' => 1,
+                'mime_types' => ['image/jpeg', 'image/png', 'image/webp'],
+            ],
+            'banner' => [
+                'multiple' => false,
+                'max_files' => 1,
+                'mime_types' => ['image/jpeg', 'image/png', 'image/webp'],
+            ],
+        ];
+    }
 
     // Relationships
     public function site(): BelongsTo
@@ -112,8 +135,7 @@ class Category extends Model
 
     public function getImageUrlAttribute(): ?string
     {
-        // TODO: Implement image handling with Spatie Media Library
-        return null;
+        return $this->image('square');
     }
 
     // Methods

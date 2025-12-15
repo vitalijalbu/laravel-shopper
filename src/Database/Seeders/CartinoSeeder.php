@@ -4,6 +4,7 @@ namespace Cartino\Database\Seeders;
 
 use Cartino\Models\Address;
 use Cartino\Models\AnalyticsEvent;
+use Cartino\Models\Asset;
 use Cartino\Models\Brand;
 use Cartino\Models\Cart;
 use Cartino\Models\CartLine;
@@ -70,11 +71,12 @@ class CartinoSeeder extends Seeder
         $this->command->info('   • Users: 26');
         $this->command->info('   • Currencies: 11');
         $this->command->info('   • Countries: 50');
-        $this->command->info('   • Brands: 50');
-        $this->command->info('   • Categories: 80');
+        $this->command->info('   • Brands: 50 (with assets: logo + banner)');
+        $this->command->info('   • Categories: 80 (with assets: featured_image + banner)');
         $this->command->info('   • Product Options: 4 (Color, Size, Material, Style with ~35 values)');
         $this->command->info('   • Price Lists: 5 (Standard, Wholesale, Tier, 2 Promotional)');
         $this->command->info('   • Products: 500 (with ~2000 variants)');
+        $this->command->info('   • Assets: ~2500-3000 (images, galleries, documents, videos)');
         $this->command->info('   • Prices: ~6000-8000 (multi-tier, multi-site pricing)');
         $this->command->info('   • Customers: 100 (with 100-200 addresses)');
         $this->command->info('   • Subscriptions: ~40-60 (active recurring billing)');
@@ -218,7 +220,7 @@ class CartinoSeeder extends Seeder
 
         // Seed brands
         $this->command->info('🏷️ Seeding brands...');
-        Brand::factory()->count(50)->create();
+        $brands = Brand::factory()->count(50)->create();
 
         // Seed product types
         $this->command->info('📦 Seeding product types...');
@@ -358,6 +360,27 @@ class CartinoSeeder extends Seeder
         // Couriers
         $this->command->info('🚚 Seeding couriers...');
         \Cartino\Models\Courier::factory()->count(10)->create();
+
+        // Asset Containers
+        $this->command->info('🗂️ Seeding asset containers...');
+        if (\Schema::hasTable('asset_containers') && class_exists(\Cartino\Models\AssetContainer::class)) {
+            \Cartino\Models\AssetContainer::firstOrCreate(
+                ['handle' => 'main'],
+                [
+                    'handle' => 'main',
+                    'title' => 'Main Assets',
+                    'disk' => 'public',
+                    'allow_uploads' => true,
+                    'allow_downloads' => true,
+                    'allow_moves' => true,
+                    'allow_renames' => true,
+                ]
+            );
+        }
+
+        // Assets for Brands
+        $this->command->info('🖼️ Seeding brand assets...');
+        $this->seedBrandAssets($brands);
     }
 
     /**
@@ -421,6 +444,10 @@ class CartinoSeeder extends Seeder
         ])->create()->each(fn ($cat) => $categories->push($cat));
 
         $this->command->info('✅ Categories created: '.$categories->count());
+
+        // Assets for Categories
+        $this->command->info('🖼️ Seeding category assets...');
+        $this->seedCategoryAssets($categories);
 
         // Get currencies for pricing
         $currencies = Currency::all();
@@ -665,6 +692,10 @@ class CartinoSeeder extends Seeder
         $this->command->getOutput()->progressFinish();
         $this->command->info('');
         $this->command->info('✅ Products with variants seeded: '.$products->count().' (OPTIMIZED)');
+
+        // Assets for Products
+        $this->command->info('🖼️ Seeding product assets...');
+        $this->seedProductAssets($products);
 
         // Product Reviews - MASSIVE (guarded if tables/models exist)
         if (\Schema::hasTable('product_reviews')
@@ -1387,5 +1418,188 @@ class CartinoSeeder extends Seeder
         $priceLists->push($tierList);
 
         return $priceLists;
+    }
+
+    /**
+     * Seed assets for brands (logo + banner)
+     */
+    protected function seedBrandAssets($brands): void
+    {
+        if (! \Schema::hasTable('assets') || ! class_exists(\Cartino\Models\Asset::class)) {
+            $this->command->warn('  ⏭️  Skipping brand assets (assets table or model not present)');
+
+            return;
+        }
+
+        $assetContainer = \Cartino\Models\AssetContainer::first();
+        if (! $assetContainer) {
+            $this->command->warn('  ⏭️  Skipping brand assets (no asset container found)');
+
+            return;
+        }
+
+        foreach ($brands->take(20) as $brand) {
+            // Logo (SVG or PNG)
+            $logoAsset = \Cartino\Models\Asset::factory()->state([
+                'asset_container_id' => $assetContainer->id,
+                'mime_type' => fake()->randomElement(['image/svg+xml', 'image/png']),
+                'width' => 200,
+                'height' => 200,
+            ])->create();
+
+            $brand->attachAsset($logoAsset, 'logo', ['is_primary' => true]);
+
+            // Banner (optional, 70% chance)
+            if (rand(1, 100) <= 70) {
+                $bannerAsset = \Cartino\Models\Asset::factory()->state([
+                    'asset_container_id' => $assetContainer->id,
+                    'mime_type' => 'image/jpeg',
+                    'width' => 1920,
+                    'height' => 600,
+                ])->create();
+
+                $brand->attachAsset($bannerAsset, 'banner', ['is_primary' => true]);
+            }
+        }
+
+        $this->command->info('  ✅ Brand assets seeded for 20 brands');
+    }
+
+    /**
+     * Seed assets for categories (featured_image + banner)
+     */
+    protected function seedCategoryAssets($categories): void
+    {
+        if (! \Schema::hasTable('assets') || ! class_exists(\Cartino\Models\Asset::class)) {
+            $this->command->warn('  ⏭️  Skipping category assets (assets table or model not present)');
+
+            return;
+        }
+
+        $assetContainer = \Cartino\Models\AssetContainer::first();
+        if (! $assetContainer) {
+            $this->command->warn('  ⏭️  Skipping category assets (no asset container found)');
+
+            return;
+        }
+
+        foreach ($categories->take(30) as $category) {
+            // Featured image (80% chance)
+            if (rand(1, 100) <= 80) {
+                $featuredAsset = \Cartino\Models\Asset::factory()->state([
+                    'asset_container_id' => $assetContainer->id,
+                    'mime_type' => 'image/webp',
+                    'width' => 800,
+                    'height' => 800,
+                ])->create();
+
+                $category->attachAsset($featuredAsset, 'featured_image', ['is_primary' => true]);
+            }
+
+            // Banner (50% chance)
+            if (rand(1, 100) <= 50) {
+                $bannerAsset = \Cartino\Models\Asset::factory()->state([
+                    'asset_container_id' => $assetContainer->id,
+                    'mime_type' => 'image/jpeg',
+                    'width' => 1920,
+                    'height' => 400,
+                ])->create();
+
+                $category->attachAsset($bannerAsset, 'banner', ['is_primary' => true]);
+            }
+        }
+
+        $this->command->info('  ✅ Category assets seeded for 30 categories');
+    }
+
+    /**
+     * Seed assets for products (images, gallery, documents, videos)
+     */
+    protected function seedProductAssets($products): void
+    {
+        if (! \Schema::hasTable('assets') || ! class_exists(\Cartino\Models\Asset::class)) {
+            $this->command->warn('  ⏭️  Skipping product assets (assets table or model not present)');
+
+            return;
+        }
+
+        $assetContainer = \Cartino\Models\AssetContainer::first();
+        if (! $assetContainer) {
+            $this->command->warn('  ⏭️  Skipping product assets (no asset container found)');
+
+            return;
+        }
+
+        $this->command->getOutput()->progressStart($products->count());
+
+        foreach ($products as $product) {
+            // Product images (1-5 images per product)
+            $imageCount = rand(1, 5);
+            for ($i = 0; $i < $imageCount; $i++) {
+                $imageAsset = \Cartino\Models\Asset::factory()->state([
+                    'asset_container_id' => $assetContainer->id,
+                    'mime_type' => fake()->randomElement(['image/jpeg', 'image/png', 'image/webp']),
+                    'width' => 1200,
+                    'height' => 1200,
+                ])->create();
+
+                $product->attachAsset($imageAsset, 'images', [
+                    'is_primary' => $i === 0,
+                    'sort_order' => $i,
+                ]);
+            }
+
+            // Gallery images (30% chance, 3-8 images)
+            if (rand(1, 100) <= 30) {
+                $galleryCount = rand(3, 8);
+                for ($g = 0; $g < $galleryCount; $g++) {
+                    $galleryAsset = \Cartino\Models\Asset::factory()->state([
+                        'asset_container_id' => $assetContainer->id,
+                        'mime_type' => 'image/webp',
+                        'width' => 1920,
+                        'height' => 1280,
+                    ])->create();
+
+                    $product->attachAsset($galleryAsset, 'gallery', ['sort_order' => $g]);
+                }
+            }
+
+            // Documents (20% chance, 1-3 PDFs)
+            if (rand(1, 100) <= 20) {
+                $docCount = rand(1, 3);
+                for ($d = 0; $d < $docCount; $d++) {
+                    $docAsset = \Cartino\Models\Asset::factory()->state([
+                        'asset_container_id' => $assetContainer->id,
+                        'mime_type' => 'application/pdf',
+                        'width' => null,
+                        'height' => null,
+                        'size' => rand(100000, 5000000), // 100KB - 5MB
+                    ])->create();
+
+                    $product->attachAsset($docAsset, 'documents', ['sort_order' => $d]);
+                }
+            }
+
+            // Videos (10% chance, 1-2 videos)
+            if (rand(1, 100) <= 10) {
+                $videoCount = rand(1, 2);
+                for ($v = 0; $v < $videoCount; $v++) {
+                    $videoAsset = \Cartino\Models\Asset::factory()->state([
+                        'asset_container_id' => $assetContainer->id,
+                        'mime_type' => fake()->randomElement(['video/mp4', 'video/webm']),
+                        'width' => 1920,
+                        'height' => 1080,
+                        'size' => rand(5000000, 50000000), // 5MB - 50MB
+                    ])->create();
+
+                    $product->attachAsset($videoAsset, 'videos', ['sort_order' => $v]);
+                }
+            }
+
+            $this->command->getOutput()->progressAdvance();
+        }
+
+        $this->command->getOutput()->progressFinish();
+        $this->command->info('  ✅ Product assets seeded for all products');
     }
 }

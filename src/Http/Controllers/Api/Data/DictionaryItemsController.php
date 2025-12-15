@@ -22,7 +22,7 @@ class DictionaryItemsController extends ApiController
             ->orderBy('order')
             ->orderBy('created_at')
             ->get()
-            ->map(fn($item) => [
+            ->map(fn ($item) => [
                 'id' => $item->id,
                 'value' => $item->value,
                 'label' => $item->label,
@@ -43,7 +43,7 @@ class DictionaryItemsController extends ApiController
     public function store(Request $request, string $handle): JsonResponse
     {
         // Check if dictionary is extensible
-        if (!$this->isExtensible($handle)) {
+        if (! $this->isExtensible($handle)) {
             return $this->errorResponse("Dictionary '{$handle}' is not extensible", 422);
         }
 
@@ -178,7 +178,7 @@ class DictionaryItemsController extends ApiController
             return $this->errorResponse('Cannot disable system dictionary items', 422);
         }
 
-        $item->update(['is_enabled' => !$item->is_enabled]);
+        $item->update(['is_enabled' => ! $item->is_enabled]);
 
         // Clear cache
         $this->clearDictionaryCache($handle);

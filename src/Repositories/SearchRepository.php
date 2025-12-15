@@ -6,7 +6,6 @@ namespace Cartino\Repositories;
 
 use Cartino\Models\Entry;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 
 class SearchRepository extends BaseRepository
@@ -63,7 +62,7 @@ class SearchRepository extends BaseRepository
                 'parent:id,collection,slug,title,locale',
                 'children' => function ($q) {
                     $q->select('id', 'parent_id', 'collection', 'slug', 'title', 'status', 'published_at', 'locale', 'order')
-                      ->orderBy('order');
+                        ->orderBy('order');
                 },
             ])
             ->select([
@@ -83,21 +82,21 @@ class SearchRepository extends BaseRepository
             ]);
 
         // Full-text search on title and JSON data
-        if (!empty($filters['q'])) {
+        if (! empty($filters['q'])) {
             $searchTerm = $filters['q'];
             $query->where(function ($q) use ($searchTerm) {
                 $q->where('title', 'LIKE', "%{$searchTerm}%")
-                  ->orWhereRaw("JSON_SEARCH(data, 'one', ?) IS NOT NULL", ["%{$searchTerm}%"]);
+                    ->orWhereRaw("JSON_SEARCH(data, 'one', ?) IS NOT NULL", ["%{$searchTerm}%"]);
             });
         }
 
         // Collection filter
-        if (!empty($filters['collection'])) {
+        if (! empty($filters['collection'])) {
             $query->where('collection', $filters['collection']);
         }
 
         // Locale filter
-        if (!empty($filters['locale'])) {
+        if (! empty($filters['locale'])) {
             $query->where('locale', $filters['locale']);
         } else {
             // Default to 'it' if not specified
@@ -105,19 +104,19 @@ class SearchRepository extends BaseRepository
         }
 
         // Status filter
-        if (!empty($filters['status'])) {
+        if (! empty($filters['status'])) {
             $query->where('status', $filters['status']);
         } else {
             // Default to published only
             $query->where('status', 'published')
-                  ->where(function ($q) {
-                      $q->whereNull('published_at')
+                ->where(function ($q) {
+                    $q->whereNull('published_at')
                         ->orWhere('published_at', '<=', now());
-                  });
+                });
         }
 
         // Author filter
-        if (!empty($filters['author_id'])) {
+        if (! empty($filters['author_id'])) {
             $query->where('author_id', $filters['author_id']);
         }
 
@@ -131,23 +130,23 @@ class SearchRepository extends BaseRepository
         }
 
         // Tags filter (search in JSON data)
-        if (!empty($filters['tags']) && is_array($filters['tags'])) {
+        if (! empty($filters['tags']) && is_array($filters['tags'])) {
             foreach ($filters['tags'] as $tag) {
                 $query->whereJsonContains('data->tags', $tag);
             }
         }
 
         // Category filter (search in JSON data)
-        if (!empty($filters['category'])) {
+        if (! empty($filters['category'])) {
             $query->where('data->category', $filters['category']);
         }
 
         // Date range filters
-        if (!empty($filters['date_from'])) {
+        if (! empty($filters['date_from'])) {
             $query->where('published_at', '>=', $filters['date_from']);
         }
 
-        if (!empty($filters['date_to'])) {
+        if (! empty($filters['date_to'])) {
             $query->where('published_at', '<=', $filters['date_to']);
         }
 
@@ -164,7 +163,7 @@ class SearchRepository extends BaseRepository
 
         // Validate sort field
         $allowedSorts = ['title', 'published_at', 'created_at', 'updated_at', 'order'];
-        if (!in_array($sortBy, $allowedSorts)) {
+        if (! in_array($sortBy, $allowedSorts)) {
             $sortBy = 'published_at';
         }
 
@@ -190,7 +189,7 @@ class SearchRepository extends BaseRepository
         ];
 
         // Add collection breadcrumb
-        if (!empty($filters['collection'])) {
+        if (! empty($filters['collection'])) {
             $collectionTitle = $this->getCollectionTitle($filters['collection']);
             $breadcrumbs[] = [
                 'title' => $collectionTitle,
@@ -200,7 +199,7 @@ class SearchRepository extends BaseRepository
         }
 
         // Add category breadcrumb
-        if (!empty($filters['category'])) {
+        if (! empty($filters['category'])) {
             $breadcrumbs[] = [
                 'title' => ucfirst($filters['category']),
                 'url' => "/search?collection={$filters['collection']}&category={$filters['category']}",
@@ -209,7 +208,7 @@ class SearchRepository extends BaseRepository
         }
 
         // Add search term breadcrumb
-        if (!empty($filters['q'])) {
+        if (! empty($filters['q'])) {
             $breadcrumbs[] = [
                 'title' => "Risultati per: {$filters['q']}",
                 'url' => null,
@@ -218,7 +217,7 @@ class SearchRepository extends BaseRepository
         }
 
         // If no specific filter, mark last breadcrumb as active
-        if (!empty($breadcrumbs) && !$this->hasActiveBreadcrumb($breadcrumbs)) {
+        if (! empty($breadcrumbs) && ! $this->hasActiveBreadcrumb($breadcrumbs)) {
             $breadcrumbs[count($breadcrumbs) - 1]['active'] = true;
         }
 
@@ -267,7 +266,7 @@ class SearchRepository extends BaseRepository
         $baseConditions = function ($query) use ($currentFilters, $locale) {
             $query->where('locale', $locale);
 
-            if (!empty($currentFilters['collection'])) {
+            if (! empty($currentFilters['collection'])) {
                 $query->where('collection', $currentFilters['collection']);
             }
         };
@@ -293,12 +292,12 @@ class SearchRepository extends BaseRepository
             ->where('status', 'published')
             ->where(function ($q) {
                 $q->whereNull('published_at')
-                  ->orWhere('published_at', '<=', now());
+                    ->orWhere('published_at', '<=', now());
             })
             ->groupBy('collection')
             ->orderBy('count', 'desc')
             ->get()
-            ->map(fn($item) => [
+            ->map(fn ($item) => [
                 'value' => $item->collection,
                 'label' => $this->getCollectionTitle($item->collection),
                 'count' => $item->count,
@@ -318,15 +317,15 @@ class SearchRepository extends BaseRepository
             ->where('entries.status', 'published')
             ->where(function ($q) {
                 $q->whereNull('entries.published_at')
-                  ->orWhere('entries.published_at', '<=', now());
+                    ->orWhere('entries.published_at', '<=', now());
             })
-            ->when(!empty($filters['collection']), function ($q) use ($filters) {
+            ->when(! empty($filters['collection']), function ($q) use ($filters) {
                 $q->where('entries.collection', $filters['collection']);
             })
             ->groupBy('users.id', 'users.name')
             ->orderBy('count', 'desc')
             ->get()
-            ->map(fn($item) => [
+            ->map(fn ($item) => [
                 'value' => $item->value,
                 'label' => $item->label,
                 'count' => $item->count,
@@ -342,13 +341,13 @@ class SearchRepository extends BaseRepository
         return DB::table('entries')
             ->select('status as value', DB::raw('COUNT(*) as count'))
             ->where('locale', $locale)
-            ->when(!empty($filters['collection']), function ($q) use ($filters) {
+            ->when(! empty($filters['collection']), function ($q) use ($filters) {
                 $q->where('collection', $filters['collection']);
             })
             ->groupBy('status')
             ->orderBy('count', 'desc')
             ->get()
-            ->map(fn($item) => [
+            ->map(fn ($item) => [
                 'value' => $item->value,
                 'label' => ucfirst($item->value),
                 'count' => $item->count,
@@ -367,9 +366,9 @@ class SearchRepository extends BaseRepository
             ->where('status', 'published')
             ->where(function ($q) {
                 $q->whereNull('published_at')
-                  ->orWhere('published_at', '<=', now());
+                    ->orWhere('published_at', '<=', now());
             })
-            ->when(!empty($filters['collection']), function ($q) use ($filters) {
+            ->when(! empty($filters['collection']), function ($q) use ($filters) {
                 $q->where('collection', $filters['collection']);
             })
             ->whereNotNull('data->tags')
@@ -393,7 +392,7 @@ class SearchRepository extends BaseRepository
         arsort($tagCounts);
 
         return collect($tagCounts)
-            ->map(fn($count, $tag) => [
+            ->map(fn ($count, $tag) => [
                 'value' => $tag,
                 'label' => $tag,
                 'count' => $count,
@@ -416,16 +415,16 @@ class SearchRepository extends BaseRepository
             ->where('status', 'published')
             ->where(function ($q) {
                 $q->whereNull('published_at')
-                  ->orWhere('published_at', '<=', now());
+                    ->orWhere('published_at', '<=', now());
             })
-            ->when(!empty($filters['collection']), function ($q) use ($filters) {
+            ->when(! empty($filters['collection']), function ($q) use ($filters) {
                 $q->where('collection', $filters['collection']);
             })
             ->whereNotNull('data->category')
             ->groupBy('category')
             ->orderBy('count', 'desc')
             ->get()
-            ->map(fn($item) => [
+            ->map(fn ($item) => [
                 'value' => $item->category,
                 'label' => ucfirst($item->category),
                 'count' => $item->count,

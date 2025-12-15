@@ -7,6 +7,7 @@ namespace Cartino\Database\Factories;
 use Cartino\Models\Brand;
 use Cartino\Models\Product;
 use Cartino\Models\ProductType;
+use Cartino\Models\ProductVariant;
 use Cartino\Models\Site;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
@@ -14,6 +15,33 @@ use Illuminate\Support\Str;
 class ProductFactory extends Factory
 {
     protected $model = Product::class;
+
+    /**
+     * Configure the model factory to always create a default variant (like Shopify)
+     */
+    public function configure(): static
+    {
+        return $this->afterCreating(function (Product $product) {
+            // If no variants exist yet, create a default variant
+            if ($product->variants()->count() === 0) {
+                $variant = ProductVariant::factory()->create([
+                    'product_id' => $product->id,
+                    'site_id' => $product->site_id,
+                    'title' => 'Default Title',
+                    'sku' => $product->handle.'-default',
+                    'position' => 1,
+                ]);
+
+                // Set as default variant
+                $product->update([
+                    'default_variant_id' => $variant->id,
+                    'variants_count' => 1,
+                    'price_min' => $variant->price,
+                    'price_max' => $variant->price,
+                ]);
+            }
+        });
+    }
 
     public function definition(): array
     {
