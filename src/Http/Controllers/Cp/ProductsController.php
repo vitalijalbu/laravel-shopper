@@ -4,39 +4,32 @@ namespace Cartino\Http\Controllers\CP;
 
 use Cartino\CP\Page;
 use Cartino\Data\ProductDto;
-use Cartino\DataTable\ProductDataTable;
 use Cartino\Http\Controllers\Controller;
-use Cartino\Http\Resources\ProductCollection;
 use Cartino\Http\Resources\ProductResource;
 use Cartino\Models\Brand;
 use Cartino\Models\Category;
 use Cartino\Models\Product;
+use Cartino\Repositories\ProductRepository;
 use Cartino\Schema\SchemaRepository;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class ProductsController extends Controller
 {
-    protected SchemaRepository $schemas;
-
-    public function __construct(SchemaRepository $schemas)
-    {
-        $this->schemas = $schemas;
-    }
+    public function __construct(
+        protected SchemaRepository $schemas,
+        protected readonly ProductRepository $repository
+    ) {}
 
     /**
      * Products index page with DataTable
      */
     public function index(Request $request)
     {
-        $dataTable = new ProductDataTable($request);
 
-        // If AJAX request, return data for DataTable
-        if ($request->expectsJson()) {
-            $products = $dataTable->process();
+        $request = $request->all();
 
-            return new ProductCollection($products);
-        }
+        $data = $this->repository->findAll($request);
 
         $page = Page::make(__('products.title'))
             ->breadcrumb(__('admin.navigation.home'), '/cp')
@@ -49,9 +42,8 @@ class ProductsController extends Controller
 
         return Inertia::render('products/index', [
             'page' => $page->compile(),
-
-            'dataTable' => $dataTable->getConfig(),
-            'bulkActions' => $dataTable->getBulkActions(),
+            'data' => $data,
+            'actions' => [],
         ]);
     }
 
@@ -140,29 +132,24 @@ class ProductsController extends Controller
     /**
      * Show single product
      */
-    public function show(Product $product)
+    public function show(int $id)
     {
-        $product->load(['category', 'brand', 'variants', 'media']);
+        $data = $this->repository->findById($id);
 
-        if (request()->expectsJson()) {
-            return new ProductResource($product);
-        }
-
-        $page = Page::make($product->name)
+        $page = Page::make($data->name)
             ->breadcrumb(__('admin.navigation.home'), '/cp')
             ->breadcrumb(__('products.title'), '/cp/products')
-            ->breadcrumb($product->name)
-            ->primaryAction(__('products.edit'), "/cp/products/{$product->id}/edit")
+            ->breadcrumb($data->name)
+            ->primaryAction(__('products.edit'), "/cp/products/{$data->id}/edit")
             ->secondaryActions([
                 ['label' => __('admin.actions.duplicate'), 'action' => 'duplicate'],
-                ['label' => __('admin.actions.view').' '.__('admin.navigation.storefront'), 'url' => "/products/{$product->handle}", 'target' => '_blank'],
+                ['label' => __('admin.actions.view').' '.__('admin.navigation.storefront'), 'url' => "/products/{$data->slug}", 'target' => '_blank'],
                 ['label' => __('admin.actions.delete'), 'action' => 'delete', 'destructive' => true],
             ]);
 
-        return Inertia::render('products/Show', [
+        return Inertia::render('products/[id]/index', [
             'page' => $page->compile(),
-
-            'product' => new ProductResource($product),
+            'product' => new ProductResource($data),
         ]);
     }
 

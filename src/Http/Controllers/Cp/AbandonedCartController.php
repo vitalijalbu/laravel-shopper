@@ -55,7 +55,7 @@ class AbandonedCartController extends Controller
                 : 0,
         ];
 
-        return Inertia::render('CP/AbandonedCarts/Index', [
+        return Inertia::render('CP/AbandonedCarts/index', [
             'abandonedCarts' => $abandonedCarts,
             'stats' => $stats,
             'filters' => $request->only(['status', 'date_from', 'date_to', 'search']),

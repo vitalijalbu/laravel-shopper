@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 use Cartino\Http\Controllers\Api\CartController;
 use Cartino\Http\Controllers\CP\AddressController;
+use Cartino\Http\Controllers\CP\Analytics\AnalyticsController;
 use Cartino\Http\Controllers\CP\AppsController;
 use Cartino\Http\Controllers\CP\Auth\AuthenticatedSessionController;
 use Cartino\Http\Controllers\CP\Auth\NewPasswordController;
 use Cartino\Http\Controllers\CP\Auth\PasswordResetLinkController;
 use Cartino\Http\Controllers\CP\BrandsController;
+use Cartino\Http\Controllers\CP\CategoriesController;
 use Cartino\Http\Controllers\CP\CollectionsController;
-use Cartino\Http\Controllers\CP\CustomerController;
+use Cartino\Http\Controllers\CP\CustomersController;
 use Cartino\Http\Controllers\CP\DashboardController;
 use Cartino\Http\Controllers\CP\DiscountController;
 use Cartino\Http\Controllers\CP\EntriesController;
@@ -18,7 +20,7 @@ use Cartino\Http\Controllers\CP\MenuController;
 use Cartino\Http\Controllers\CP\OrdersController;
 use Cartino\Http\Controllers\CP\PaymentGatewaysController;
 use Cartino\Http\Controllers\CP\ProductsController;
-use Cartino\Http\Controllers\CP\SettingsController;
+use Cartino\Http\Controllers\CP\Settings\SettingsController;
 use Cartino\Http\Controllers\CP\ShippingMethodsController;
 use Cartino\Http\Controllers\CP\TaxRatesController;
 use Cartino\Http\Controllers\CP\WishlistController;
@@ -64,7 +66,7 @@ Route::prefix($cpPrefix)->name('cp.')->group(function () { // ->middleware(['web
     });
 
     // Authenticated Routes (CP access required)
-    Route::group(function () { // middleware(['cartino.auth', 'cp', 'cartino.inertia'])->
+    Route::middleware([])->group(function () { // ['cartino.auth', 'cp', 'cartino.inertia']
         Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
             ->name('logout');
 
@@ -82,10 +84,20 @@ Route::prefix($cpPrefix)->name('cp.')->group(function () { // ->middleware(['web
         Route::get('/collections/{collection}/edit', [CollectionsController::class, 'edit'])->name('collections.edit');
 
         Route::prefix('collections/{collection}')->name('collections.')->group(function () {
-            Route::get('/entries', [EntriesController::class, 'index'])->name('entries.index');
-            Route::get('/entries/create', [EntriesController::class, 'create'])->name('entries.create');
-            Route::get('/entries/{entry}', [EntriesController::class, 'show'])->name('entries.show');
-            Route::get('/entries/{entry}/edit', [EntriesController::class, 'edit'])->name('entries.edit');
+            Route::get('/entries', [EntriesController::class, 'index'])->name('index');
+            Route::get('/entries/create', [EntriesController::class, 'create'])->name('create');
+            Route::get('/entries/{entry}', [EntriesController::class, 'show'])->name('show');
+            Route::get('/entries/{entry}/edit', [EntriesController::class, 'edit'])->name('edit');
+        });
+
+        Route::prefix('categories')->name('categories.')->group(function () {
+            Route::get('/', [CategoriesController::class, 'index'])->name('index');
+            Route::get('/create', [CategoriesController::class, 'create'])->name('create');
+            Route::get('/{id}', [CategoriesController::class, 'show'])->name('show');
+            Route::get('/{id}/edit', [CategoriesController::class, 'edit'])->name('edit');
+        });
+        Route::prefix('analytics')->name('analytics.')->group(function () {
+            Route::get('/', [AnalyticsController::class, 'index'])->name('index');
         });
 
         Route::prefix('navigations')->name('navigations.')->group(function () {
@@ -158,18 +170,18 @@ Route::prefix($cpPrefix)->name('cp.')->group(function () { // ->middleware(['web
 
         // Customers Management
         Route::prefix('customers')->name('customers.')->group(function () {
-            Route::get('/', [CustomerController::class, 'index'])->name('index');
-            Route::get('/create', [CustomerController::class, 'create'])->name('create');
-            Route::post('/', [CustomerController::class, 'store'])->name('store');
-            Route::get('/{customer}', [CustomerController::class, 'show'])->name('show');
-            Route::get('/{customer}/edit', [CustomerController::class, 'edit'])->name('edit');
-            Route::put('/{customer}', [CustomerController::class, 'update'])->name('update');
-            Route::delete('/{customer}', [CustomerController::class, 'destroy'])->name('destroy');
+            Route::get('/', [CustomersController::class, 'index'])->name('index');
+            Route::get('/create', [CustomersController::class, 'create'])->name('create');
+            Route::post('/', [CustomersController::class, 'store'])->name('store');
+            Route::get('/{customer}', [CustomersController::class, 'show'])->name('show');
+            Route::get('/{customer}/edit', [CustomersController::class, 'edit'])->name('edit');
+            Route::put('/{customer}', [CustomersController::class, 'update'])->name('update');
+            Route::delete('/{customer}', [CustomersController::class, 'destroy'])->name('destroy');
 
             // Additional customer actions
-            Route::post('/bulk-action', [CustomerController::class, 'bulkAction'])->name('bulk-action');
-            Route::post('/{id}/restore', [CustomerController::class, 'restore'])->name('restore');
-            Route::delete('/{id}/force-delete', [CustomerController::class, 'forceDelete'])->name('force-delete');
+            Route::post('/bulk-action', [CustomersController::class, 'bulkAction'])->name('bulk-action');
+            Route::post('/{id}/restore', [CustomersController::class, 'restore'])->name('restore');
+            Route::delete('/{id}/force-delete', [CustomersController::class, 'forceDelete'])->name('force-delete');
 
             // Customer Addresses
             Route::prefix('{customer}/addresses')->name('addresses.')->group(function () {
@@ -226,7 +238,9 @@ Route::prefix($cpPrefix)->name('cp.')->group(function () { // ->middleware(['web
         // Bulk Product Edit
         Route::prefix('products')->name('products.')->group(function () {
             Route::get('/', [ProductsController::class, 'index'])->name('index');
-            Route::post('/{id}', [ProductsController::class, 'show'])->name('show');
+            Route::get('/{id}', [ProductsController::class, 'show'])->name('show');
+            Route::get('/{id}/variants', [ProductsController::class, 'variants'])->name('variants');
+            Route::get('/{id}/inventory', [ProductsController::class, 'inventory'])->name('inventory');
         });
 
         // Orders Management
@@ -275,12 +289,6 @@ Route::prefix($cpPrefix)->name('cp.')->group(function () { // ->middleware(['web
         // Settings Management
         Route::prefix('settings')->name('settings.')->group(function () {
             Route::get('/', [SettingsController::class, 'index'])->name('index');
-            Route::get('/general', [SettingsController::class, 'general'])->name('general');
-            Route::put('/general', [SettingsController::class, 'updateGeneral'])->name('general.update');
-            Route::get('/checkout', [SettingsController::class, 'checkout'])->name('checkout');
-            Route::put('/checkout', [SettingsController::class, 'updateCheckout'])->name('checkout.update');
-            Route::get('/email', [SettingsController::class, 'email'])->name('email');
-            Route::put('/email', [SettingsController::class, 'updateEmail'])->name('email.update');
 
             // Payment Gateways
             Route::prefix('payment-gateways')->name('payment-gateways.')->group(function () {
@@ -335,12 +343,12 @@ Route::prefix($cpPrefix)->name('cp.')->group(function () { // ->middleware(['web
 
 //     // Entries API
 //     Route::prefix('collections/{collection}')->group(function () {
-//         Route::get('/entries', [EntriesController::class, 'index'])->name('entries.index');
-//         Route::post('/entries', [EntriesController::class, 'store'])->name('entries.store');
-//         Route::get('/entries/{entry}', [EntriesController::class, 'show'])->name('entries.show');
-//         Route::put('/entries/{entry}', [EntriesController::class, 'update'])->name('entries.update');
-//         Route::delete('/entries/{entry}', [EntriesController::class, 'destroy'])->name('entries.destroy');
-//         Route::post('/entries/bulk', [EntriesController::class, 'bulk'])->name('entries.bulk');
+//         Route::get('/entries', [EntriesController::class, 'index'])->name('index');
+//         Route::post('/entries', [EntriesController::class, 'store'])->name('store');
+//         Route::get('/entries/{entry}', [EntriesController::class, 'show'])->name('show');
+//         Route::put('/entries/{entry}', [EntriesController::class, 'update'])->name('update');
+//         Route::delete('/entries/{entry}', [EntriesController::class, 'destroy'])->name('destroy');
+//         Route::post('/entries/bulk', [EntriesController::class, 'bulk'])->name('bulk');
 //     });
 
 //     // Import/Export API

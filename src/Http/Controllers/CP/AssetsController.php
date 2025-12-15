@@ -27,10 +27,10 @@ class AssetsController extends BaseController
         $this->addBreadcrumb('Assets');
 
         $page = Page::make('Assets')
-            ->primaryAction('Upload', route('cartino.assets.create'))
+            ->primaryAction('Upload', route('cp.assets.create'))
             ->secondaryActions([
-                ['label' => 'Manage containers', 'url' => route('cartino.asset-containers.index')],
-                ['label' => 'Settings', 'url' => route('cartino.settings.media')],
+                ['label' => 'Manage containers', 'url' => route('cp.asset-containers.index')],
+                ['label' => 'Settings', 'url' => route('cp.settings.media')],
             ]);
 
         // Get all containers
@@ -78,7 +78,7 @@ class AssetsController extends BaseController
             ->orderBy('path')
             ->get();
 
-        return $this->inertiaResponse('assets/Index', [
+        return $this->inertiaResponse('assets/index', [
             'page' => $page->compile(),
             'containers' => $containers,
             'currentContainer' => $container,
@@ -100,7 +100,7 @@ class AssetsController extends BaseController
      */
     public function create(Request $request): Response
     {
-        $this->addBreadcrumb('Assets', route('cartino.assets.index'));
+        $this->addBreadcrumb('Assets', route('cp.assets.index'));
         $this->addBreadcrumb('Upload');
 
         $page = Page::make('Upload Assets');
@@ -153,7 +153,7 @@ class AssetsController extends BaseController
                 ->with('errors', $errors);
         }
 
-        return redirect()->route('cartino.assets.index', ['container' => $request->container])
+        return redirect()->route('cp.assets.index', ['container' => $request->container])
             ->with('success', count($uploadedAssets).' assets uploaded successfully');
     }
 
@@ -162,13 +162,13 @@ class AssetsController extends BaseController
      */
     public function show(Asset $asset): Response
     {
-        $this->addBreadcrumb('Assets', route('cartino.assets.index'));
+        $this->addBreadcrumb('Assets', route('cp.assets.index'));
         $this->addBreadcrumb($asset->filename);
 
         $page = Page::make($asset->filename)
-            ->primaryAction('Download', route('cartino.assets.download', $asset))
+            ->primaryAction('Download', route('cp.assets.download', $asset))
             ->secondaryActions([
-                ['label' => 'Delete', 'url' => route('cartino.assets.destroy', $asset), 'destructive' => true],
+                ['label' => 'Delete', 'url' => route('cp.assets.destroy', $asset), 'destructive' => true],
             ]);
 
         $asset->load(['containerModel', 'uploadedBy', 'transformations']);
@@ -222,8 +222,8 @@ class AssetsController extends BaseController
      */
     public function edit(Asset $asset): Response
     {
-        $this->addBreadcrumb('Assets', route('cartino.assets.index'));
-        $this->addBreadcrumb($asset->filename, route('cartino.assets.show', $asset));
+        $this->addBreadcrumb('Assets', route('cp.assets.index'));
+        $this->addBreadcrumb($asset->filename, route('cp.assets.show', $asset));
         $this->addBreadcrumb('Edit');
 
         $page = Page::make('Edit Asset');
@@ -270,7 +270,7 @@ class AssetsController extends BaseController
             $this->assetService->move($asset, $request->folder);
         }
 
-        return redirect()->route('cartino.assets.show', $asset)
+        return redirect()->route('cp.assets.show', $asset)
             ->with('success', 'Asset updated successfully');
     }
 
@@ -283,7 +283,7 @@ class AssetsController extends BaseController
 
         $this->assetService->delete($asset);
 
-        return redirect()->route('cartino.assets.index', ['container' => $container])
+        return redirect()->route('cp.assets.index', ['container' => $container])
             ->with('success', 'Asset deleted successfully');
     }
 

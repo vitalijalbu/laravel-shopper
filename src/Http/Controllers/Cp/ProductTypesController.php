@@ -59,7 +59,7 @@ class ProductTypesController extends Controller
             return ProductTypeResource::collection($productTypes);
         }
 
-        return Inertia::render('product-types/Index', [
+        return Inertia::render('product-types/index', [
             'page' => $page->compile(),
 
         ]);

@@ -56,12 +56,12 @@
             </div>
 
 
-            <Button type="submit" :disabled="form.processing" :loading="form.processing" class="w-full justify-center">
+            <button type="submit" :disabled="form.processing" :loading="form.processing" class="w-full justify-center">
 
 
                 {{ t('cartino.auth.labels.login') }}
 
-            </Button>
+            </button>
 
         </form>
     </AuthLayout>
@@ -72,7 +72,6 @@ import { ref } from 'vue'
 import { useForm, Head, Link } from '@inertiajs/vue3'
 import { useTranslations } from '@/composables/useTranslations'
 import AuthLayout from '@/layouts/auth-layout.vue'
-import { Button } from '@cartino/ui'
 
 // Auth layout per pagine di autenticazione
 defineOptions({

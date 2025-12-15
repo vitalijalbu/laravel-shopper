@@ -5,7 +5,7 @@ namespace Cartino\Repositories;
 use Cartino\Contracts\RepositoryInterface;
 use Cartino\Traits\OptimizesQueries;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Category;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Cache;
@@ -32,7 +32,7 @@ abstract class BaseRepository implements RepositoryInterface
 
     abstract protected function makeModel(): Model;
 
-    public function all(array $columns = ['*']): Category
+    public function all(array $columns = ['*']): Collection
     {
         $cacheKey = $this->getCacheKey('all', md5(serialize($columns)));
 
@@ -64,7 +64,7 @@ abstract class BaseRepository implements RepositoryInterface
         });
     }
 
-    public function findWhere(array $where, array $columns = ['*']): Category
+    public function findWhere(array $where, array $columns = ['*']): Collection
     {
         $cacheKey = $this->getCacheKey('findWhere', md5(serialize($where)));
 
@@ -175,7 +175,7 @@ abstract class BaseRepository implements RepositoryInterface
 
     protected function clearCache(): void
     {
-        if (method_exists(Cache::getStore(), 'tags')) {
+        if (Cache::supportsTags()) {
             Cache::tags([$this->cachePrefix])->flush();
         }
     }

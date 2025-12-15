@@ -132,7 +132,7 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerateToken();
 
         // Clear Inertia user data
-        return redirect()->route('cartino.cp.login')->with('status', __('cartino::auth.logged_out'));
+        return redirect()->route('cp.cp.login')->with('status', __('cartino::auth.logged_out'));
     }
 
     /**

@@ -36,7 +36,11 @@ trait OptimizesQueries
         $fullKey = $this->getCachePrefix().':'.$key;
         $ttl = $ttl ?? $this->getCacheTTL();
 
-        return Cache::tags([$this->getCachePrefix()])->remember($fullKey, $ttl, $callback);
+        if (Cache::supportsTags()) {
+            return Cache::tags([$this->getCachePrefix()])->remember($fullKey, $ttl, $callback);
+        }
+
+        return Cache::remember($fullKey, $ttl, $callback);
     }
 
     /**

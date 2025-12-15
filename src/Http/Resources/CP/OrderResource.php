@@ -189,9 +189,9 @@ class OrderResource extends JsonResource
             'can_be_refunded' => $this->can_be_refunded,
 
             // URLs
-            'admin_url' => route('cartino.orders.show', $this->id),
-            'edit_url' => route('cartino.orders.edit', $this->id),
-            'invoice_url' => route('cartino.orders.invoice', $this->id),
+            'admin_url' => route('cp.orders.show', $this->id),
+            'edit_url' => route('cp.orders.edit', $this->id),
+            'invoice_url' => route('cp.orders.invoice', $this->id),
 
             // Shipping info
             'shipping_method_name' => $this->shipping_method_name,

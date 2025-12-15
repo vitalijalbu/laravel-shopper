@@ -77,10 +77,16 @@ class ProductRepository extends BaseRepository
         });
     }
 
-    /**
-     * Create oneModelCache();
+    public function findById(int $id): ?Product
+    {
+        $cacheKey = "product:{$id}";
 
-        return $product;
+        return $this->cacheQuery($cacheKey, function () use ($id) {
+            return $this->model
+                ->with(['brand', 'productType', 'variants', 'media', 'categories'])
+                ->where('id', $id)
+                ->firstOrFail();
+        });
     }
 
     /**

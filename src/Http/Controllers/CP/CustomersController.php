@@ -13,7 +13,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Inertia\Response;
 
-class CustomerController extends BaseController
+class CustomersController extends BaseController
 {
     public function __construct(
         protected CustomerRepository $customerRepository
@@ -40,14 +40,14 @@ class CustomerController extends BaseController
         );
 
         $page = Page::make('Customers')
-            ->primaryAction('Add customer', route('cartino.customers.create'))
+            ->primaryAction('Add customer', route('cp.customers.create'))
             ->secondaryActions([
-                ['label' => 'Import', 'url' => route('cartino.customers.import')],
-                ['label' => 'Export', 'url' => route('cartino.customers.export')],
-                ['label' => 'Customer groups', 'url' => route('cartino.customer-groups.index')],
+                ['label' => 'Import', 'url' => route('cp.customers.import')],
+                ['label' => 'Export', 'url' => route('cp.customers.export')],
+                ['label' => 'Customer groups', 'url' => route('cp.customer-groups.index')],
             ]);
 
-        return $this->inertiaResponse('customers/Index', [
+        return $this->inertiaResponse('customers/index', [
             'page' => $page->compile(),
 
             'customers' => $customers->through(fn ($customer) => new CustomerResource($customer)),
@@ -87,9 +87,9 @@ class CustomerController extends BaseController
         $action = $request->input('_action', 'save');
 
         $redirectUrl = match ($action) {
-            'save_continue' => route('cartino.customers.edit', $customer),
-            'save_add_another' => route('cartino.customers.create'),
-            default => route('cartino.customers.index'),
+            'save_continue' => route('cp.customers.edit', $customer),
+            'save_add_another' => route('cp.customers.create'),
+            default => route('cp.customers.index'),
         };
 
         return $this->successResponse('Customer created successfully', [
@@ -112,11 +112,11 @@ class CustomerController extends BaseController
             ->addBreadcrumb($customer->full_name);
 
         $page = Page::make($customer->full_name)
-            ->primaryAction('Edit customer', route('cartino.customers.edit', $customer))
+            ->primaryAction('Edit customer', route('cp.customers.edit', $customer))
             ->secondaryActions([
                 ['label' => 'Send email', 'action' => 'send_email'],
-                ['label' => 'Create order', 'url' => route('cartino.orders.create', ['customer' => $customer->id])],
-                ['label' => 'View orders', 'url' => route('cartino.orders.index', ['customer' => $customer->id])],
+                ['label' => 'Create order', 'url' => route('cp.orders.create', ['customer' => $customer->id])],
+                ['label' => 'View orders', 'url' => route('cp.orders.index', ['customer' => $customer->id])],
                 ['label' => 'Delete', 'action' => 'delete', 'destructive' => true],
             ]);
 
@@ -137,16 +137,16 @@ class CustomerController extends BaseController
         ]);
 
         $this->addDashboardBreadcrumb()
-            ->addBreadcrumb('Customers', 'cartino.customers.index')
-            ->addBreadcrumb($customer->full_name, route('cartino.customers.show', $customer))
+            ->addBreadcrumb('Customers', 'cp.customers.index')
+            ->addBreadcrumb($customer->full_name, route('cp.customers.show', $customer))
             ->addBreadcrumb('Edit');
 
         $page = Page::make("Edit {$customer->full_name}")
             ->primaryAction('Update customer', null, ['form' => 'customer-form'])
             ->secondaryActions([
-                ['label' => 'View customer', 'url' => route('cartino.customers.show', $customer)],
+                ['label' => 'View customer', 'url' => route('cp.customers.show', $customer)],
                 ['label' => 'Send email', 'action' => 'send_email'],
-                ['label' => 'Create order', 'url' => route('cartino.orders.create', ['customer' => $customer->id])],
+                ['label' => 'Create order', 'url' => route('cp.orders.create', ['customer' => $customer->id])],
                 ['label' => 'Delete', 'action' => 'delete', 'destructive' => true],
             ])
             ->tabs([

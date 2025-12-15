@@ -74,7 +74,7 @@ class NewPasswordController extends Controller
         // the application's home authenticated view. If there is an error we can
         // redirect them back to where they came from with their error message.
         return $status === Password::PASSWORD_RESET
-            ? redirect()->route('cartino.cp.login')->with('status', __('cartino::auth.password_reset_success'))
+            ? redirect()->route('cp.cp.login')->with('status', __('cartino::auth.password_reset_success'))
             : back()->withInput($request->only('email'))
                 ->withErrors(['email' => __('cartino::auth.password_reset_invalid')]);
     }

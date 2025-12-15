@@ -98,27 +98,6 @@ abstract class BaseController extends Controller
     }
 
     /**
-     * Handle bulk operations.
-     */
-    protected function handleBulkOperation(string $action, array $ids, callable $callback): JsonResponse
-    {
-        try {
-            $result = $callback($action, $ids);
-
-            return $this->successResponse(
-                "Bulk {$action} completed successfully",
-                ['affected_count' => $result]
-            );
-        } catch (\Exception $e) {
-            return $this->errorResponse(
-                "Bulk {$action} failed: ".$e->getMessage(),
-                [],
-                500
-            );
-        }
-    }
-
-    /**
      * Validate permissions for current user.
      */
     protected function checkPermission(string $permission): void

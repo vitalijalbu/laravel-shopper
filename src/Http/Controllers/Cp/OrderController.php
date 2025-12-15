@@ -50,14 +50,14 @@ class OrderController extends BaseController
             ->paginate(request('per_page', 15));
 
         $page = Page::make('Orders')
-            ->primaryAction('Create order', route('cartino.orders.create'))
+            ->primaryAction('Create order', route('cp.orders.create'))
             ->secondaryActions([
-                ['label' => 'Export orders', 'url' => route('cartino.orders.export')],
-                ['label' => 'Abandoned checkouts', 'url' => route('cartino.abandoned-checkouts.index')],
-                ['label' => 'Draft orders', 'url' => route('cartino.orders.index', ['status' => 'draft'])],
+                ['label' => 'Export orders', 'url' => route('cp.orders.export')],
+                ['label' => 'Abandoned checkouts', 'url' => route('cp.abandoned-checkouts.index')],
+                ['label' => 'Draft orders', 'url' => route('cp.orders.index', ['status' => 'draft'])],
             ]);
 
-        return $this->inertiaResponse('orders/Index', [
+        return $this->inertiaResponse('orders/index', [
             'page' => $page->compile(),
 
             'orders' => $orders->through(fn ($order) => new OrderResource($order)),
@@ -126,9 +126,9 @@ class OrderController extends BaseController
         $action = $request->input('_action', 'save');
 
         $redirectUrl = match ($action) {
-            'save_draft' => route('cartino.orders.edit', $order),
-            'save_send_invoice' => route('cartino.orders.show', $order),
-            default => route('cartino.orders.index'),
+            'save_draft' => route('cp.orders.edit', $order),
+            'save_send_invoice' => route('cp.orders.show', $order),
+            default => route('cp.orders.index'),
         };
 
         // Send invoice if requested
@@ -162,12 +162,12 @@ class OrderController extends BaseController
             ->addBreadcrumb($order->number);
 
         $page = Page::make("Order #{$order->number}")
-            ->primaryAction('Edit order', route('cartino.orders.edit', $order))
+            ->primaryAction('Edit order', route('cp.orders.edit', $order))
             ->secondaryActions([
                 ['label' => 'Print invoice', 'action' => 'print_invoice'],
                 ['label' => 'Send invoice', 'action' => 'send_invoice'],
-                ['label' => 'Create fulfillment', 'url' => route('cartino.fulfillments.create', $order)],
-                ['label' => 'Refund', 'url' => route('cartino.refunds.create', $order)],
+                ['label' => 'Create fulfillment', 'url' => route('cp.fulfillments.create', $order)],
+                ['label' => 'Refund', 'url' => route('cp.refunds.create', $order)],
                 ['label' => 'Archive', 'action' => 'archive'],
             ])
             ->tabs([
@@ -199,13 +199,13 @@ class OrderController extends BaseController
 
         $this->addDashboardBreadcrumb()
             ->addBreadcrumb('Orders', 'cartino.orders.index')
-            ->addBreadcrumb($order->number, route('cartino.orders.show', $order))
+            ->addBreadcrumb($order->number, route('cp.orders.show', $order))
             ->addBreadcrumb('Edit');
 
         $page = Page::make("Edit Order #{$order->number}")
             ->primaryAction('Update order', null, ['form' => 'order-form'])
             ->secondaryActions([
-                ['label' => 'View order', 'url' => route('cartino.orders.show', $order)],
+                ['label' => 'View order', 'url' => route('cp.orders.show', $order)],
                 ['label' => 'Send invoice', 'action' => 'send_invoice'],
                 ['label' => 'Cancel order', 'action' => 'cancel', 'destructive' => true],
             ])

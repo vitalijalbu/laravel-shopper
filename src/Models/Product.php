@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
@@ -243,6 +244,14 @@ class Product extends Model
     public function isFavoritedBy(Customer $customer): bool
     {
         return $this->favorites()->where('customer_id', $customer->id)->exists();
+    }
+
+    /**
+     * Alias for assets relationship for backward compatibility
+     */
+    public function media(): MorphToMany
+    {
+        return $this->assets();
     }
 
     // ========================================

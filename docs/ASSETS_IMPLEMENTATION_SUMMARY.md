@@ -399,7 +399,7 @@ Dove `{model_type}` può essere: `products`, `categories`, `brands`, etc.
    [
        'label' => 'Assets',
        'icon' => 'photo',
-       'url' => route('cartino.assets.index'),
+       'url' => route('cp.assets.index'),
    ]
    ```
 

@@ -4,7 +4,7 @@
 
     <div class="debug-props">
       <h2>Props Data:</h2>
-      <pre>{{ JSON.stringify($page.props, null, 2) }}</pre>
+      <code>{{ JSON.stringify($page.props, null, 2) }}</code>
     </div>
   </div>
 </template>

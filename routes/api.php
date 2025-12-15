@@ -12,8 +12,8 @@ use Cartino\Http\Controllers\Api\ChannelController;
 use Cartino\Http\Controllers\Api\CountryController;
 use Cartino\Http\Controllers\Api\CouriersController;
 use Cartino\Http\Controllers\Api\CurrencyController;
-use Cartino\Http\Controllers\Api\CustomerController;
 use Cartino\Http\Controllers\Api\CustomerGroupsController;
+use Cartino\Http\Controllers\Api\CustomersController;
 use Cartino\Http\Controllers\Api\Data\StatusController;
 use Cartino\Http\Controllers\Api\DiscountController;
 use Cartino\Http\Controllers\Api\DiscountsController;
@@ -88,7 +88,7 @@ Route::group([
     Route::apiResource('payment-methods', PaymentMethodsController::class, [
         'names' => 'api.payment-methods',
     ]);
-    Route::apiResource('customers', CustomerController::class, [
+    Route::apiResource('customers', CustomersController::class, [
         'names' => 'api.customers',
     ]);
     Route::apiResource('customer-groups', CustomerGroupsController::class, [
@@ -178,23 +178,23 @@ Route::group([
 
     // Customer Authentication and Management
     Route::prefix('customers')->name('customers.')->group(function () {
-        Route::post('/register', [CustomerController::class, 'register'])->name('register');
-        Route::post('/login', [CustomerController::class, 'login'])->name('login');
-        Route::post('/logout', [CustomerController::class, 'logout'])->name('logout')->middleware('auth:customer');
-        Route::post('/forgot-password', [CustomerController::class, 'forgotPassword'])->name('forgot-password');
-        Route::post('/reset-password', [CustomerController::class, 'resetPassword'])->name('reset-password');
-        Route::get('/verify/{token}', [CustomerController::class, 'verify'])->name('verify');
+        Route::post('/register', [CustomersController::class, 'register'])->name('register');
+        Route::post('/login', [CustomersController::class, 'login'])->name('login');
+        Route::post('/logout', [CustomersController::class, 'logout'])->name('logout')->middleware('auth:customer');
+        Route::post('/forgot-password', [CustomersController::class, 'forgotPassword'])->name('forgot-password');
+        Route::post('/reset-password', [CustomersController::class, 'resetPassword'])->name('reset-password');
+        Route::get('/verify/{token}', [CustomersController::class, 'verify'])->name('verify');
 
         // Authenticated Customer Routes
         Route::middleware(['auth:customer'])->group(function () {
-            Route::get('/profile', [CustomerController::class, 'profile'])->name('profile');
-            Route::put('/profile', [CustomerController::class, 'updateProfile'])->name('update-profile');
-            Route::get('/addresses', [CustomerController::class, 'addresses'])->name('addresses');
-            Route::post('/addresses', [CustomerController::class, 'storeAddress'])->name('store-address');
-            Route::put('/addresses/{address}', [CustomerController::class, 'updateAddress'])->name('update-address');
-            Route::delete('/addresses/{address}', [CustomerController::class, 'destroyAddress'])->name('destroy-address');
-            Route::get('/orders', [CustomerController::class, 'customerOrders'])->name('orders');
-            Route::get('/orders/{order}', [CustomerController::class, 'customerOrder'])->name('order');
+            Route::get('/profile', [CustomersController::class, 'profile'])->name('profile');
+            Route::put('/profile', [CustomersController::class, 'updateProfile'])->name('update-profile');
+            Route::get('/addresses', [CustomersController::class, 'addresses'])->name('addresses');
+            Route::post('/addresses', [CustomersController::class, 'storeAddress'])->name('store-address');
+            Route::put('/addresses/{address}', [CustomersController::class, 'updateAddress'])->name('update-address');
+            Route::delete('/addresses/{address}', [CustomersController::class, 'destroyAddress'])->name('destroy-address');
+            Route::get('/orders', [CustomersController::class, 'customerOrders'])->name('orders');
+            Route::get('/orders/{order}', [CustomersController::class, 'customerOrder'])->name('order');
         });
     });
 
@@ -267,19 +267,19 @@ Route::group([
     Route::get('roles/statistics', [\Cartino\Http\Controllers\Api\RoleController::class, 'statistics'])->name('api.roles.statistics');
 
     // Customer Management (Standardized with apiResource)
-    Route::apiResource('customers', \Cartino\Http\Controllers\Api\CustomerController::class, [
+    Route::apiResource('customers', \Cartino\Http\Controllers\Api\CustomersController::class, [
         'names' => 'api.customers',
     ]);
 
     // Custom customer actions
-    Route::get('customers/with-fidelity', [\Cartino\Http\Controllers\Api\CustomerController::class, 'indexWithFidelity'])->name('api.customers.index-with-fidelity');
-    Route::get('customers/{customer}/fidelity', [\Cartino\Http\Controllers\Api\CustomerController::class, 'fidelityCard'])->name('api.customers.fidelity');
-    Route::post('customers/{customer}/fidelity', [\Cartino\Http\Controllers\Api\CustomerController::class, 'createFidelityCard'])->name('api.customers.fidelity.create');
-    Route::get('customers/{customer}/orders', [\Cartino\Http\Controllers\Api\CustomerController::class, 'orders'])->name('api.customers.orders');
-    Route::get('customers/{customer}/addresses', [\Cartino\Http\Controllers\Api\CustomerController::class, 'addresses'])->name('api.customers.addresses');
-    Route::post('customers/{customer}/addresses', [\Cartino\Http\Controllers\Api\CustomerController::class, 'addAddress'])->name('api.customers.addresses.add');
-    Route::get('customers/{customer}/statistics', [\Cartino\Http\Controllers\Api\CustomerController::class, 'statistics'])->name('api.customers.statistics');
-    Route::post('customers/bulk', [\Cartino\Http\Controllers\Api\CustomerController::class, 'bulk'])->name('api.customers.bulk');
+    Route::get('customers/with-fidelity', [\Cartino\Http\Controllers\Api\CustomersController::class, 'indexWithFidelity'])->name('api.customers.index-with-fidelity');
+    Route::get('customers/{customer}/fidelity', [\Cartino\Http\Controllers\Api\CustomersController::class, 'fidelityCard'])->name('api.customers.fidelity');
+    Route::post('customers/{customer}/fidelity', [\Cartino\Http\Controllers\Api\CustomersController::class, 'createFidelityCard'])->name('api.customers.fidelity.create');
+    Route::get('customers/{customer}/orders', [\Cartino\Http\Controllers\Api\CustomersController::class, 'orders'])->name('api.customers.orders');
+    Route::get('customers/{customer}/addresses', [\Cartino\Http\Controllers\Api\CustomersController::class, 'addresses'])->name('api.customers.addresses');
+    Route::post('customers/{customer}/addresses', [\Cartino\Http\Controllers\Api\CustomersController::class, 'addAddress'])->name('api.customers.addresses.add');
+    Route::get('customers/{customer}/statistics', [\Cartino\Http\Controllers\Api\CustomersController::class, 'statistics'])->name('api.customers.statistics');
+    Route::post('customers/bulk', [\Cartino\Http\Controllers\Api\CustomersController::class, 'bulk'])->name('api.customers.bulk');
 
     // Fidelity System Management
     Route::prefix('fidelity')->name('fidelity.')->group(function () {

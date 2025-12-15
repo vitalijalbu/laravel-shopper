@@ -21,14 +21,14 @@ class DashboardController extends BaseController
         $this->addBreadcrumb('Dashboard');
 
         $page = Page::make('Dashboard')
-            ->primaryAction('Quick order', route('cartino.orders.create'))
+            ->primaryAction('Quick order', route('cp.orders.create'))
             ->secondaryActions([
-                ['label' => 'Add product', 'url' => route('cartino.products.create')],
-                ['label' => 'Add customer', 'url' => route('cartino.customers.create')],
-                ['label' => 'View reports', 'url' => route('cartino.reports.index')],
+                ['label' => 'Add product', 'url' => route('cp.products.create')],
+                ['label' => 'Add customer', 'url' => route('cp.customers.create')],
+                ['label' => 'View reports', 'url' => route('cp.reports.index')],
             ]);
 
-        return $this->inertiaResponse('dashboard/Index', [
+        return $this->inertiaResponse('dashboard/index', [
             'page' => $page->compile(),
 
             'stats' => $this->getDashboardStats(),
@@ -156,7 +156,7 @@ class DashboardController extends BaseController
                     'formatted_total' => number_format($order->total, 2).' €',
                     'status' => $order->status,
                     'created_at' => $order->created_at->format('Y-m-d H:i'),
-                    'url' => route('cartino.orders.show', $order),
+                    'url' => route('cp.orders.show', $order),
                 ];
             })
             ->toArray();
@@ -179,7 +179,7 @@ class DashboardController extends BaseController
                     'sku' => $product->sku,
                     'stock_quantity' => $product->stock_quantity,
                     'image_url' => $product->image_url,
-                    'url' => route('cartino.products.show', $product),
+                    'url' => route('cp.products.show', $product),
                 ];
             })
             ->toArray();
@@ -204,7 +204,7 @@ class DashboardController extends BaseController
                     'formatted_price' => number_format($product->price, 2).' €',
                     'image_url' => $product->image_url,
                     'sales' => rand(10, 100), // TODO: Calculate real sales
-                    'url' => route('cartino.products.show', $product),
+                    'url' => route('cp.products.show', $product),
                 ];
             })
             ->toArray();
@@ -228,7 +228,7 @@ class DashboardController extends BaseController
                 'description' => "Order #{$order->number} from ".
                     ($order->customer?->full_name ?? 'Guest'),
                 'time' => $order->created_at->diffForHumans(),
-                'url' => route('cartino.orders.show', $order),
+                'url' => route('cp.orders.show', $order),
             ];
         }
 
@@ -242,7 +242,7 @@ class DashboardController extends BaseController
                 'title' => 'New customer registered',
                 'description' => $customer->full_name.' ('.$customer->email.')',
                 'time' => $customer->created_at->diffForHumans(),
-                'url' => route('cartino.customers.show', $customer),
+                'url' => route('cp.customers.show', $customer),
             ];
         }
 
@@ -256,7 +256,7 @@ class DashboardController extends BaseController
                 'title' => 'Product updated',
                 'description' => $product->name,
                 'time' => $product->updated_at->diffForHumans(),
-                'url' => route('cartino.products.show', $product),
+                'url' => route('cp.products.show', $product),
             ];
         }
 

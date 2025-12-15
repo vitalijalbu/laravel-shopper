@@ -53,7 +53,7 @@ class DiscountController extends Controller
             return $discount;
         });
 
-        return Inertia::render('Discounts/Index', [
+        return Inertia::render('Discounts/index', [
             'discounts' => $discounts,
             'filters' => $request->only(['status', 'type', 'search']),
             'statistics' => $this->getOverallStatistics(),

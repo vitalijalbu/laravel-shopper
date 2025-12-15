@@ -20,7 +20,7 @@ class AssetContainersController extends BaseController
         $this->addBreadcrumb('Asset Containers');
 
         $page = Page::make('Asset Containers')
-            ->primaryAction('Create Container', route('cartino.asset-containers.create'));
+            ->primaryAction('Create Container', route('cp.asset-containers.create'));
 
         $containers = AssetContainer::withCount('assets')
             ->get()
@@ -35,11 +35,11 @@ class AssetContainersController extends BaseController
                     'max_file_size' => $container->max_file_size,
                     'max_file_size_mb' => $container->max_file_size ? round($container->max_file_size / 1024 / 1024, 2) : null,
                     'allowed_extensions' => $container->allowed_extensions,
-                    'url' => route('cartino.asset-containers.show', $container),
+                    'url' => route('cp.asset-containers.show', $container),
                 ];
             });
 
-        return $this->inertiaResponse('asset-containers/Index', [
+        return $this->inertiaResponse('asset-containers/index', [
             'page' => $page->compile(),
             'containers' => $containers,
             'availableDisks' => config('filesystems.disks'),
@@ -51,7 +51,7 @@ class AssetContainersController extends BaseController
      */
     public function create(): Response
     {
-        $this->addBreadcrumb('Asset Containers', route('cartino.asset-containers.index'));
+        $this->addBreadcrumb('Asset Containers', route('cp.asset-containers.index'));
         $this->addBreadcrumb('Create');
 
         $page = Page::make('Create Container');
@@ -93,7 +93,7 @@ class AssetContainersController extends BaseController
             'allowed_extensions' => $request->allowed_extensions,
         ]);
 
-        return redirect()->route('cartino.asset-containers.show', $container)
+        return redirect()->route('cp.asset-containers.show', $container)
             ->with('success', 'Container created successfully');
     }
 
@@ -102,14 +102,14 @@ class AssetContainersController extends BaseController
      */
     public function show(AssetContainer $assetContainer): Response
     {
-        $this->addBreadcrumb('Asset Containers', route('cartino.asset-containers.index'));
+        $this->addBreadcrumb('Asset Containers', route('cp.asset-containers.index'));
         $this->addBreadcrumb($assetContainer->title);
 
         $page = Page::make($assetContainer->title)
-            ->primaryAction('Browse Assets', route('cartino.assets.index', ['container' => $assetContainer->handle]))
+            ->primaryAction('Browse Assets', route('cp.assets.index', ['container' => $assetContainer->handle]))
             ->secondaryActions([
-                ['label' => 'Edit', 'url' => route('cartino.asset-containers.edit', $assetContainer)],
-                ['label' => 'Delete', 'url' => route('cartino.asset-containers.destroy', $assetContainer), 'destructive' => true],
+                ['label' => 'Edit', 'url' => route('cp.asset-containers.edit', $assetContainer)],
+                ['label' => 'Delete', 'url' => route('cp.asset-containers.destroy', $assetContainer), 'destructive' => true],
             ]);
 
         $assetContainer->loadCount('assets');
@@ -134,8 +134,8 @@ class AssetContainersController extends BaseController
      */
     public function edit(AssetContainer $assetContainer): Response
     {
-        $this->addBreadcrumb('Asset Containers', route('cartino.asset-containers.index'));
-        $this->addBreadcrumb($assetContainer->title, route('cartino.asset-containers.show', $assetContainer));
+        $this->addBreadcrumb('Asset Containers', route('cp.asset-containers.index'));
+        $this->addBreadcrumb($assetContainer->title, route('cp.asset-containers.show', $assetContainer));
         $this->addBreadcrumb('Edit');
 
         $page = Page::make('Edit Container');
@@ -176,7 +176,7 @@ class AssetContainersController extends BaseController
             'allowed_extensions' => $request->allowed_extensions,
         ]);
 
-        return redirect()->route('cartino.asset-containers.show', $assetContainer)
+        return redirect()->route('cp.asset-containers.show', $assetContainer)
             ->with('success', 'Container updated successfully');
     }
 
@@ -193,7 +193,7 @@ class AssetContainersController extends BaseController
 
         $assetContainer->delete();
 
-        return redirect()->route('cartino.asset-containers.index')
+        return redirect()->route('cp.asset-containers.index')
             ->with('success', 'Container deleted successfully');
     }
 }

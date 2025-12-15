@@ -30,7 +30,7 @@ class BrandsController extends BaseController
     public function index(Request $request): Response
     {
         $this->addDashboardBreadcrumb()
-            ->addBreadcrumb('Catalog', 'cartino.catalog')
+            ->addBreadcrumb('Catalog', 'cp.categories.index')
             ->addBreadcrumb('Brands');
 
         $filters = $this->getFilters(['search', 'status', 'created_at']);
@@ -42,13 +42,13 @@ class BrandsController extends BaseController
             ->paginate(request('per_page', 15));
 
         $page = Page::make('Brands')
-            ->primaryAction('Add brand', route('cartino.brands.create'))
+            ->primaryAction('Add brand', route('cp.brands.create'))
             ->secondaryActions([
-                ['label' => 'Import', 'url' => route('cartino.brands.import')],
-                ['label' => 'Export', 'url' => route('cartino.brands.export')],
+                ['label' => 'Import', 'url' => route('cp.brands.import')],
+                ['label' => 'Export', 'url' => route('cp.brands.export')],
             ]);
 
-        return $this->inertiaResponse('brands/Index', [
+        return $this->inertiaResponse('brands/index', [
             'page' => $page->compile(),
 
             'brands' => new BrandCollection($brands),
@@ -62,7 +62,7 @@ class BrandsController extends BaseController
     public function create(): Response
     {
         $this->addDashboardBreadcrumb()
-            ->addBreadcrumb('Catalog', 'cartino.catalog')
+            ->addBreadcrumb('Catalog', 'cp.categories.index')
             ->addBreadcrumb('Brands', 'cartino.brands.index')
             ->addBreadcrumb('Add brand');
 
@@ -89,9 +89,9 @@ class BrandsController extends BaseController
         $action = $request->input('_action', 'save');
 
         $redirectUrl = match ($action) {
-            'save_continue' => route('cartino.brands.edit', $brand),
-            'save_add_another' => route('cartino.brands.create'),
-            default => route('cartino.brands.index'),
+            'save_continue' => route('cp.brands.edit', $brand),
+            'save_add_another' => route('cp.brands.create'),
+            default => route('cp.brands.index'),
         };
 
         return $this->successResponse('Brand created successfully', [
@@ -108,12 +108,12 @@ class BrandsController extends BaseController
         $brand->load(['products' => fn ($query) => $query->limit(10)->latest()]);
 
         $this->addDashboardBreadcrumb()
-            ->addBreadcrumb('Catalog', 'cartino.catalog')
+            ->addBreadcrumb('Catalog', 'cp.categories.index')
             ->addBreadcrumb('Brands', 'cartino.brands.index')
             ->addBreadcrumb($brand->name);
 
         $page = Page::make($brand->name)
-            ->primaryAction('Edit brand', route('cartino.brands.edit', $brand))
+            ->primaryAction('Edit brand', route('cp.brands.edit', $brand))
             ->secondaryActions([
                 ['label' => 'View in store', 'url' => "/brands/{$brand->slug}", 'target' => '_blank'],
                 ['label' => 'Visit website', 'url' => $brand->website, 'target' => '_blank', 'disabled' => ! $brand->website],
@@ -134,15 +134,15 @@ class BrandsController extends BaseController
     public function edit(Brand $brand): Response
     {
         $this->addDashboardBreadcrumb()
-            ->addBreadcrumb('Catalog', 'cartino.catalog')
+            ->addBreadcrumb('Catalog', 'cp.categories.index')
             ->addBreadcrumb('Brands', 'cartino.brands.index')
-            ->addBreadcrumb($brand->name, route('cartino.brands.show', $brand))
+            ->addBreadcrumb($brand->name, route('cp.brands.show', $brand))
             ->addBreadcrumb('Edit');
 
         $page = Page::make("Edit {$brand->name}")
             ->primaryAction('Update brand', null, ['form' => 'brand-form'])
             ->secondaryActions([
-                ['label' => 'View brand', 'url' => route('cartino.brands.show', $brand)],
+                ['label' => 'View brand', 'url' => route('cp.brands.show', $brand)],
                 ['label' => 'View in store', 'url' => "/brands/{$brand->slug}", 'target' => '_blank'],
                 ['label' => 'Visit website', 'url' => $brand->website, 'target' => '_blank', 'disabled' => ! $brand->website],
                 ['label' => 'Duplicate', 'action' => 'duplicate'],

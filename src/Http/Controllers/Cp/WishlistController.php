@@ -33,7 +33,7 @@ class WishlistController extends Controller
         $filters = $request->only(['search', 'status', 'customer_id', 'date_from', 'date_to']);
         $wishlists = $this->repository->getPaginated($filters, $request->get('per_page', 15));
 
-        return Inertia::render('CP/Wishlists/Index', [
+        return Inertia::render('CP/Wishlists/index', [
             'wishlists' => $wishlists,
             'filters' => $filters,
             'statistics' => $this->repository->getStatistics(),

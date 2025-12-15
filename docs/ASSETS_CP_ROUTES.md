@@ -186,19 +186,19 @@ Aggiungere al menu CP:
 [
     'label' => 'Assets',
     'icon' => 'photo',
-    'url' => route('cartino.assets.index'),
+    'url' => route('cp.assets.index'),
     'children' => [
         [
             'label' => 'All Assets',
-            'url' => route('cartino.assets.index'),
+            'url' => route('cp.assets.index'),
         ],
         [
             'label' => 'Upload',
-            'url' => route('cartino.assets.create'),
+            'url' => route('cp.assets.create'),
         ],
         [
             'label' => 'Containers',
-            'url' => route('cartino.asset-containers.index'),
+            'url' => route('cp.asset-containers.index'),
         ],
     ],
 ],
