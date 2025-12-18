@@ -370,10 +370,6 @@ class CartinoSeeder extends Seeder
                     'handle' => 'main',
                     'title' => 'Main Assets',
                     'disk' => 'public',
-                    'allow_uploads' => true,
-                    'allow_downloads' => true,
-                    'allow_moves' => true,
-                    'allow_renames' => true,
                 ]
             );
         }
