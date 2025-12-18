@@ -358,4 +358,90 @@ return [
             'max_joins' => env('CARTINO_FILTERS_MAX_JOINS', 5),
         ],
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Dictionaries Configuration
+    |--------------------------------------------------------------------------
+    | Sistema di dictionaries estensibile per reference data (paesi, valute, etc.)
+    | Simile a Statamic CMS, permette di aggiungere custom dictionaries e
+    | estendere quelli esistenti.
+    */
+
+    /*
+    |--------------------------------------------------------------------------
+    | Custom Dictionaries
+    |--------------------------------------------------------------------------
+    | Aggiungi qui i tuoi dictionaries custom. Devono estendere BasicDictionary.
+    |
+    | Esempio:
+    | 'product_categories' => \App\Dictionaries\ProductCategories::class,
+    | 'custom_statuses' => \App\Dictionaries\CustomStatuses::class,
+    */
+    'custom_dictionaries' => [
+        // Aggiungi qui i tuoi dictionaries custom
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Extensible Dictionaries
+    |--------------------------------------------------------------------------
+    | Lista dei dictionaries che possono essere estesi aggiungendo items custom.
+    | Per motivi di sicurezza, solo questi possono essere modificati via config.
+    */
+    'extensible_dictionaries' => [
+        'address_types',      // Tipi di indirizzo (billing, shipping, etc.)
+        'payment_providers',  // Provider di pagamento
+        'shipping_types',     // Tipi di spedizione
+        'order_statuses',     // Stati ordine
+        'payment_statuses',   // Stati pagamento
+        'units',              // Unità di misura
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Dictionary Extensions
+    |--------------------------------------------------------------------------
+    | Estendi i dictionaries esistenti aggiungendo items custom.
+    | Gli items custom vengono uniti a quelli di default.
+    |
+    | Esempio per aggiungere un address type custom:
+    |
+    | 'dictionary_extensions' => [
+    |     'address_types' => [
+    |         ['value' => 'warehouse', 'label' => 'Warehouse', 'icon' => 'building'],
+    |         ['value' => 'office', 'label' => 'Office HQ', 'icon' => 'briefcase'],
+    |     ],
+    |     'payment_providers' => [
+    |         ['value' => 'custom_gateway', 'label' => 'Custom Gateway', 'supports' => ['card']],
+    |     ],
+    |     'order_statuses' => [
+    |         ['value' => 'on_hold', 'label' => 'On Hold', 'color' => 'orange', 'icon' => 'pause'],
+    |         ['value' => 'backordered', 'label' => 'Backordered', 'color' => 'purple', 'icon' => 'clock'],
+    |     ],
+    |     'units' => [
+    |         ['value' => 'pz', 'label' => 'Pezzi', 'type' => 'quantity', 'system' => 'metric', 'symbol' => 'pz'],
+    |         ['value' => 'box', 'label' => 'Scatole', 'type' => 'quantity', 'system' => 'generic', 'symbol' => 'box'],
+    |     ],
+    | ],
+    */
+    'dictionary_extensions' => [
+        // Estendi qui i dictionaries esistenti
+
+        // Esempio: aggiungi custom address types
+        // 'address_types' => [
+        //     ['value' => 'warehouse', 'label' => 'Warehouse', 'icon' => 'building'],
+        //     ['value' => 'office', 'label' => 'Office', 'icon' => 'briefcase'],
+        // ],
+
+        // Esempio: aggiungi custom order status
+        // 'order_statuses' => [
+        //     ['value' => 'on_hold', 'label' => 'On Hold', 'color' => 'orange', 'icon' => 'pause'],
+        // ],
+
+        // Esempio: aggiungi custom payment provider
+        // 'payment_providers' => [
+        //     ['value' => 'bank_wire', 'label' => 'Bank Wire Transfer', 'supports' => ['wire'], 'countries' => ['*']],
+        // ],
+    ],
 ];
