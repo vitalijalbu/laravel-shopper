@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Tests\Feature;
+namespace Cartino\Tests\Feature;
 
 use Cartino\Models\Entry;
 use Cartino\Models\User;
+use Cartino\Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 
 class SearchApiTest extends TestCase
 {

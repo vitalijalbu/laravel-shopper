@@ -28,8 +28,7 @@ class TranslationTest extends TestCase
         ]);
     }
 
-    /** @test */
-    public function it_can_set_and_get_translation()
+    public function test_it_can_set_and_get_translation()
     {
         Translation::set($this->product, 'name', 'Prodotto Test', 'it_IT');
 
@@ -38,16 +37,14 @@ class TranslationTest extends TestCase
         $this->assertEquals('Prodotto Test', $translation);
     }
 
-    /** @test */
-    public function it_returns_default_when_translation_not_found()
+    public function test_it_returns_default_when_translation_not_found()
     {
         $translation = Translation::get($this->product, 'name', 'fr_FR', 'Default Name');
 
         $this->assertEquals('Default Name', $translation);
     }
 
-    /** @test */
-    public function it_can_remove_translation()
+    public function test_it_can_remove_translation()
     {
         Translation::set($this->product, 'name', 'Prodotto Test', 'it_IT');
 
@@ -57,8 +54,7 @@ class TranslationTest extends TestCase
         $this->assertNull(Translation::get($this->product, 'name', 'it_IT'));
     }
 
-    /** @test */
-    public function locale_resolver_builds_fallback_chain()
+    public function test_locale_resolver_builds_fallback_chain()
     {
         $resolver = app(LocaleResolver::class);
 
@@ -71,8 +67,7 @@ class TranslationTest extends TestCase
         $this->assertContains('en', $chain);
     }
 
-    /** @test */
-    public function locale_resolver_normalizes_locale_format()
+    public function test_locale_resolver_normalizes_locale_format()
     {
         $resolver = app(LocaleResolver::class);
 

@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Tests\Feature;
+namespace Cartino\Tests\Feature;
 
 use Cartino\Models\Customer;
 use Cartino\Models\FidelityCard;
 use Cartino\Models\FidelityTransaction;
 use Cartino\Models\Order;
 use Cartino\Services\FidelityService;
+use Cartino\Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use PHPUnit\Framework\TestCase as BaseTestCase;
 
-class FidelitySystemTest extends BaseTestCase
+class FidelitySystemTest extends TestCase
 {
     use RefreshDatabase;
 

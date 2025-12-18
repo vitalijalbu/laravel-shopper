@@ -106,8 +106,7 @@ class PriceResolutionTest extends TestCase
         ]);
     }
 
-    /** @test */
-    public function it_resolves_base_price_when_no_specific_context()
+    public function test_it_resolves_base_price_when_no_specific_context()
     {
         // Create base price (no market, site, channel)
         Price::create([
@@ -130,8 +129,7 @@ class PriceResolutionTest extends TestCase
         $this->assertNull($price->site_id);
     }
 
-    /** @test */
-    public function it_resolves_market_specific_price_over_base_price()
+    public function test_it_resolves_market_specific_price_over_base_price()
     {
         // Base price
         Price::create([
@@ -163,8 +161,7 @@ class PriceResolutionTest extends TestCase
         $this->assertEquals($this->marketEU->id, $price->market_id);
     }
 
-    /** @test */
-    public function it_resolves_site_specific_price_over_market_price()
+    public function test_it_resolves_site_specific_price_over_market_price()
     {
         // Market price
         Price::create([
@@ -199,8 +196,7 @@ class PriceResolutionTest extends TestCase
         $this->assertEquals($this->siteIT->id, $price->site_id);
     }
 
-    /** @test */
-    public function it_resolves_most_specific_price_with_all_context()
+    public function test_it_resolves_most_specific_price_with_all_context()
     {
         // Create prices with increasing specificity
         $basePrice = Price::create([
@@ -252,8 +248,7 @@ class PriceResolutionTest extends TestCase
         $this->assertEquals($channelPrice->id, $price->id);
     }
 
-    /** @test */
-    public function it_respects_quantity_tiers()
+    public function test_it_respects_quantity_tiers()
     {
         // Base price for qty 1-9
         Price::create([
@@ -285,8 +280,7 @@ class PriceResolutionTest extends TestCase
         $this->assertEquals(9000, $price2->amount);
     }
 
-    /** @test */
-    public function it_filters_by_currency()
+    public function test_it_filters_by_currency()
     {
         Price::create([
             'product_variant_id' => $this->variant->id,
@@ -313,8 +307,7 @@ class PriceResolutionTest extends TestCase
         $this->assertEquals('USD', $priceUSD->currency);
     }
 
-    /** @test */
-    public function it_ignores_inactive_prices()
+    public function test_it_ignores_inactive_prices()
     {
         Price::create([
             'product_variant_id' => $this->variant->id,
@@ -336,8 +329,7 @@ class PriceResolutionTest extends TestCase
         $this->assertEquals(10000, $price->amount);
     }
 
-    /** @test */
-    public function it_respects_price_scheduling()
+    public function test_it_respects_price_scheduling()
     {
         // Future price (not yet active)
         Price::create([
@@ -362,8 +354,7 @@ class PriceResolutionTest extends TestCase
         $this->assertEquals(10000, $price->amount);
     }
 
-    /** @test */
-    public function it_resolves_bulk_prices_efficiently()
+    public function test_it_resolves_bulk_prices_efficiently()
     {
         $variants = collect();
 
@@ -393,8 +384,7 @@ class PriceResolutionTest extends TestCase
         $this->assertEquals(10500, $prices[$variants[4]->id]->amount);
     }
 
-    /** @test */
-    public function pricing_context_resolves_defaults_from_market()
+    public function test_pricing_context_resolves_defaults_from_market()
     {
         $context = new PricingContext(
             market: $this->marketEU,
@@ -405,8 +395,7 @@ class PriceResolutionTest extends TestCase
         $this->assertEquals('it_IT', $context->locale);
     }
 
-    /** @test */
-    public function pricing_context_supports_cache_key_generation()
+    public function test_pricing_context_supports_cache_key_generation()
     {
         $context = new PricingContext(
             market: $this->marketEU,
@@ -424,8 +413,7 @@ class PriceResolutionTest extends TestCase
         $this->assertStringContainsString('qty5', $cacheKey);
     }
 
-    /** @test */
-    public function it_returns_null_when_no_price_found()
+    public function test_it_returns_null_when_no_price_found()
     {
         $context = new PricingContext(currency: 'EUR', quantity: 1);
         $price = $this->service->resolve($this->variant, $context);
