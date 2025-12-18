@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Cartino\Models;
 
+use Cartino\Services\GlideService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -169,7 +170,7 @@ class Asset extends Model
             $params['crop'] = $this->focus_css;
         }
 
-        return app(\Cartino\Services\GlideService::class)->url($this->path, $params);
+        return app(GlideService::class)->url($this->path, $params);
     }
 
     public function responsive(?array $breakpoints = null): array

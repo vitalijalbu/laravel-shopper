@@ -1437,7 +1437,7 @@ class CartinoSeeder extends Seeder
         foreach ($brands->take(20) as $brand) {
             // Logo (SVG or PNG)
             $logoAsset = \Cartino\Models\Asset::factory()->state([
-                'asset_container_id' => $assetContainer->id,
+                'container' => $assetContainer->handle,
                 'mime_type' => fake()->randomElement(['image/svg+xml', 'image/png']),
                 'width' => 200,
                 'height' => 200,
@@ -1448,7 +1448,7 @@ class CartinoSeeder extends Seeder
             // Banner (optional, 70% chance)
             if (rand(1, 100) <= 70) {
                 $bannerAsset = \Cartino\Models\Asset::factory()->state([
-                    'asset_container_id' => $assetContainer->id,
+                    'container' => $assetContainer->handle,
                     'mime_type' => 'image/jpeg',
                     'width' => 1920,
                     'height' => 600,
@@ -1483,7 +1483,7 @@ class CartinoSeeder extends Seeder
             // Featured image (80% chance)
             if (rand(1, 100) <= 80) {
                 $featuredAsset = \Cartino\Models\Asset::factory()->state([
-                    'asset_container_id' => $assetContainer->id,
+                    'container' => $assetContainer->handle,
                     'mime_type' => 'image/webp',
                     'width' => 800,
                     'height' => 800,
@@ -1495,7 +1495,7 @@ class CartinoSeeder extends Seeder
             // Banner (50% chance)
             if (rand(1, 100) <= 50) {
                 $bannerAsset = \Cartino\Models\Asset::factory()->state([
-                    'asset_container_id' => $assetContainer->id,
+                    'container' => $assetContainer->handle,
                     'mime_type' => 'image/jpeg',
                     'width' => 1920,
                     'height' => 400,
@@ -1533,7 +1533,7 @@ class CartinoSeeder extends Seeder
             $imageCount = rand(1, 5);
             for ($i = 0; $i < $imageCount; $i++) {
                 $imageAsset = \Cartino\Models\Asset::factory()->state([
-                    'asset_container_id' => $assetContainer->id,
+                    'container' => $assetContainer->handle,
                     'mime_type' => fake()->randomElement(['image/jpeg', 'image/png', 'image/webp']),
                     'width' => 1200,
                     'height' => 1200,
@@ -1550,7 +1550,7 @@ class CartinoSeeder extends Seeder
                 $galleryCount = rand(3, 8);
                 for ($g = 0; $g < $galleryCount; $g++) {
                     $galleryAsset = \Cartino\Models\Asset::factory()->state([
-                        'asset_container_id' => $assetContainer->id,
+                        'container' => $assetContainer->handle,
                         'mime_type' => 'image/webp',
                         'width' => 1920,
                         'height' => 1280,
@@ -1565,7 +1565,7 @@ class CartinoSeeder extends Seeder
                 $docCount = rand(1, 3);
                 for ($d = 0; $d < $docCount; $d++) {
                     $docAsset = \Cartino\Models\Asset::factory()->state([
-                        'asset_container_id' => $assetContainer->id,
+                        'container' => $assetContainer->handle,
                         'mime_type' => 'application/pdf',
                         'width' => null,
                         'height' => null,
@@ -1581,7 +1581,7 @@ class CartinoSeeder extends Seeder
                 $videoCount = rand(1, 2);
                 for ($v = 0; $v < $videoCount; $v++) {
                     $videoAsset = \Cartino\Models\Asset::factory()->state([
-                        'asset_container_id' => $assetContainer->id,
+                        'container' => $assetContainer->handle,
                         'mime_type' => fake()->randomElement(['video/mp4', 'video/webm']),
                         'width' => 1920,
                         'height' => 1080,
