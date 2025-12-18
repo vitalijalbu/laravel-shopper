@@ -108,6 +108,11 @@ return new class extends Migration
                 ->after('lifetime_value')
                 ->comment('Total number of orders');
 
+            // Ensure marketing opt-in flag exists before timestamps
+            $table->boolean('accepts_marketing')
+                ->default(false)
+                ->after('status');
+
             // Marketing consent (GDPR)
             $table->timestamp('marketing_consent_at')
                 ->nullable()
@@ -142,27 +147,6 @@ return new class extends Migration
             $table->index(['lifetime_value', 'order_count']);
         });
 
-        // Multiple customer groups (many-to-many pivot)
-        Schema::create('customer_customer_group', function (Blueprint $table) {
-            $table->id();
-
-            $table->foreignId('customer_id')
-                ->constrained('customers')
-                ->cascadeOnDelete();
-
-            $table->foreignId('customer_group_id')
-                ->constrained('customer_groups')
-                ->cascadeOnDelete();
-
-            $table->boolean('is_primary')
-                ->default(false)
-                ->comment('Primary group for this customer');
-
-            $table->timestamps();
-
-            $table->unique(['customer_id', 'customer_group_id']);
-            $table->index(['customer_group_id', 'is_primary']);
-        });
 
         // Customer tags (flexible categorization)
         Schema::create('customer_tags', function (Blueprint $table) {
