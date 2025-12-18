@@ -1,6 +1,6 @@
 <?php
 
-namespace Cartino\Http\Controllers\CP\Auth;
+namespace Cartino\Http\Controllers\Cp\Auth;
 
 use Cartino\Http\Controllers\Controller;
 use Cartino\Http\Requests\Auth\LoginRequest;

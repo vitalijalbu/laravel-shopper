@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Cartino\Http\Controllers\CP\Concerns;
+namespace Cartino\Http\Controllers\Cp\Concerns;
 
-use Cartino\CP\Page;
+use Cartino\Cp\Page;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\JsonResponse;

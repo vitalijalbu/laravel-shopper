@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Cartino\Http\Controllers\CP;
+namespace Cartino\Http\Controllers\Cp;
 
-use Cartino\CP\Page;
+use Cartino\Cp\Page;
 use Cartino\Http\Requests\CP\StoreOrderRequest;
 use Cartino\Http\Resources\CP\OrderResource;
 use Cartino\Models\Customer;

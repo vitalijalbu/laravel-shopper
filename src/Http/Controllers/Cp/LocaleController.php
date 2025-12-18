@@ -1,6 +1,6 @@
 <?php
 
-namespace Cartino\Http\Controllers\CP;
+namespace Cartino\Http\Controllers\Cp;
 
 use Cartino\Http\Controllers\Controller;
 use Illuminate\Http\Request;

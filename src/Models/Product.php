@@ -9,6 +9,7 @@ use Cartino\Support\HasSite;
 use Cartino\Traits\HasAssets;
 use Cartino\Traits\HasCustomFields;
 use Cartino\Traits\HasOptimizedFilters;
+use Cartino\Traits\Translatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -27,6 +28,7 @@ class Product extends Model
     use HasOptimizedFilters;
     use HasSite;
     use SoftDeletes;
+    use Translatable;
 
     protected $fillable = [
         'site_id',
@@ -91,6 +93,16 @@ class Product extends Model
         'order_increment' => 'integer',
         'is_closeout' => 'boolean',
         'restock_days' => 'integer',
+    ];
+
+    /**
+     * Translatable fields for multi-language support
+     */
+    protected array $translatable = [
+        'name',
+        'slug',
+        'description',
+        'short_description',
     ];
 
     /**

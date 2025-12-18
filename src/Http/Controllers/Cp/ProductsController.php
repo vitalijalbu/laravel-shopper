@@ -1,8 +1,8 @@
 <?php
 
-namespace Cartino\Http\Controllers\CP;
+namespace Cartino\Http\Controllers\Cp;
 
-use Cartino\CP\Page;
+use Cartino\Cp\Page;
 use Cartino\Data\ProductDto;
 use Cartino\Http\Controllers\Controller;
 use Cartino\Http\Resources\ProductResource;

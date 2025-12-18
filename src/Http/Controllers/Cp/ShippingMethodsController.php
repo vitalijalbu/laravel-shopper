@@ -1,8 +1,8 @@
 <?php
 
-namespace Cartino\Http\Controllers\CP;
+namespace Cartino\Http\Controllers\Cp;
 
-use Cartino\CP\Page;
+use Cartino\Cp\Page;
 use Cartino\Http\Controllers\Controller;
 use Cartino\Models\ShippingMethod;
 use Cartino\Repositories\ShippingMethodRepository;

@@ -18,17 +18,21 @@ use Cartino\Http\Controllers\Api\Data\StatusController;
 use Cartino\Http\Controllers\Api\DiscountController;
 use Cartino\Http\Controllers\Api\DiscountsController;
 use Cartino\Http\Controllers\Api\FidelityController;
+use Cartino\Http\Controllers\Api\MarketController;
 use Cartino\Http\Controllers\Api\OrderController;
 use Cartino\Http\Controllers\Api\OrdersController;
 use Cartino\Http\Controllers\Api\PaymentMethodsController;
+use Cartino\Http\Controllers\Api\PriceController;
 use Cartino\Http\Controllers\Api\ProductController;
 use Cartino\Http\Controllers\Api\ProductTypesController;
 use Cartino\Http\Controllers\Api\ShippingMethodController;
 use Cartino\Http\Controllers\Api\SitesController;
+use Cartino\Http\Controllers\Api\StoreController;
 use Cartino\Http\Controllers\Api\SuppliersController;
 use Cartino\Http\Controllers\Api\TaxRateController;
 use Cartino\Http\Controllers\Api\UserController;
 use Cartino\Http\Controllers\Api\UserGroupController;
+use Cartino\Http\Middleware\AcceptMarketHeaders;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -47,8 +51,43 @@ use Illuminate\Support\Facades\Route;
 
 Route::group([
     'prefix' => 'api',
-    'middleware' => ['api', 'force.json'],
+    'middleware' => ['api', 'force.json', AcceptMarketHeaders::class],
 ], function () {
+
+    /*
+    |--------------------------------------------------------------------------
+    | Multi-Market & Store Context (Public)
+    |--------------------------------------------------------------------------
+    */
+
+    // Store Configuration & Context
+    Route::prefix('store')->name('store.')->group(function () {
+        Route::get('/', [StoreController::class, 'index'])->name('index');
+        Route::post('/', [StoreController::class, 'store'])->name('store');
+        Route::post('/reset', [StoreController::class, 'reset'])->name('reset');
+    });
+
+    // Markets API
+    Route::prefix('markets')->name('markets.')->group(function () {
+        Route::get('/', [MarketController::class, 'index'])->name('index');
+        Route::get('/current', [MarketController::class, 'current'])->name('current');
+        Route::get('/{market}', [MarketController::class, 'show'])->name('show');
+        Route::post('/set-context', [MarketController::class, 'setContext'])->name('set-context');
+        Route::get('/context', [MarketController::class, 'getContext'])->name('context');
+        Route::post('/switch', [MarketController::class, 'switch'])->name('switch');
+        Route::get('/{market}/configuration', [MarketController::class, 'configuration'])->name('configuration');
+        Route::get('/{market}/payment-methods', [MarketController::class, 'paymentMethods'])->name('payment-methods');
+        Route::get('/{market}/shipping-methods', [MarketController::class, 'shippingMethods'])->name('shipping-methods');
+        Route::post('/{market}/calculate-tax', [MarketController::class, 'calculateTax'])->name('calculate-tax');
+    });
+
+    // Prices API
+    Route::prefix('prices')->name('prices.')->group(function () {
+        Route::get('/show', [PriceController::class, 'show'])->name('show');
+        Route::post('/bulk', [PriceController::class, 'bulk'])->name('bulk');
+        Route::get('/tiers', [PriceController::class, 'tiers'])->name('tiers');
+        Route::post('/calculate', [PriceController::class, 'calculate'])->name('calculate');
+    });
 
     /*
     |--------------------------------------------------------------------------

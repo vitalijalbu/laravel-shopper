@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::create('sites', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('market_id')->nullable()->constrained('markets')->nullOnDelete();
             $table->string('handle')->unique();
             $table->boolean('is_default')->default(true);
             $table->string('name');
@@ -40,6 +41,7 @@ return new class extends Migration
             $table->index(['locale', 'status']);
             $table->index(['default_currency', 'status']);
             $table->index(['is_default', 'status', 'priority']);
+            $table->index(['market_id', 'status']);
         });
     }
 

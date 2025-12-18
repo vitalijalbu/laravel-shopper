@@ -1,6 +1,6 @@
 <?php
 
-namespace Cartino\Http\Controllers\CP;
+namespace Cartino\Http\Controllers\Cp;
 
 use Cartino\Data\Wishlist\WishlistData;
 use Cartino\Http\Controllers\Controller;

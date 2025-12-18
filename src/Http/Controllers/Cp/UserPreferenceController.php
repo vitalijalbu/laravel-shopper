@@ -1,6 +1,6 @@
 <?php
 
-namespace Cartino\Http\Controllers\CP;
+namespace Cartino\Http\Controllers\Cp;
 
 use Cartino\Http\Requests\UserPreferenceRequest;
 use Cartino\Models\UserPreference;

@@ -5,8 +5,8 @@ Routes da aggiungere al file `routes/cp.php` per il Control Panel.
 ## Assets Management
 
 ```php
-use Cartino\Http\Controllers\CP\AssetsController;
-use Cartino\Http\Controllers\CP\AssetContainersController;
+use Cartino\Http\Controllers\Cp\AssetsController;
+use Cartino\Http\Controllers\Cp\AssetContainersController;
 
 // Assets
 Route::prefix('assets')->name('assets.')->group(function () {

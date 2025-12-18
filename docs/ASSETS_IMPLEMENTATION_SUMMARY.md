@@ -72,8 +72,8 @@ src/Http/Controllers/Api/
 Aggiungere a `routes/cp.php`:
 
 ```php
-use Cartino\Http\Controllers\CP\AssetsController;
-use Cartino\Http\Controllers\CP\AssetContainersController;
+use Cartino\Http\Controllers\Cp\AssetsController;
+use Cartino\Http\Controllers\Cp\AssetContainersController;
 
 Route::middleware(['auth:sanctum', 'cp'])->prefix('cp')->name('cartino.')->group(function () {
 

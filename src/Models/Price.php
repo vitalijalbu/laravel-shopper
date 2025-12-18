@@ -16,7 +16,9 @@ class Price extends Model
 
     protected $fillable = [
         'product_variant_id',
+        'market_id',
         'site_id',
+        'channel_id',
         'price_list_id',
         'currency',
         'amount',
@@ -59,9 +61,19 @@ class Price extends Model
         return $this->belongsTo(ProductVariant::class, 'product_variant_id');
     }
 
+    public function market(): BelongsTo
+    {
+        return $this->belongsTo(Market::class);
+    }
+
     public function site(): BelongsTo
     {
         return $this->belongsTo(Site::class);
+    }
+
+    public function channel(): BelongsTo
+    {
+        return $this->belongsTo(Channel::class);
     }
 
     public function priceList(): BelongsTo
@@ -105,10 +117,24 @@ class Price extends Model
             });
     }
 
-    public function scopeForSite($query, int $siteId)
+    public function scopeForMarket($query, ?int $marketId)
+    {
+        return $query->where(function ($q) use ($marketId) {
+            $q->where('market_id', $marketId)->orWhereNull('market_id');
+        });
+    }
+
+    public function scopeForSite($query, ?int $siteId)
     {
         return $query->where(function ($q) use ($siteId) {
             $q->where('site_id', $siteId)->orWhereNull('site_id');
+        });
+    }
+
+    public function scopeForChannel($query, ?int $channelId)
+    {
+        return $query->where(function ($q) use ($channelId) {
+            $q->where('channel_id', $channelId)->orWhereNull('channel_id');
         });
     }
 

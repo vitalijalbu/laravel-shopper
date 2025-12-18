@@ -19,6 +19,11 @@ class SubscriptionRepository extends BaseRepository
         parent::__construct($model);
     }
 
+    protected function makeModel(): Subscription
+    {
+        return app(Subscription::class);
+    }
+
     public function findAll(array $filters = [], int $perPage = 15): LengthAwarePaginator
     {
         $query = QueryBuilder::for(Subscription::class)

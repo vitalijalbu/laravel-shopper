@@ -37,7 +37,9 @@ return new class extends Migration
 
             // References
             $table->foreignId('product_variant_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('market_id')->nullable()->constrained('markets')->cascadeOnDelete();
             $table->foreignId('site_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->foreignId('channel_id')->nullable()->constrained('channels')->cascadeOnDelete();
             $table->foreignId('price_list_id')->nullable()->constrained()->nullOnDelete();
             $table->string('currency', 3); // EUR, USD, etc.
 
@@ -66,11 +68,16 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
 
-            // FUNDAMENTAL INDEX - query performance critica
-            $table->unique(['product_variant_id', 'site_id', 'price_list_id', 'currency', 'min_quantity'], 'prices_unique_idx');
+            // FUNDAMENTAL INDEX - query performance critica (includes market & channel)
+            $table->unique(
+                ['product_variant_id', 'market_id', 'site_id', 'channel_id', 'price_list_id', 'currency', 'min_quantity'],
+                'prices_context_unique'
+            );
 
             // Additional indexes for common queries
             $table->index(['product_variant_id', 'site_id', 'currency', 'is_active']);
+            $table->index(['market_id', 'currency', 'is_active']);
+            $table->index(['channel_id', 'currency', 'is_active']);
             $table->index(['price_list_id', 'is_active']);
             $table->index(['starts_at', 'ends_at', 'is_active']);
             $table->index('amount');

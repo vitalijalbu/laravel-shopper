@@ -1,6 +1,6 @@
 <?php
 
-namespace Cartino\CP;
+namespace Cartino\Cp;
 
 class Navigation
 {

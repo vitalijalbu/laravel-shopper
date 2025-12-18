@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Cartino\Http\Controllers\CP;
+namespace Cartino\Http\Controllers\Cp;
 
 use Cartino\Models\Channel;
 use Cartino\Models\Site;

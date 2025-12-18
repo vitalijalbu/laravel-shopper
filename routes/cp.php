@@ -3,27 +3,26 @@
 declare(strict_types=1);
 
 use Cartino\Http\Controllers\Api\CartController;
-use Cartino\Http\Controllers\CP\AddressController;
-use Cartino\Http\Controllers\CP\Analytics\AnalyticsController;
-use Cartino\Http\Controllers\CP\AppsController;
-use Cartino\Http\Controllers\CP\Auth\AuthenticatedSessionController;
-use Cartino\Http\Controllers\CP\Auth\NewPasswordController;
-use Cartino\Http\Controllers\CP\Auth\PasswordResetLinkController;
-use Cartino\Http\Controllers\CP\BrandsController;
-use Cartino\Http\Controllers\CP\CategoriesController;
-use Cartino\Http\Controllers\CP\CollectionsController;
-use Cartino\Http\Controllers\CP\CustomersController;
-use Cartino\Http\Controllers\CP\DashboardController;
-use Cartino\Http\Controllers\CP\DiscountController;
-use Cartino\Http\Controllers\CP\EntriesController;
-use Cartino\Http\Controllers\CP\MenuController;
-use Cartino\Http\Controllers\CP\OrdersController;
-use Cartino\Http\Controllers\CP\PaymentGatewaysController;
-use Cartino\Http\Controllers\CP\ProductsController;
-use Cartino\Http\Controllers\CP\Settings\SettingsController;
-use Cartino\Http\Controllers\CP\ShippingMethodsController;
-use Cartino\Http\Controllers\CP\TaxRatesController;
-use Cartino\Http\Controllers\CP\WishlistController;
+use Cartino\Http\Controllers\Cp\AddressController;
+use Cartino\Http\Controllers\Cp\Analytics\AnalyticsController;
+use Cartino\Http\Controllers\Cp\AppsController;
+use Cartino\Http\Controllers\Cp\Auth\AuthenticatedSessionController;
+use Cartino\Http\Controllers\Cp\Auth\NewPasswordController;
+use Cartino\Http\Controllers\Cp\Auth\PasswordResetLinkController;
+use Cartino\Http\Controllers\Cp\BrandsController;
+use Cartino\Http\Controllers\Cp\CategoriesController;
+use Cartino\Http\Controllers\Cp\CustomersController;
+use Cartino\Http\Controllers\Cp\DashboardController;
+use Cartino\Http\Controllers\Cp\DiscountController;
+use Cartino\Http\Controllers\Cp\EntriesController;
+use Cartino\Http\Controllers\Cp\MenuController;
+use Cartino\Http\Controllers\Cp\OrdersController;
+use Cartino\Http\Controllers\Cp\PaymentGatewaysController;
+use Cartino\Http\Controllers\Cp\ProductsController;
+use Cartino\Http\Controllers\Cp\Settings\SettingsController;
+use Cartino\Http\Controllers\Cp\ShippingMethodsController;
+use Cartino\Http\Controllers\Cp\TaxRatesController;
+use Cartino\Http\Controllers\Cp\WishlistController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -76,12 +75,7 @@ Route::prefix($cpPrefix)->name('cp.')->group(function () { // ->middleware(['web
         Route::get('dashboard', [DashboardController::class, 'index'])
             ->name('dashboard.index');
 
-        Route::get('/assets', [\Cartino\Http\Controllers\CP\AssetBrowserController::class, 'index'])->name('assets.index');
-
-        Route::get('/collections', [CollectionsController::class, 'index'])->name('collections.index');
-        Route::get('/collections/create', [CollectionsController::class, 'create'])->name('collections.create');
-        Route::get('/collections/{collection}', [CollectionsController::class, 'show'])->name('collections.show');
-        Route::get('/collections/{collection}/edit', [CollectionsController::class, 'edit'])->name('collections.edit');
+        Route::get('/assets', [\Cartino\Http\Controllers\Cp\AssetBrowserController::class, 'index'])->name('assets.index');
 
         Route::prefix('collections/{collection}')->name('collections.')->group(function () {
             Route::get('/entries', [EntriesController::class, 'index'])->name('index');
@@ -112,30 +106,30 @@ Route::prefix($cpPrefix)->name('cp.')->group(function () { // ->middleware(['web
         });
 
         Route::prefix('product-types')->name('product-types.')->group(function () {
-            Route::get('/', [\Cartino\Http\Controllers\CP\ProductTypesController::class, 'index'])->name('index');
-            Route::get('/create', [\Cartino\Http\Controllers\CP\ProductTypesController::class, 'create'])->name('create');
-            Route::post('/', [\Cartino\Http\Controllers\CP\ProductTypesController::class, 'store'])->name('store');
-            Route::get('/{productType}', [\Cartino\Http\Controllers\CP\ProductTypesController::class, 'show'])->name('show');
-            Route::get('/{productType}/edit', [\Cartino\Http\Controllers\CP\ProductTypesController::class, 'edit'])->name('edit');
-            Route::put('/{productType}', [\Cartino\Http\Controllers\CP\ProductTypesController::class, 'update'])->name('update');
-            Route::delete('/{productType}', [\Cartino\Http\Controllers\CP\ProductTypesController::class, 'destroy'])->name('destroy');
-            Route::post('/bulk', [\Cartino\Http\Controllers\CP\ProductTypesController::class, 'bulk'])->name('bulk');
-            Route::post('/{productType}/duplicate', [\Cartino\Http\Controllers\CP\ProductTypesController::class, 'duplicate'])->name('duplicate');
-            Route::get('/export', [\Cartino\Http\Controllers\CP\ProductTypesController::class, 'export'])->name('export');
+            Route::get('/', [\Cartino\Http\Controllers\Cp\ProductTypesController::class, 'index'])->name('index');
+            Route::get('/create', [\Cartino\Http\Controllers\Cp\ProductTypesController::class, 'create'])->name('create');
+            Route::post('/', [\Cartino\Http\Controllers\Cp\ProductTypesController::class, 'store'])->name('store');
+            Route::get('/{productType}', [\Cartino\Http\Controllers\Cp\ProductTypesController::class, 'show'])->name('show');
+            Route::get('/{productType}/edit', [\Cartino\Http\Controllers\Cp\ProductTypesController::class, 'edit'])->name('edit');
+            Route::put('/{productType}', [\Cartino\Http\Controllers\Cp\ProductTypesController::class, 'update'])->name('update');
+            Route::delete('/{productType}', [\Cartino\Http\Controllers\Cp\ProductTypesController::class, 'destroy'])->name('destroy');
+            Route::post('/bulk', [\Cartino\Http\Controllers\Cp\ProductTypesController::class, 'bulk'])->name('bulk');
+            Route::post('/{productType}/duplicate', [\Cartino\Http\Controllers\Cp\ProductTypesController::class, 'duplicate'])->name('duplicate');
+            Route::get('/export', [\Cartino\Http\Controllers\Cp\ProductTypesController::class, 'export'])->name('export');
         });
 
         Route::prefix('reviews')->name('reviews.')->group(function () {
-            Route::get('/', [\Cartino\Http\Controllers\CP\ReviewsController::class, 'index'])->name('index');
-            Route::post('/', [\Cartino\Http\Controllers\CP\ReviewsController::class, 'store'])->name('store');
-            Route::get('/analytics', [\Cartino\Http\Controllers\CP\ReviewsController::class, 'analytics'])->name('analytics');
-            Route::get('/export', [\Cartino\Http\Controllers\CP\ReviewsController::class, 'export'])->name('export');
-            Route::get('/{review}', [\Cartino\Http\Controllers\CP\ReviewsController::class, 'show'])->name('show');
-            Route::put('/{review}', [\Cartino\Http\Controllers\CP\ReviewsController::class, 'update'])->name('update');
-            Route::delete('/{review}', [\Cartino\Http\Controllers\CP\ReviewsController::class, 'destroy'])->name('destroy');
-            Route::put('/{review}/approve', [\Cartino\Http\Controllers\CP\ReviewsController::class, 'approve'])->name('approve');
-            Route::put('/{review}/unapprove', [\Cartino\Http\Controllers\CP\ReviewsController::class, 'unapprove'])->name('unapprove');
-            Route::post('/bulk-approve', [\Cartino\Http\Controllers\CP\ReviewsController::class, 'bulkApprove'])->name('bulk.approve');
-            Route::post('/bulk-delete', [\Cartino\Http\Controllers\CP\ReviewsController::class, 'bulkDelete'])->name('bulk.delete');
+            Route::get('/', [\Cartino\Http\Controllers\Cp\ReviewsController::class, 'index'])->name('index');
+            Route::post('/', [\Cartino\Http\Controllers\Cp\ReviewsController::class, 'store'])->name('store');
+            Route::get('/analytics', [\Cartino\Http\Controllers\Cp\ReviewsController::class, 'analytics'])->name('analytics');
+            Route::get('/export', [\Cartino\Http\Controllers\Cp\ReviewsController::class, 'export'])->name('export');
+            Route::get('/{review}', [\Cartino\Http\Controllers\Cp\ReviewsController::class, 'show'])->name('show');
+            Route::put('/{review}', [\Cartino\Http\Controllers\Cp\ReviewsController::class, 'update'])->name('update');
+            Route::delete('/{review}', [\Cartino\Http\Controllers\Cp\ReviewsController::class, 'destroy'])->name('destroy');
+            Route::put('/{review}/approve', [\Cartino\Http\Controllers\Cp\ReviewsController::class, 'approve'])->name('approve');
+            Route::put('/{review}/unapprove', [\Cartino\Http\Controllers\Cp\ReviewsController::class, 'unapprove'])->name('unapprove');
+            Route::post('/bulk-approve', [\Cartino\Http\Controllers\Cp\ReviewsController::class, 'bulkApprove'])->name('bulk.approve');
+            Route::post('/bulk-delete', [\Cartino\Http\Controllers\Cp\ReviewsController::class, 'bulkDelete'])->name('bulk.delete');
         });
 
         // Utilities
@@ -263,15 +257,15 @@ Route::prefix($cpPrefix)->name('cp.')->group(function () { // ->middleware(['web
 
         // Sites Management
         Route::prefix('sites')->name('sites.')->group(function () {
-            Route::get('/', [\Cartino\Http\Controllers\CP\SiteController::class, 'index'])->name('index');
-            Route::get('/create', [\Cartino\Http\Controllers\CP\SiteController::class, 'create'])->name('create');
-            Route::get('/{site}/edit', [\Cartino\Http\Controllers\CP\SiteController::class, 'edit'])->name('edit');
+            Route::get('/', [\Cartino\Http\Controllers\Cp\SiteController::class, 'index'])->name('index');
+            Route::get('/create', [\Cartino\Http\Controllers\Cp\SiteController::class, 'create'])->name('create');
+            Route::get('/{site}/edit', [\Cartino\Http\Controllers\Cp\SiteController::class, 'edit'])->name('edit');
 
             // Channels nested under sites
             Route::prefix('{site}/channels')->name('channels.')->group(function () {
-                Route::get('/', [\Cartino\Http\Controllers\CP\ChannelController::class, 'index'])->name('index');
-                Route::get('/create', [\Cartino\Http\Controllers\CP\ChannelController::class, 'create'])->name('create');
-                Route::get('/{channel}/edit', [\Cartino\Http\Controllers\CP\ChannelController::class, 'edit'])->name('edit');
+                Route::get('/', [\Cartino\Http\Controllers\Cp\ChannelController::class, 'index'])->name('index');
+                Route::get('/create', [\Cartino\Http\Controllers\Cp\ChannelController::class, 'create'])->name('create');
+                Route::get('/{channel}/edit', [\Cartino\Http\Controllers\Cp\ChannelController::class, 'edit'])->name('edit');
             });
         });
 

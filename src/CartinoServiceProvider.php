@@ -39,6 +39,11 @@ class CartinoServiceProvider extends ServiceProvider
         // Register Inertia Service Provider
         $this->app->register(InertiaServiceProvider::class);
 
+        // Register Intervention Image Manager
+        $this->app->singleton(\Intervention\Image\ImageManager::class, function ($app) {
+            return \Intervention\Image\ImageManager::gd();
+        });
+
         // Register services
         $this->app->singleton(CacheService::class);
         $this->app->singleton(FidelityService::class);

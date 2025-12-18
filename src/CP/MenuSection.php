@@ -1,6 +1,6 @@
 <?php
 
-namespace Cartino\CP;
+namespace Cartino\Cp;
 
 use Illuminate\Support\Category;
 
@@ -59,7 +59,7 @@ class NavigationSection
      */
     public function items(): Category
     {
-        return collect(\Cartino\CP\Navigation::$items ?? [])
+        return collect(\Cartino\Cp\Navigation::$items ?? [])
             ->filter(fn ($item) => $item->section === $this->name);
     }
 
