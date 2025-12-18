@@ -21,6 +21,7 @@ use Cartino\Services\FidelityService;
 use Cartino\Services\InventoryService;
 use Cartino\Services\NotificationService;
 use Cartino\Services\WebhookService;
+use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 
@@ -50,6 +51,9 @@ class CartinoServiceProvider extends ServiceProvider
         $this->app->singleton(InventoryService::class);
         $this->app->singleton(NotificationService::class);
         $this->app->singleton(WebhookService::class);
+
+        // Use Cartino API exception handler by default (overrides app handler)
+        $this->app->singleton(ExceptionHandler::class, \Cartino\Exceptions\ApiHandler::class);
 
         // Register repositories
         $this->app->bind(ProductRepositoryInterface::class, ProductRepository::class);
