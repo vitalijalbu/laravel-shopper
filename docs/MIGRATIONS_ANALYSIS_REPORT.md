@@ -535,6 +535,21 @@ query ProductListing {
 
 ---
 
+---
+
+## 🔗 REPORT CORRELATI
+
+### 📊 [Database Schema Optimization & Enterprise Patterns](./DB_SCHEMA_OPTIMIZATION_ENTERPRISE.md)
+
+**Analisi approfondita su:**
+- **Risparmi Storage:** 30-40% con ottimizzazioni schema (120 MB per 1M variants)
+- **Colonne Ridondanti:** 13 colonne da rimuovere da product_variants
+- **Pattern Enterprise:** Shopify, Amazon, Walmart best practices
+- **Scalabilità:** Sharding, read replicas, columnar storage
+- **Quick Wins:** 9 ore di lavoro per +70% performance
+
+---
+
 **Report Generato:** 2025-12-18
 **Autore:** Claude Sonnet 4.5
 **Versione:** 1.0
