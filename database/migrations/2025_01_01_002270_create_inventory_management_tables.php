@@ -57,38 +57,6 @@ return new class extends Migration
             $table->index(['available', 'reserved']);
         });
 
-        // Stock Movements - Track all inventory changes
-        Schema::create('stock_movements', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('inventory_item_id')->constrained('inventory_items')->cascadeOnDelete();
-            $table->foreignId('inventory_location_id')->constrained('inventory_locations')->cascadeOnDelete();
-
-            // Movement details
-            $table->string('type'); // purchase, sale, return, transfer, adjustment, damage
-            $table->integer('quantity'); // Can be negative
-            $table->integer('quantity_before')->default(0);
-            $table->integer('quantity_after')->default(0);
-
-            // Reference to source
-            $table->string('reference_type')->nullable(); // Order, PurchaseOrder, Transfer, etc.
-            $table->unsignedBigInteger('reference_id')->nullable();
-
-            // User who made the movement
-            $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
-
-            // Additional info
-            $table->text('notes')->nullable();
-            $table->jsonb('metadata')->nullable();
-
-            $table->timestamp('occurred_at');
-            $table->timestamps();
-
-            $table->index(['inventory_item_id', 'occurred_at']);
-            $table->index(['inventory_location_id', 'occurred_at']);
-            $table->index(['reference_type', 'reference_id']);
-            $table->index(['type', 'occurred_at']);
-        });
-
         // Stock Reservations - Reserve stock for orders
         Schema::create('stock_reservations', function (Blueprint $table) {
             $table->id();
