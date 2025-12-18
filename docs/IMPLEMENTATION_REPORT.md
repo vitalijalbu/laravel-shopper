@@ -22,15 +22,27 @@ L'architettura **Multi-Market Enterprise** è stata implementata con successo in
 | Site Model (updated) | ✅ | `src/Models/Site.php` | Aggiunto market_id FK |
 | Migrations | ✅ | 4 nuove migrations | Markets, Translations, consolidate |
 
-**Migrations Create:**
-- ✅ `2025_01_01_000000_create_markets_table.php` (rinominata per priorità)
-- ✅ `2025_01_01_000001_create_sites_table.php` (aggiunto market_id)
-- ✅ `2025_12_13_000003_create_prices_table.php` (aggiunto market_id, channel_id)
-- ✅ `2025_12_18_000003_create_translations_table.php`
+**Migrations Create (RIORDINATE - 2025-12-18):**
+- ✅ `2025_01_01_000060_create_products_table.php` (spostata da 000840)
+- ✅ `2025_01_01_000070_create_product_variants_table.php` (spostata da 000800)
+- ✅ `2025_01_01_000090_create_customer_groups_table.php` (spostata da 000500)
+- ✅ `2025_01_01_000100_create_catalogs_table.php`
+- ✅ `2025_01_01_000105_create_translations_table.php` (rinominata da 2025_12_18)
+- ✅ `2025_01_01_000200_create_markets_table.php` (FK: catalogs)
+- ✅ `2025_01_01_000300_create_sites_table.php` (FK: markets, consolidato market_id)
+- ✅ `2025_01_01_000400_create_channels_table.php` (FK: sites)
+- ✅ `2025_01_01_000410_create_price_lists_and_prices_table.php` (rinominata da 2025_12_13, FK: markets, sites, channels, product_variants, customer_groups)
 
 **⚠️ Migration `add_*` RIMOSSE come richiesto:**
-- ❌ ~~`2025_12_18_000002_add_market_id_to_sites_table.php`~~ → Consolidata
-- ❌ ~~`2025_12_18_000004_add_market_channel_to_prices.php`~~ → Consolidata
+- ❌ ~~`2025_12_18_000002_add_market_id_to_sites_table.php`~~ → Consolidata in create_sites
+- ❌ ~~`2025_12_18_000004_add_market_channel_to_prices.php`~~ → Consolidata in create_prices
+
+**📊 Analisi Completa Ordine Migrations:**
+Vedi [MIGRATIONS_ANALYSIS_REPORT.md](./MIGRATIONS_ANALYSIS_REPORT.md) per:
+- Grafo dipendenze FK completo
+- Problemi risolti (7 migrations riordinate)
+- Colli di bottiglia identificati
+- Raccomandazioni ottimizzazione
 
 ---
 

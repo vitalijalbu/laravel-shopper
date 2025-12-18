@@ -40,38 +40,10 @@ return new class extends Migration
             $table->index(['status', 'published_at']);
             $table->index(['currency', 'status']);
         });
-
-        // Pivot: Sites can have multiple Catalogs (B2C, B2B, Wholesale, Outlet)
-        Schema::create('site_catalog', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('site_id')->constrained('sites')->cascadeOnDelete();
-            $table->foreignId('catalog_id')->constrained('catalogs')->cascadeOnDelete();
-
-            // Priority for catalog selection (higher = preferred)
-            $table->integer('priority')->default(0);
-
-            // Is this the default catalog for this site?
-            $table->boolean('is_default')->default(false);
-
-            // Status
-            $table->boolean('is_active')->default(true);
-
-            // Scheduling
-            $table->timestamp('starts_at')->nullable();
-            $table->timestamp('ends_at')->nullable();
-
-            $table->timestamps();
-            $table->jsonb('settings')->nullable()->comment('Catalog-specific settings for this site');
-
-            $table->unique(['site_id', 'catalog_id']);
-            $table->index(['site_id', 'is_active', 'priority']);
-            $table->index(['site_id', 'is_default']);
-        });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('site_catalog');
         Schema::dropIfExists('catalogs');
     }
 };
