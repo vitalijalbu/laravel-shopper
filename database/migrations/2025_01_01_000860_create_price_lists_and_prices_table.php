@@ -34,33 +34,21 @@ return new class extends Migration
 
         Schema::create('prices', function (Blueprint $table) {
             $table->id();
-
-            // References
             $table->foreignId('product_variant_id')->constrained()->cascadeOnDelete();
             $table->foreignId('market_id')->nullable()->constrained('markets')->cascadeOnDelete();
             $table->foreignId('site_id')->nullable()->constrained()->cascadeOnDelete();
             $table->foreignId('channel_id')->nullable()->constrained('channels')->cascadeOnDelete();
             $table->foreignId('price_list_id')->nullable()->constrained()->nullOnDelete();
-            $table->string('currency', 3); // EUR, USD, etc.
-
-            // Pricing
+            $table->string('currency', 3);
             $table->unsignedBigInteger('amount'); // Prezzo in centesimi (INT per precisione)
             $table->unsignedBigInteger('compare_at_amount')->nullable(); // Prezzo confronto (barrato)
             $table->unsignedBigInteger('cost_amount')->nullable(); // Costo per calcolo margini
-
-            // Tax configuration
             $table->boolean('tax_included')->default(false); // Il prezzo include le tasse?
             $table->decimal('tax_rate', 8, 4)->nullable(); // Tax rate % (es: 22.0000)
-
-            // Quantity breaks (pricing tiers)
             $table->integer('min_quantity')->default(1);
             $table->integer('max_quantity')->nullable();
-
-            // Validity period
             $table->timestamp('starts_at')->nullable();
             $table->timestamp('ends_at')->nullable();
-
-            // Status
             $table->boolean('is_active')->default(true);
 
             // Metadata
@@ -74,7 +62,6 @@ return new class extends Migration
                 'prices_context_unique'
             );
 
-            // Additional indexes for common queries
             $table->index(['product_variant_id', 'site_id', 'currency', 'is_active']);
             $table->index(['market_id', 'currency', 'is_active']);
             $table->index(['channel_id', 'currency', 'is_active']);

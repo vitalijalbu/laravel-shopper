@@ -147,7 +147,6 @@ return new class extends Migration
             $table->index(['lifetime_value', 'order_count']);
         });
 
-
         // Customer tags (flexible categorization)
         Schema::create('customer_tags', function (Blueprint $table) {
             $table->id();
