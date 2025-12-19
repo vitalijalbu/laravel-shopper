@@ -3,6 +3,7 @@
 namespace Cartino;
 
 use Cartino\Console\Commands\ExpireFidelityPoints;
+use Cartino\Console\Commands\GenerateApiKey;
 use Cartino\Console\Commands\OptimizeCommand;
 use Cartino\Console\Commands\ShowAdminUsersCommand;
 /** @phpstan-ignore-next-line */
@@ -166,6 +167,7 @@ class CartinoServiceProvider extends ServiceProvider
                 CreateAdminUserCommand::class,
                 ShowAdminUsersCommand::class,
                 OptimizeCommand::class,
+                GenerateApiKey::class,
             ]);
         }
 
@@ -325,5 +327,7 @@ class CartinoServiceProvider extends ServiceProvider
     {
         $router = $this->app['router'];
         $router->aliasMiddleware('force.json', \Cartino\Http\Middleware\ForceJsonResponse::class);
+        $router->aliasMiddleware('api.key', \Cartino\Http\Middleware\ValidateApiKey::class);
+        $router->aliasMiddleware('auth.flexible', \Cartino\Http\Middleware\AuthenticateSanctumOrApiKey::class);
     }
 }

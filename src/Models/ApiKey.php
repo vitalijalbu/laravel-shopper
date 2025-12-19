@@ -74,7 +74,7 @@ class ApiKey extends Model
         }
 
         if ($this->type === 'custom' && is_array($this->permissions)) {
-            return in_array($permission, $this->permissions);
+            return in_array($permission, $this->permissions, true);
         }
 
         return false;
@@ -94,10 +94,41 @@ class ApiKey extends Model
         }
 
         if ($this->type === 'read_only') {
-            return in_array($method, ['GET', 'HEAD', 'OPTIONS']);
+            return in_array($method, ['GET', 'HEAD', 'OPTIONS'], true);
         }
 
-        return true; // Per custom, si basa sui permessi specifici
+        // Custom: mappa il metodo HTTP a un permesso CRUD
+        $method = strtoupper($method);
+
+        $map = [
+            'GET' => ['view', 'read', 'list'],
+            'HEAD' => ['view', 'read', 'list'],
+            'OPTIONS' => ['view', 'read', 'list'],
+            'POST' => ['create', 'write', 'manage'],
+            'PUT' => ['update', 'edit', 'write', 'manage'],
+            'PATCH' => ['update', 'edit', 'write', 'manage'],
+            'DELETE' => ['delete', 'destroy', 'manage'],
+        ];
+
+        $required = $map[$method] ?? null;
+
+        if (! $required) {
+            return false;
+        }
+
+        if (! is_array($this->permissions) || $this->permissions === []) {
+            return false;
+        }
+
+        foreach ($required as $needle) {
+            foreach ($this->permissions as $perm) {
+                if (is_string($perm) && str_contains($perm, $needle)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     /**

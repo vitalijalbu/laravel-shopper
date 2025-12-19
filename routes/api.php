@@ -168,7 +168,7 @@ Route::group([
         Route::get('/dictionaries/{handle}/{key}', [\Cartino\Http\Controllers\Api\Data\DataController::class, 'dictionaryItem'])->name('dictionaries.item');
 
         // Dictionary Items Management (Admin only) - CRUD for custom items
-        Route::prefix('dictionaries/{handle}/items')->name('dictionary-items.')->middleware(['auth:sanctum'])->group(function () {
+        Route::prefix('dictionaries/{handle}/items')->name('dictionary-items.')->middleware(['auth.flexible'])->group(function () {
             Route::get('/', [\Cartino\Http\Controllers\Api\Data\DictionaryItemsController::class, 'index'])->name('index');
             Route::post('/', [\Cartino\Http\Controllers\Api\Data\DictionaryItemsController::class, 'store'])->name('store');
             Route::put('/{id}', [\Cartino\Http\Controllers\Api\Data\DictionaryItemsController::class, 'update'])->name('update');
@@ -213,7 +213,12 @@ Route::group([
     Route::post('/fidelity/find-card', [FidelityController::class, 'findByCardNumber'])->name('api.fidelity.find-card');
 
     // Authentication
-    Route::post('/logout', [AuthController::class, 'logout'])->name('api.logout');
+    Route::prefix('auth')->name('api.auth.')->group(function () {
+        Route::middleware(['auth.flexible'])->group(function () {
+            Route::get('/me', [AuthController::class, 'me'])->name('me');
+            Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+        });
+    });
 
     // Customer Authentication and Management
     Route::prefix('customers')->name('customers.')->group(function () {
@@ -288,6 +293,9 @@ Route::group([
         | Admin Routes (Permissions Required)
         |--------------------------------------------------------------------------
         */
+
+    // Admin routes group - requires authentication via Sanctum OR API Key
+    Route::middleware(['auth.flexible'])->group(function () {
 
     // Permission Management
     Route::prefix('permissions')->name('permissions.')->group(function () {
@@ -560,4 +568,6 @@ Route::group([
         Route::get('/orders-by-status', [\Cartino\Http\Controllers\Api\ReportsController::class, 'ordersByStatus'])->name('orders-by-status');
         Route::get('/export', [\Cartino\Http\Controllers\Api\ReportsController::class, 'export'])->name('export');
     });
+
+    }); // End admin routes group (auth.flexible)
 });
