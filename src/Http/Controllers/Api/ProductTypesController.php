@@ -15,7 +15,7 @@ use Illuminate\Http\Request;
 class ProductTypesController extends ApiController
 {
     public function __construct(
-        private readonly ProductTypeRepository $repository
+        private readonly ProductTypeRepository $repository,
     ) {}
 
     /**
@@ -60,7 +60,10 @@ class ProductTypesController extends ApiController
         try {
             $updatedProductType = $this->repository->updateOne($productType->id, $request->validated());
 
-            return $this->successResponse(new ProductTypeResource($updatedProductType), 'ProductType aggiornato con successo');
+            return $this->successResponse(
+                new ProductTypeResource($updatedProductType),
+                'ProductType aggiornato con successo',
+            );
         } catch (\Exception $e) {
             return $this->errorResponse('Errore nell\'aggiornamento del product type: '.$e->getMessage());
         }
@@ -92,7 +95,10 @@ class ProductTypesController extends ApiController
         try {
             $updatedProductType = $this->repository->toggleStatus($productType->id);
 
-            return $this->successResponse(new ProductTypeResource($updatedProductType), 'Stato del product type aggiornato');
+            return $this->successResponse(
+                new ProductTypeResource($updatedProductType),
+                'Stato del product type aggiornato',
+            );
         } catch (\Exception $e) {
             return $this->errorResponse('Errore nel cambio stato: '.$e->getMessage());
         }

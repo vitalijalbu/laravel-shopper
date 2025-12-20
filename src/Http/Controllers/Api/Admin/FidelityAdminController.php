@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\DB;
 class FidelityAdminController extends ApiController
 {
     public function __construct(
-        protected FidelityService $fidelityService
+        protected FidelityService $fidelityService,
     ) {}
 
     /**
@@ -29,29 +29,28 @@ class FidelityAdminController extends ApiController
         $sortBy = $request->get('sort_by', 'created_at');
         $sortOrder = $request->get('sort_order', 'desc');
 
-        $query = FidelityCard::with(['customer'])
-            ->when($search, function ($q) use ($search) {
-                $q->where('card_number', 'like', "%{$search}%")
-                    ->orWhereHas('customer', function ($customerQuery) use ($search) {
-                        $customerQuery->where('first_name', 'like', "%{$search}%")
-                            ->orWhere('last_name', 'like', "%{$search}%")
-                            ->orWhere('email', 'like', "%{$search}%");
-                    });
-            })
-            ->when($isActive !== null, function ($q) use ($isActive) {
-                $q->where('is_active', (bool) $isActive);
-            })
-            ->orderBy($sortBy, $sortOrder);
+        $query = FidelityCard::with(['customer'])->when($search, function ($q) use ($search) {
+            $q->where('card_number', 'like', "%{$search}%")->orWhereHas('customer', function ($customerQuery) use (
+                $search,
+            ) {
+                $customerQuery->where('first_name', 'like', "%{$search}%")->orWhere(
+                    'last_name',
+                    'like',
+                    "%{$search}%",
+                )->orWhere('email', 'like', "%{$search}%");
+            });
+        })->when($isActive !== null, function ($q) use ($isActive) {
+            $q->where('is_active', (bool) $isActive);
+        })->orderBy($sortBy, $sortOrder);
 
         $cards = $query->paginate($perPage);
 
         // Aggiungi statistiche per ogni card
-        $cards->getCollection()->transform(function ($card) {
-            return array_merge(
-                $card->toArray(),
-                ['statistics' => $this->fidelityService->getCardStatistics($card)]
-            );
-        });
+        $cards
+            ->getCollection()
+            ->transform(function ($card) {
+                return array_merge($card->toArray(), ['statistics' => $this->fidelityService->getCardStatistics($card)]);
+            });
 
         return response()->json($cards);
     }
@@ -61,9 +60,12 @@ class FidelityAdminController extends ApiController
      */
     public function show(FidelityCard $card): JsonResponse
     {
-        $card->load(['customer', 'transactions' => function ($query) {
-            $query->orderBy('created_at', 'desc')->limit(20);
-        }]);
+        $card->load([
+            'customer',
+            'transactions' => function ($query) {
+                $query->orderBy('created_at', 'desc')->limit(20);
+            },
+        ]);
 
         $statistics = $this->fidelityService->getCardStatistics($card);
 

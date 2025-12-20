@@ -13,7 +13,7 @@ class BrandDTO
         public readonly ?string $description = null,
         public readonly ?string $website = null,
         public readonly ?string $email = null,
-        public readonly ?int $id = null
+        public readonly ?int $id = null,
     ) {}
 
     public static function fromArray(array $data): self
@@ -25,21 +25,24 @@ class BrandDTO
             description: $data['description'] ?? null,
             website: $data['website'] ?? null,
             email: $data['email'] ?? null,
-            id: $data['id'] ?? null
+            id: $data['id'] ?? null,
         );
     }
 
     public function toArray(): array
     {
-        return array_filter([
-            'id' => $this->id,
-            'name' => $this->name,
-            'slug' => $this->slug,
-            'status' => $this->status,
-            'description' => $this->description,
-            'website' => $this->website,
-            'email' => $this->email,
-        ], fn ($value) => $value !== null);
+        return array_filter(
+            [
+                'id' => $this->id,
+                'name' => $this->name,
+                'slug' => $this->slug,
+                'status' => $this->status,
+                'description' => $this->description,
+                'website' => $this->website,
+                'email' => $this->email,
+            ],
+            fn ($value) => $value !== null,
+        );
     }
 
     public function toCreateArray(): array

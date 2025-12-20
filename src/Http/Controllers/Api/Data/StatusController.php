@@ -48,7 +48,7 @@ class StatusController extends Controller
             ],
             'order' => OrderStatus::cases(),
             'general' => Status::cases(),
-            default => []
+            default => [],
         };
 
         if (empty($statuses)) {

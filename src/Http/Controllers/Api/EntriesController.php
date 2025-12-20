@@ -15,7 +15,7 @@ use Illuminate\Http\Request;
 class EntriesController extends ApiController
 {
     public function __construct(
-        private readonly EntryRepository $repository
+        private readonly EntryRepository $repository,
     ) {}
 
     /**

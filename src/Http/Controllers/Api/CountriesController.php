@@ -15,7 +15,7 @@ use Illuminate\Http\Request;
 class CountriesController extends ApiController
 {
     public function __construct(
-        private readonly CountryRepository $repository
+        private readonly CountryRepository $repository,
     ) {}
 
     /**

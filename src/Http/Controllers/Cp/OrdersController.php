@@ -25,9 +25,7 @@ class OrdersController extends Controller
      */
     public function index(Request $request): Response
     {
-        $page = Page::make('Ordini')
-            ->breadcrumb('Home', '/cp')
-            ->breadcrumb('Ordini');
+        $page = Page::make('Ordini')->breadcrumb('Home', '/cp')->breadcrumb('Ordini');
 
         $filters = $request->only([
             'search',
@@ -46,7 +44,6 @@ class OrdersController extends Controller
 
         return Inertia::render('orders/index', [
             'page' => $page->compile(),
-
             'orders' => $orders,
             'customers' => $customers,
             'products' => $products,
@@ -111,7 +108,6 @@ class OrdersController extends Controller
 
         return Inertia::render('order-show', [
             'page' => $page->compile(),
-
             'order' => $order,
         ]);
     }

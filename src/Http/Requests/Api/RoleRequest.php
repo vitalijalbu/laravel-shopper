@@ -12,7 +12,7 @@ class RoleRequest extends FormRequest
         return match ($this->route()->getActionMethod()) {
             'store' => $this->user()->can('create roles'),
             'update' => $this->user()->can('edit roles'),
-            default => false
+            default => false,
         };
     }
 
@@ -40,7 +40,7 @@ class RoleRequest extends FormRequest
                 'permissions' => 'nullable|array',
                 'permissions.*' => 'string|exists:permissions,name',
             ],
-            default => []
+            default => [],
         };
     }
 

@@ -53,7 +53,7 @@ class Site extends Model
 
     /**
      * Create a new factory instance for the model.
-    /**
+     * /**
      * Create a new factory instance for the model.
      */
     protected static function newFactory(): \Illuminate\Database\Eloquent\Factories\Factory
@@ -90,9 +90,7 @@ class Site extends Model
 
     public function activeCatalogs(): BelongsToMany
     {
-        return $this->catalogs()
-            ->wherePivot('is_active', true)
-            ->orderByPivot('priority', 'desc');
+        return $this->catalogs()->wherePivot('is_active', true)->orderByPivot('priority', 'desc');
     }
 
     public function defaultCatalog(): BelongsToMany
@@ -117,41 +115,37 @@ class Site extends Model
 
     public function scopePublished($query)
     {
-        return $query->where('status', 'active')
+        return $query
+            ->where('status', 'active')
             ->where(function ($q) {
-                $q->whereNull('published_at')
-                    ->orWhere('published_at', '<=', now());
+                $q->whereNull('published_at')->orWhere('published_at', '<=', now());
             })
             ->where(function ($q) {
-                $q->whereNull('unpublished_at')
-                    ->orWhere('unpublished_at', '>=', now());
+                $q->whereNull('unpublished_at')->orWhere('unpublished_at', '>=', now());
             });
     }
 
     public function scopeDefault($query)
     {
-        return $query->where('is_default', true)
-            ->active()
-            ->orderByDesc('priority')
-            ->limit(1);
+        return $query->where('is_default', true)->active()->orderByDesc('priority')->limit(1);
     }
 
     public function scopeForCountry($query, string $countryCode)
     {
-        return $query->where('status', 'active')
+        return $query
+            ->where('status', 'active')
             ->where(function ($q) use ($countryCode) {
-                $q->whereJsonContains('countries', $countryCode)
-                    ->orWhereNull('countries'); // Global sites
+                $q->whereJsonContains('countries', $countryCode)->orWhereNull('countries'); // Global sites
             })
             ->orderByDesc('priority');
     }
 
     public function scopeForDomain($query, string $domain)
     {
-        return $query->where('status', 'active')
+        return $query
+            ->where('status', 'active')
             ->where(function ($q) use ($domain) {
-                $q->where('domain', $domain)
-                    ->orWhereJsonContains('domains', $domain);
+                $q->where('domain', $domain)->orWhereJsonContains('domains', $domain);
             });
     }
 

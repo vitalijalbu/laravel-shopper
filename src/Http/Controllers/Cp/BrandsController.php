@@ -29,9 +29,7 @@ class BrandsController extends BaseController
      */
     public function index(Request $request): Response
     {
-        $this->addDashboardBreadcrumb()
-            ->addBreadcrumb('Catalog', 'cp.categories.index')
-            ->addBreadcrumb('Brands');
+        $this->addDashboardBreadcrumb()->addBreadcrumb('Catalog', 'cp.categories.index')->addBreadcrumb('Brands');
 
         $filters = $this->getFilters(['search', 'status', 'created_at']);
 
@@ -50,7 +48,6 @@ class BrandsController extends BaseController
 
         return $this->inertiaResponse('brands/index', [
             'page' => $page->compile(),
-
             'brands' => new BrandCollection($brands),
             'filters' => $filters,
         ]);
@@ -75,7 +72,6 @@ class BrandsController extends BaseController
 
         return $this->inertiaResponse('brands/Create', [
             'page' => $page->compile(),
-
         ]);
     }
 
@@ -116,14 +112,18 @@ class BrandsController extends BaseController
             ->primaryAction('Edit brand', route('cp.brands.edit', $brand))
             ->secondaryActions([
                 ['label' => 'View in store', 'url' => "/brands/{$brand->slug}", 'target' => '_blank'],
-                ['label' => 'Visit website', 'url' => $brand->website, 'target' => '_blank', 'disabled' => ! $brand->website],
+                [
+                    'label' => 'Visit website',
+                    'url' => $brand->website,
+                    'target' => '_blank',
+                    'disabled' => ! $brand->website,
+                ],
                 ['label' => 'Duplicate', 'action' => 'duplicate'],
                 ['label' => 'Delete', 'action' => 'delete', 'destructive' => true],
             ]);
 
         return $this->inertiaResponse('brands/Show', [
             'page' => $page->compile(),
-
             'brand' => new BrandResource($brand),
         ]);
     }
@@ -144,7 +144,12 @@ class BrandsController extends BaseController
             ->secondaryActions([
                 ['label' => 'View brand', 'url' => route('cp.brands.show', $brand)],
                 ['label' => 'View in store', 'url' => "/brands/{$brand->slug}", 'target' => '_blank'],
-                ['label' => 'Visit website', 'url' => $brand->website, 'target' => '_blank', 'disabled' => ! $brand->website],
+                [
+                    'label' => 'Visit website',
+                    'url' => $brand->website,
+                    'target' => '_blank',
+                    'disabled' => ! $brand->website,
+                ],
                 ['label' => 'Duplicate', 'action' => 'duplicate'],
                 ['label' => 'Delete', 'action' => 'delete', 'destructive' => true],
             ])
@@ -156,7 +161,6 @@ class BrandsController extends BaseController
 
         return $this->inertiaResponse('brands/Edit', [
             'page' => $page->compile(),
-
             'brand' => new BrandResource($brand),
         ]);
     }
@@ -219,9 +223,11 @@ class BrandsController extends BaseController
     protected function applySearchFilter($query, string $search): void
     {
         $query->where(function ($q) use ($search) {
-            $q->where('name', 'like', "%{$search}%")
-                ->orWhere('description', 'like', "%{$search}%")
-                ->orWhere('website', 'like', "%{$search}%");
+            $q->where('name', 'like', "%{$search}%")->orWhere('description', 'like', "%{$search}%")->orWhere(
+                'website',
+                'like',
+                "%{$search}%",
+            );
         });
     }
 
@@ -231,12 +237,14 @@ class BrandsController extends BaseController
     private function handleBulkDelete($brands): int
     {
         $count = 0;
-        $brands->get()->each(function ($brand) use (&$count) {
-            if (! $brand->products()->exists()) {
-                $brand->delete();
-                $count++;
-            }
-        });
+        $brands
+            ->get()
+            ->each(function ($brand) use (&$count) {
+                if (! $brand->products()->exists()) {
+                    $brand->delete();
+                    $count++;
+                }
+            });
 
         return $count;
     }

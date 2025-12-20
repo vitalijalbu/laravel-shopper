@@ -169,15 +169,15 @@ class Order extends Model
 
     public function canBeCancelled(): bool
     {
-        return in_array($this->status, ['pending', 'confirmed']) &&
-               $this->payment_status !== 'paid';
+        return in_array($this->status, ['pending', 'confirmed']) && $this->payment_status !== 'paid';
     }
 
     public function canBeShipped(): bool
     {
-        return $this->status === 'confirmed' &&
-               $this->payment_status === 'paid' &&
-               $this->fulfillment_status === 'unfulfilled';
+        return
+            $this->status === 'confirmed' &&
+            $this->payment_status === 'paid' &&
+            $this->fulfillment_status === 'unfulfilled';
     }
 
     protected static function boot()

@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 class CategoriesController extends ApiController
 {
     public function __construct(
-        protected CategoryRepository $repository
+        protected CategoryRepository $repository,
     ) {}
 
     /**

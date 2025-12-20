@@ -40,7 +40,8 @@ class Asset
                 foreach ($entry['imports'] as $import) {
                     if (isset($manifest[$import])) {
                         $importFile = $manifest[$import]['file'];
-                        $scripts .= '<link rel="modulepreload" href="'.asset('vendor/cartino/'.$importFile).'">'."\n";
+                        $scripts .=
+                            '<link rel="modulepreload" href="'.asset('vendor/cartino/'.$importFile).'">'."\n";
                     }
                 }
             }

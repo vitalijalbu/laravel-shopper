@@ -15,7 +15,7 @@ use Illuminate\Http\Request;
 class PagesController extends ApiController
 {
     public function __construct(
-        private readonly PageRepository $repository
+        private readonly PageRepository $repository,
     ) {}
 
     /**

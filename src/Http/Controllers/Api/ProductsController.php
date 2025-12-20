@@ -13,7 +13,7 @@ class ProductsController extends ApiController
     use HasCrudActions;
 
     public function __construct(
-        private readonly ProductRepository $repository
+        private readonly ProductRepository $repository,
     ) {}
 
     protected function repository(): ProductRepository

@@ -36,7 +36,7 @@ class PriceCalculator
         ?Customer $customer = null,
         ?Channel $channel = null,
         int $quantity = 1,
-        ?Cart $cart = null
+        ?Cart $cart = null,
     ): array {
         // Get base price (could be from PricingService in real implementation)
         $basePrice = (float) $variant->price;
@@ -90,12 +90,9 @@ class PriceCalculator
         Product $product,
         ?Customer $customer = null,
         ?Channel $channel = null,
-        int $quantity = 1
+        int $quantity = 1,
     ): array {
-        $variants = $product->variants()
-            ->where('status', 'active')
-            ->where('available', true)
-            ->get();
+        $variants = $product->variants()->where('status', 'active')->where('available', true)->get();
 
         if ($variants->isEmpty()) {
             return [
@@ -134,7 +131,7 @@ class PriceCalculator
         ?Customer $customer,
         ?Channel $channel,
         int $quantity,
-        ?Cart $cart
+        ?Cart $cart,
     ): Collection {
         // Base query: active rules within time range, ordered by priority
         $rules = PriceRule::query()
@@ -148,8 +145,7 @@ class PriceCalculator
             ->where(function ($q) {
                 // Check usage limits
                 $q->where(function ($q2) {
-                    $q2->whereNull('usage_limit')
-                        ->orWhereRaw('usage_count < usage_limit');
+                    $q2->whereNull('usage_limit')->orWhereRaw('usage_count < usage_limit');
                 });
             })
             ->orderBy('priority', 'desc')
@@ -170,7 +166,7 @@ class PriceCalculator
         ?Customer $customer,
         ?Channel $channel,
         int $quantity,
-        ?Cart $cart
+        ?Cart $cart,
     ): bool {
         // Check entity type and IDs
         if (! $this->matchesEntityType($rule, $variant)) {
@@ -257,9 +253,7 @@ class PriceCalculator
 
         // Usage limit per customer
         if ($customer && $rule->usage_limit_per_customer) {
-            $usageCount = $rule->usages()
-                ->where('customer_id', $customer->id)
-                ->count();
+            $usageCount = $rule->usages()->where('customer_id', $customer->id)->count();
 
             if ($usageCount >= $rule->usage_limit_per_customer) {
                 return false;
@@ -295,9 +289,7 @@ class PriceCalculator
      */
     protected function productInCategories(Product $product, array $categoryIds): bool
     {
-        return $product->categories()
-            ->whereIn('categories.id', $categoryIds)
-            ->exists();
+        return $product->categories()->whereIn('categories.id', $categoryIds)->exists();
     }
 
     /**
@@ -306,7 +298,7 @@ class PriceCalculator
     protected function applyRule(float $price, PriceRule $rule): float
     {
         return match ($rule->discount_type) {
-            'percent' => $price * (1 - $rule->discount_value / 100),
+            'percent' => $price * (1 - ($rule->discount_value / 100)),
             'fixed' => max(0, $price - $rule->discount_value),
             'override' => $rule->discount_value,
             default => $price,
@@ -320,7 +312,7 @@ class PriceCalculator
         PriceRule $rule,
         int $orderId,
         float $discountAmount,
-        ?int $customerId = null
+        ?int $customerId = null,
     ): void {
         $rule->usages()->create([
             'order_id' => $orderId,

@@ -25,7 +25,6 @@ class EntryResource extends JsonResource
             'order' => $this->order,
             'url' => $this->url(),
             'is_published' => $this->isPublished(),
-
             // Relationships
             'author' => $this->whenLoaded('author', function () {
                 return [
@@ -36,7 +35,6 @@ class EntryResource extends JsonResource
             }),
             'parent' => new EntryResource($this->whenLoaded('parent')),
             'children' => EntryResource::collection($this->whenLoaded('children')),
-
             // Timestamps
             'created_at' => $this->created_at?->toISOString(),
             'updated_at' => $this->updated_at?->toISOString(),

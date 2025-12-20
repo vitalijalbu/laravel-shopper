@@ -66,7 +66,7 @@ class LocaleResolver
         ?string $explicit = null,
         ?int $marketId = null,
         ?int $siteId = null,
-        ?int $channelId = null
+        ?int $channelId = null,
     ): string {
         // 1. Explicit locale (from parameter/URL)
         if ($explicit && $this->isValidLocale($explicit)) {

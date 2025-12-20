@@ -100,7 +100,6 @@ class AuthenticatedSessionController extends Controller
 
             // Redirect to dashboard
             return redirect()->route('cp.dashboard');
-
         } catch (ValidationException $e) {
             Log::warning('Authentication failed', [
                 'email' => $request->input('email'),
@@ -159,24 +158,20 @@ class AuthenticatedSessionController extends Controller
         //         return true;
         //     }
         // }
-
         // Check if user has roles (Spatie Permission)
         // if (method_exists($user, 'hasRole')) {
         //     if ($user->hasRole('admin') || $user->hasRole('super-admin')) {
         //         return true;
         //     }
         // }
-
         // Check if user has specific field
         // if (isset($user->can_access_cp)) {
         //     return (bool) $user->can_access_cp;
         // }
-
         // Check if user is admin type
         // if (isset($user->is_admin)) {
         //     return (bool) $user->is_admin;
         // }
-
         // Default: allow if user exists (configure based on your needs)
         // return true;
     }

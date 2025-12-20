@@ -13,7 +13,7 @@ trait HasRating
         Blueprint $table,
         string $columnName = 'rating',
         bool $withCount = true,
-        bool $nullable = true
+        bool $nullable = true,
     ): void {
         $column = $table->decimal($columnName, 3, 2);
 

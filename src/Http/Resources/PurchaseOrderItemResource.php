@@ -18,7 +18,6 @@ class PurchaseOrderItemResource extends JsonResource
             'quantity' => $this->quantity,
             'unit_price' => $this->unit_price,
             'total_price' => $this->total_price,
-
             'product' => $this->whenLoaded('product', fn () => new ProductResource($this->product)),
         ];
     }

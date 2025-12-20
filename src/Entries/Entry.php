@@ -91,7 +91,7 @@ class Entry implements Arrayable, ArrayAccess, Contract
     public function collection($collection = null)
     {
         if (func_num_args() === 0) {
-            return $this->collection instanceof \Cartino\Collections\Category
+            return ($this->collection instanceof \Cartino\Collections\Category)
                 ? $this->collection
                 : Category::findByHandle($this->collection);
         }
@@ -103,7 +103,7 @@ class Entry implements Arrayable, ArrayAccess, Contract
 
     public function collectionHandle()
     {
-        return $this->collection instanceof \Cartino\Collections\Category
+        return ($this->collection instanceof \Cartino\Collections\Category)
             ? $this->collection->handle()
             : $this->collection;
     }
@@ -244,7 +244,7 @@ class Entry implements Arrayable, ArrayAccess, Contract
 
     protected function cpUrl($route)
     {
-        if (! $id = $this->id()) {
+        if (! ($id = $this->id())) {
             return null;
         }
 
@@ -278,7 +278,7 @@ class Entry implements Arrayable, ArrayAccess, Contract
 
     public function absoluteUrl()
     {
-        if (! $uri = $this->uri()) {
+        if (! ($uri = $this->uri())) {
             return null;
         }
 
@@ -290,7 +290,7 @@ class Entry implements Arrayable, ArrayAccess, Contract
 
     public function url()
     {
-        if (! $uri = $this->uri()) {
+        if (! ($uri = $this->uri())) {
             return null;
         }
 

@@ -18,9 +18,7 @@ class AssetBrowserController
 
         $container = $request->get('container', $containers->first()?->handle ?? 'images');
 
-        $query = Asset::query()
-            ->with(['containerModel', 'uploadedBy'])
-            ->inContainer($container);
+        $query = Asset::query()->with(['containerModel', 'uploadedBy'])->inContainer($container);
 
         if ($request->filled('folder')) {
             $query->inFolder($request->folder);

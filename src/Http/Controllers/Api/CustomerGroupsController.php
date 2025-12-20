@@ -15,7 +15,7 @@ use Illuminate\Http\Request;
 class CustomerGroupsController extends ApiController
 {
     public function __construct(
-        private readonly CustomerGroupRepository $repository
+        private readonly CustomerGroupRepository $repository,
     ) {}
 
     /**
@@ -60,7 +60,10 @@ class CustomerGroupsController extends ApiController
         try {
             $updatedCustomerGroup = $this->repository->updateOne($customerGroup->id, $request->validated());
 
-            return $this->successResponse(new CustomerGroupResource($updatedCustomerGroup), 'CustomerGroup aggiornato con successo');
+            return $this->successResponse(
+                new CustomerGroupResource($updatedCustomerGroup),
+                'CustomerGroup aggiornato con successo',
+            );
         } catch (\Exception $e) {
             return $this->errorResponse('Errore nell\'aggiornamento del customer group: '.$e->getMessage());
         }

@@ -34,8 +34,7 @@ class SocialAuthController extends Controller
     public function redirect(Request $request, string $provider): RedirectResponse
     {
         if (! $this->isProviderSupported($provider)) {
-            return redirect()->route('cp.login')
-                ->withErrors(['provider' => __('auth.social.unsupported_provider')]);
+            return redirect()->route('cp.login')->withErrors(['provider' => __('auth.social.unsupported_provider')]);
         }
 
         try {
@@ -69,12 +68,10 @@ class SocialAuthController extends Controller
             }
 
             return $driver->redirect();
-
         } catch (Exception $e) {
             Log::error("OAuth redirect failed for provider {$provider}: ".$e->getMessage());
 
-            return redirect()->route('cp.login')
-                ->withErrors(['provider' => __('auth.social.redirect_failed')]);
+            return redirect()->route('cp.login')->withErrors(['provider' => __('auth.social.redirect_failed')]);
         }
     }
 
@@ -84,8 +81,7 @@ class SocialAuthController extends Controller
     public function callback(Request $request, string $provider): RedirectResponse
     {
         if (! $this->isProviderSupported($provider)) {
-            return redirect()->route('cp.login')
-                ->withErrors(['provider' => __('auth.social.unsupported_provider')]);
+            return redirect()->route('cp.login')->withErrors(['provider' => __('auth.social.unsupported_provider')]);
         }
 
         try {
@@ -96,7 +92,8 @@ class SocialAuthController extends Controller
 
                 Log::warning("OAuth error for provider {$provider}: {$error} - {$errorDescription}");
 
-                return redirect()->route('cp.login')
+                return redirect()
+                    ->route('cp.login')
                     ->withErrors(['oauth' => __('auth.social.authentication_cancelled')]);
             }
 
@@ -104,8 +101,7 @@ class SocialAuthController extends Controller
             $providerUser = Socialite::driver($provider)->user();
 
             if (! $providerUser->getEmail()) {
-                return redirect()->route('cp.login')
-                    ->withErrors(['oauth' => __('auth.social.email_required')]);
+                return redirect()->route('cp.login')->withErrors(['oauth' => __('auth.social.email_required')]);
             }
 
             // Create or update user
@@ -121,17 +117,16 @@ class SocialAuthController extends Controller
             $intendedUrl = session('url.intended', route('dashboard'));
             session()->forget('url.intended');
 
-            return redirect()->to($intendedUrl)
+            return redirect()
+                ->to($intendedUrl)
                 ->with('success', __('auth.social.login_success', ['provider' => Str::title($provider)]));
-
         } catch (Exception $e) {
             Log::error("OAuth callback failed for provider {$provider}: ".$e->getMessage(), [
                 'exception' => $e,
                 'request_data' => $request->except(['state']),
             ]);
 
-            return redirect()->route('cp.login')
-                ->withErrors(['oauth' => __('auth.social.authentication_failed')]);
+            return redirect()->route('cp.login')->withErrors(['oauth' => __('auth.social.authentication_failed')]);
         }
     }
 
@@ -145,13 +140,13 @@ class SocialAuthController extends Controller
         }
 
         if (! $this->isProviderSupported($provider)) {
-            return redirect()->back()
-                ->withErrors(['provider' => __('auth.social.unsupported_provider')]);
+            return redirect()->back()->withErrors(['provider' => __('auth.social.unsupported_provider')]);
         }
 
         // Check if user already has this provider linked
         if (Auth::user()->hasSocialAccount($provider)) {
-            return redirect()->back()
+            return redirect()
+                ->back()
                 ->withErrors(['provider' => __('auth.social.already_linked', ['provider' => Str::title($provider)])]);
         }
 
@@ -160,12 +155,10 @@ class SocialAuthController extends Controller
             session(['linking_provider' => $provider]);
 
             return Socialite::driver($provider)->redirect();
-
         } catch (Exception $e) {
             Log::error("OAuth linking failed for provider {$provider}: ".$e->getMessage());
 
-            return redirect()->back()
-                ->withErrors(['provider' => __('auth.social.link_failed')]);
+            return redirect()->back()->withErrors(['provider' => __('auth.social.link_failed')]);
         }
     }
 
@@ -180,8 +173,7 @@ class SocialAuthController extends Controller
 
         $linkingProvider = session('linking_provider');
         if ($linkingProvider !== $provider) {
-            return redirect()->back()
-                ->withErrors(['provider' => __('auth.social.invalid_linking_session')]);
+            return redirect()->back()->withErrors(['provider' => __('auth.social.invalid_linking_session')]);
         }
 
         session()->forget('linking_provider');
@@ -196,8 +188,7 @@ class SocialAuthController extends Controller
                 ->first();
 
             if ($existingAccount && $existingAccount->user_id !== $user->id) {
-                return redirect()->back()
-                    ->withErrors(['provider' => __('auth.social.account_already_linked')]);
+                return redirect()->back()->withErrors(['provider' => __('auth.social.account_already_linked')]);
             }
 
             // Create or update social account
@@ -216,19 +207,18 @@ class SocialAuthController extends Controller
                         'raw' => $providerUser->getRaw(),
                         'linked_at' => now(),
                     ],
-                ]
+                ],
             );
 
             Log::info("User {$user->id} linked {$provider} account");
 
-            return redirect()->back()
+            return redirect()
+                ->back()
                 ->with('success', __('auth.social.link_success', ['provider' => Str::title($provider)]));
-
         } catch (Exception $e) {
             Log::error("OAuth link callback failed for provider {$provider}: ".$e->getMessage());
 
-            return redirect()->back()
-                ->withErrors(['provider' => __('auth.social.link_failed')]);
+            return redirect()->back()->withErrors(['provider' => __('auth.social.link_failed')]);
         }
     }
 
@@ -245,14 +235,14 @@ class SocialAuthController extends Controller
         $socialAccount = $user->getSocialAccount($provider);
 
         if (! $socialAccount) {
-            return redirect()->back()
+            return redirect()
+                ->back()
                 ->withErrors(['provider' => __('auth.social.not_linked', ['provider' => Str::title($provider)])]);
         }
 
         // Prevent unlinking if it's the only authentication method
         if (! $user->hasPassword() && $user->socialAccounts()->count() <= 1) {
-            return redirect()->back()
-                ->withErrors(['provider' => __('auth.social.cannot_unlink_only_method')]);
+            return redirect()->back()->withErrors(['provider' => __('auth.social.cannot_unlink_only_method')]);
         }
 
         try {
@@ -270,14 +260,13 @@ class SocialAuthController extends Controller
 
             Log::info("User {$user->id} unlinked {$provider} account");
 
-            return redirect()->back()
+            return redirect()
+                ->back()
                 ->with('success', __('auth.social.unlink_success', ['provider' => Str::title($provider)]));
-
         } catch (Exception $e) {
             Log::error("OAuth unlink failed for provider {$provider}: ".$e->getMessage());
 
-            return redirect()->back()
-                ->withErrors(['provider' => __('auth.social.unlink_failed')]);
+            return redirect()->back()->withErrors(['provider' => __('auth.social.unlink_failed')]);
         }
     }
 
@@ -313,8 +302,6 @@ class SocialAuthController extends Controller
     {
         $config = config("services.{$provider}");
 
-        return $config
-            && ! empty($config['client_id'])
-            && ! empty($config['client_secret']);
+        return $config && ! empty($config['client_id']) && ! empty($config['client_secret']);
     }
 }

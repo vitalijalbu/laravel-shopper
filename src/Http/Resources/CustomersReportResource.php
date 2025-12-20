@@ -14,10 +14,10 @@ class CustomersReportResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $data = is_array($this->resource) ? $this->resource : (array) $this->resource;
+        $data = is_array($this->resource) ? $this->resource : ((array) $this->resource);
 
         $topCustomers = collect($data['top_customers'] ?? [])->map(function ($customer) {
-            $customerArray = is_array($customer) ? $customer : (array) $customer;
+            $customerArray = is_array($customer) ? $customer : ((array) $customer);
 
             return [
                 'id' => $customerArray['id'] ?? null,

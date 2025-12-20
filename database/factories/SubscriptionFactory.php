@@ -101,7 +101,13 @@ class SubscriptionFactory extends Factory
             'status' => 'cancelled',
             'cancelled_at' => now()->subDays(rand(1, 60)),
             'ended_at' => now()->subDays(rand(1, 60)),
-            'cancel_reason' => $this->faker->randomElement(['customer_request', 'payment_failed', 'too_expensive', 'not_using', 'other']),
+            'cancel_reason' => $this->faker->randomElement([
+                'customer_request',
+                'payment_failed',
+                'too_expensive',
+                'not_using',
+                'other',
+            ]),
         ]);
     }
 

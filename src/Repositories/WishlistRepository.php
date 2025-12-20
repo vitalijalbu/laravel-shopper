@@ -97,12 +97,15 @@ class WishlistRepository extends BaseRepository
         if (! empty($filters['search'])) {
             $search = $filters['search'];
             $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                    ->orWhereHas('customer', function ($customerQuery) use ($search) {
-                        $customerQuery->where('email', 'like', "%{$search}%")
-                            ->orWhere('first_name', 'like', "%{$search}%")
-                            ->orWhere('last_name', 'like', "%{$search}%");
-                    });
+                $q->where('name', 'like', "%{$search}%")->orWhereHas('customer', function ($customerQuery) use (
+                    $search,
+                ) {
+                    $customerQuery->where('email', 'like', "%{$search}%")->orWhere(
+                        'first_name',
+                        'like',
+                        "%{$search}%",
+                    )->orWhere('last_name', 'like', "%{$search}%");
+                });
             });
         }
 
@@ -141,17 +144,19 @@ class WishlistRepository extends BaseRepository
         if ($existingItem) {
             // Update quantity
             $existingItem->update([
-                'quantity' => ($existingItem->quantity + ($itemData['quantity'] ?? 1)),
+                'quantity' => $existingItem->quantity + ($itemData['quantity'] ?? 1),
                 'notes' => $itemData['notes'] ?? $existingItem->notes,
             ]);
             $item = $existingItem;
         } else {
             // Create new item
-            $item = $wishlist->items()->create([
-                'product_id' => $itemData['product_id'],
-                'quantity' => $itemData['quantity'] ?? 1,
-                'notes' => $itemData['notes'] ?? null,
-            ]);
+            $item = $wishlist
+                ->items()
+                ->create([
+                    'product_id' => $itemData['product_id'],
+                    'quantity' => $itemData['quantity'] ?? 1,
+                    'notes' => $itemData['notes'] ?? null,
+                ]);
         }
 
         $this->clearCache();
@@ -215,7 +220,8 @@ class WishlistRepository extends BaseRepository
      */
     public function findByShareToken(string $token): ?Wishlist
     {
-        return $this->model->where('share_token', $token)
+        return $this->model
+            ->where('share_token', $token)
             ->where('is_shared', true)
             ->with(['customer', 'items.product'])
             ->first();

@@ -15,7 +15,7 @@ use Illuminate\Http\Request;
 class SuppliersController extends ApiController
 {
     public function __construct(
-        private readonly SupplierRepository $repository
+        private readonly SupplierRepository $repository,
     ) {}
 
     /**

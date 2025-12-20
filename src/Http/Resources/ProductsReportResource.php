@@ -14,10 +14,10 @@ class ProductsReportResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $data = is_array($this->resource) ? $this->resource : (array) $this->resource;
+        $data = is_array($this->resource) ? $this->resource : ((array) $this->resource);
 
         $topSelling = collect($data['top_selling'] ?? [])->map(function ($product) {
-            $productArray = is_array($product) ? $product : (array) $product;
+            $productArray = is_array($product) ? $product : ((array) $product);
 
             return [
                 'id' => $productArray['id'] ?? null,
@@ -30,7 +30,7 @@ class ProductsReportResource extends JsonResource
         });
 
         $topRevenue = collect($data['top_revenue'] ?? [])->map(function ($product) {
-            $productArray = is_array($product) ? $product : (array) $product;
+            $productArray = is_array($product) ? $product : ((array) $product);
             $unitsSold = $productArray['units_sold'] ?? 0;
             $revenue = $productArray['revenue'] ?? 0;
 

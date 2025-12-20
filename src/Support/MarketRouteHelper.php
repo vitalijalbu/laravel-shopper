@@ -12,11 +12,8 @@ class MarketRouteHelper
     /**
      * Generate a URL for a specific market and locale.
      */
-    public static function url(
-        string $path,
-        ?Market $market = null,
-        ?string $locale = null
-    ): string {
+    public static function url(string $path, ?Market $market = null, ?string $locale = null): string
+    {
         $market = $market ?? app('market');
         $locale = $locale ?? app()->getLocale();
 
@@ -46,7 +43,7 @@ class MarketRouteHelper
         string $name,
         array $parameters = [],
         ?Market $market = null,
-        ?string $locale = null
+        ?string $locale = null,
     ): string {
         $market = $market ?? app('market');
         $locale = $locale ?? app()->getLocale();
@@ -118,7 +115,7 @@ class MarketRouteHelper
     public static function switchTo(
         ?Market $market = null,
         ?string $locale = null,
-        ?string $returnUrl = null
+        ?string $returnUrl = null,
     ): string {
         $market = $market ?? self::current();
         $locale = $locale ?? self::currentLocale();
@@ -169,20 +166,22 @@ class MarketRouteHelper
                 'locale' => $currentLocale,
             ],
             'available' => [
-                'markets' => self::availableMarkets()->map(fn ($m) => [
-                    'id' => $m->id,
-                    'code' => $m->code,
-                    'name' => $m->name,
-                    'type' => $m->type,
-                    'is_active' => self::isActive($m),
-                    'url' => self::switchTo($m, $currentLocale),
-                ]),
-                'locales' => collect(self::availableLocales($currentMarket))->map(fn ($locale) => [
-                    'code' => $locale,
-                    'name' => locale_get_display_name($locale, $currentLocale),
-                    'is_active' => self::isLocaleActive($locale),
-                    'url' => self::switchTo($currentMarket, $locale),
-                ]),
+                'markets' => self::availableMarkets()
+                    ->map(fn ($m) => [
+                        'id' => $m->id,
+                        'code' => $m->code,
+                        'name' => $m->name,
+                        'type' => $m->type,
+                        'is_active' => self::isActive($m),
+                        'url' => self::switchTo($m, $currentLocale),
+                    ]),
+                'locales' => collect(self::availableLocales($currentMarket))
+                    ->map(fn ($locale) => [
+                        'code' => $locale,
+                        'name' => locale_get_display_name($locale, $currentLocale),
+                        'is_active' => self::isLocaleActive($locale),
+                        'url' => self::switchTo($currentMarket, $locale),
+                    ]),
             ],
         ];
     }

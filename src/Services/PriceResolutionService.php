@@ -18,10 +18,8 @@ class PriceResolutionService
      * Resolve price for a variant using PricingContext.
      * Priority: Specific (Market+Site+Channel+Catalog) > Market+Catalog > Site+Catalog > Catalog > Base
      */
-    public function resolve(
-        ProductVariant $variant,
-        PricingContext $context
-    ): ?Price {
+    public function resolve(ProductVariant $variant, PricingContext $context): ?Price
+    {
         $cacheKey = $context->getCacheKey("price:{$variant->id}");
 
         return Cache::remember($cacheKey, 300, function () use ($variant, $context) {
@@ -32,10 +30,8 @@ class PriceResolutionService
     /**
      * Perform actual price resolution without cache.
      */
-    protected function performResolution(
-        ProductVariant $variant,
-        PricingContext $context
-    ): ?Price {
+    protected function performResolution(ProductVariant $variant, PricingContext $context): ?Price
+    {
         // Build query with base filters
         $query = Price::query()
             ->where('product_variant_id', $variant->id)
@@ -49,7 +45,10 @@ class PriceResolutionService
             ->forSite($context->site?->id)
             ->forChannel($context->channel?->id)
             ->when($context->catalog, fn ($q) => $q->whereHas('priceList', function ($q) use ($context) {
-                $q->whereHas('customerGroups', fn ($q2) => $q2->where('customer_groups.id', $context->customerGroup?->id));
+                $q->whereHas('customerGroups', fn ($q2) => $q2->where(
+                    'customer_groups.id',
+                    $context->customerGroup?->id,
+                ));
             }))
             ->orderByDesc('priority')
             ->first();
@@ -183,10 +182,8 @@ class PriceResolutionService
     /**
      * Resolve prices for multiple variants in bulk (optimized).
      */
-    public function resolveBulk(
-        Collection $variants,
-        PricingContext $context
-    ): Collection {
+    public function resolveBulk(Collection $variants, PricingContext $context): Collection
+    {
         $variantIds = $variants->pluck('id')->toArray();
 
         // Load all potential prices for these variants in one query
@@ -276,10 +273,8 @@ class PriceResolutionService
     /**
      * Get all price tiers for a variant (quantity breaks).
      */
-    public function getTiers(
-        ProductVariant $variant,
-        PricingContext $context
-    ): Collection {
+    public function getTiers(ProductVariant $variant, PricingContext $context): Collection
+    {
         $cacheKey = $context->getCacheKey("price_tiers:{$variant->id}");
 
         return Cache::remember($cacheKey, 300, function () use ($variant, $context) {
@@ -332,10 +327,8 @@ class PriceResolutionService
     /**
      * Get price with applied catalog adjustments if configured.
      */
-    public function resolveWithAdjustments(
-        ProductVariant $variant,
-        PricingContext $context
-    ): ?Price {
+    public function resolveWithAdjustments(ProductVariant $variant, PricingContext $context): ?Price
+    {
         $price = $this->resolve($variant, $context);
 
         if (! $price || ! $context->catalog) {
@@ -348,7 +341,7 @@ class PriceResolutionService
                 $price->amount,
                 $context->catalog->adjustment_type,
                 $context->catalog->adjustment_direction,
-                $context->catalog->adjustment_value
+                $context->catalog->adjustment_value,
             );
 
             // Clone price with adjusted amount (don't modify original)
@@ -362,20 +355,14 @@ class PriceResolutionService
     /**
      * Apply catalog adjustment to a price amount.
      */
-    protected function applyCatalogAdjustment(
-        int $amount,
-        string $type,
-        string $direction,
-        float $value
-    ): int {
+    protected function applyCatalogAdjustment(int $amount, string $type, string $direction, float $value): int
+    {
         if ($type === 'percentage') {
             $adjustment = (int) round($amount * ($value / 100));
         } else {
             $adjustment = (int) ($value * 100); // Convert to cents
         }
 
-        return $direction === 'increase'
-            ? $amount + $adjustment
-            : $amount - $adjustment;
+        return $direction === 'increase' ? ($amount + $adjustment) : ($amount - $adjustment);
     }
 }

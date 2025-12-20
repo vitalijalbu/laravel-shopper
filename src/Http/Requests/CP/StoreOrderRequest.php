@@ -33,14 +33,12 @@ class StoreOrderRequest extends FormRequest
             'notes' => ['nullable', 'string'],
             'tags' => ['nullable', 'array'],
             'tags.*' => ['string', 'max:50'],
-
             // Financial fields
             'subtotal' => ['required', 'numeric', 'min:0'],
             'tax_total' => ['nullable', 'numeric', 'min:0'],
             'shipping_total' => ['nullable', 'numeric', 'min:0'],
             'discount_total' => ['nullable', 'numeric', 'min:0'],
             'total' => ['required', 'numeric', 'min:0'],
-
             // Order items
             'items' => ['required', 'array', 'min:1'],
             'items.*.product_id' => ['required', 'exists:products,id'],
@@ -49,7 +47,6 @@ class StoreOrderRequest extends FormRequest
             'items.*.price' => ['required', 'numeric', 'min:0'],
             'items.*.name' => ['required', 'string', 'max:255'],
             'items.*.sku' => ['nullable', 'string', 'max:100'],
-
             // Shipping address
             'shipping_address' => ['nullable', 'array'],
             'shipping_address.first_name' => ['nullable', 'string', 'max:255'],
@@ -62,7 +59,6 @@ class StoreOrderRequest extends FormRequest
             'shipping_address.postal_code' => ['nullable', 'string', 'max:20'],
             'shipping_address.country_id' => ['nullable', 'exists:countries,id'],
             'shipping_address.phone' => ['nullable', 'string', 'max:20'],
-
             // Billing address
             'billing_address' => ['nullable', 'array'],
             'billing_address.first_name' => ['nullable', 'string', 'max:255'],
@@ -75,12 +71,10 @@ class StoreOrderRequest extends FormRequest
             'billing_address.postal_code' => ['nullable', 'string', 'max:20'],
             'billing_address.country_id' => ['nullable', 'exists:countries,id'],
             'billing_address.phone' => ['nullable', 'string', 'max:20'],
-
             // Shipping method
             'shipping_method_id' => ['nullable', 'exists:shipping_methods,id'],
             'shipping_method_name' => ['nullable', 'string', 'max:255'],
             'shipping_method_price' => ['nullable', 'numeric', 'min:0'],
-
             // Payment method
             'payment_method' => ['nullable', 'string', 'max:255'],
             'payment_reference' => ['nullable', 'string', 'max:255'],
@@ -161,7 +155,7 @@ class StoreOrderRequest extends FormRequest
             $taxTotal = $this->input('tax_total', 0);
             $shippingTotal = $this->input('shipping_total', 0);
             $discountTotal = $this->input('discount_total', 0);
-            $total = $subtotal + $taxTotal + $shippingTotal - $discountTotal;
+            $total = ($subtotal + $taxTotal + $shippingTotal) - $discountTotal;
 
             $this->merge([
                 'subtotal' => $subtotal,
@@ -175,11 +169,10 @@ class StoreOrderRequest extends FormRequest
      */
     private function generateOrderNumber(): string
     {
-        return 'ORD-'.date('Y').'-'.str_pad(
-            \Cartino\Models\Order::whereYear('created_at', date('Y'))->count() + 1,
-            6,
-            '0',
-            STR_PAD_LEFT
-        );
+        return
+            'ORD-'.
+            date('Y').
+            '-'.
+            str_pad(\Cartino\Models\Order::whereYear('created_at', date('Y'))->count() + 1, 6, '0', STR_PAD_LEFT);
     }
 }

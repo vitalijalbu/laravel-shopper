@@ -53,8 +53,12 @@ class Wishlist extends Model
         return $this->hasMany(WishlistItem::class);
     }
 
-    public function addItem(Product $product, ?ProductVariant $variant = null, array $options = [], ?string $note = null): WishlistItem
-    {
+    public function addItem(
+        Product $product,
+        ?ProductVariant $variant = null,
+        array $options = [],
+        ?string $note = null,
+    ): WishlistItem {
         $existingItem = $this->items()
             ->where('product_id', $product->id)
             ->where('product_variant_id', $variant?->id)

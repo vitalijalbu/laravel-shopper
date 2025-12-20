@@ -15,7 +15,7 @@ use Illuminate\Http\Request;
 class GlobalsController extends ApiController
 {
     public function __construct(
-        private readonly GlobalRepository $repository
+        private readonly GlobalRepository $repository,
     ) {}
 
     /**

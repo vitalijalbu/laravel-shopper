@@ -15,7 +15,7 @@ use Illuminate\Http\Request;
 class CartsController extends ApiController
 {
     public function __construct(
-        private readonly CartRepository $repository
+        private readonly CartRepository $repository,
     ) {}
 
     /**

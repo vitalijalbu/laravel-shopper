@@ -74,7 +74,7 @@ class MultiMarketPricesSeeder extends Seeder
                 'name' => 'Classic T-Shirt',
                 'description' => 'Comfortable cotton t-shirt',
                 'status' => 'active',
-            ]
+            ],
         );
 
         // Create variant if doesn't exist
@@ -95,7 +95,7 @@ class MultiMarketPricesSeeder extends Seeder
                 'name' => 'Sport Sneakers',
                 'description' => 'High-performance sport sneakers',
                 'status' => 'active',
-            ]
+            ],
         );
 
         $product = $products[1];
@@ -137,7 +137,7 @@ class MultiMarketPricesSeeder extends Seeder
                 'tax_included' => true,
                 'tax_rate' => 22.00,
                 'is_active' => true,
-            ]
+            ],
         );
 
         // ===========================================
@@ -157,7 +157,7 @@ class MultiMarketPricesSeeder extends Seeder
                 'tax_included' => true,
                 'tax_rate' => 22.00,
                 'is_active' => true,
-            ]
+            ],
         );
 
         // IT Market (best price)
@@ -174,7 +174,7 @@ class MultiMarketPricesSeeder extends Seeder
                 'tax_included' => true,
                 'tax_rate' => 22.00,
                 'is_active' => true,
-            ]
+            ],
         );
 
         // US Market
@@ -190,7 +190,7 @@ class MultiMarketPricesSeeder extends Seeder
                 'tax_included' => false,
                 'tax_rate' => null, // Tax varies by state
                 'is_active' => true,
-            ]
+            ],
         );
 
         // UK Market
@@ -206,7 +206,7 @@ class MultiMarketPricesSeeder extends Seeder
                 'tax_included' => true,
                 'tax_rate' => 20.00,
                 'is_active' => true,
-            ]
+            ],
         );
 
         // ===========================================
@@ -228,7 +228,7 @@ class MultiMarketPricesSeeder extends Seeder
                 'tax_included' => true,
                 'tax_rate' => 22.00,
                 'is_active' => true,
-            ]
+            ],
         );
 
         // ===========================================
@@ -249,7 +249,7 @@ class MultiMarketPricesSeeder extends Seeder
                 'tax_included' => false,
                 'tax_rate' => 22.00,
                 'is_active' => true,
-            ]
+            ],
         );
 
         // ===========================================
@@ -270,7 +270,7 @@ class MultiMarketPricesSeeder extends Seeder
                 'tax_included' => true,
                 'tax_rate' => 22.00,
                 'is_active' => true,
-            ]
+            ],
         );
 
         // 50+ units
@@ -286,7 +286,7 @@ class MultiMarketPricesSeeder extends Seeder
                 'tax_included' => true,
                 'tax_rate' => 22.00,
                 'is_active' => true,
-            ]
+            ],
         );
 
         $this->command->info("   ✓ Prices created for SKU: {$variant->sku}");

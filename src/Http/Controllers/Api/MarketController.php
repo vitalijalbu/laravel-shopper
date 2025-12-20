@@ -19,7 +19,7 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 class MarketController extends Controller
 {
     public function __construct(
-        protected MarketConfigurationService $marketConfig
+        protected MarketConfigurationService $marketConfig,
     ) {}
 
     /**
@@ -100,7 +100,7 @@ class MarketController extends Controller
             currency: $validated['currency'] ?? null,
             locale: $validated['locale'] ?? null,
             quantity: $validated['quantity'] ?? 1,
-            countryCode: $validated['country_code'] ?? null
+            countryCode: $validated['country_code'] ?? null,
         );
 
         // Save to session
@@ -209,7 +209,7 @@ class MarketController extends Controller
             $validated['amount'],
             $market,
             $validated['country_code'] ?? null,
-            $validated['product_type'] ?? null
+            $validated['product_type'] ?? null,
         );
 
         return response()->json([

@@ -44,8 +44,7 @@ class AssetFolder extends Model
 
     public function assets(): HasMany
     {
-        return $this->hasMany(Asset::class, 'folder', 'path')
-            ->where('container', $this->container);
+        return $this->hasMany(Asset::class, 'folder', 'path')->where('container', $this->container);
     }
 
     public function getDepth(): int

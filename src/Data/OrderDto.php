@@ -31,7 +31,7 @@ class OrderDto extends BaseDto
         public ?DateTime $shipped_at = null,
         public ?DateTime $delivered_at = null,
         public ?string $created_at = null,
-        public ?string $updated_at = null
+        public ?string $updated_at = null,
     ) {}
 
     /**
@@ -42,10 +42,10 @@ class OrderDto extends BaseDto
         return new static(
             id: $data['id'] ?? null,
             order_number: $data['order_number'] ?? '',
-            customer_id: isset($data['customer_id']) ? (int) $data['customer_id'] : null,
+            customer_id: isset($data['customer_id']) ? ((int) $data['customer_id']) : null,
             customer_email: $data['customer_email'] ?? '',
             customer_details: $data['customer_details'] ?? [],
-            currency_id: isset($data['currency_id']) ? (int) $data['currency_id'] : null,
+            currency_id: isset($data['currency_id']) ? ((int) $data['currency_id']) : null,
             subtotal: (float) ($data['subtotal'] ?? 0.0),
             tax_total: (float) ($data['tax_total'] ?? 0.0),
             shipping_total: (float) ($data['shipping_total'] ?? 0.0),
@@ -73,33 +73,36 @@ class OrderDto extends BaseDto
      */
     public function toArray(): array
     {
-        return array_filter([
-            'id' => $this->id,
-            'order_number' => $this->order_number,
-            'customer_id' => $this->customer_id,
-            'customer_email' => $this->customer_email,
-            'customer_details' => $this->customer_details,
-            'currency_id' => $this->currency_id,
-            'subtotal' => round($this->subtotal, 2),
-            'tax_total' => round($this->tax_total, 2),
-            'shipping_total' => round($this->shipping_total, 2),
-            'discount_total' => round($this->discount_total, 2),
-            'total' => round($this->total, 2),
-            'status' => $this->status,
-            'payment_status' => $this->payment_status,
-            'fulfillment_status' => $this->fulfillment_status,
-            'shipping_address' => $this->shipping_address,
-            'billing_address' => $this->billing_address,
-            'applied_discounts' => $this->applied_discounts,
-            'shipping_method' => $this->shipping_method,
-            'payment_method' => $this->payment_method,
-            'payment_details' => $this->payment_details,
-            'notes' => $this->notes,
-            'shipped_at' => $this->shipped_at?->format('Y-m-d H:i:s'),
-            'delivered_at' => $this->delivered_at?->format('Y-m-d H:i:s'),
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-        ], fn ($value) => $value !== null);
+        return array_filter(
+            [
+                'id' => $this->id,
+                'order_number' => $this->order_number,
+                'customer_id' => $this->customer_id,
+                'customer_email' => $this->customer_email,
+                'customer_details' => $this->customer_details,
+                'currency_id' => $this->currency_id,
+                'subtotal' => round($this->subtotal, 2),
+                'tax_total' => round($this->tax_total, 2),
+                'shipping_total' => round($this->shipping_total, 2),
+                'discount_total' => round($this->discount_total, 2),
+                'total' => round($this->total, 2),
+                'status' => $this->status,
+                'payment_status' => $this->payment_status,
+                'fulfillment_status' => $this->fulfillment_status,
+                'shipping_address' => $this->shipping_address,
+                'billing_address' => $this->billing_address,
+                'applied_discounts' => $this->applied_discounts,
+                'shipping_method' => $this->shipping_method,
+                'payment_method' => $this->payment_method,
+                'payment_details' => $this->payment_details,
+                'notes' => $this->notes,
+                'shipped_at' => $this->shipped_at?->format('Y-m-d H:i:s'),
+                'delivered_at' => $this->delivered_at?->format('Y-m-d H:i:s'),
+                'created_at' => $this->created_at,
+                'updated_at' => $this->updated_at,
+            ],
+            fn ($value) => $value !== null,
+        );
     }
 
     /**
@@ -117,7 +120,17 @@ class OrderDto extends BaseDto
             $errors['customer_email'] = 'Customer email must be valid';
         }
 
-        if (! in_array($this->status, ['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled', 'refunded'])) {
+        if (
+            ! in_array($this->status, [
+                'pending',
+                'confirmed',
+                'processing',
+                'shipped',
+                'delivered',
+                'cancelled',
+                'refunded',
+            ])
+        ) {
             $errors['status'] = 'Invalid order status';
         }
 
@@ -258,8 +271,7 @@ class OrderDto extends BaseDto
      */
     public function canBeCancelled(): bool
     {
-        return in_array($this->status, ['pending', 'confirmed']) &&
-               $this->payment_status !== 'paid';
+        return in_array($this->status, ['pending', 'confirmed']) && $this->payment_status !== 'paid';
     }
 
     /**
@@ -267,9 +279,10 @@ class OrderDto extends BaseDto
      */
     public function canBeShipped(): bool
     {
-        return $this->status === 'confirmed' &&
-               $this->payment_status === 'paid' &&
-               $this->fulfillment_status === 'unfulfilled';
+        return
+            $this->status === 'confirmed' &&
+            $this->payment_status === 'paid' &&
+            $this->fulfillment_status === 'unfulfilled';
     }
 
     /**
@@ -277,6 +290,6 @@ class OrderDto extends BaseDto
      */
     public function calculateTotal(): void
     {
-        $this->total = $this->subtotal + $this->tax_total + $this->shipping_total - $this->discount_total;
+        $this->total = ($this->subtotal + $this->tax_total + $this->shipping_total) - $this->discount_total;
     }
 }

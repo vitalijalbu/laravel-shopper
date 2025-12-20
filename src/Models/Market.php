@@ -103,12 +103,10 @@ class Market extends Model
         return $this->sites()
             ->where('status', 'active')
             ->where(function ($q) {
-                $q->whereNull('published_at')
-                    ->orWhere('published_at', '<=', now());
+                $q->whereNull('published_at')->orWhere('published_at', '<=', now());
             })
             ->where(function ($q) {
-                $q->whereNull('unpublished_at')
-                    ->orWhere('unpublished_at', '>=', now());
+                $q->whereNull('unpublished_at')->orWhere('unpublished_at', '>=', now());
             });
     }
 
@@ -121,40 +119,34 @@ class Market extends Model
 
     public function scopePublished($query)
     {
-        return $query->where('status', 'active')
+        return $query
+            ->where('status', 'active')
             ->where(function ($q) {
-                $q->whereNull('published_at')
-                    ->orWhere('published_at', '<=', now());
+                $q->whereNull('published_at')->orWhere('published_at', '<=', now());
             })
             ->where(function ($q) {
-                $q->whereNull('unpublished_at')
-                    ->orWhere('unpublished_at', '>=', now());
+                $q->whereNull('unpublished_at')->orWhere('unpublished_at', '>=', now());
             });
     }
 
     public function scopeDefault($query)
     {
-        return $query->where('is_default', true)
-            ->active()
-            ->orderByDesc('priority')
-            ->limit(1);
+        return $query->where('is_default', true)->active()->orderByDesc('priority')->limit(1);
     }
 
     public function scopeForCountry($query, string $countryCode)
     {
-        return $query->where('status', 'active')
+        return $query
+            ->where('status', 'active')
             ->where(function ($q) use ($countryCode) {
-                $q->whereJsonContains('countries', $countryCode)
-                    ->orWhereNull('countries'); // Global markets
+                $q->whereJsonContains('countries', $countryCode)->orWhereNull('countries'); // Global markets
             })
             ->orderByDesc('priority');
     }
 
     public function scopeForType($query, string $type)
     {
-        return $query->where('status', 'active')
-            ->where('type', $type)
-            ->orderByDesc('priority');
+        return $query->where('status', 'active')->where('type', $type)->orderByDesc('priority');
     }
 
     // Accessors

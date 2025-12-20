@@ -56,7 +56,10 @@ class ApiKeysController extends ApiController
             // Ritorna la risorsa con la chiave in chiaro (solo questa volta!)
             $resource = (new ApiKeyResource($apiKey))->withPlainKey($plainKey);
 
-            return $this->created($resource, 'API key creata con successo. ATTENZIONE: Salva questa chiave, non sarà più visibile!');
+            return $this->created(
+                $resource,
+                'API key creata con successo. ATTENZIONE: Salva questa chiave, non sarà più visibile!',
+            );
         } catch (\Exception $e) {
             return $this->errorResponse('Errore nella creazione della API key: '.$e->getMessage());
         }
@@ -156,7 +159,10 @@ class ApiKeysController extends ApiController
             // Ritorna con la nuova chiave in chiaro
             $resource = (new ApiKeyResource($apiKey))->withPlainKey($plainKey);
 
-            return $this->successResponse($resource, 'API key rigenerata con successo. ATTENZIONE: Salva questa chiave!');
+            return $this->successResponse(
+                $resource,
+                'API key rigenerata con successo. ATTENZIONE: Salva questa chiave!',
+            );
         } catch (\Exception $e) {
             return $this->errorResponse('Errore: '.$e->getMessage());
         }

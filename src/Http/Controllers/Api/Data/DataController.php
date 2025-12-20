@@ -77,11 +77,14 @@ class DataController extends ApiController
                 'title' => $dictionary->title() ?? ucfirst($handle),
                 'keywords' => $dictionary->keywords(),
                 'options' => $dictionary->options($search),
-                'items' => collect($items)->map(fn ($item) => [
-                    'value' => $item->value(),
-                    'label' => $item->label(),
-                    'extra' => $item->extra(),
-                ])->values()->all(),
+                'items' => collect($items)
+                    ->map(fn ($item) => [
+                        'value' => $item->value(),
+                        'label' => $item->label(),
+                        'extra' => $item->extra(),
+                    ])
+                    ->values()
+                    ->all(),
                 'total' => count($items),
                 'is_extensible' => $this->isExtensible($handle),
                 'has_custom_items' => count($this->getCustomItems($handle)) > 0,
@@ -130,25 +133,31 @@ class DataController extends ApiController
 
         $dictionaries = $this->getAllDictionaries();
 
-        $results = collect($dictionaries)->map(function ($class, $handle) use ($query) {
-            $dictionary = $this->instantiateDictionary($class, $handle);
-            $items = $dictionary->optionItems($query);
+        $results = collect($dictionaries)
+            ->map(function ($class, $handle) use ($query) {
+                $dictionary = $this->instantiateDictionary($class, $handle);
+                $items = $dictionary->optionItems($query);
 
-            if (empty($items)) {
-                return null;
-            }
+                if (empty($items)) {
+                    return null;
+                }
 
-            return [
-                'handle' => $handle,
-                'title' => $dictionary->title() ?? ucfirst($handle),
-                'items' => collect($items)->map(fn ($item) => [
-                    'value' => $item->value(),
-                    'label' => $item->label(),
-                    'extra' => $item->extra(),
-                ])->values()->all(),
-                'count' => count($items),
-            ];
-        })->filter()->values();
+                return [
+                    'handle' => $handle,
+                    'title' => $dictionary->title() ?? ucfirst($handle),
+                    'items' => collect($items)
+                        ->map(fn ($item) => [
+                            'value' => $item->value(),
+                            'label' => $item->label(),
+                            'extra' => $item->extra(),
+                        ])
+                        ->values()
+                        ->all(),
+                    'count' => count($items),
+                ];
+            })
+            ->filter()
+            ->values();
 
         return $this->successResponse([
             'query' => $query,
@@ -277,7 +286,7 @@ class DataController extends ApiController
                     [
                         '_source' => 'database',
                         '_db_id' => $item->id,
-                    ]
+                    ],
                 );
             })
             ->toArray();

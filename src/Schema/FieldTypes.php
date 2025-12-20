@@ -67,7 +67,7 @@ class NumberFieldType extends FieldType
     public function preProcess($value)
     {
         if (is_numeric($value)) {
-            return is_int($value) ? (int) $value : (float) $value;
+            return is_int($value) ? ((int) $value) : ((float) $value);
         }
 
         return $value;
@@ -126,9 +126,12 @@ class SelectFieldType extends FieldType
             }
 
             // Convert associative array to options format
-            return collect($options)->map(function ($label, $value) {
-                return ['value' => $value, 'label' => $label];
-            })->values()->toArray();
+            return collect($options)
+                ->map(function ($label, $value) {
+                    return ['value' => $value, 'label' => $label];
+                })
+                ->values()
+                ->toArray();
         }
 
         return [];
@@ -199,7 +202,7 @@ class DateFieldType extends FieldType
 
     public function preProcess($value)
     {
-        if ($value && ! $value instanceof \Carbon\Carbon) {
+        if ($value && ! ($value instanceof \Carbon\Carbon)) {
             try {
                 return \Carbon\Carbon::parse($value);
             } catch (\Exception $e) {

@@ -21,8 +21,18 @@ class Locales extends BasicDictionary
     {
         return [
             ['code' => 'it_IT', 'name' => 'Italian (Italy)', 'language' => 'Italian', 'country' => 'Italy'],
-            ['code' => 'en_US', 'name' => 'English (United States)', 'language' => 'English', 'country' => 'United States'],
-            ['code' => 'en_GB', 'name' => 'English (United Kingdom)', 'language' => 'English', 'country' => 'United Kingdom'],
+            [
+                'code' => 'en_US',
+                'name' => 'English (United States)',
+                'language' => 'English',
+                'country' => 'United States',
+            ],
+            [
+                'code' => 'en_GB',
+                'name' => 'English (United Kingdom)',
+                'language' => 'English',
+                'country' => 'United Kingdom',
+            ],
             ['code' => 'de_DE', 'name' => 'German (Germany)', 'language' => 'German', 'country' => 'Germany'],
             ['code' => 'fr_FR', 'name' => 'French (France)', 'language' => 'French', 'country' => 'France'],
             ['code' => 'es_ES', 'name' => 'Spanish (Spain)', 'language' => 'Spanish', 'country' => 'Spain'],

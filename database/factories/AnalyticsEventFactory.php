@@ -14,7 +14,13 @@ class AnalyticsEventFactory extends Factory
     public function definition(): array
     {
         return [
-            'event_type' => $this->faker->randomElement(['page_view', 'product_view', 'add_to_cart', 'purchase', 'search']),
+            'event_type' => $this->faker->randomElement([
+                'page_view',
+                'product_view',
+                'add_to_cart',
+                'purchase',
+                'search',
+            ]),
             'user_id' => $this->faker->optional()->numberBetween(1, 100),
             'session_id' => $this->faker->uuid(),
             'ip_address' => $this->faker->ipv4(),

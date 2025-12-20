@@ -176,9 +176,7 @@ class PageLayout extends PageBlock
         return [
             'component' => $this->component,
             'props' => [
-                'sections' => collect($this->sections)
-                    ->map(fn ($section) => $section->compile())
-                    ->toArray(),
+                'sections' => collect($this->sections)->map(fn ($section) => $section->compile())->toArray(),
                 ...$this->props,
             ],
             'order' => $this->order,

@@ -139,9 +139,10 @@ class EntriesController extends Controller
         if ($request->filled('search')) {
             $search = strtolower($request->get('search'));
             $entries = $entries->filter(function ($entry) use ($search) {
-                return str_contains(strtolower($entry['title']), $search) ||
-                       str_contains(strtolower($entry['slug']), $search) ||
-                       str_contains(strtolower($entry['excerpt'] ?? ''), $search);
+                return
+                    str_contains(strtolower($entry['title']), $search) ||
+                    str_contains(strtolower($entry['slug']), $search) ||
+                    str_contains(strtolower($entry['excerpt'] ?? ''), $search);
             });
         }
 
@@ -181,16 +182,10 @@ class EntriesController extends Controller
 
         $paginatedEntries = $entries->slice(($page - 1) * $perPage, $perPage)->values();
 
-        $pagination = new LengthAwarePaginator(
-            $paginatedEntries,
-            $total,
-            $perPage,
-            $page,
-            [
-                'path' => $request->url(),
-                'pageName' => 'page',
-            ]
-        );
+        $pagination = new LengthAwarePaginator($paginatedEntries, $total, $perPage, $page, [
+            'path' => $request->url(),
+            'pageName' => 'page',
+        ]);
 
         return response()->json([
             'entries' => $paginatedEntries,

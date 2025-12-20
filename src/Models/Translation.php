@@ -59,13 +59,8 @@ class Translation extends Model
 
     // Helpers
 
-    public static function set(
-        Model $model,
-        string $key,
-        string $value,
-        string $locale,
-        array $options = []
-    ): self {
+    public static function set(Model $model, string $key, string $value, string $locale, array $options = []): self
+    {
         return static::updateOrCreate(
             [
                 'translatable_type' => $model->getMorphClass(),
@@ -75,16 +70,12 @@ class Translation extends Model
             ],
             array_merge([
                 'value' => $value,
-            ], $options)
+            ], $options),
         );
     }
 
-    public static function get(
-        Model $model,
-        string $key,
-        string $locale,
-        $default = null
-    ): ?string {
+    public static function get(Model $model, string $key, string $locale, $default = null): ?string
+    {
         $translation = static::query()
             ->where('translatable_type', $model->getMorphClass())
             ->where('translatable_id', $model->getKey())
@@ -95,11 +86,8 @@ class Translation extends Model
         return $translation?->value ?? $default;
     }
 
-    public static function remove(
-        Model $model,
-        string $key,
-        ?string $locale = null
-    ): int {
+    public static function remove(Model $model, string $key, ?string $locale = null): int
+    {
         $query = static::query()
             ->where('translatable_type', $model->getMorphClass())
             ->where('translatable_id', $model->getKey())

@@ -18,7 +18,7 @@ use Illuminate\Http\JsonResponse;
 class ReportsController extends ApiController
 {
     public function __construct(
-        protected ReportRepository $repository
+        protected ReportRepository $repository,
     ) {}
 
     /**

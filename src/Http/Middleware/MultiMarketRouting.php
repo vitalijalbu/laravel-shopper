@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\URL;
 class MultiMarketRouting
 {
     public function __construct(
-        protected LocaleResolver $localeResolver
+        protected LocaleResolver $localeResolver,
     ) {}
 
     /**
@@ -94,7 +94,7 @@ class MultiMarketRouting
                 explicit: $localeSegment ?? $request->query('locale'),
                 marketId: $market?->id,
                 siteId: session('site_id'),
-                channelId: session('channel_id')
+                channelId: session('channel_id'),
             );
         }
 
@@ -116,8 +116,7 @@ class MultiMarketRouting
         }
 
         // Get primary site for the market
-        $site = $market->sites()->published()->first()
-            ?? $market->sites()->active()->first();
+        $site = $market->sites()->published()->first() ?? $market->sites()->active()->first();
 
         if ($site) {
             session(['site_id' => $site->id]);

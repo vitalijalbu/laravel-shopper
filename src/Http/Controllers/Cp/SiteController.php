@@ -14,17 +14,17 @@ final class SiteController
 {
     public function index(Request $request): Response
     {
-        $query = Site::query()
-            ->with(['channels'])
-            ->withCount('channels');
+        $query = Site::query()->with(['channels'])->withCount('channels');
 
         // Apply filters
         if ($request->filled('search')) {
             $search = $request->input('search');
             $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                    ->orWhere('handle', 'like', "%{$search}%")
-                    ->orWhere('domain', 'like', "%{$search}%");
+                $q->where('name', 'like', "%{$search}%")->orWhere('handle', 'like', "%{$search}%")->orWhere(
+                    'domain',
+                    'like',
+                    "%{$search}%",
+                );
             });
         }
 
@@ -40,9 +40,7 @@ final class SiteController
             $query->where('default_currency', $request->input('currency'));
         }
 
-        $sites = $query->orderBy('priority', 'asc')
-            ->orderBy('created_at', 'desc')
-            ->paginate(15);
+        $sites = $query->orderBy('priority', 'asc')->orderBy('created_at', 'desc')->paginate(15);
 
         return Inertia::render('sites/index', [
             'sites' => $sites,
@@ -71,9 +69,7 @@ final class SiteController
             'availableCountries' => $this->getAvailableCountries(),
             'availableLocales' => $this->getAvailableLocales(),
             'availableCurrencies' => $this->getAvailableCurrencies(),
-            'availableCatalogs' => Catalog::select(['id', 'name', 'handle', 'description'])
-                ->orderBy('name')
-                ->get(),
+            'availableCatalogs' => Catalog::select(['id', 'name', 'handle', 'description'])->orderBy('name')->get(),
         ]);
     }
 

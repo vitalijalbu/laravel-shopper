@@ -86,7 +86,7 @@ class AddonManager
         try {
             $addon = new $className($path);
 
-            if (! $addon instanceof AddonInterface) {
+            if (! ($addon instanceof AddonInterface)) {
                 return;
             }
 
@@ -188,7 +188,7 @@ class AddonManager
         if ($dependents->isNotEmpty()) {
             throw new AddonException(
                 "Cannot uninstall {$id} because the following addons depend on it: ".
-                $dependents->pluck('name')->implode(', ')
+                    $dependents->pluck('name')->implode(', '),
             );
         }
 
@@ -272,7 +272,7 @@ class AddonManager
         if ($activeDependents->isNotEmpty()) {
             throw new AddonException(
                 "Cannot deactivate {$id} because the following active addons depend on it: ".
-                $activeDependents->pluck('name')->implode(', ')
+                    $activeDependents->pluck('name')->implode(', '),
             );
         }
 
@@ -348,15 +348,11 @@ class AddonManager
             $dependency = $this->get($dependencyId);
 
             if (! $dependency) {
-                throw new AddonException(
-                    "Plugin {$addon->getId()} requires {$dependencyId} but it's not available"
-                );
+                throw new AddonException("Plugin {$addon->getId()} requires {$dependencyId} but it's not available");
             }
 
             if (! $this->repository->exists($dependencyId)) {
-                throw new AddonException(
-                    "Plugin {$addon->getId()} requires {$dependencyId} to be installed"
-                );
+                throw new AddonException("Plugin {$addon->getId()} requires {$dependencyId} to be installed");
             }
 
             $installedVersion = $dependency->getVersion();
@@ -364,7 +360,7 @@ class AddonManager
             if (! $this->versionSatisfies($installedVersion, $versionConstraint)) {
                 throw new AddonException(
                     "Plugin {$addon->getId()} requires {$dependencyId} {$versionConstraint} ".
-                    "but version {$installedVersion} is installed"
+                        "but version {$installedVersion} is installed",
                 );
             }
         }
@@ -418,8 +414,7 @@ class AddonManager
             $parts = explode('.', $minVersion);
             $maxVersion = ($parts[0] + 1).'.0.0';
 
-            return version_compare($version, $minVersion, '>=') &&
-                   version_compare($version, $maxVersion, '<');
+            return version_compare($version, $minVersion, '>=') && version_compare($version, $maxVersion, '<');
         }
 
         return version_compare($version, $constraint, '=');

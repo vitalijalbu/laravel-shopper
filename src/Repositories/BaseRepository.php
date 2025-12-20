@@ -165,12 +165,7 @@ abstract class BaseRepository implements RepositoryInterface
 
     protected function getCacheKey(string $method, mixed $identifier): string
     {
-        return sprintf(
-            '%s:%s:%s',
-            $this->cachePrefix,
-            $method,
-            $identifier
-        );
+        return sprintf('%s:%s:%s', $this->cachePrefix, $method, $identifier);
     }
 
     protected function clearCache(): void

@@ -20,7 +20,7 @@ class ShippingService
         float $orderValue = 0,
         float $totalWeight = 0,
         array $productIds = [],
-        ?int $marketId = null
+        ?int $marketId = null,
     ): Category {
         // Find matching zones by priority
         $zones = ShippingZone::active()
@@ -37,7 +37,8 @@ class ShippingService
         foreach ($zones as $zone) {
             $zoneRates = ShippingRate::where('shipping_zone_id', $zone->id)
                 ->active()
-                ->when($marketId, fn ($q) => $q->where(fn ($q2) => $q2->where('market_id', $marketId)->orWhereNull('market_id')
+                ->when($marketId, fn ($q) => $q->where(
+                    fn ($q2) => $q2->where('market_id', $marketId)->orWhereNull('market_id'),
                 ))
                 ->orderByDesc('priority')
                 ->get();
@@ -71,7 +72,7 @@ class ShippingService
         float $orderValue,
         float $totalWeight,
         int $itemCount = 1,
-        array $productIds = []
+        array $productIds = [],
     ): array {
         $rate = ShippingRate::findOrFail($shippingRateId);
 

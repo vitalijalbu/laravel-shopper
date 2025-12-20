@@ -15,7 +15,7 @@ use Illuminate\Http\Request;
 class ProductVariantsController extends ApiController
 {
     public function __construct(
-        private readonly ProductVariantRepository $repository
+        private readonly ProductVariantRepository $repository,
     ) {}
 
     /**
@@ -60,7 +60,10 @@ class ProductVariantsController extends ApiController
         try {
             $updatedVariant = $this->repository->updateOne($productVariant->id, $request->validated());
 
-            return $this->successResponse(new ProductVariantResource($updatedVariant), 'Variant aggiornata con successo');
+            return $this->successResponse(
+                new ProductVariantResource($updatedVariant),
+                'Variant aggiornata con successo',
+            );
         } catch (\Exception $e) {
             return $this->errorResponse('Errore nell\'aggiornamento della variant: '.$e->getMessage());
         }

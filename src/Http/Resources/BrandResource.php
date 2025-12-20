@@ -28,7 +28,6 @@ class BrandResource extends BaseResource
             'products_count' => $this->whenCounted('products') ?? $this->products()->count(),
             'created_at' => $this->created_at?->toISOString(),
             'updated_at' => $this->updated_at?->toISOString(),
-
             // Display values
             'display_status' => $this->status === 'active' ? 'Attivo' : 'Inattivo',
             'is_active' => $this->status === 'active',

@@ -9,11 +9,8 @@ trait HasReference
     /**
      * Add handle field (unique identifier)
      */
-    public function addHandle(
-        Blueprint $table,
-        bool $unique = true,
-        ?string $scopeColumn = null
-    ): void {
+    public function addHandle(Blueprint $table, bool $unique = true, ?string $scopeColumn = null): void
+    {
         $table->string('handle');
 
         if ($unique && ! $scopeColumn) {
@@ -30,7 +27,7 @@ trait HasReference
         Blueprint $table,
         int $length = 50,
         bool $unique = true,
-        ?string $scopeColumn = null
+        ?string $scopeColumn = null,
     ): void {
         $column = $table->string('code', $length);
 
@@ -49,7 +46,7 @@ trait HasReference
         string $columnName = 'reference',
         int $length = 100,
         ?string $scopeColumn = null,
-        string $comment = ''
+        string $comment = '',
     ): void {
         $column = $table->string($columnName, $length);
 
@@ -67,6 +64,7 @@ trait HasReference
     {
         $table->string('order_number');
         $table->index('order_number');
+
         // Unique constraint should be added separately:
         // $table->unique(['order_number', 'site_id']);
     }

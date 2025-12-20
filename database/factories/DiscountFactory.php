@@ -20,7 +20,9 @@ class DiscountFactory extends Factory
             'title' => $this->faker->words(3, true),
             'description' => $this->faker->sentence(),
             'type' => $type,
-            'value' => $type === 'percentage' ? $this->faker->randomFloat(2, 1, 50) : $this->faker->randomFloat(2, 1, 100),
+            'value' => $type === 'percentage'
+                ? $this->faker->randomFloat(2, 1, 50)
+                : $this->faker->randomFloat(2, 1, 100),
             'minimum_amount' => $this->faker->optional()->randomFloat(2, 10, 500),
             'maximum_discount_amount' => $this->faker->optional()->randomFloat(2, 10, 200),
             'usage_limit' => $this->faker->optional()->numberBetween(10, 1000),
@@ -29,7 +31,12 @@ class DiscountFactory extends Factory
             'starts_at' => $this->faker->dateTimeBetween('-1 month', 'now'),
             'expires_at' => $this->faker->dateTimeBetween('now', '+6 months'),
             'is_active' => $this->faker->boolean(80),
-            'target_type' => $this->faker->randomElement(['all', 'specific_products', 'specific_collections', 'categories']),
+            'target_type' => $this->faker->randomElement([
+                'all',
+                'specific_products',
+                'specific_collections',
+                'categories',
+            ]),
             'target_selection' => null,
             'customer_eligibility' => $this->faker->randomElement(['all', 'specific_groups', 'specific_customers']),
             'customer_selection' => null,

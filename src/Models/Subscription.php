@@ -165,16 +165,19 @@ class Subscription extends Model
 
     public function scopeDueForBilling($query)
     {
-        return $query->where('status', 'active')
-            ->whereNotNull('next_billing_date')
-            ->where('next_billing_date', '<=', now());
+        return $query->where('status', 'active')->whereNotNull('next_billing_date')->where(
+            'next_billing_date',
+            '<=',
+            now(),
+        );
     }
 
     public function scopeTrialEnding($query, int $days = 3)
     {
-        return $query->where('status', 'active')
-            ->whereNotNull('trial_end_at')
-            ->whereBetween('trial_end_at', [now(), now()->addDays($days)]);
+        return $query->where('status', 'active')->whereNotNull('trial_end_at')->whereBetween('trial_end_at', [
+            now(),
+            now()->addDays($days),
+        ]);
     }
 
     // Methods

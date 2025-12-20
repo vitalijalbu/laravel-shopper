@@ -18,7 +18,7 @@ use Illuminate\Http\Request;
 class PriceController extends Controller
 {
     public function __construct(
-        protected PriceResolutionService $priceResolution
+        protected PriceResolutionService $priceResolution,
     ) {}
 
     /**
@@ -219,7 +219,7 @@ class PriceController extends Controller
             catalogId: $validated['catalog_id'] ?? null,
             currency: $validated['currency'] ?? null,
             locale: $validated['locale'] ?? null,
-            quantity: $validated['quantity'] ?? 1
+            quantity: $validated['quantity'] ?? 1,
         );
     }
 }

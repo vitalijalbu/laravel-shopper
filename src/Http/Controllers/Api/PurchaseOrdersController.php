@@ -15,7 +15,7 @@ use Illuminate\Http\Request;
 class PurchaseOrdersController extends ApiController
 {
     public function __construct(
-        private readonly PurchaseOrderRepository $repository
+        private readonly PurchaseOrderRepository $repository,
     ) {}
 
     /**
@@ -60,7 +60,10 @@ class PurchaseOrdersController extends ApiController
         try {
             $updatedPurchaseOrder = $this->repository->updateOne($purchaseOrder->id, $request->validated());
 
-            return $this->successResponse(new PurchaseOrderResource($updatedPurchaseOrder), 'Purchase Order aggiornato con successo');
+            return $this->successResponse(
+                new PurchaseOrderResource($updatedPurchaseOrder),
+                'Purchase Order aggiornato con successo',
+            );
         } catch (\Exception $e) {
             return $this->errorResponse('Errore nell\'aggiornamento del purchase order: '.$e->getMessage());
         }
@@ -92,7 +95,10 @@ class PurchaseOrdersController extends ApiController
         try {
             $receivedPO = $this->repository->receivePurchaseOrder($purchaseOrder->id);
 
-            return $this->successResponse(new PurchaseOrderResource($receivedPO), 'Purchase Order ricevuto con successo');
+            return $this->successResponse(
+                new PurchaseOrderResource($receivedPO),
+                'Purchase Order ricevuto con successo',
+            );
         } catch (\Exception $e) {
             return $this->errorResponse('Errore nella ricezione del purchase order: '.$e->getMessage());
         }

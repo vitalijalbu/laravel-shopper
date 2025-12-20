@@ -14,7 +14,7 @@ class BrandDto extends BaseDto
         public array $seo = [],
         public array $meta = [],
         public ?string $created_at = null,
-        public ?string $updated_at = null
+        public ?string $updated_at = null,
     ) {}
 
     /**
@@ -41,18 +41,21 @@ class BrandDto extends BaseDto
      */
     public function toArray(): array
     {
-        return array_filter([
-            'id' => $this->id,
-            'name' => $this->name,
-            'slug' => $this->slug ?: str($this->name)->slug()->toString(),
-            'description' => $this->description,
-            'website' => $this->website,
-            'status' => $this->status,
-            'seo' => $this->seo,
-            'meta' => $this->meta,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-        ], fn ($value) => $value !== null);
+        return array_filter(
+            [
+                'id' => $this->id,
+                'name' => $this->name,
+                'slug' => $this->slug ?: str($this->name)->slug()->toString(),
+                'description' => $this->description,
+                'website' => $this->website,
+                'status' => $this->status,
+                'seo' => $this->seo,
+                'meta' => $this->meta,
+                'created_at' => $this->created_at,
+                'updated_at' => $this->updated_at,
+            ],
+            fn ($value) => $value !== null,
+        );
     }
 
     /**

@@ -19,7 +19,6 @@ class GetPriceRequest extends FormRequest
             // Variant identification
             'variant_id' => ['sometimes', 'integer', 'exists:product_variants,id'],
             'sku' => ['sometimes', 'string', 'exists:product_variants,sku'],
-
             // Context (optional, will use session if not provided)
             'market_id' => ['sometimes', 'integer', 'exists:markets,id'],
             'market_code' => ['sometimes', 'string', 'exists:markets,code'],
@@ -29,7 +28,6 @@ class GetPriceRequest extends FormRequest
             'currency' => ['sometimes', 'string', 'size:3'],
             'locale' => ['sometimes', 'string', 'max:10'],
             'quantity' => ['sometimes', 'integer', 'min:1', 'max:10000'],
-
             // Options
             'include_tiers' => ['sometimes', 'boolean'],
             'include_context' => ['sometimes', 'boolean'],

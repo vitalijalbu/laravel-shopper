@@ -22,7 +22,7 @@ class MenuController extends Controller
     use HandlesFlashMessages;
 
     public function __construct(
-        private MenuService $menuService
+        private MenuService $menuService,
     ) {}
 
     public function index(): Response
@@ -45,8 +45,7 @@ class MenuController extends Controller
 
         $this->flashSuccess(__('flash.menus.created'));
 
-        return redirect()
-            ->route('cp.menus.edit', $menu->handle);
+        return redirect()->route('cp.menus.edit', $menu->handle);
     }
 
     public function edit(string $handle): Response
@@ -76,8 +75,7 @@ class MenuController extends Controller
 
         $this->flashSuccess(__('flash.menus.deleted'));
 
-        return redirect()
-            ->route('cp.menus.index');
+        return redirect()->route('cp.menus.index');
     }
 
     public function duplicate(string $handle)
@@ -87,8 +85,7 @@ class MenuController extends Controller
 
         $this->flashSuccess(__('flash.menus.duplicated'));
 
-        return redirect()
-            ->route('cp.menus.edit', $newMenu->handle);
+        return redirect()->route('cp.menus.edit', $newMenu->handle);
     }
 
     // Menu Items Management
@@ -143,11 +140,7 @@ class MenuController extends Controller
             'sort_order' => 'required|integer|min:0',
         ]);
 
-        $item = $this->menuService->moveMenuItem(
-            $item,
-            $validated['parent_id'],
-            $validated['sort_order']
-        );
+        $item = $this->menuService->moveMenuItem($item, $validated['parent_id'], $validated['sort_order']);
 
         return response()->json([
             'success' => true,

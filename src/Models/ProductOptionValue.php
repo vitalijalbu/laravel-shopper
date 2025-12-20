@@ -39,8 +39,7 @@ class ProductOptionValue extends Model
 
     public function variants(): BelongsToMany
     {
-        return $this->belongsToMany(ProductVariant::class, 'product_variant_option_value')
-            ->withTimestamps();
+        return $this->belongsToMany(ProductVariant::class, 'product_variant_option_value')->withTimestamps();
     }
 
     // Scopes

@@ -24,18 +24,21 @@ class ProductCollection extends BaseResourceCollection
             ],
             'inventory' => $product->inventory_quantity,
             'sku' => $product->sku,
-            'image' => $product->featured_image ? [
-                'url' => $product->featured_image,
-                'thumb' => $product->featured_image_thumb,
-            ] : null,
-            'category' => $product->category ? [
-                'id' => $product->category->id,
-                'name' => $product->category->name,
-            ] : null,
-            'brand' => $product->brand ? [
-                'id' => $product->brand->id,
-                'name' => $product->brand->name,
-            ] : null,
+            'image' => $product->featured_image
+                ? [
+                    'url' => $product->featured_image,
+                    'thumb' => $product->featured_image_thumb,
+                ] : null,
+            'category' => $product->category
+                ? [
+                    'id' => $product->category->id,
+                    'name' => $product->category->name,
+                ] : null,
+            'brand' => $product->brand
+                ? [
+                    'id' => $product->brand->id,
+                    'name' => $product->brand->name,
+                ] : null,
             'variants_count' => $product->variants_count ?? 0,
             'created_at' => $product->created_at?->toISOString(),
             'updated_at' => $product->updated_at?->toISOString(),

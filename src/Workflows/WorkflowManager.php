@@ -68,7 +68,7 @@ class WorkflowManager
     public function executeWorkflow(WorkflowInterface $workflow, $event): void
     {
         try {
-            $data = is_array($event) ? $event : (array) $event;
+            $data = is_array($event) ? $event : ((array) $event);
 
             $result = $workflow->execute($data);
 

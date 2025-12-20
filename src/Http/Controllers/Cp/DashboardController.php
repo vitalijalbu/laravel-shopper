@@ -30,7 +30,6 @@ class DashboardController extends BaseController
 
         return $this->inertiaResponse('dashboard/index', [
             'page' => $page->compile(),
-
             'stats' => $this->getDashboardStats(),
             'charts' => $this->getChartData(),
             'recent_orders' => $this->getRecentOrders(),
@@ -56,9 +55,7 @@ class DashboardController extends BaseController
 
         // This month stats
         $ordersThisMonth = Order::whereMonth('created_at', $now->month)->count();
-        $revenueThisMonth = Order::whereMonth('created_at', $now->month)
-            ->where('status', 'completed')
-            ->sum('total');
+        $revenueThisMonth = Order::whereMonth('created_at', $now->month)->where('status', 'completed')->sum('total');
         $customersThisMonth = Customer::whereMonth('created_at', $now->month)->count();
 
         // Last month stats for comparison
@@ -101,10 +98,8 @@ class DashboardController extends BaseController
                 'low_stock' => Product::where('stock_quantity', '<=', 10)->count(),
             ],
             'average_order_value' => [
-                'value' => $totalOrders > 0 ? $totalRevenue / $totalOrders : 0,
-                'formatted' => $totalOrders > 0
-                    ? number_format($totalRevenue / $totalOrders, 2).' €'
-                    : '0 €',
+                'value' => $totalOrders > 0 ? ($totalRevenue / $totalOrders) : 0,
+                'formatted' => $totalOrders > 0 ? (number_format($totalRevenue / $totalOrders, 2).' €') : '0 €',
             ],
         ];
     }
@@ -114,17 +109,18 @@ class DashboardController extends BaseController
      */
     protected function getChartData(): array
     {
-        $days = collect(range(0, 29))->map(function ($day) {
-            $date = now()->subDays($day);
+        $days = collect(range(0, 29))
+            ->map(function ($day) {
+                $date = now()->subDays($day);
 
-            return [
-                'date' => $date->format('Y-m-d'),
-                'orders' => Order::whereDate('created_at', $date)->count(),
-                'revenue' => Order::whereDate('created_at', $date)
-                    ->where('status', 'completed')
-                    ->sum('total'),
-            ];
-        })->reverse()->values();
+                return [
+                    'date' => $date->format('Y-m-d'),
+                    'orders' => Order::whereDate('created_at', $date)->count(),
+                    'revenue' => Order::whereDate('created_at', $date)->where('status', 'completed')->sum('total'),
+                ];
+            })
+            ->reverse()
+            ->values();
 
         return [
             'orders' => [
@@ -218,15 +214,17 @@ class DashboardController extends BaseController
         $activities = [];
 
         // Recent orders
-        $recentOrders = Order::with('customer')->latest()->limit(3)->get();
+        $recentOrders = Order::with('customer')
+            ->latest()
+            ->limit(3)
+            ->get();
         foreach ($recentOrders as $order) {
             $activities[] = [
                 'id' => 'order_'.$order->id,
                 'type' => 'order',
                 'icon' => 'shopping-bag',
                 'title' => 'New order received',
-                'description' => "Order #{$order->number} from ".
-                    ($order->customer?->full_name ?? 'Guest'),
+                'description' => "Order #{$order->number} from ".($order->customer?->full_name ?? 'Guest'),
                 'time' => $order->created_at->diffForHumans(),
                 'url' => route('cp.orders.show', $order),
             ];

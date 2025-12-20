@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 class FidelityController extends ApiController
 {
     public function __construct(
-        protected FidelityService $fidelityService
+        protected FidelityService $fidelityService,
     ) {}
 
     /**
@@ -193,7 +193,7 @@ class FidelityController extends ApiController
             $transaction = $this->fidelityService->redeemPoints(
                 $card,
                 $request->points,
-                $request->reason ?? 'Manual redemption'
+                $request->reason ?? 'Manual redemption',
             );
 
             $updatedStatistics = $this->fidelityService->getCardStatistics($card);

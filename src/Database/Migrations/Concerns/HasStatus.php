@@ -13,7 +13,7 @@ trait HasStatus
         Blueprint $table,
         array $values = [],
         string $default = 'active',
-        bool $withIndex = true
+        bool $withIndex = true,
     ): void {
         if (! empty($values)) {
             $table->enum('status', $values)->default($default);

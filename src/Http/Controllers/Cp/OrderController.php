@@ -28,8 +28,7 @@ class OrderController extends BaseController
      */
     public function index(Request $request): Response
     {
-        $this->addDashboardBreadcrumb()
-            ->addBreadcrumb('Orders');
+        $this->addDashboardBreadcrumb()->addBreadcrumb('Orders');
 
         $filters = $this->getFilters([
             'search',
@@ -59,7 +58,6 @@ class OrderController extends BaseController
 
         return $this->inertiaResponse('orders/index', [
             'page' => $page->compile(),
-
             'orders' => $orders->through(fn ($order) => new OrderResource($order)),
             'filters' => $filters,
             'stats' => $this->getOrderStats(),
@@ -71,9 +69,7 @@ class OrderController extends BaseController
      */
     public function create(Request $request): Response
     {
-        $this->addDashboardBreadcrumb()
-            ->addBreadcrumb('Orders', 'cartino.orders.index')
-            ->addBreadcrumb('Create order');
+        $this->addDashboardBreadcrumb()->addBreadcrumb('Orders', 'cartino.orders.index')->addBreadcrumb('Create order');
 
         $customer = null;
         if ($request->has('customer')) {
@@ -96,7 +92,6 @@ class OrderController extends BaseController
 
         return $this->inertiaResponse('orders/Create', [
             'page' => $page->compile(),
-
             'customer' => $customer ? new \Cartino\Http\Resources\CP\CustomerResource($customer) : null,
         ]);
     }
@@ -157,9 +152,7 @@ class OrderController extends BaseController
             'refunds',
         ]);
 
-        $this->addDashboardBreadcrumb()
-            ->addBreadcrumb('Orders', 'cartino.orders.index')
-            ->addBreadcrumb($order->number);
+        $this->addDashboardBreadcrumb()->addBreadcrumb('Orders', 'cartino.orders.index')->addBreadcrumb($order->number);
 
         $page = Page::make("Order #{$order->number}")
             ->primaryAction('Edit order', route('cp.orders.edit', $order))
@@ -180,7 +173,6 @@ class OrderController extends BaseController
 
         return $this->inertiaResponse('orders/Show', [
             'page' => $page->compile(),
-
             'order' => new OrderResource($order),
         ]);
     }
@@ -219,7 +211,6 @@ class OrderController extends BaseController
 
         return $this->inertiaResponse('orders/Edit', [
             'page' => $page->compile(),
-
             'order' => new OrderResource($order),
         ]);
     }
@@ -247,7 +238,10 @@ class OrderController extends BaseController
 
         return $this->successResponse('Order updated successfully', [
             'order' => new OrderResource($order->fresh([
-                'customer', 'items.product', 'shippingAddress', 'billingAddress',
+                'customer',
+                'items.product',
+                'shippingAddress',
+                'billingAddress',
             ])),
         ]);
     }
@@ -306,13 +300,16 @@ class OrderController extends BaseController
     protected function applySearchFilter($query, string $search): void
     {
         $query->where(function ($q) use ($search) {
-            $q->where('number', 'like', "%{$search}%")
-                ->orWhere('email', 'like', "%{$search}%")
-                ->orWhereHas('customer', function ($customerQuery) use ($search) {
-                    $customerQuery->where('first_name', 'like', "%{$search}%")
-                        ->orWhere('last_name', 'like', "%{$search}%")
-                        ->orWhere('email', 'like', "%{$search}%");
-                });
+            $q->where('number', 'like', "%{$search}%")->orWhere('email', 'like', "%{$search}%")->orWhereHas(
+                'customer',
+                function ($customerQuery) use ($search) {
+                    $customerQuery->where('first_name', 'like', "%{$search}%")->orWhere(
+                        'last_name',
+                        'like',
+                        "%{$search}%",
+                    )->orWhere('email', 'like', "%{$search}%");
+                },
+            );
         });
     }
 
@@ -353,14 +350,16 @@ class OrderController extends BaseController
         $order->items()->delete();
 
         foreach ($items as $item) {
-            $order->items()->create([
-                'product_id' => $item['product_id'],
-                'product_variant_id' => $item['product_variant_id'] ?? null,
-                'quantity' => $item['quantity'],
-                'price' => $item['price'],
-                'name' => $item['name'],
-                'sku' => $item['sku'] ?? null,
-            ]);
+            $order
+                ->items()
+                ->create([
+                    'product_id' => $item['product_id'],
+                    'product_variant_id' => $item['product_variant_id'] ?? null,
+                    'quantity' => $item['quantity'],
+                    'price' => $item['price'],
+                    'name' => $item['name'],
+                    'sku' => $item['sku'] ?? null,
+                ]);
         }
 
         // Recalculate order totals
@@ -373,12 +372,14 @@ class OrderController extends BaseController
     private function handleBulkFulfill($orders): int
     {
         $count = 0;
-        $orders->get()->each(function ($order) use (&$count) {
-            if ($order->status === 'pending' || $order->status === 'processing') {
-                $order->update(['status' => 'fulfilled']);
-                $count++;
-            }
-        });
+        $orders
+            ->get()
+            ->each(function ($order) use (&$count) {
+                if ($order->status === 'pending' || $order->status === 'processing') {
+                    $order->update(['status' => 'fulfilled']);
+                    $count++;
+                }
+            });
 
         return $count;
     }

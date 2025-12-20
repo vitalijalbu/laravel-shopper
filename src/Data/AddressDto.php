@@ -21,7 +21,7 @@ class AddressDto extends BaseDto
         public ?string $phone = null,
         public bool $is_default = false,
         public ?string $created_at = null,
-        public ?string $updated_at = null
+        public ?string $updated_at = null,
     ) {}
 
     /**
@@ -32,7 +32,7 @@ class AddressDto extends BaseDto
         return new static(
             id: $data['id'] ?? null,
             addressable_type: $data['addressable_type'] ?? null,
-            addressable_id: isset($data['addressable_id']) ? (int) $data['addressable_id'] : null,
+            addressable_id: isset($data['addressable_id']) ? ((int) $data['addressable_id']) : null,
             type: $data['type'] ?? 'shipping',
             first_name: $data['first_name'] ?? '',
             last_name: $data['last_name'] ?? '',
@@ -55,25 +55,28 @@ class AddressDto extends BaseDto
      */
     public function toArray(): array
     {
-        return array_filter([
-            'id' => $this->id,
-            'addressable_type' => $this->addressable_type,
-            'addressable_id' => $this->addressable_id,
-            'type' => $this->type,
-            'first_name' => $this->first_name,
-            'last_name' => $this->last_name,
-            'company' => $this->company,
-            'address_line_1' => $this->address_line_1,
-            'address_line_2' => $this->address_line_2,
-            'city' => $this->city,
-            'state' => $this->state,
-            'postal_code' => $this->postal_code,
-            'country_id' => $this->country_id,
-            'phone' => $this->phone,
-            'is_default' => $this->is_default,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-        ], fn ($value) => $value !== null);
+        return array_filter(
+            [
+                'id' => $this->id,
+                'addressable_type' => $this->addressable_type,
+                'addressable_id' => $this->addressable_id,
+                'type' => $this->type,
+                'first_name' => $this->first_name,
+                'last_name' => $this->last_name,
+                'company' => $this->company,
+                'address_line_1' => $this->address_line_1,
+                'address_line_2' => $this->address_line_2,
+                'city' => $this->city,
+                'state' => $this->state,
+                'postal_code' => $this->postal_code,
+                'country_id' => $this->country_id,
+                'phone' => $this->phone,
+                'is_default' => $this->is_default,
+                'created_at' => $this->created_at,
+                'updated_at' => $this->updated_at,
+            ],
+            fn ($value) => $value !== null,
+        );
     }
 
     /**

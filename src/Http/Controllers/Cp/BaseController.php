@@ -16,13 +16,15 @@ use Inertia\Response;
 
 abstract class BaseController extends Controller
 {
-    use AuthorizesRequests, HasBreadcrumbs, HandlesFlashMessages, ValidatesRequests;
+    use AuthorizesRequests, HandlesFlashMessages, HasBreadcrumbs, ValidatesRequests;
 
     /**
      * Return success JSON response.
      */
-    protected function successResponse(string $message = 'Operation completed successfully', array $data = []): JsonResponse
-    {
+    protected function successResponse(
+        string $message = 'Operation completed successfully',
+        array $data = [],
+    ): JsonResponse {
         return response()->json([
             'success' => true,
             'message' => $message,
@@ -33,8 +35,11 @@ abstract class BaseController extends Controller
     /**
      * Return error JSON response.
      */
-    protected function errorResponse(string $message = 'Operation failed', array $errors = [], int $status = 422): JsonResponse
-    {
+    protected function errorResponse(
+        string $message = 'Operation failed',
+        array $errors = [],
+        int $status = 422,
+    ): JsonResponse {
         return response()->json([
             'success' => false,
             'message' => $message,

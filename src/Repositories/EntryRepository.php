@@ -55,7 +55,10 @@ class EntryRepository extends BaseRepository
         }
 
         // Try to find by slug
-        return $this->model->with(['author', 'parent', 'children'])->where('slug', $id)->first();
+        return $this->model
+            ->with(['author', 'parent', 'children'])
+            ->where('slug', $id)
+            ->first();
     }
 
     /**

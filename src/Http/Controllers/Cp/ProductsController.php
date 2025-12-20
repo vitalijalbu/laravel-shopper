@@ -18,7 +18,7 @@ class ProductsController extends Controller
 {
     public function __construct(
         protected SchemaRepository $schemas,
-        protected readonly ProductRepository $repository
+        protected readonly ProductRepository $repository,
     ) {}
 
     /**
@@ -26,7 +26,6 @@ class ProductsController extends Controller
      */
     public function index(Request $request)
     {
-
         $request = $request->all();
 
         $data = $this->repository->findAll($request);
@@ -63,10 +62,18 @@ class ProductsController extends Controller
             ->breadcrumb(__('admin.navigation.home'), '/cp')
             ->breadcrumb(__('products.title'), '/cp/products')
             ->breadcrumb(__('products.create'))
-            ->primaryAction(__('admin.actions.save').' '.strtolower(__('products.single')), null, ['form' => 'product-form'])
+            ->primaryAction(__('admin.actions.save').' '.strtolower(__('products.single')), null, [
+                'form' => 'product-form',
+            ])
             ->secondaryActions([
-                ['label' => __('admin.actions.save').' & '.__('admin.actions.continue_editing'), 'action' => 'save_continue'],
-                ['label' => __('admin.actions.save').' & '.__('admin.actions.add_another'), 'action' => 'save_add_another'],
+                [
+                    'label' => __('admin.actions.save').' & '.__('admin.actions.continue_editing'),
+                    'action' => 'save_continue',
+                ],
+                [
+                    'label' => __('admin.actions.save').' & '.__('admin.actions.add_another'),
+                    'action' => 'save_add_another',
+                ],
             ]);
 
         // Product form tabs
@@ -80,7 +87,6 @@ class ProductsController extends Controller
 
         return Inertia::render('products/Create', [
             'page' => $page->compile(),
-
             'schema' => $schema->toArray(),
             'categories' => Category::select('id', 'name')->get(),
             'brands' => Brand::select('id', 'name')->get(),
@@ -125,7 +131,7 @@ class ProductsController extends Controller
             default => response()->json([
                 'message' => __('products.messages.created'),
                 'redirect' => '/cp/products',
-            ])
+            ]),
         };
     }
 
@@ -143,7 +149,11 @@ class ProductsController extends Controller
             ->primaryAction(__('products.edit'), "/cp/products/{$data->id}/edit")
             ->secondaryActions([
                 ['label' => __('admin.actions.duplicate'), 'action' => 'duplicate'],
-                ['label' => __('admin.actions.view').' '.__('admin.navigation.storefront'), 'url' => "/products/{$data->slug}", 'target' => '_blank'],
+                [
+                    'label' => __('admin.actions.view').' '.__('admin.navigation.storefront'),
+                    'url' => "/products/{$data->slug}",
+                    'target' => '_blank',
+                ],
                 ['label' => __('admin.actions.delete'), 'action' => 'delete', 'destructive' => true],
             ]);
 
@@ -172,10 +182,19 @@ class ProductsController extends Controller
             ->breadcrumb(__('products.title'), '/cp/products')
             ->breadcrumb($product->name, "/cp/products/{$product->id}")
             ->breadcrumb(__('admin.actions.edit'))
-            ->primaryAction(__('admin.actions.update').' '.strtolower(__('products.single')), null, ['form' => 'product-form'])
+            ->primaryAction(__('admin.actions.update').' '.strtolower(__('products.single')), null, [
+                'form' => 'product-form',
+            ])
             ->secondaryActions([
-                ['label' => __('admin.actions.view').' '.strtolower(__('products.single')), 'url' => "/cp/products/{$product->id}"],
-                ['label' => __('admin.actions.view').' '.__('admin.navigation.storefront'), 'url' => "/products/{$product->handle}", 'target' => '_blank'],
+                [
+                    'label' => __('admin.actions.view').' '.strtolower(__('products.single')),
+                    'url' => "/cp/products/{$product->id}",
+                ],
+                [
+                    'label' => __('admin.actions.view').' '.__('admin.navigation.storefront'),
+                    'url' => "/products/{$product->handle}",
+                    'target' => '_blank',
+                ],
                 ['label' => __('admin.actions.duplicate'), 'action' => 'duplicate'],
                 ['label' => __('admin.actions.delete'), 'action' => 'delete', 'destructive' => true],
             ]);
@@ -191,7 +210,6 @@ class ProductsController extends Controller
 
         return Inertia::render('products/Edit', [
             'page' => $page->compile(),
-
             'schema' => $schema->toArray(),
             'product' => new ProductResource($product),
             'categories' => Category::select('id', 'name')->get(),
@@ -265,7 +283,7 @@ class ProductsController extends Controller
             'archive' => $this->bulkArchive($products),
             'delete' => $this->bulkDelete($products),
             'export' => $this->bulkExport($products),
-            default => response()->json(['error' => 'Unknown action'], 422)
+            default => response()->json(['error' => 'Unknown action'], 422),
         };
     }
 

@@ -97,16 +97,27 @@ class CurrencyRepository extends BaseRepository
 
     public function getEnabled(): Category
     {
-        return \Illuminate\Support\Facades\Cache::remember($this->getCacheKey('enabled', 'all'), $this->cacheTtl, function () {
-            return $this->model->where('is_enabled', true)->orderBy('name')->get();
-        });
+        return \Illuminate\Support\Facades\Cache::remember(
+            $this->getCacheKey('enabled', 'all'),
+            $this->cacheTtl,
+            function () {
+                return $this->model
+                    ->where('is_enabled', true)
+                    ->orderBy('name')
+                    ->get();
+            },
+        );
     }
 
     public function getDefault(): ?Currency
     {
-        return \Illuminate\Support\Facades\Cache::remember($this->getCacheKey('default', 'currency'), $this->cacheTtl, function () {
-            return $this->model->where('is_default', true)->first();
-        });
+        return \Illuminate\Support\Facades\Cache::remember(
+            $this->getCacheKey('default', 'currency'),
+            $this->cacheTtl,
+            function () {
+                return $this->model->where('is_default', true)->first();
+            },
+        );
     }
 
     public function setAsDefault(int $id): Currency

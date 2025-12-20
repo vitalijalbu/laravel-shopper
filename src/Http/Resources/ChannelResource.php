@@ -26,7 +26,6 @@ class ChannelResource extends JsonResource
             'settings' => $this->settings,
             'created_at' => $this->created_at?->toISOString(),
             'updated_at' => $this->updated_at?->toISOString(),
-
             // Relationships
             'site' => new SiteResource($this->whenLoaded('site')),
         ];

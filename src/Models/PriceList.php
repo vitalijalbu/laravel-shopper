@@ -53,7 +53,8 @@ class PriceList extends Model
 
     public function scopeActive($query)
     {
-        return $query->where('is_active', true)
+        return $query
+            ->where('is_active', true)
             ->where(function ($q) {
                 $q->whereNull('starts_at')->orWhere('starts_at', '<=', now());
             })

@@ -9,7 +9,7 @@ class Item
     public function __construct(
         private mixed $value,
         private string $label,
-        private array $extra = []
+        private array $extra = [],
     ) {}
 
     public function value(): mixed

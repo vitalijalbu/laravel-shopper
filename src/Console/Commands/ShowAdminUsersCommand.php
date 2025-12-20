@@ -32,7 +32,9 @@ class ShowAdminUsersCommand extends Command
 
         if ($users->isEmpty()) {
             $this->warn('❌ No users found in the database.');
-            $this->line('   Run the seeder first: php artisan db:seed --class=Cartino\\Database\\Seeders\\CartinoSeeder');
+            $this->line(
+                '   Run the seeder first: php artisan db:seed --class=Cartino\\Database\\Seeders\\CartinoSeeder',
+            );
 
             return 1;
         }

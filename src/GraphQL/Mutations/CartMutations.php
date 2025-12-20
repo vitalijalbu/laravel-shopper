@@ -8,7 +8,9 @@ use Cartino\Services\CartService;
 
 class CartMutations
 {
-    public function __construct(protected CartService $cartService) {}
+    public function __construct(
+        protected CartService $cartService,
+    ) {}
 
     /**
      * Add item to cart
@@ -18,7 +20,7 @@ class CartMutations
         $cart = $this->cartService->add(
             productId: $args['product_id'],
             variantId: $args['variant_id'] ?? null,
-            quantity: $args['quantity']
+            quantity: $args['quantity'],
         );
 
         return $this->formatCart($cart);
@@ -31,7 +33,7 @@ class CartMutations
     {
         $cart = $this->cartService->updateQuantity(
             lineId: $args['line_id'],
-            quantity: $args['quantity']
+            quantity: $args['quantity'],
         );
 
         return $this->formatCart($cart);
@@ -83,14 +85,17 @@ class CartMutations
     protected function formatCart($cart): array
     {
         return [
-            'lines' => $cart->lines->map(fn ($line) => [
-                'id' => $line->id,
-                'product' => $line->product,
-                'variant' => $line->variant,
-                'quantity' => $line->quantity,
-                'price' => $line->price,
-                'total' => $line->total,
-            ])->toArray(),
+            'lines' => $cart
+                ->lines
+                ->map(fn ($line) => [
+                    'id' => $line->id,
+                    'product' => $line->product,
+                    'variant' => $line->variant,
+                    'quantity' => $line->quantity,
+                    'price' => $line->price,
+                    'total' => $line->total,
+                ])
+                ->toArray(),
             'subtotal' => $cart->subtotal,
             'shipping' => $cart->shipping,
             'tax' => $cart->tax,

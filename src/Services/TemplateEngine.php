@@ -41,8 +41,11 @@ class TemplateEngine
     /**
      * Resolve the appropriate template for a resource
      */
-    protected function resolveTemplate(string $resourceType, mixed $resource = null, ?string $customTemplate = null): ?StorefrontTemplate
-    {
+    protected function resolveTemplate(
+        string $resourceType,
+        mixed $resource = null,
+        ?string $customTemplate = null,
+    ): ?StorefrontTemplate {
         // 1. Custom template specified
         if ($customTemplate) {
             $template = StorefrontTemplate::where('site_id', $this->currentSite->id)
@@ -100,18 +103,20 @@ class TemplateEngine
      */
     protected function getGlobalSettings(): array
     {
-        $themeSettings = $this->currentSite->themeSettings()
+        $themeSettings = $this->currentSite
+            ->themeSettings()
             ->where('is_active', true)
             ->first();
 
-        return $themeSettings ? [
-            'global' => $themeSettings->global_settings ?? [],
-            'navigation' => $themeSettings->navigation_menus ?? [],
-            'social' => $themeSettings->social_links ?? [],
-            'seo' => $themeSettings->seo_settings ?? [],
-            'custom_css' => $themeSettings->custom_css ?? [],
-            'custom_js' => $themeSettings->custom_js ?? [],
-        ] : [];
+        return $themeSettings
+            ? [
+                'global' => $themeSettings->global_settings ?? [],
+                'navigation' => $themeSettings->navigation_menus ?? [],
+                'social' => $themeSettings->social_links ?? [],
+                'seo' => $themeSettings->seo_settings ?? [],
+                'custom_css' => $themeSettings->custom_css ?? [],
+                'custom_js' => $themeSettings->custom_js ?? [],
+            ] : [];
     }
 
     /**

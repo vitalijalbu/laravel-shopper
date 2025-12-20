@@ -130,7 +130,10 @@ class SupplierRepository extends BaseRepository
         $cacheKey = $this->getCacheKey('active', 'all');
 
         return \Illuminate\Support\Facades\Cache::remember($cacheKey, $this->cacheTtl, function () {
-            return $this->model->active()->orderBy('name')->get();
+            return $this->model
+                ->active()
+                ->orderBy('name')
+                ->get();
         });
     }
 
@@ -142,7 +145,10 @@ class SupplierRepository extends BaseRepository
         $cacheKey = $this->getCacheKey('preferred', 'all');
 
         return \Illuminate\Support\Facades\Cache::remember($cacheKey, $this->cacheTtl, function () {
-            return $this->model->preferred()->orderBy('rating', 'desc')->get();
+            return $this->model
+                ->preferred()
+                ->orderBy('rating', 'desc')
+                ->get();
         });
     }
 

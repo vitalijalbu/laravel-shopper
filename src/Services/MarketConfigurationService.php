@@ -19,7 +19,7 @@ class MarketConfigurationService
      */
     public function getAvailablePaymentMethods(
         ?Market $market = null,
-        ?PricingContext $context = null
+        ?PricingContext $context = null,
     ): Collection {
         $market = $market ?? $context?->market;
 
@@ -50,10 +50,8 @@ class MarketConfigurationService
     /**
      * Check if a payment method is available in a market.
      */
-    public function isPaymentMethodAvailable(
-        string $paymentMethodCode,
-        Market $market
-    ): bool {
+    public function isPaymentMethodAvailable(string $paymentMethodCode, Market $market): bool
+    {
         if (empty($market->payment_methods)) {
             return true; // No restrictions
         }
@@ -67,7 +65,7 @@ class MarketConfigurationService
     public function getAvailableShippingMethods(
         ?Market $market = null,
         ?PricingContext $context = null,
-        ?string $countryCode = null
+        ?string $countryCode = null,
     ): Collection {
         $market = $market ?? $context?->market;
         $countryCode = $countryCode ?? $context?->countryCode;
@@ -79,8 +77,7 @@ class MarketConfigurationService
         $cacheKey = "market:{$market->id}:shipping_methods:{$countryCode}";
 
         return Cache::remember($cacheKey, 3600, function () use ($market, $countryCode) {
-            $query = ShippingMethod::query()
-                ->where('is_active', true);
+            $query = ShippingMethod::query()->where('is_active', true);
 
             // If market has specific shipping methods configured
             if (! empty($market->shipping_methods)) {
@@ -90,8 +87,7 @@ class MarketConfigurationService
             // Filter by country if provided
             if ($countryCode) {
                 $query->whereHas('shippingZones', function ($q) use ($countryCode) {
-                    $q->whereJsonContains('countries', $countryCode)
-                        ->orWhereNull('countries'); // Global zones
+                    $q->whereJsonContains('countries', $countryCode)->orWhereNull('countries'); // Global zones
                 });
             }
 
@@ -102,10 +98,8 @@ class MarketConfigurationService
     /**
      * Check if a shipping method is available in a market.
      */
-    public function isShippingMethodAvailable(
-        string $shippingMethodCode,
-        Market $market
-    ): bool {
+    public function isShippingMethodAvailable(string $shippingMethodCode, Market $market): bool
+    {
         if (empty($market->shipping_methods)) {
             return true; // No restrictions
         }
@@ -120,7 +114,7 @@ class MarketConfigurationService
         ?Market $market = null,
         ?PricingContext $context = null,
         ?string $countryCode = null,
-        ?string $stateCode = null
+        ?string $stateCode = null,
     ): Collection {
         $market = $market ?? $context?->market;
         $countryCode = $countryCode ?? $context?->countryCode;
@@ -137,15 +131,13 @@ class MarketConfigurationService
 
             // Filter by country
             $query->where(function ($q) use ($taxRegion) {
-                $q->whereJsonContains('countries', $taxRegion)
-                    ->orWhereNull('countries'); // Global rates
+                $q->whereJsonContains('countries', $taxRegion)->orWhereNull('countries'); // Global rates
             });
 
             // Filter by state if provided
             if ($stateCode) {
                 $query->where(function ($q) use ($stateCode) {
-                    $q->whereJsonContains('states', $stateCode)
-                        ->orWhereNull('states');
+                    $q->whereJsonContains('states', $stateCode)->orWhereNull('states');
                 });
             }
 
@@ -160,15 +152,14 @@ class MarketConfigurationService
         int $amount,
         Market $market,
         ?string $countryCode = null,
-        ?string $productType = null
+        ?string $productType = null,
     ): array {
         $taxRates = $this->getApplicableTaxRates($market, null, $countryCode);
 
         // Filter by product type if provided
         if ($productType) {
             $taxRates = $taxRates->filter(function ($rate) use ($productType) {
-                return empty($rate->product_collections)
-                    || in_array($productType, $rate->product_collections);
+                return empty($rate->product_collections) || in_array($productType, $rate->product_collections);
             });
         }
 
@@ -197,11 +188,13 @@ class MarketConfigurationService
             'amount_without_tax' => $amount,
             'amount_with_tax' => $amount + $taxAmount,
             'effective_tax_rate' => round($effectiveTaxRate, 4),
-            'applied_rates' => $taxRates->map(fn ($rate) => [
-                'name' => $rate->name,
-                'rate' => $rate->rate,
-                'type' => $rate->type,
-            ])->toArray(),
+            'applied_rates' => $taxRates
+                ->map(fn ($rate) => [
+                    'name' => $rate->name,
+                    'rate' => $rate->rate,
+                    'type' => $rate->type,
+                ])
+                ->toArray(),
         ];
     }
 

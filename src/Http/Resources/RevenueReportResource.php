@@ -14,10 +14,10 @@ class RevenueReportResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $data = is_array($this->resource) ? $this->resource : (array) $this->resource;
+        $data = is_array($this->resource) ? $this->resource : ((array) $this->resource);
 
         $timeline = collect($data['timeline'] ?? [])->map(function ($item) {
-            $itemArray = is_array($item) ? $item : (array) $item;
+            $itemArray = is_array($item) ? $item : ((array) $item);
 
             return [
                 'period' => $itemArray['period'] ?? null,

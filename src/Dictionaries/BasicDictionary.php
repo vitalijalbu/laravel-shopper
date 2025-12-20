@@ -28,9 +28,10 @@ abstract class BasicDictionary extends Dictionary
 
     public function optionItems(?string $search = null): array
     {
-        return $this
-            ->getFilteredItems()
-            ->when($search, fn ($collection) => $collection->filter(fn ($item) => $this->matchesSearchQuery($search, $item)))
+        return $this->getFilteredItems()
+            ->when($search, fn ($collection) => $collection->filter(
+                fn ($item) => $this->matchesSearchQuery($search, $item),
+            ))
             ->all();
     }
 

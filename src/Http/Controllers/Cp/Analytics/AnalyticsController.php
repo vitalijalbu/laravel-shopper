@@ -11,13 +11,8 @@ class AnalyticsController extends Controller
 {
     public function index(): Response
     {
-        $page = Page::make(__('analytics.title'))
-            ->breadcrumb('Home', '/cp')
-            ->breadcrumb(__('analytics.title'));
+        $page = Page::make(__('analytics.title'))->breadcrumb('Home', '/cp')->breadcrumb(__('analytics.title'));
 
-        return Inertia::render(
-            'analytics/index',
-            compact('page')
-        );
+        return Inertia::render('analytics/index', compact('page'));
     }
 }

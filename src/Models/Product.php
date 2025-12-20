@@ -215,7 +215,9 @@ class Product extends Model
 
     public function options(): BelongsToMany
     {
-        return $this->belongsToMany(ProductOption::class, 'product_product_option')->withPivot('sort_order')->withTimestamps();
+        return $this->belongsToMany(ProductOption::class, 'product_product_option')
+            ->withPivot('sort_order')
+            ->withTimestamps();
     }
 
     public function variants(): HasMany
@@ -360,9 +362,7 @@ class Product extends Model
         }
 
         // For products with variants, check if any variant allows out of stock purchases
-        return $this->variants()
-            ->where('inventory_policy', 'continue')
-            ->exists();
+        return $this->variants()->where('inventory_policy', 'continue')->exists();
     }
 
     /**
@@ -382,9 +382,10 @@ class Product extends Model
         // For products with variants, check if any variant is in stock
         return $this->variants()
             ->where(function ($query) {
-                $query->where('track_quantity', false)
-                    ->orWhere('inventory_quantity', '>', 0)
-                    ->orWhere('inventory_policy', 'continue');
+                $query->where('track_quantity', false)->orWhere('inventory_quantity', '>', 0)->orWhere(
+                    'inventory_policy',
+                    'continue',
+                );
             })
             ->exists();
     }
@@ -443,7 +444,7 @@ class Product extends Model
         }
 
         // Check increment (quantity must be a multiple of increment)
-        if (($quantity - $minQty) % $increment !== 0) {
+        if ((($quantity - $minQty) % $increment) !== 0) {
             return false;
         }
 

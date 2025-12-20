@@ -88,10 +88,10 @@ class Entry extends Model
      */
     public function scopePublished($query)
     {
-        return $query->where('status', 'published')
+        return $query
+            ->where('status', 'published')
             ->where(function ($q) {
-                $q->whereNull('published_at')
-                    ->orWhere('published_at', '<=', now());
+                $q->whereNull('published_at')->orWhere('published_at', '<=', now());
             });
     }
 
@@ -108,8 +108,7 @@ class Entry extends Model
      */
     public function scopeScheduled($query)
     {
-        return $query->where('status', 'scheduled')
-            ->where('published_at', '>', now());
+        return $query->where('status', 'scheduled')->where('published_at', '>', now());
     }
 
     /**

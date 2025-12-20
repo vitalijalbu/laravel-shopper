@@ -175,7 +175,8 @@ class ProductRepository extends BaseRepository
 
     public function getOnSale(): Product
     {
-        return $this->model->whereNotNull('sale_price_amount')
+        return $this->model
+            ->whereNotNull('sale_price_amount')
             ->where('sale_price_amount', '>', 0)
             ->get();
     }
@@ -187,7 +188,8 @@ class ProductRepository extends BaseRepository
 
     public function getPopular(int $limit = 10): Product
     {
-        return $this->model->orderBy('views_count', 'desc')
+        return $this->model
+            ->orderBy('views_count', 'desc')
             ->limit($limit)
             ->get();
     }
@@ -206,10 +208,7 @@ class ProductRepository extends BaseRepository
             $query->orWhere('shopper_brand_id', $product->shopper_brand_id);
         }
 
-        return $query->published()
-            ->visible()
-            ->limit($limit)
-            ->get();
+        return $query->published()->visible()->limit($limit)->get();
     }
 
     public function getBySku(string $sku): ?Product
@@ -225,9 +224,11 @@ class ProductRepository extends BaseRepository
     public function search(string $term): static
     {
         $this->query->where(function ($query) use ($term) {
-            $query->where('name', 'like', "%{$term}%")
-                ->orWhere('sku', 'like', "%{$term}%")
-                ->orWhere('description', 'like', "%{$term}%");
+            $query->where('name', 'like', "%{$term}%")->orWhere('sku', 'like', "%{$term}%")->orWhere(
+                'description',
+                'like',
+                "%{$term}%",
+            );
         });
 
         return $this;

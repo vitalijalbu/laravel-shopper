@@ -16,7 +16,7 @@ use Inertia\Response;
 class WishlistController extends Controller
 {
     public function __construct(
-        private WishlistRepository $repository
+        private WishlistRepository $repository,
     ) {
         $this->authorizeResource(Wishlist::class, 'wishlist', [
             'except' => ['index', 'show'],

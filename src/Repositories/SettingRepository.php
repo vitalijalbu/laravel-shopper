@@ -101,10 +101,7 @@ class SettingRepository extends BaseRepository
      */
     public function set(string $key, $value): Model
     {
-        $setting = $this->model->updateOrCreate(
-            ['key' => $key],
-            ['value' => $value]
-        );
+        $setting = $this->model->updateOrCreate(['key' => $key], ['value' => $value]);
 
         $this->clearCache();
 
@@ -137,10 +134,7 @@ class SettingRepository extends BaseRepository
     public function setMultiple(array $settings): void
     {
         foreach ($settings as $key => $value) {
-            $this->model->updateOrCreate(
-                ['key' => $key],
-                ['value' => $value]
-            );
+            $this->model->updateOrCreate(['key' => $key], ['value' => $value]);
         }
 
         $this->clearCache();
@@ -277,6 +271,6 @@ class SettingRepository extends BaseRepository
      */
     protected function getCacheKey(string $method, mixed $identifier): string
     {
-        return $this->cachePrefix.'_'.$method.($identifier ? '_'.$identifier : '');
+        return $this->cachePrefix.'_'.$method.($identifier ? ('_'.$identifier) : '');
     }
 }

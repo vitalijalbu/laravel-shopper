@@ -115,14 +115,14 @@ class AppWebhook extends Model
         }
 
         try {
-            $response = \Http::timeout($this->timeout_seconds)
-                ->withHeaders($this->headers ?? [])
-                ->{strtolower($this->method)}($this->endpoint_url, [
-                    'event' => $event,
-                    'payload' => $payload,
-                    'timestamp' => now()->toISOString(),
-                    'signature' => $this->generateSignature($payload),
-                ]);
+            $response = \Http::timeout($this->timeout_seconds)->withHeaders(
+                $this->headers ?? [],
+            )->{strtolower($this->method)}($this->endpoint_url, [
+                'event' => $event,
+                'payload' => $payload,
+                'timestamp' => now()->toISOString(),
+                'signature' => $this->generateSignature($payload),
+            ]);
 
             if ($response->successful()) {
                 $this->recordSuccess();
@@ -133,7 +133,6 @@ class AppWebhook extends Model
 
                 return false;
             }
-
         } catch (\Exception $e) {
             $this->recordFailure($e->getMessage());
 

@@ -68,8 +68,7 @@ class AnalyticsEvent extends Model
 
     public function scopeThisMonth($query)
     {
-        return $query->whereMonth('occurred_at', now()->month)
-            ->whereYear('occurred_at', now()->year);
+        return $query->whereMonth('occurred_at', now()->month)->whereYear('occurred_at', now()->year);
     }
 
     public function scopeLastDays($query, int $days)
@@ -92,7 +91,7 @@ class AnalyticsEvent extends Model
         array $properties = [],
         array $context = [],
         ?string $sessionId = null,
-        ?string $userId = null
+        ?string $userId = null,
     ): self {
         return self::create([
             'event_type' => $eventType,

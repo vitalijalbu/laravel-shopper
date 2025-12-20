@@ -25,7 +25,7 @@ class PermissionRequest extends FormRequest
                 'groups' => 'nullable|array',
                 'groups.*' => 'string|in:content,collections,commerce,customers,users,assets,forms,settings,roles,reports',
             ],
-            default => []
+            default => [],
         };
     }
 

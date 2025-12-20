@@ -38,7 +38,8 @@ class ShippingMethodRepository extends BaseRepository
         $cacheKey = $this->getCacheKey('enabled', '');
 
         return \Illuminate\Support\Facades\Cache::remember($cacheKey, $this->cacheTtl, function () {
-            return $this->model->with(['zones'])
+            return $this->model
+                ->with(['zones'])
                 ->where('is_enabled', true)
                 ->orderBy('sort_order')
                 ->get();
@@ -74,7 +75,7 @@ class ShippingMethodRepository extends BaseRepository
                 $config = $method->config ?? [];
                 $percentage = $config['percentage'] ?? 0;
 
-                return $method->base_cost + ($subtotal * $percentage / 100);
+                return $method->base_cost + (($subtotal * $percentage) / 100);
 
             case 'item_count':
                 $config = $method->config ?? [];
@@ -98,7 +99,8 @@ class ShippingMethodRepository extends BaseRepository
      */
     public function getCarriers(): ShippingMethod
     {
-        return $this->model->select('carrier')
+        return $this->model
+            ->select('carrier')
             ->distinct()
             ->whereNotNull('carrier')
             ->orderBy('carrier')
@@ -126,8 +128,7 @@ class ShippingMethodRepository extends BaseRepository
     {
         try {
             foreach ($shippingMethods as $methodData) {
-                $this->model->where('id', $methodData['id'])
-                    ->update(['sort_order' => $methodData['sort_order']]);
+                $this->model->where('id', $methodData['id'])->update(['sort_order' => $methodData['sort_order']]);
             }
 
             $this->clearCache();
@@ -241,6 +242,6 @@ class ShippingMethodRepository extends BaseRepository
      */
     protected function getCacheKey(string $method, mixed $identifier): string
     {
-        return $this->cachePrefix.'_'.$method.($identifier ? '_'.$identifier : '');
+        return $this->cachePrefix.'_'.$method.($identifier ? ('_'.$identifier) : '');
     }
 }

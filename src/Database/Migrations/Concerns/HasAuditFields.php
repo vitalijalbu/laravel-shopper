@@ -14,7 +14,7 @@ trait HasAuditFields
         bool $includeCreatedBy = true,
         bool $includeUpdatedBy = true,
         bool $includeDeletedBy = false,
-        string $onDelete = 'nullOnDelete'
+        string $onDelete = 'nullOnDelete',
     ): void {
         if ($includeCreatedBy) {
             $column = $table->foreignId('created_by')->nullable()->constrained('users');

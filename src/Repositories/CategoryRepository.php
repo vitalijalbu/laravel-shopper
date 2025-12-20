@@ -64,9 +64,10 @@ final class CategoryRepository extends BaseRepository
         return $this->model
             ->whereNull('parent_id')
             ->with(['children' => function ($query) {
-                $query->with(['children' => function ($q) {
-                    $q->withCount('children')->orderBy('sort_order');
-                }])
+                $query
+                    ->with(['children' => function ($q) {
+                        $q->withCount('children')->orderBy('sort_order');
+                    }])
                     ->withCount('children')
                     ->orderBy('sort_order');
             }])
@@ -199,7 +200,10 @@ final class CategoryRepository extends BaseRepository
 
     public function bulkAction(string $action, array $ids): array
     {
-        $validatedIds = $this->model->whereIn('id', $ids)->pluck('id')->toArray();
+        $validatedIds = $this->model
+            ->whereIn('id', $ids)
+            ->pluck('id')
+            ->toArray();
         $processedCount = 0;
         $errors = [];
 

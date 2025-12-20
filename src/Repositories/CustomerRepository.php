@@ -146,7 +146,8 @@ class CustomerRepository extends BaseRepository
      */
     public function getWithFidelityStats(array $filters = []): LengthAwarePaginator
     {
-        $query = $this->model->newQuery()
+        $query = $this->model
+            ->newQuery()
             ->with(['customerGroup', 'fidelityCard'])
             ->withCount(['orders'])
             ->withSum('orders', 'total_amount');
@@ -183,7 +184,8 @@ class CustomerRepository extends BaseRepository
         if (! empty($filters['search'])) {
             $search = $filters['search'];
             $query->where(function ($q) use ($search) {
-                $q->where('first_name', 'like', "%{$search}%")
+                $q
+                    ->where('first_name', 'like', "%{$search}%")
                     ->orWhere('last_name', 'like', "%{$search}%")
                     ->orWhere('email', 'like', "%{$search}%")
                     ->orWhereHas('fidelityCard', function ($fq) use ($search) {
@@ -230,7 +232,8 @@ class CustomerRepository extends BaseRepository
             'card_status' => $card->is_active ? 'active' : 'inactive',
             'issued_at' => $card->issued_at,
             'last_activity' => $card->last_activity_at,
-            'recent_transactions' => $card->transactions()
+            'recent_transactions' => $card
+                ->transactions()
                 ->orderBy('created_at', 'desc')
                 ->limit(5)
                 ->get()
@@ -393,7 +396,7 @@ class CustomerRepository extends BaseRepository
 
             $orders = $customer->orders;
             $totalSpent = $orders->sum('total_amount');
-            $averageOrderValue = $orders->count() > 0 ? $totalSpent / $orders->count() : 0;
+            $averageOrderValue = $orders->count() > 0 ? ($totalSpent / $orders->count()) : 0;
 
             return [
                 'total_orders' => $orders->count(),
@@ -411,7 +414,10 @@ class CustomerRepository extends BaseRepository
      */
     public function bulkAction(string $action, array $ids, array $metadata = []): array
     {
-        $validatedIds = $this->model->whereIn('id', $ids)->pluck('id')->toArray();
+        $validatedIds = $this->model
+            ->whereIn('id', $ids)
+            ->pluck('id')
+            ->toArray();
         $processedCount = 0;
         $errors = [];
 

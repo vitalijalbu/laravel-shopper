@@ -83,7 +83,7 @@ class AuthController extends Controller
             'authenticated_via' => $apiKey ? 'api_key' : 'sanctum',
             'api_key_id' => $apiKey?->id,
             'api_key_type' => $apiKey?->type,
-            'api_key_permissions' => ($apiKey && $apiKey->type === 'custom') ? $apiKey->permissions : null,
+            'api_key_permissions' => $apiKey && $apiKey->type === 'custom' ? $apiKey->permissions : null,
             'api_key' => $apiKey ? new ApiKeyResource($apiKey) : null,
             'api_key_capabilities' => $capabilities,
         ]);
@@ -113,7 +113,7 @@ class AuthController extends Controller
             'user' => $apiKey ? null : $request->user(),
             'api_key_id' => $apiKey?->id,
             'api_key_type' => $apiKey?->type,
-            'api_key_permissions' => ($apiKey && $apiKey->type === 'custom') ? $apiKey->permissions : null,
+            'api_key_permissions' => $apiKey && $apiKey->type === 'custom' ? $apiKey->permissions : null,
             'api_key' => $apiKey ? new ApiKeyResource($apiKey) : null,
             'api_key_capabilities' => $capabilities,
         ]);
@@ -145,7 +145,12 @@ class AuthController extends Controller
                 if (str_contains($perm, 'create') || str_contains($perm, 'write') || str_contains($perm, 'manage')) {
                     $canCreate = true;
                 }
-                if (str_contains($perm, 'update') || str_contains($perm, 'edit') || str_contains($perm, 'write') || str_contains($perm, 'manage')) {
+                if (
+                    str_contains($perm, 'update') ||
+                        str_contains($perm, 'edit') ||
+                        str_contains($perm, 'write') ||
+                        str_contains($perm, 'manage')
+                ) {
                     $canUpdate = true;
                 }
                 if (str_contains($perm, 'delete') || str_contains($perm, 'destroy') || str_contains($perm, 'manage')) {

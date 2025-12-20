@@ -64,12 +64,13 @@ class CartData
             metadata: $cart->metadata,
             created_at: $cart->created_at->toISOString(),
             updated_at: $cart->updated_at->toISOString(),
-            customer: $cart->relationLoaded('customer') && $cart->customer ? [
-                'id' => $cart->customer->id,
-                'first_name' => $cart->customer->first_name,
-                'last_name' => $cart->customer->last_name,
-                'email' => $cart->customer->email,
-            ] : null,
+            customer: $cart->relationLoaded('customer') && $cart->customer
+                ? [
+                    'id' => $cart->customer->id,
+                    'first_name' => $cart->customer->first_name,
+                    'last_name' => $cart->customer->last_name,
+                    'email' => $cart->customer->email,
+                ] : null,
             items_count: collect($cart->items ?? [])->sum('quantity'),
             age_in_hours: $cart->created_at->diffInHours(now()),
         );

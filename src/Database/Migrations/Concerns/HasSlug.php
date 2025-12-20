@@ -13,7 +13,7 @@ trait HasSlug
         Blueprint $table,
         bool $nullable = false,
         ?string $scopeColumn = null,
-        bool $withIndex = true
+        bool $withIndex = true,
     ): void {
         $column = $table->string('slug');
 

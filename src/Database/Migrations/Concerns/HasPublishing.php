@@ -13,7 +13,7 @@ trait HasPublishing
         Blueprint $table,
         bool $withScheduling = false,
         bool $withScope = false,
-        bool $withUnpublish = false
+        bool $withUnpublish = false,
     ): void {
         $table->timestamp('published_at')->nullable();
 

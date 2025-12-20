@@ -15,7 +15,7 @@ use Illuminate\Http\Request;
 class OrdersController extends ApiController
 {
     public function __construct(
-        private readonly OrderRepository $repository
+        private readonly OrderRepository $repository,
     ) {}
 
     /**

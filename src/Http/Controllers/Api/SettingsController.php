@@ -15,7 +15,7 @@ use Illuminate\Http\Request;
 class SettingsController extends ApiController
 {
     public function __construct(
-        private readonly SettingRepository $repository
+        private readonly SettingRepository $repository,
     ) {}
 
     /**

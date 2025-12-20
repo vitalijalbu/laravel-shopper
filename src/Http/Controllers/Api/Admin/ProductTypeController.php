@@ -22,9 +22,11 @@ class ProductTypeController extends ApiController
         // Search filter
         if ($search = $request->get('search')) {
             $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                    ->orWhere('slug', 'like', "%{$search}%")
-                    ->orWhere('description', 'like', "%{$search}%");
+                $q->where('name', 'like', "%{$search}%")->orWhere('slug', 'like', "%{$search}%")->orWhere(
+                    'description',
+                    'like',
+                    "%{$search}%",
+                );
             });
         }
 
@@ -38,7 +40,12 @@ class ProductTypeController extends ApiController
         $sortDirection = $request->get('sort_direction', 'desc');
 
         $allowedSorts = [
-            'name', 'slug', 'products_count', 'is_enabled', 'created_at', 'updated_at',
+            'name',
+            'slug',
+            'products_count',
+            'is_enabled',
+            'created_at',
+            'updated_at',
         ];
 
         if (in_array($sortBy, $allowedSorts)) {
@@ -106,7 +113,6 @@ class ProductTypeController extends ApiController
                 'message' => 'Product type created successfully',
                 'data' => $productType->loadCount('products'),
             ], 201);
-
         } catch (\Exception $e) {
             DB::rollBack();
 
@@ -172,7 +178,6 @@ class ProductTypeController extends ApiController
                 'message' => 'Product type updated successfully',
                 'data' => $productType,
             ]);
-
         } catch (\Exception $e) {
             DB::rollBack();
 
@@ -192,7 +197,7 @@ class ProductTypeController extends ApiController
             if ($productsCount > 0) {
                 return $this->errorResponse(
                     "Cannot delete product type '{$productType->name}' because it has {$productsCount} associated products. Please reassign or delete the products first.",
-                    422
+                    422,
                 );
             }
 
@@ -201,7 +206,6 @@ class ProductTypeController extends ApiController
             return $this->successResponse([
                 'message' => 'Product type deleted successfully',
             ]);
-
         } catch (\Exception $e) {
             return $this->errorResponse('Failed to delete product type: '.$e->getMessage(), 500);
         }
@@ -221,7 +225,6 @@ class ProductTypeController extends ApiController
                 'message' => "Product type {$status} successfully",
                 'data' => $productType->loadCount('products'),
             ]);
-
         } catch (\Exception $e) {
             return $this->errorResponse('Failed to toggle product type status: '.$e->getMessage(), 500);
         }
@@ -271,7 +274,7 @@ class ProductTypeController extends ApiController
 
                         return $this->errorResponse(
                             "Cannot delete product types ({$names}) because they have associated products. Please reassign or delete the products first.",
-                            422
+                            422,
                         );
                     }
 
@@ -286,7 +289,6 @@ class ProductTypeController extends ApiController
                 'message' => $message,
                 'affected_count' => $updated ?? $deleted ?? 0,
             ]);
-
         } catch (\Exception $e) {
             DB::rollBack();
 
@@ -336,7 +338,6 @@ class ProductTypeController extends ApiController
                     'top_types' => $topTypes,
                 ],
             ]);
-
         } catch (\Exception $e) {
             return $this->errorResponse('Failed to load statistics: '.$e->getMessage(), 500);
         }

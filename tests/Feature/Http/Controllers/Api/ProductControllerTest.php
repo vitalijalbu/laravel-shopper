@@ -32,7 +32,8 @@ class ProductControllerTest extends TestCase
 
         $response = $this->getJson('/api/cartino/products');
 
-        $response->assertOk()
+        $response
+            ->assertOk()
             ->assertJsonCount(3, 'data')
             ->assertJsonStructure([
                 'data' => [
@@ -67,7 +68,8 @@ class ProductControllerTest extends TestCase
 
         $response = $this->getJson("/api/cartino/products/{$product->id}");
 
-        $response->assertOk()
+        $response
+            ->assertOk()
             ->assertJson([
                 'data' => [
                     'id' => $product->id,
@@ -94,7 +96,8 @@ class ProductControllerTest extends TestCase
 
         $response = $this->postJson('/api/cartino/products', $productData);
 
-        $response->assertCreated()
+        $response
+            ->assertCreated()
             ->assertJsonFragment([
                 'name' => 'New Product',
                 'sku' => 'NEW-001',
@@ -113,8 +116,7 @@ class ProductControllerTest extends TestCase
     {
         $response = $this->postJson('/api/cartino/products', []);
 
-        $response->assertStatus(422)
-            ->assertJsonValidationErrors(['name', 'sku']);
+        $response->assertStatus(422)->assertJsonValidationErrors(['name', 'sku']);
     }
 
     /** @test */
@@ -132,7 +134,8 @@ class ProductControllerTest extends TestCase
 
         $response = $this->putJson("/api/cartino/products/{$product->id}", $updateData);
 
-        $response->assertOk()
+        $response
+            ->assertOk()
             ->assertJsonFragment([
                 'name' => 'Updated Name',
                 'price_amount' => 2000,
@@ -168,8 +171,7 @@ class ProductControllerTest extends TestCase
 
         $response = $this->getJson('/api/cartino/products?search=iPhone');
 
-        $response->assertOk()
-            ->assertJsonCount(2, 'data');
+        $response->assertOk()->assertJsonCount(2, 'data');
     }
 
     /** @test */
@@ -181,8 +183,7 @@ class ProductControllerTest extends TestCase
 
         $response = $this->getJson('/api/cartino/products?status=published');
 
-        $response->assertOk()
-            ->assertJsonCount(2, 'data');
+        $response->assertOk()->assertJsonCount(2, 'data');
     }
 
     /** @test */

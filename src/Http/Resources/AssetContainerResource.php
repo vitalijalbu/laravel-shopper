@@ -21,12 +21,11 @@ class AssetContainerResource extends JsonResource
             'allow_moving' => $this->allow_moving,
             'allowed_extensions' => $this->allowed_extensions,
             'max_file_size' => $this->max_file_size,
-            'max_file_size_mb' => $this->max_file_size ? round($this->max_file_size / 1024 / 1024, 2) : null,
+            'max_file_size_mb' => $this->max_file_size ? round(($this->max_file_size / 1024) / 1024, 2) : null,
             'settings' => $this->settings,
             'glide_presets' => $this->glide_presets,
             'assets_count' => $this->whenCounted('assets'),
-            'recent_assets' => $this->whenLoaded('assets', fn () => AssetResource::collection($this->assets)
-            ),
+            'recent_assets' => $this->whenLoaded('assets', fn () => AssetResource::collection($this->assets)),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

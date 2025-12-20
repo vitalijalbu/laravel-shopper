@@ -90,9 +90,7 @@ class Price extends Model
 
     public function getFormattedCompareAtAttribute(): ?string
     {
-        return $this->compare_at_amount
-            ? number_format($this->compare_at_amount / 100, 2)
-            : null;
+        return $this->compare_at_amount ? number_format($this->compare_at_amount / 100, 2) : null;
     }
 
     public function getDiscountPercentageAttribute(): ?float
@@ -108,7 +106,8 @@ class Price extends Model
 
     public function scopeActive($query)
     {
-        return $query->where('is_active', true)
+        return $query
+            ->where('is_active', true)
             ->where(function ($q) {
                 $q->whereNull('starts_at')->orWhere('starts_at', '<=', now());
             })
@@ -145,7 +144,8 @@ class Price extends Model
 
     public function scopeForQuantity($query, int $quantity)
     {
-        return $query->where('min_quantity', '<=', $quantity)
+        return $query
+            ->where('min_quantity', '<=', $quantity)
             ->where(function ($q) use ($quantity) {
                 $q->whereNull('max_quantity')->orWhere('max_quantity', '>=', $quantity);
             });

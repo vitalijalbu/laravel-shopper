@@ -139,12 +139,14 @@ class OrderRepository extends BaseRepository
 
         // Add order items
         foreach ($items as $item) {
-            $order->items()->create([
-                'product_id' => $item['product_id'],
-                'quantity' => $item['quantity'],
-                'unit_price' => $item['unit_price'],
-                'total_price' => $item['quantity'] * $item['unit_price'],
-            ]);
+            $order
+                ->items()
+                ->create([
+                    'product_id' => $item['product_id'],
+                    'quantity' => $item['quantity'],
+                    'unit_price' => $item['unit_price'],
+                    'total_price' => $item['quantity'] * $item['unit_price'],
+                ]);
         }
 
         return $order->load(['customer', 'items.product']);
@@ -172,12 +174,14 @@ class OrderRepository extends BaseRepository
         $order->items()->delete();
 
         foreach ($items as $item) {
-            $order->items()->create([
-                'product_id' => $item['product_id'],
-                'quantity' => $item['quantity'],
-                'unit_price' => $item['unit_price'],
-                'total_price' => $item['quantity'] * $item['unit_price'],
-            ]);
+            $order
+                ->items()
+                ->create([
+                    'product_id' => $item['product_id'],
+                    'quantity' => $item['quantity'],
+                    'unit_price' => $item['unit_price'],
+                    'total_price' => $item['quantity'] * $item['unit_price'],
+                ]);
         }
 
         return $order->load(['customer', 'items.product']);
@@ -369,7 +373,7 @@ class OrderRepository extends BaseRepository
 
             $totalOrders = $orders->count();
             $totalRevenue = $orders->sum('total_amount');
-            $averageOrderValue = $totalOrders > 0 ? $totalRevenue / $totalOrders : 0;
+            $averageOrderValue = $totalOrders > 0 ? ($totalRevenue / $totalOrders) : 0;
 
             $statusCounts = $orders->groupBy('status')->map->count()->toArray();
             $paymentStatusCounts = $orders->groupBy('payment_status')->map->count()->toArray();
@@ -389,7 +393,10 @@ class OrderRepository extends BaseRepository
      */
     public function bulkAction(string $action, array $ids, array $metadata = []): array
     {
-        $validatedIds = $this->model->whereIn('id', $ids)->pluck('id')->toArray();
+        $validatedIds = $this->model
+            ->whereIn('id', $ids)
+            ->pluck('id')
+            ->toArray();
         $processedCount = 0;
         $errors = [];
 

@@ -13,14 +13,14 @@ use Intervention\Image\ImageManager;
 class AssetService
 {
     public function __construct(
-        protected ImageManager $imageManager
+        protected ImageManager $imageManager,
     ) {}
 
     public function upload(
         UploadedFile $file,
         string $container,
         ?string $folder = null,
-        ?int $userId = null
+        ?int $userId = null,
     ): Asset {
         $containerModel = AssetContainer::where('handle', $container)->firstOrFail();
 
@@ -47,11 +47,7 @@ class AssetService
         }
 
         // Store file
-        $stored = $file->storeAs(
-            $folder ?? '',
-            $filename,
-            ['disk' => $containerModel->disk]
-        );
+        $stored = $file->storeAs($folder ?? '', $filename, ['disk' => $containerModel->disk]);
 
         if (! $stored) {
             throw new \RuntimeException('Failed to store file');
@@ -118,9 +114,7 @@ class AssetService
     {
         $path = $folder ? "{$folder}/{$filename}" : $filename;
 
-        return Asset::where('container', $container)
-            ->where('path', $path)
-            ->exists();
+        return Asset::where('container', $container)->where('path', $path)->exists();
     }
 
     protected function getMediaDimensions(UploadedFile $file, string $mimeType): array

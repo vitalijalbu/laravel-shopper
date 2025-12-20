@@ -15,7 +15,7 @@ use Illuminate\Http\Request;
 class DiscountsController extends ApiController
 {
     public function __construct(
-        private readonly DiscountRepository $repository
+        private readonly DiscountRepository $repository,
     ) {}
 
     /**

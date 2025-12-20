@@ -14,15 +14,13 @@ final class ChannelController
 {
     public function index(Request $request, Site $site): Response
     {
-        $query = Channel::query()
-            ->where('site_id', $site->id);
+        $query = Channel::query()->where('site_id', $site->id);
 
         // Apply filters
         if ($request->filled('search')) {
             $search = $request->input('search');
             $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                    ->orWhere('slug', 'like', "%{$search}%");
+                $q->where('name', 'like', "%{$search}%")->orWhere('slug', 'like', "%{$search}%");
             });
         }
 
@@ -34,8 +32,7 @@ final class ChannelController
             $query->where('status', $request->input('status'));
         }
 
-        $channels = $query->orderBy('created_at', 'desc')
-            ->paginate(15);
+        $channels = $query->orderBy('created_at', 'desc')->paginate(15);
 
         return Inertia::render('channels/index', [
             'site' => $site,

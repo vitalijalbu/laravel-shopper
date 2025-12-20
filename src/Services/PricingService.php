@@ -19,7 +19,7 @@ class PricingService
         ?int $marketId = null,
         ?int $customerGroupId = null,
         ?string $currency = null,
-        int $quantity = 1
+        int $quantity = 1,
     ): array {
         $context = [
             'market_id' => $marketId,
@@ -49,9 +49,7 @@ class PricingService
         if ($marketId) {
             $market = Market::find($marketId);
             if ($market && $market->use_catalog_prices && $market->catalog_id) {
-                $catalogPrice = $variant->catalogPrices()
-                    ->where('catalog_id', $market->catalog_id)
-                    ->first();
+                $catalogPrice = $variant->catalogPrices()->where('catalog_id', $market->catalog_id)->first();
 
                 if ($catalogPrice && $catalogPrice->fixed_price) {
                     return [
@@ -81,7 +79,7 @@ class PricingService
         ProductVariant $variant,
         ?int $marketId = null,
         ?int $customerGroupId = null,
-        ?string $currency = null
+        ?string $currency = null,
     ): array {
         $context = array_filter([
             'market_id' => $marketId,
@@ -111,7 +109,7 @@ class PricingService
         ?int $marketId = null,
         ?int $customerGroupId = null,
         ?string $currency = null,
-        int $quantity = 1
+        int $quantity = 1,
     ): array {
         $context = [
             'market_id' => $marketId,
@@ -130,9 +128,7 @@ class PricingService
             ->map->first();
 
         // Load all variants with base prices
-        $variants = ProductVariant::whereIn('id', $variantIds)
-            ->get()
-            ->keyBy('id');
+        $variants = ProductVariant::whereIn('id', $variantIds)->get()->keyBy('id');
 
         $results = [];
         foreach ($variantIds as $variantId) {

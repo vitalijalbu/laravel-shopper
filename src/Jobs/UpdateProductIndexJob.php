@@ -22,15 +22,13 @@ class UpdateProductIndexJob implements ShouldQueue
 
     public function __construct(
         private Product $product,
-        private string $action = 'update' // update, delete
+        private string $action = 'update', // update, delete
     ) {
         $this->onQueue('indexing');
     }
 
-    public function handle(
-        SearchService $search,
-        CacheService $cache
-    ): void {
+    public function handle(SearchService $search, CacheService $cache): void
+    {
         Log::info('Updating product search index', [
             'product_id' => $this->product->id,
             'action' => $this->action,
@@ -53,7 +51,6 @@ class UpdateProductIndexJob implements ShouldQueue
                 'product_id' => $this->product->id,
                 'action' => $this->action,
             ]);
-
         } catch (\Exception $e) {
             Log::error('Failed to update product search index', [
                 'product_id' => $this->product->id,

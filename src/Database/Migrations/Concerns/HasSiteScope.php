@@ -10,11 +10,8 @@ trait HasSiteScope
      * Add multi-tenancy site_id with standardized definition
      * Used by 37% of tables for multi-site support
      */
-    public function addSiteScope(
-        Blueprint $table,
-        bool $nullable = true,
-        bool $withIndex = true
-    ): void {
+    public function addSiteScope(Blueprint $table, bool $nullable = true, bool $withIndex = true): void
+    {
         $column = $table->foreignId('site_id');
 
         if ($nullable) {
@@ -35,7 +32,7 @@ trait HasSiteScope
     public function addSiteScopeWithStatus(
         Blueprint $table,
         string $statusColumn = 'is_active',
-        bool $nullable = true
+        bool $nullable = true,
     ): void {
         $column = $table->foreignId('site_id');
 

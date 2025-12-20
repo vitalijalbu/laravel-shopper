@@ -23,7 +23,6 @@ class CartResource extends JsonResource
             'recovered_at' => $this->recovered_at?->toISOString(),
             'created_at' => $this->created_at->toISOString(),
             'updated_at' => $this->updated_at->toISOString(),
-
             'customer' => $this->whenLoaded('customer', fn () => new CustomerResource($this->customer)),
             'items' => CartLineResource::collection($this->whenLoaded('items')),
         ];

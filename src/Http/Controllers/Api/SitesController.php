@@ -21,7 +21,7 @@ use Illuminate\Http\Request;
 class SitesController extends ApiController
 {
     public function __construct(
-        private readonly SiteRepository $repository
+        private readonly SiteRepository $repository,
     ) {}
 
     /**
@@ -60,16 +60,11 @@ class SitesController extends ApiController
                 ->map(fn (array $data) => BrandDTO::fromArray($data))
                 ->toArray();
 
-            $brandsData = collect($brandDTOs)
-                ->map(fn (BrandDTO $dto) => $dto->toCreateArray())
-                ->toArray();
+            $brandsData = collect($brandDTOs)->map(fn (BrandDTO $dto) => $dto->toCreateArray())->toArray();
 
             $brands = $this->repository->createMany($brandsData);
 
-            return $this->created(
-                BrandResource::collection($brands),
-                count($brands).' brand creati con successo'
-            );
+            return $this->created(BrandResource::collection($brands), count($brands).' brand creati con successo');
         } catch (\Exception $e) {
             return $this->errorResponse('Errore nella creazione multipla dei brand: '.$e->getMessage());
         }
@@ -105,20 +100,11 @@ class SitesController extends ApiController
     public function updateMany(UpdateManyBrandsRequest $request): JsonResponse
     {
         try {
-            $bulkOperation = BulkOperationDTO::forUpdate(
-                $request->getIds(),
-                $request->getUpdateData()
-            );
+            $bulkOperation = BulkOperationDTO::forUpdate($request->getIds(), $request->getUpdateData());
 
-            $count = $this->repository->updateMany(
-                $bulkOperation->getIds(),
-                $bulkOperation->getData()
-            );
+            $count = $this->repository->updateMany($bulkOperation->getIds(), $bulkOperation->getData());
 
-            return $this->successResponse(
-                ['updated_count' => $count],
-                $count.' brand aggiornati con successo'
-            );
+            return $this->successResponse(['updated_count' => $count], $count.' brand aggiornati con successo');
         } catch (\Exception $e) {
             return $this->errorResponse('Errore nell\'aggiornamento multiplo dei brand: '.$e->getMessage());
         }
@@ -148,10 +134,7 @@ class SitesController extends ApiController
     public function destroyMany(DestroyManyBrandsRequest $request): JsonResponse
     {
         try {
-            $bulkOperation = BulkOperationDTO::forDelete(
-                $request->getIds(),
-                $request->isForceDelete()
-            );
+            $bulkOperation = BulkOperationDTO::forDelete($request->getIds(), $request->isForceDelete());
 
             $errors = [];
             $validIds = [];
@@ -174,8 +157,9 @@ class SitesController extends ApiController
 
             return $this->successResponse(
                 $response,
-                $deleted.' brand eliminati con successo'.
-                (! empty($errors) ? ' ('.count($errors).' saltati)' : '')
+                $deleted.
+                ' brand eliminati con successo'.
+                (! empty($errors) ? (' ('.count($errors).' saltati)') : ''),
             );
         } catch (\Exception $e) {
             return $this->errorResponse('Errore nell\'eliminazione multipla dei brand: '.$e->getMessage());
@@ -212,20 +196,11 @@ class SitesController extends ApiController
     public function bulkActivate(BulkActionRequest $request): JsonResponse
     {
         try {
-            $bulkOperation = BulkOperationDTO::forUpdate(
-                $request->getIds(),
-                ['status' => 'active']
-            );
+            $bulkOperation = BulkOperationDTO::forUpdate($request->getIds(), ['status' => 'active']);
 
-            $count = $this->repository->updateMany(
-                $bulkOperation->getIds(),
-                $bulkOperation->getData()
-            );
+            $count = $this->repository->updateMany($bulkOperation->getIds(), $bulkOperation->getData());
 
-            return $this->successResponse(
-                ['activated_count' => $count],
-                $count.' brand attivati con successo'
-            );
+            return $this->successResponse(['activated_count' => $count], $count.' brand attivati con successo');
         } catch (\Exception $e) {
             return $this->errorResponse('Errore nell\'attivazione multipla dei brand: '.$e->getMessage());
         }
@@ -237,20 +212,11 @@ class SitesController extends ApiController
     public function bulkDeactivate(BulkActionRequest $request): JsonResponse
     {
         try {
-            $bulkOperation = BulkOperationDTO::forUpdate(
-                $request->getIds(),
-                ['status' => 'inactive']
-            );
+            $bulkOperation = BulkOperationDTO::forUpdate($request->getIds(), ['status' => 'inactive']);
 
-            $count = $this->repository->updateMany(
-                $bulkOperation->getIds(),
-                $bulkOperation->getData()
-            );
+            $count = $this->repository->updateMany($bulkOperation->getIds(), $bulkOperation->getData());
 
-            return $this->successResponse(
-                ['deactivated_count' => $count],
-                $count.' brand disattivati con successo'
-            );
+            return $this->successResponse(['deactivated_count' => $count], $count.' brand disattivati con successo');
         } catch (\Exception $e) {
             return $this->errorResponse('Errore nella disattivazione multipla dei brand: '.$e->getMessage());
         }
@@ -284,8 +250,9 @@ class SitesController extends ApiController
 
             return $this->successResponse(
                 $response,
-                $deleted.' brand eliminati con successo'.
-                (! empty($errors) ? ' ('.count($errors).' saltati)' : '')
+                $deleted.
+                ' brand eliminati con successo'.
+                (! empty($errors) ? (' ('.count($errors).' saltati)') : ''),
             );
         } catch (\Exception $e) {
             return $this->errorResponse('Errore nell\'eliminazione multipla dei brand: '.$e->getMessage());
@@ -313,7 +280,7 @@ class SitesController extends ApiController
 
             return $this->successResponse(
                 ['export_data' => $exportData, 'total_exported' => $exportData->count()],
-                $exportData->count().' brand esportati con successo'
+                $exportData->count().' brand esportati con successo',
             );
         } catch (\Exception $e) {
             return $this->errorResponse('Errore nell\'esportazione dei brand: '.$e->getMessage());

@@ -121,8 +121,7 @@ class PriceRule extends Model
     public function scopeWithinUsageLimit(Builder $query): Builder
     {
         return $query->where(function ($q) {
-            $q->whereNull('usage_limit')
-                ->orWhereRaw('usage_count < usage_limit');
+            $q->whereNull('usage_limit')->orWhereRaw('usage_count < usage_limit');
         });
     }
 
@@ -192,9 +191,7 @@ class PriceRule extends Model
 
         // Check per-customer limit
         if ($customerId && $this->usage_limit_per_customer) {
-            $usageCount = $this->usages()
-                ->where('customer_id', $customerId)
-                ->count();
+            $usageCount = $this->usages()->where('customer_id', $customerId)->count();
 
             if ($usageCount >= $this->usage_limit_per_customer) {
                 return false;
@@ -281,7 +278,7 @@ class PriceRule extends Model
     public function applyToPrice(float $price): float
     {
         return match ($this->discount_type) {
-            'percent' => $price * (1 - $this->discount_value / 100),
+            'percent' => $price * (1 - ($this->discount_value / 100)),
             'fixed' => max(0, $price - $this->discount_value),
             'override' => $this->discount_value,
             default => $price,

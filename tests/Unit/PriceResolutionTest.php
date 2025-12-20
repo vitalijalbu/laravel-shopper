@@ -118,7 +118,7 @@ class PriceResolutionTest extends TestCase
 
         $context = new PricingContext(
             currency: 'EUR',
-            quantity: 1
+            quantity: 1,
         );
 
         $price = $this->service->resolve($this->variant, $context);
@@ -151,7 +151,7 @@ class PriceResolutionTest extends TestCase
         $context = new PricingContext(
             market: $this->marketEU,
             currency: 'EUR',
-            quantity: 1
+            quantity: 1,
         );
 
         $price = $this->service->resolve($this->variant, $context);
@@ -186,7 +186,7 @@ class PriceResolutionTest extends TestCase
             market: $this->marketEU,
             site: $this->siteIT,
             currency: 'EUR',
-            quantity: 1
+            quantity: 1,
         );
 
         $price = $this->service->resolve($this->variant, $context);
@@ -238,7 +238,7 @@ class PriceResolutionTest extends TestCase
             site: $this->siteIT,
             channel: $this->channelWeb,
             currency: 'EUR',
-            quantity: 1
+            quantity: 1,
         );
 
         $price = $this->service->resolve($this->variant, $context);
@@ -270,12 +270,18 @@ class PriceResolutionTest extends TestCase
         ]);
 
         // Test qty 5 - should get base price
-        $context1 = new PricingContext(currency: 'EUR', quantity: 5);
+        $context1 = new PricingContext(
+            currency: 'EUR',
+            quantity: 5,
+        );
         $price1 = $this->service->resolve($this->variant, $context1);
         $this->assertEquals(10000, $price1->amount);
 
         // Test qty 10 - should get tier price
-        $context2 = new PricingContext(currency: 'EUR', quantity: 10);
+        $context2 = new PricingContext(
+            currency: 'EUR',
+            quantity: 10,
+        );
         $price2 = $this->service->resolve($this->variant, $context2);
         $this->assertEquals(9000, $price2->amount);
     }
@@ -296,12 +302,18 @@ class PriceResolutionTest extends TestCase
             'is_active' => true,
         ]);
 
-        $contextEUR = new PricingContext(currency: 'EUR', quantity: 1);
+        $contextEUR = new PricingContext(
+            currency: 'EUR',
+            quantity: 1,
+        );
         $priceEUR = $this->service->resolve($this->variant, $contextEUR);
         $this->assertEquals(10000, $priceEUR->amount);
         $this->assertEquals('EUR', $priceEUR->currency);
 
-        $contextUSD = new PricingContext(currency: 'USD', quantity: 1);
+        $contextUSD = new PricingContext(
+            currency: 'USD',
+            quantity: 1,
+        );
         $priceUSD = $this->service->resolve($this->variant, $contextUSD);
         $this->assertEquals(11000, $priceUSD->amount);
         $this->assertEquals('USD', $priceUSD->currency);
@@ -323,7 +335,10 @@ class PriceResolutionTest extends TestCase
             'is_active' => true,
         ]);
 
-        $context = new PricingContext(currency: 'EUR', quantity: 1);
+        $context = new PricingContext(
+            currency: 'EUR',
+            quantity: 1,
+        );
         $price = $this->service->resolve($this->variant, $context);
 
         $this->assertEquals(10000, $price->amount);
@@ -348,7 +363,10 @@ class PriceResolutionTest extends TestCase
             'is_active' => true,
         ]);
 
-        $context = new PricingContext(currency: 'EUR', quantity: 1);
+        $context = new PricingContext(
+            currency: 'EUR',
+            quantity: 1,
+        );
         $price = $this->service->resolve($this->variant, $context);
 
         $this->assertEquals(10000, $price->amount);
@@ -376,7 +394,10 @@ class PriceResolutionTest extends TestCase
             $variants->push($variant);
         }
 
-        $context = new PricingContext(currency: 'EUR', quantity: 1);
+        $context = new PricingContext(
+            currency: 'EUR',
+            quantity: 1,
+        );
         $prices = $this->service->resolveBulk($variants, $context);
 
         $this->assertCount(5, $prices);
@@ -388,7 +409,7 @@ class PriceResolutionTest extends TestCase
     {
         $context = new PricingContext(
             market: $this->marketEU,
-            quantity: 1
+            quantity: 1,
         );
 
         $this->assertEquals('EUR', $context->currency);
@@ -401,7 +422,7 @@ class PriceResolutionTest extends TestCase
             market: $this->marketEU,
             site: $this->siteIT,
             currency: 'EUR',
-            quantity: 5
+            quantity: 5,
         );
 
         $cacheKey = $context->getCacheKey('test');
@@ -415,7 +436,10 @@ class PriceResolutionTest extends TestCase
 
     public function test_it_returns_null_when_no_price_found()
     {
-        $context = new PricingContext(currency: 'EUR', quantity: 1);
+        $context = new PricingContext(
+            currency: 'EUR',
+            quantity: 1,
+        );
         $price = $this->service->resolve($this->variant, $context);
 
         $this->assertNull($price);

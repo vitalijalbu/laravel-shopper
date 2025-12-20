@@ -21,11 +21,42 @@ class AssetFactory extends Factory
         $folder = $this->faker->randomElement(['brands', 'categories', 'products', 'gallery', 'docs', 'videos']);
 
         $mimeChoices = [
-            ['ext' => 'jpg', 'mime' => 'image/jpeg', 'width' => $this->faker->numberBetween(800, 1920), 'height' => $this->faker->numberBetween(800, 1920), 'size' => $this->faker->numberBetween(80_000, 2_000_000)],
-            ['ext' => 'png', 'mime' => 'image/png', 'width' => $this->faker->numberBetween(800, 1920), 'height' => $this->faker->numberBetween(800, 1920), 'size' => $this->faker->numberBetween(120_000, 3_000_000)],
-            ['ext' => 'webp', 'mime' => 'image/webp', 'width' => $this->faker->numberBetween(800, 1920), 'height' => $this->faker->numberBetween(800, 1920), 'size' => $this->faker->numberBetween(80_000, 1_500_000)],
-            ['ext' => 'pdf', 'mime' => 'application/pdf', 'width' => null, 'height' => null, 'size' => $this->faker->numberBetween(200_000, 5_000_000)],
-            ['ext' => 'mp4', 'mime' => 'video/mp4', 'width' => 1920, 'height' => 1080, 'size' => $this->faker->numberBetween(5_000_000, 50_000_000), 'duration' => $this->faker->numberBetween(15, 180)],
+            [
+                'ext' => 'jpg',
+                'mime' => 'image/jpeg',
+                'width' => $this->faker->numberBetween(800, 1920),
+                'height' => $this->faker->numberBetween(800, 1920),
+                'size' => $this->faker->numberBetween(80_000, 2_000_000),
+            ],
+            [
+                'ext' => 'png',
+                'mime' => 'image/png',
+                'width' => $this->faker->numberBetween(800, 1920),
+                'height' => $this->faker->numberBetween(800, 1920),
+                'size' => $this->faker->numberBetween(120_000, 3_000_000),
+            ],
+            [
+                'ext' => 'webp',
+                'mime' => 'image/webp',
+                'width' => $this->faker->numberBetween(800, 1920),
+                'height' => $this->faker->numberBetween(800, 1920),
+                'size' => $this->faker->numberBetween(80_000, 1_500_000),
+            ],
+            [
+                'ext' => 'pdf',
+                'mime' => 'application/pdf',
+                'width' => null,
+                'height' => null,
+                'size' => $this->faker->numberBetween(200_000, 5_000_000),
+            ],
+            [
+                'ext' => 'mp4',
+                'mime' => 'video/mp4',
+                'width' => 1920,
+                'height' => 1080,
+                'size' => $this->faker->numberBetween(5_000_000, 50_000_000),
+                'duration' => $this->faker->numberBetween(15, 180),
+            ],
         ];
 
         $file = $this->faker->randomElement($mimeChoices);

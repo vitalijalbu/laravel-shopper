@@ -116,7 +116,7 @@ class PurchaseOrderItem extends Model
      */
     public function getRemainingQuantity(): int
     {
-        return max(0, $this->quantity_ordered - $this->quantity_received - $this->quantity_cancelled);
+        return max(0, ($this->quantity_ordered - $this->quantity_received) - $this->quantity_cancelled);
     }
 
     /**
@@ -176,7 +176,7 @@ class PurchaseOrderItem extends Model
      */
     public function cancelQuantity(int $quantity): void
     {
-        $availableQuantity = $this->quantity_ordered - $this->quantity_received - $this->quantity_cancelled;
+        $availableQuantity = ($this->quantity_ordered - $this->quantity_received) - $this->quantity_cancelled;
         $actualQuantity = min($quantity, $availableQuantity);
 
         if ($actualQuantity <= 0) {
@@ -217,7 +217,10 @@ class PurchaseOrderItem extends Model
 
         if ($receivedItems === $totalItems) {
             $purchaseOrder->markAsReceived();
-        } elseif (($receivedItems + $partialItems + $cancelledItems) === $totalItems && ($receivedItems + $partialItems) > 0) {
+        } elseif (
+            ($receivedItems + $partialItems + $cancelledItems) === $totalItems &&
+                ($receivedItems + $partialItems) > 0
+        ) {
             $purchaseOrder->update(['status' => 'partial']);
         }
     }

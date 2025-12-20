@@ -252,7 +252,9 @@ trait HasCustomFields
         // Options validation
         if (isset($validation['options'])) {
             if ($field['type'] === 'select' && ! in_array($value, $validation['options'])) {
-                throw new \InvalidArgumentException("Custom field '{$name}' must be one of: ".implode(', ', $validation['options']));
+                throw new \InvalidArgumentException(
+                    "Custom field '{$name}' must be one of: ".implode(', ', $validation['options']),
+                );
             }
 
             if ($field['type'] === 'multi_select' && is_array($value)) {

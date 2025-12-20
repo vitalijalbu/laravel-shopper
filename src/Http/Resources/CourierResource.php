@@ -33,7 +33,6 @@ class CourierResource extends BaseResource
             'orders_count' => $this->whenCounted('orders') ?? $this->orders()->count(),
             'created_at' => $this->created_at?->toISOString(),
             'updated_at' => $this->updated_at?->toISOString(),
-
             // Display values
             'display_status' => $this->status === 'active' ? 'Attivo' : 'Inattivo',
             'is_active' => $this->status === 'active',

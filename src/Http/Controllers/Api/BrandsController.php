@@ -15,7 +15,7 @@ use Illuminate\Http\Request;
 class BrandsController extends ApiController
 {
     public function __construct(
-        private readonly BrandRepository $repository
+        private readonly BrandRepository $repository,
     ) {}
 
     /**

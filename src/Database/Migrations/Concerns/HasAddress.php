@@ -14,7 +14,7 @@ trait HasAddress
         bool $required = false,
         bool $withGeocoding = false,
         bool $withValidation = false,
-        string $prefix = ''
+        string $prefix = '',
     ): void {
         $nullable = ! $required;
 

@@ -37,7 +37,6 @@ class ImportExportController extends Controller
                     // Create entry in collection
                     // In real implementation, you would create the actual entry
                     $imported++;
-
                 } catch (\Exception $e) {
                     $errors[] = "Row {$offset}: ".$e->getMessage();
                 }
@@ -49,7 +48,6 @@ class ImportExportController extends Controller
                 'imported' => $imported,
                 'errors' => $errors,
             ]);
-
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -122,7 +120,6 @@ class ImportExportController extends Controller
                 'data' => $entries,
                 'count' => count($entries),
             ]);
-
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,

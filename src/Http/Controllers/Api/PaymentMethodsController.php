@@ -15,7 +15,7 @@ use Illuminate\Http\Request;
 class PaymentMethodsController extends ApiController
 {
     public function __construct(
-        private readonly PaymentMethodRepository $repository
+        private readonly PaymentMethodRepository $repository,
     ) {}
 
     /**

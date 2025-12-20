@@ -9,7 +9,7 @@ use Cartino\Repositories\CustomerAddressRepository;
 class CustomerAddressService
 {
     public function __construct(
-        private CustomerAddressRepository $repository
+        private CustomerAddressRepository $repository,
     ) {}
 
     /**

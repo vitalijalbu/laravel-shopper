@@ -10,11 +10,8 @@ trait HasMoneyFields
      * Add standard pricing fields (price, compare_at_price, cost)
      * Shopify-compatible pattern with high precision
      */
-    public function addPricingFields(
-        Blueprint $table,
-        int $precision = 15,
-        int $scale = 4  // Alta precisione per conversioni currency
-    ): void {
+    public function addPricingFields(Blueprint $table, int $precision = 15, int $scale = 4): void // Alta precisione per conversioni currency
+    {
         $table->decimal('price', $precision, $scale);
         $table->decimal('compare_at_price', $precision, $scale)->nullable();
         $table->decimal('cost', $precision, $scale)->nullable();
@@ -31,7 +28,7 @@ trait HasMoneyFields
         int $precision = 15,
         int $scale = 4,
         bool $nullable = false,
-        $default = null
+        $default = null,
     ): void {
         $column = $table->decimal($columnName, $precision, $scale);
 

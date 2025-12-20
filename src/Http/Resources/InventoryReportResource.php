@@ -14,10 +14,10 @@ class InventoryReportResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $data = is_array($this->resource) ? $this->resource : (array) $this->resource;
+        $data = is_array($this->resource) ? $this->resource : ((array) $this->resource);
 
         $lowStockProducts = collect($data['low_stock_products'] ?? [])->map(function ($product) {
-            $productArray = is_array($product) ? $product : (array) $product;
+            $productArray = is_array($product) ? $product : ((array) $product);
 
             return [
                 'id' => $productArray['id'] ?? null,
@@ -29,7 +29,7 @@ class InventoryReportResource extends JsonResource
         });
 
         $outOfStockProducts = collect($data['out_of_stock_products'] ?? [])->map(function ($product) {
-            $productArray = is_array($product) ? $product : (array) $product;
+            $productArray = is_array($product) ? $product : ((array) $product);
 
             return [
                 'id' => $productArray['id'] ?? null,

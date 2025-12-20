@@ -37,10 +37,7 @@ class Navigation
      */
     public static function items(): Category
     {
-        return collect(static::$items)
-            ->filter(fn ($item) => $item->canView())
-            ->sortBy('order')
-            ->values();
+        return collect(static::$items)->filter(fn ($item) => $item->canView())->sortBy('order')->values();
     }
 
     /**
@@ -50,10 +47,7 @@ class Navigation
     {
         return collect(static::$sections)
             ->map(function ($section) {
-                $section->items = $section->items()
-                    ->filter(fn ($item) => $item->canView())
-                    ->sortBy('order')
-                    ->values();
+                $section->items = $section->items()->filter(fn ($item) => $item->canView())->sortBy('order')->values();
 
                 return $section;
             })
@@ -86,8 +80,7 @@ class Navigation
             ->order(1);
 
         // Orders Section
-        static::section('orders', 'Orders')
-            ->order(10);
+        static::section('orders', 'Orders')->order(10);
 
         static::item('orders.index')
             ->label('Orders')
@@ -110,8 +103,7 @@ class Navigation
             ->order(3);
 
         // Products Section
-        static::section('catalog', 'Products')
-            ->order(20);
+        static::section('catalog', 'Products')->order(20);
 
         static::item('products.index')
             ->label('Products')
@@ -142,8 +134,7 @@ class Navigation
             ->order(4);
 
         // Customers Section
-        static::section('customers', 'Customers')
-            ->order(30);
+        static::section('customers', 'Customers')->order(30);
 
         static::item('customers.index')
             ->label('Customers')
@@ -159,8 +150,7 @@ class Navigation
             ->order(2);
 
         // Content Section
-        static::section('content', 'Content')
-            ->order(40);
+        static::section('content', 'Content')->order(40);
 
         static::item('pages.index')
             ->label('Pages')
@@ -184,8 +174,7 @@ class Navigation
             ->order(3);
 
         // Analytics Section
-        static::section('analytics', 'Analytics')
-            ->order(50);
+        static::section('analytics', 'Analytics')->order(50);
 
         static::item('analytics.overview')
             ->label('Overview')
@@ -201,8 +190,7 @@ class Navigation
             ->order(2);
 
         // Marketing Section
-        static::section('marketing', 'Marketing')
-            ->order(60);
+        static::section('marketing', 'Marketing')->order(60);
 
         static::item('discounts')
             ->label('Discounts')
@@ -219,8 +207,7 @@ class Navigation
             ->order(2);
 
         // Settings Section
-        static::section('settings', 'Settings')
-            ->order(100);
+        static::section('settings', 'Settings')->order(100);
 
         static::item('settings.general')
             ->label('General')
@@ -254,8 +241,7 @@ class Navigation
             ->order(5);
 
         // Apps Section
-        static::section('apps', 'Apps')
-            ->order(90);
+        static::section('apps', 'Apps')->order(90);
 
         static::item('apps')
             ->label('Apps')

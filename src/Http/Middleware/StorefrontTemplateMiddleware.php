@@ -105,8 +105,14 @@ class StorefrontTemplateMiddleware
         $routeName = $route->getName();
 
         return match ($routeName) {
-            'storefront.products.show' => Product::where('handle', $parameters['handle'] ?? $parameters['product'] ?? null)->first(),
-            'storefront.categories.show' => Category::where('handle', $parameters['handle'] ?? $parameters['category'] ?? null)->first(),
+            'storefront.products.show' => Product::where(
+                'handle',
+                $parameters['handle'] ?? $parameters['product'] ?? null,
+            )->first(),
+            'storefront.categories.show' => Category::where(
+                'handle',
+                $parameters['handle'] ?? $parameters['category'] ?? null,
+            )->first(),
             default => null,
         };
     }

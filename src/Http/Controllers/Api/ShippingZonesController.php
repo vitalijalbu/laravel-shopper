@@ -15,7 +15,7 @@ use Illuminate\Http\Request;
 class ShippingZonesController extends ApiController
 {
     public function __construct(
-        private readonly ShippingZoneRepository $repository
+        private readonly ShippingZoneRepository $repository,
     ) {}
 
     /**
@@ -60,7 +60,10 @@ class ShippingZonesController extends ApiController
         try {
             $updatedShippingZone = $this->repository->updateOne($shippingZone->id, $request->validated());
 
-            return $this->successResponse(new ShippingZoneResource($updatedShippingZone), 'ShippingZone aggiornata con successo');
+            return $this->successResponse(
+                new ShippingZoneResource($updatedShippingZone),
+                'ShippingZone aggiornata con successo',
+            );
         } catch (\Exception $e) {
             return $this->errorResponse('Errore nell\'aggiornamento della shipping zone: '.$e->getMessage());
         }

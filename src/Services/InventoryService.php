@@ -32,7 +32,7 @@ class InventoryService
     {
         if ($product->track_quantity && $product->stock_quantity < $quantity) {
             throw new InsufficientStockException(
-                "Insufficient stock for product {$product->name}. Available: {$product->stock_quantity}, Required: {$quantity}"
+                "Insufficient stock for product {$product->name}. Available: {$product->stock_quantity}, Required: {$quantity}",
             );
         }
 
@@ -192,9 +192,10 @@ class InventoryService
      */
     private function checkLowStockAlert(Product $product): void
     {
-        if ($product->track_quantity &&
-            $product->stock_quantity <= $product->low_stock_threshold &&
-            $product->stock_quantity > 0
+        if (
+            $product->track_quantity &&
+                $product->stock_quantity <= $product->low_stock_threshold &&
+                $product->stock_quantity > 0
         ) {
             Log::warning('Low stock alert', [
                 'product_id' => $product->id,

@@ -233,7 +233,7 @@ class PurchaseOrder extends Model
 
         $this->update([
             'subtotal' => $itemsTotal,
-            'total_amount' => $itemsTotal + $this->tax_amount + $this->shipping_cost - $this->discount_amount,
+            'total_amount' => ($itemsTotal + $this->tax_amount + $this->shipping_cost) - $this->discount_amount,
         ]);
     }
 
@@ -259,9 +259,7 @@ class PurchaseOrder extends Model
     public static function generateReference(): string
     {
         $year = date('Y');
-        $lastOrder = static::where('reference', 'like', "PO-{$year}-%")
-            ->orderBy('reference', 'desc')
-            ->first();
+        $lastOrder = static::where('reference', 'like', "PO-{$year}-%")->orderBy('reference', 'desc')->first();
 
         if ($lastOrder) {
             $lastNumber = (int) substr($lastOrder->reference, -3);

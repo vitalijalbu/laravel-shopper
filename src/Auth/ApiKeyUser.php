@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Cartino\Auth;
 
 use Cartino\Models\ApiKey;
-use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Auth\Access\Authorizable;
 
 /**
@@ -16,9 +16,9 @@ class ApiKeyUser implements Authenticatable, AuthorizableContract
 {
     use Authorizable;
 
-    public function __construct(private ApiKey $apiKey)
-    {
-    }
+    public function __construct(
+        private ApiKey $apiKey,
+    ) {}
 
     public function getAuthIdentifierName(): string
     {
@@ -45,9 +45,7 @@ class ApiKeyUser implements Authenticatable, AuthorizableContract
         return null;
     }
 
-    public function setRememberToken($value): void
-    {
-    }
+    public function setRememberToken($value): void {}
 
     public function getRememberTokenName(): string
     {

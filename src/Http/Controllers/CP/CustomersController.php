@@ -16,7 +16,7 @@ use Inertia\Response;
 class CustomersController extends BaseController
 {
     public function __construct(
-        protected CustomerRepository $customerRepository
+        protected CustomerRepository $customerRepository,
     ) {
         $this->middleware('can:browse_customers')->only(['index', 'show']);
         $this->middleware('can:create_customers')->only(['create', 'store']);
@@ -29,15 +29,11 @@ class CustomersController extends BaseController
      */
     public function index(Request $request): Response
     {
-        $this->addDashboardBreadcrumb()
-            ->addBreadcrumb('Customers');
+        $this->addDashboardBreadcrumb()->addBreadcrumb('Customers');
 
         $filters = $this->getFilters(['search', 'status', 'customer_group_id', 'created_at']);
 
-        $customers = $this->customerRepository->findAll(
-            $filters,
-            request('per_page', 15)
-        );
+        $customers = $this->customerRepository->findAll($filters, request('per_page', 15));
 
         $page = Page::make('Customers')
             ->primaryAction('Add customer', route('cp.customers.create'))
@@ -49,7 +45,6 @@ class CustomersController extends BaseController
 
         return $this->inertiaResponse('customers/index', [
             'page' => $page->compile(),
-
             'customers' => $customers->through(fn ($customer) => new CustomerResource($customer)),
             'filters' => $filters,
         ]);
@@ -73,7 +68,6 @@ class CustomersController extends BaseController
 
         return $this->inertiaResponse('customers/Create', [
             'page' => $page->compile(),
-
         ]);
     }
 
@@ -104,7 +98,9 @@ class CustomersController extends BaseController
     public function show(Customer $customer): Response
     {
         $customer = $this->customerRepository->findWithRelations($customer->id, [
-            'addresses', 'orders', 'customerGroup',
+            'addresses',
+            'orders',
+            'customerGroup',
         ]);
 
         $this->addDashboardBreadcrumb()
@@ -122,7 +118,6 @@ class CustomersController extends BaseController
 
         return $this->inertiaResponse('customers/Show', [
             'page' => $page->compile(),
-
             'customer' => new CustomerResource($customer),
         ]);
     }
@@ -133,7 +128,8 @@ class CustomersController extends BaseController
     public function edit(Customer $customer): Response
     {
         $customer = $this->customerRepository->findWithRelations($customer->id, [
-            'addresses', 'customerGroup',
+            'addresses',
+            'customerGroup',
         ]);
 
         $this->addDashboardBreadcrumb()
@@ -158,7 +154,6 @@ class CustomersController extends BaseController
 
         return $this->inertiaResponse('customers/Edit', [
             'page' => $page->compile(),
-
             'customer' => new CustomerResource($customer),
         ]);
     }

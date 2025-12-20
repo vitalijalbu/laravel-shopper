@@ -12,15 +12,12 @@ class MediaController extends Controller
 {
     public function index(Request $request): Response
     {
-        $query = Media::query()
-            ->with(['model'])
-            ->latest();
+        $query = Media::query()->with(['model'])->latest();
 
         // Search filter
         if ($search = $request->get('search')) {
             $query->where(function ($q) use ($search) {
-                $q->where('name', 'LIKE', "%{$search}%")
-                    ->orWhere('file_name', 'LIKE', "%{$search}%");
+                $q->where('name', 'LIKE', "%{$search}%")->orWhere('file_name', 'LIKE', "%{$search}%");
             });
         }
 
@@ -80,8 +77,7 @@ class MediaController extends Controller
         // In a real implementation, you might want a dedicated MediaLibrary model
         $product = new Product;
 
-        $media = $product->addMediaFromRequest('file')
-            ->toMediaCollection($request->get('collection', 'default'));
+        $media = $product->addMediaFromRequest('file')->toMediaCollection($request->get('collection', 'default'));
 
         // Update alt text if provided
         if ($request->has('alt_text')) {

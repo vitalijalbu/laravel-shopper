@@ -35,8 +35,12 @@ class VolumeDiscountRule implements PricingRuleInterface
         return $quantity >= 10;
     }
 
-    public function calculateAdjustment(float $currentPrice, Product $product, int $quantity, array $context): ?array
-    {
+    public function calculateAdjustment(
+        float $currentPrice,
+        Product $product,
+        int $quantity,
+        array $context,
+    ): ?array {
         foreach ($this->tiers as $tier) {
             if ($quantity >= $tier['min'] && ($tier['max'] === null || $quantity <= $tier['max'])) {
                 return [

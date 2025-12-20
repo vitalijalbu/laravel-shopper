@@ -18,13 +18,12 @@ class DiscountController extends Controller
     use HandlesFlashMessages;
 
     public function __construct(
-        protected DiscountService $discountService
+        protected DiscountService $discountService,
     ) {}
 
     public function index(Request $request): Response
     {
-        $query = Discount::with(['applications'])
-            ->orderBy('created_at', 'desc');
+        $query = Discount::with(['applications'])->orderBy('created_at', 'desc');
 
         // Apply filters
         if ($request->filled('status')) {
@@ -42,19 +41,20 @@ class DiscountController extends Controller
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                    ->orWhere('code', 'like', "%{$search}%");
+                $q->where('name', 'like', "%{$search}%")->orWhere('code', 'like', "%{$search}%");
             });
         }
 
         $discounts = $query->paginate(15)->withQueryString();
 
         // Add statistics to each discount
-        $discounts->getCollection()->transform(function ($discount) {
-            $discount->statistics = $this->discountService->getDiscountStatistics($discount);
+        $discounts
+            ->getCollection()
+            ->transform(function ($discount) {
+                $discount->statistics = $this->discountService->getDiscountStatistics($discount);
 
-            return $discount;
-        });
+                return $discount;
+            });
 
         return Inertia::render('Discounts/index', [
             'discounts' => $discounts,
@@ -76,8 +76,7 @@ class DiscountController extends Controller
 
         $this->flashSuccess(__('discount.messages.created_successfully'));
 
-        return redirect()
-            ->route('cp.discounts.show', $discount);
+        return redirect()->route('cp.discounts.show', $discount);
     }
 
     public function show(Discount $discount): Response
@@ -104,8 +103,7 @@ class DiscountController extends Controller
 
         $this->flashSuccess(__('discount.messages.updated_successfully'));
 
-        return redirect()
-            ->route('cp.discounts.show', $discount);
+        return redirect()->route('cp.discounts.show', $discount);
     }
 
     public function destroy(Discount $discount)
@@ -115,8 +113,7 @@ class DiscountController extends Controller
         if ($deleted) {
             $this->flashSuccess(__('discount.messages.deleted_successfully'));
 
-            return redirect()
-                ->route('cp.discounts.index');
+            return redirect()->route('cp.discounts.index');
         }
 
         $this->flashError(__('discount.messages.delete_failed'));

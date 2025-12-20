@@ -59,8 +59,7 @@ class NavigationSection
      */
     public function items(): Category
     {
-        return collect(\Cartino\Cp\Navigation::$items ?? [])
-            ->filter(fn ($item) => $item->section === $this->name);
+        return collect(\Cartino\Cp\Navigation::$items ?? [])->filter(fn ($item) => $item->section === $this->name);
     }
 
     /**

@@ -17,7 +17,7 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 class SubscriptionsController extends Controller
 {
     public function __construct(
-        protected SubscriptionRepository $repository
+        protected SubscriptionRepository $repository,
     ) {}
 
     /**
@@ -121,11 +121,7 @@ class SubscriptionsController extends Controller
 
         $resumesAt = $request->input('resumes_at') ? new \DateTime($request->input('resumes_at')) : null;
 
-        $subscription = $this->repository->pause(
-            $subscription->id,
-            $request->input('reason'),
-            $resumesAt
-        );
+        $subscription = $this->repository->pause($subscription->id, $request->input('reason'), $resumesAt);
 
         return new SubscriptionResource($subscription);
     }
@@ -155,7 +151,7 @@ class SubscriptionsController extends Controller
             $subscription->id,
             $request->input('reason'),
             $request->input('comment'),
-            $request->boolean('immediately', false)
+            $request->boolean('immediately', false),
         );
 
         return new SubscriptionResource($subscription);

@@ -77,7 +77,8 @@ class Discount extends Model
      */
     public function scopeActive($query)
     {
-        return $query->where('is_enabled', true)
+        return $query
+            ->where('is_enabled', true)
             ->where(function ($q) {
                 $q->whereNull('starts_at')->orWhere('starts_at', '<=', now());
             })

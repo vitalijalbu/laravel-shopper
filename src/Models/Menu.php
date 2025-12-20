@@ -32,15 +32,12 @@ class Menu extends Model
 
     public function items(): HasMany
     {
-        return $this->hasMany(MenuItem::class)
-            ->whereNull('parent_id')
-            ->orderBy('sort_order');
+        return $this->hasMany(MenuItem::class)->whereNull('parent_id')->orderBy('sort_order');
     }
 
     public function allItems(): HasMany
     {
-        return $this->hasMany(MenuItem::class)
-            ->orderBy('sort_order');
+        return $this->hasMany(MenuItem::class)->orderBy('sort_order');
     }
 
     public function getTree(): array

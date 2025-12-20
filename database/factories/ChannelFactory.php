@@ -27,7 +27,10 @@ class ChannelFactory extends Factory
             'url' => $this->faker->url(),
             'is_default' => false,
             'status' => $this->faker->randomElement(['active', 'inactive']),
-            'locales' => $this->faker->randomElements(['en', 'it', 'fr', 'de', 'es'], $this->faker->numberBetween(1, 3)),
+            'locales' => $this->faker->randomElements(
+                ['en', 'it', 'fr', 'de', 'es'],
+                $this->faker->numberBetween(1, 3),
+            ),
             'currencies' => $this->faker->randomElements(['EUR', 'USD', 'GBP'], $this->faker->numberBetween(1, 2)),
             'settings' => [
                 'theme' => $this->faker->word(),

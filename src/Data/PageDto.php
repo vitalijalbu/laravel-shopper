@@ -21,7 +21,7 @@ class PageDto extends BaseDto
         public ?string $seo_description = null,
         public ?DateTime $published_at = null,
         public ?string $created_at = null,
-        public ?string $updated_at = null
+        public ?string $updated_at = null,
     ) {}
 
     /**
@@ -31,13 +31,13 @@ class PageDto extends BaseDto
     {
         return new static(
             id: $data['id'] ?? null,
-            site_id: isset($data['site_id']) ? (int) $data['site_id'] : null,
+            site_id: isset($data['site_id']) ? ((int) $data['site_id']) : null,
             title: $data['title'] ?? '',
             handle: $data['handle'] ?? '',
             content: $data['content'] ?? '',
             status: $data['status'] ?? 'draft',
-            template_id: isset($data['template_id']) ? (int) $data['template_id'] : null,
-            author_id: isset($data['author_id']) ? (int) $data['author_id'] : null,
+            template_id: isset($data['template_id']) ? ((int) $data['template_id']) : null,
+            author_id: isset($data['author_id']) ? ((int) $data['author_id']) : null,
             show_title: filter_var($data['show_title'] ?? true, FILTER_VALIDATE_BOOLEAN),
             seo_title: $data['seo_title'] ?? null,
             seo_description: $data['seo_description'] ?? null,
@@ -52,22 +52,25 @@ class PageDto extends BaseDto
      */
     public function toArray(): array
     {
-        return array_filter([
-            'id' => $this->id,
-            'site_id' => $this->site_id,
-            'title' => $this->title,
-            'handle' => $this->handle ?: Str::slug($this->title),
-            'content' => $this->content,
-            'status' => $this->status,
-            'template_id' => $this->template_id,
-            'author_id' => $this->author_id,
-            'show_title' => $this->show_title,
-            'seo_title' => $this->seo_title,
-            'seo_description' => $this->seo_description,
-            'published_at' => $this->published_at?->format('Y-m-d H:i:s'),
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-        ], fn ($value) => $value !== null);
+        return array_filter(
+            [
+                'id' => $this->id,
+                'site_id' => $this->site_id,
+                'title' => $this->title,
+                'handle' => $this->handle ?: Str::slug($this->title),
+                'content' => $this->content,
+                'status' => $this->status,
+                'template_id' => $this->template_id,
+                'author_id' => $this->author_id,
+                'show_title' => $this->show_title,
+                'seo_title' => $this->seo_title,
+                'seo_description' => $this->seo_description,
+                'published_at' => $this->published_at?->format('Y-m-d H:i:s'),
+                'created_at' => $this->created_at,
+                'updated_at' => $this->updated_at,
+            ],
+            fn ($value) => $value !== null,
+        );
     }
 
     /**
@@ -117,8 +120,7 @@ class PageDto extends BaseDto
      */
     public function isPublished(): bool
     {
-        return $this->status === 'published' &&
-               ($this->published_at === null || $this->published_at <= new DateTime);
+        return $this->status === 'published' && ($this->published_at === null || $this->published_at <= new DateTime);
     }
 
     /**
@@ -142,9 +144,7 @@ class PageDto extends BaseDto
      */
     public function isScheduled(): bool
     {
-        return $this->status === 'published' &&
-               $this->published_at &&
-               $this->published_at > new DateTime;
+        return $this->status === 'published' && $this->published_at && $this->published_at > new DateTime;
     }
 
     /**

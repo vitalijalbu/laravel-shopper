@@ -27,9 +27,11 @@ class PaymentGatewayRepository extends BaseRepository
         if (! empty($filters['search'])) {
             $search = $filters['search'];
             $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                    ->orWhere('provider', 'like', "%{$search}%")
-                    ->orWhere('description', 'like', "%{$search}%");
+                $q->where('name', 'like', "%{$search}%")->orWhere('provider', 'like', "%{$search}%")->orWhere(
+                    'description',
+                    'like',
+                    "%{$search}%",
+                );
             });
         }
 
@@ -65,7 +67,10 @@ class PaymentGatewayRepository extends BaseRepository
         $cacheKey = $this->getCacheKey('enabled', '');
 
         return \Illuminate\Support\Facades\Cache::remember($cacheKey, $this->cacheTtl, function () {
-            return $this->model->enabled()->orderBy('sort_order')->get();
+            return $this->model
+                ->enabled()
+                ->orderBy('sort_order')
+                ->get();
         });
     }
 
@@ -137,8 +142,7 @@ class PaymentGatewayRepository extends BaseRepository
     public function updateSortOrder(array $sortData): void
     {
         foreach ($sortData as $item) {
-            $this->model->where('id', $item['id'])
-                ->update(['sort_order' => $item['sort_order']]);
+            $this->model->where('id', $item['id'])->update(['sort_order' => $item['sort_order']]);
         }
 
         $this->clearCache();
@@ -176,6 +180,6 @@ class PaymentGatewayRepository extends BaseRepository
      */
     protected function getCacheKey(string $method, mixed $identifier): string
     {
-        return $this->cachePrefix.'_'.$method.($identifier ? '_'.$identifier : '');
+        return $this->cachePrefix.'_'.$method.($identifier ? ('_'.$identifier) : '');
     }
 }

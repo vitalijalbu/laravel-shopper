@@ -26,7 +26,6 @@ class ProductReviewResource extends JsonResource
             'published_at' => $this->published_at?->toISOString(),
             'created_at' => $this->created_at->toISOString(),
             'updated_at' => $this->updated_at->toISOString(),
-
             'product' => $this->whenLoaded('product', fn () => new ProductResource($this->product)),
             'customer' => $this->whenLoaded('customer', fn () => new CustomerResource($this->customer)),
             'media' => ReviewMediaResource::collection($this->whenLoaded('media')),

@@ -64,14 +64,9 @@ trait HasCrudActions
             $item = $this->repository()->createOne($request->validated());
             $resourceClass = $this->resourceClass();
 
-            return $this->created(
-                new $resourceClass($item),
-                $this->entityName().' creato con successo'
-            );
+            return $this->created(new $resourceClass($item), $this->entityName().' creato con successo');
         } catch (\Exception $e) {
-            return $this->errorResponse(
-                'Errore nella creazione del '.$this->entityName().': '.$e->getMessage()
-            );
+            return $this->errorResponse('Errore nella creazione del '.$this->entityName().': '.$e->getMessage());
         }
     }
 
@@ -86,11 +81,11 @@ trait HasCrudActions
 
             return $this->successResponse(
                 new $resourceClass($updated),
-                $this->entityName().' aggiornato con successo'
+                $this->entityName().' aggiornato con successo',
             );
         } catch (\Exception $e) {
             return $this->errorResponse(
-                "Errore nell'aggiornamento del ".$this->entityName().': '.$e->getMessage()
+                "Errore nell'aggiornamento del ".$this->entityName().': '.$e->getMessage(),
             );
         }
     }
@@ -104,19 +99,16 @@ trait HasCrudActions
             if (! $this->repository()->canDelete($model->id)) {
                 return $this->errorResponse(
                     'Impossibile eliminare il '.$this->entityName().': ha relazioni attive',
-                    422
+                    422,
                 );
             }
 
             $this->repository()->deleteOne($model->id);
 
-            return $this->successResponse(
-                null,
-                $this->entityName().' eliminato con successo'
-            );
+            return $this->successResponse(null, $this->entityName().' eliminato con successo');
         } catch (\Exception $e) {
             return $this->errorResponse(
-                "Errore nell'eliminazione del ".$this->entityName().': '.$e->getMessage()
+                "Errore nell'eliminazione del ".$this->entityName().': '.$e->getMessage(),
             );
         }
     }
@@ -132,12 +124,10 @@ trait HasCrudActions
 
             return $this->successResponse(
                 new $resourceClass($updated),
-                'Stato del '.$this->entityName().' aggiornato'
+                'Stato del '.$this->entityName().' aggiornato',
             );
         } catch (\Exception $e) {
-            return $this->errorResponse(
-                'Errore nel cambio stato: '.$e->getMessage()
-            );
+            return $this->errorResponse('Errore nel cambio stato: '.$e->getMessage());
         }
     }
 }

@@ -86,7 +86,10 @@ class ChannelRepository extends BaseRepository
         $cacheKey = $this->getCacheKey('active', 'all');
 
         return \Illuminate\Support\Facades\Cache::remember($cacheKey, $this->cacheTtl, function () {
-            return $this->model->where('is_active', true)->orderBy('name')->get();
+            return $this->model
+                ->where('is_active', true)
+                ->orderBy('name')
+                ->get();
         });
     }
 

@@ -145,9 +145,7 @@ class MenuService
 
     private function getNextItemSortOrder(int $menuId, ?int $parentId): int
     {
-        return MenuItem::where('menu_id', $menuId)
-            ->where('parent_id', $parentId)
-            ->max('sort_order') + 1;
+        return MenuItem::where('menu_id', $menuId)->where('parent_id', $parentId)->max('sort_order') + 1;
     }
 
     private function calculateDepth(?int $parentId): int
@@ -158,7 +156,7 @@ class MenuService
 
         $parent = MenuItem::find($parentId);
 
-        return $parent ? $parent->depth + 1 : 0;
+        return $parent ? ($parent->depth + 1) : 0;
     }
 
     public function duplicateMenu(Menu $menu): MenuData

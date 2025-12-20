@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 class SearchController extends ApiController
 {
     public function __construct(
-        private readonly SearchRepository $repository
+        private readonly SearchRepository $repository,
     ) {}
 
     /**

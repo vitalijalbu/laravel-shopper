@@ -161,10 +161,10 @@ class ApiKey extends Model
      */
     public function scopeActive($query)
     {
-        return $query->where('is_active', true)
+        return $query
+            ->where('is_active', true)
             ->where(function ($q) {
-                $q->whereNull('expires_at')
-                    ->orWhere('expires_at', '>', now());
+                $q->whereNull('expires_at')->orWhere('expires_at', '>', now());
             });
     }
 

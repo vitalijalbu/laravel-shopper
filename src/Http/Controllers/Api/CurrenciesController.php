@@ -15,7 +15,7 @@ use Illuminate\Http\Request;
 class CurrenciesController extends ApiController
 {
     public function __construct(
-        private readonly CurrencyRepository $repository
+        private readonly CurrencyRepository $repository,
     ) {}
 
     /**
@@ -73,7 +73,10 @@ class CurrenciesController extends ApiController
     {
         try {
             if (! $this->repository->canDelete($currency->id)) {
-                return $this->errorResponse('Impossibile eliminare la currency: è la currency di default o ha dati associati', 422);
+                return $this->errorResponse(
+                    'Impossibile eliminare la currency: è la currency di default o ha dati associati',
+                    422,
+                );
             }
 
             $this->repository->deleteOne($currency->id);

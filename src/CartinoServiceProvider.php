@@ -58,7 +58,10 @@ class CartinoServiceProvider extends ServiceProvider
 
         // Register repositories
         $this->app->bind(ProductRepositoryInterface::class, ProductRepository::class);
-        $this->app->bind(\Cartino\Contracts\SupplierRepositoryInterface::class, \Cartino\Repositories\SupplierRepository::class);
+        $this->app->bind(
+            \Cartino\Contracts\SupplierRepositoryInterface::class,
+            \Cartino\Repositories\SupplierRepository::class,
+        );
         $this->app->singleton(\Cartino\Repositories\BrandRepository::class);
         $this->app->singleton(\Cartino\Repositories\ChannelRepository::class);
         $this->app->singleton(\Cartino\Repositories\CountryRepository::class);
@@ -205,29 +208,38 @@ class CartinoServiceProvider extends ServiceProvider
 
     protected function bootRoutes(): void
     {
-        Route::group([
-            'middleware' => ['web'],
-        ], function () {
-            $this->loadRoutesFrom(__DIR__.'/../routes/cp.php');
-        });
+        Route::group(
+            [
+                'middleware' => ['web'],
+            ],
+            function () {
+                $this->loadRoutesFrom(__DIR__.'/../routes/cp.php');
+            },
+        );
 
         // Load OAuth routes if they exist
         if (file_exists(__DIR__.'/../routes/auth.php')) {
-            Route::group([
-                'middleware' => ['web'],
-            ], function () {
-                $this->loadRoutesFrom(__DIR__.'/../routes/auth.php');
-            });
+            Route::group(
+                [
+                    'middleware' => ['web'],
+                ],
+                function () {
+                    $this->loadRoutesFrom(__DIR__.'/../routes/auth.php');
+                },
+            );
         }
 
         // Load API OAuth routes if they exist
         if (file_exists(__DIR__.'/../routes/api-auth.php')) {
-            Route::group([
-                'middleware' => ['api'],
-                'prefix' => 'api',
-            ], function () {
-                $this->loadRoutesFrom(__DIR__.'/../routes/api-auth.php');
-            });
+            Route::group(
+                [
+                    'middleware' => ['api'],
+                    'prefix' => 'api',
+                ],
+                function () {
+                    $this->loadRoutesFrom(__DIR__.'/../routes/api-auth.php');
+                },
+            );
         }
     }
 

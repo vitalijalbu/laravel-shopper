@@ -28,9 +28,7 @@ class PricingEngine
      */
     protected function loadRules(): void
     {
-        $rules = \Cartino\Models\PricingRule::where('is_active', true)
-            ->orderBy('priority', 'desc')
-            ->get();
+        $rules = \Cartino\Models\PricingRule::where('is_active', true)->orderBy('priority', 'desc')->get();
 
         foreach ($rules as $ruleModel) {
             $rule = $this->instantiateRule($ruleModel);
@@ -106,7 +104,7 @@ class PricingEngine
             originalPrice: $originalPrice,
             finalPrice: max(0, $basePrice),
             appliedRules: $appliedRules,
-            quantity: $quantity
+            quantity: $quantity,
         );
     }
 

@@ -45,11 +45,8 @@ trait Translatable
      * Get a translated value for a specific field and locale.
      * Uses fallback chain if translation is not found.
      */
-    public function translate(
-        string $key,
-        ?string $locale = null,
-        bool $useFallback = true
-    ): ?string {
+    public function translate(string $key, ?string $locale = null, bool $useFallback = true): ?string
+    {
         $locale = $locale ?? app()->getLocale();
 
         // Try exact locale
@@ -91,12 +88,8 @@ trait Translatable
     /**
      * Set a translation for a specific field and locale.
      */
-    public function setTranslation(
-        string $key,
-        string $value,
-        string $locale,
-        array $options = []
-    ): Translation {
+    public function setTranslation(string $key, string $value, string $locale, array $options = []): Translation
+    {
         return Translation::set($this, $key, $value, $locale, $options);
     }
 
@@ -153,9 +146,7 @@ trait Translatable
      */
     public function getAvailableLocales(): Collection
     {
-        return $this->translations()
-            ->distinct('locale')
-            ->pluck('locale');
+        return $this->translations()->distinct('locale')->pluck('locale');
     }
 
     /**

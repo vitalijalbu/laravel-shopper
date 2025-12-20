@@ -61,8 +61,17 @@ class SearchRepository extends BaseRepository
                 'author:id,name,email',
                 'parent:id,collection,slug,title,locale',
                 'children' => function ($q) {
-                    $q->select('id', 'parent_id', 'collection', 'slug', 'title', 'status', 'published_at', 'locale', 'order')
-                        ->orderBy('order');
+                    $q->select(
+                        'id',
+                        'parent_id',
+                        'collection',
+                        'slug',
+                        'title',
+                        'status',
+                        'published_at',
+                        'locale',
+                        'order',
+                    )->orderBy('order');
                 },
             ])
             ->select([
@@ -85,8 +94,9 @@ class SearchRepository extends BaseRepository
         if (! empty($filters['q'])) {
             $searchTerm = $filters['q'];
             $query->where(function ($q) use ($searchTerm) {
-                $q->where('title', 'LIKE', "%{$searchTerm}%")
-                    ->orWhereRaw("JSON_SEARCH(data, 'one', ?) IS NOT NULL", ["%{$searchTerm}%"]);
+                $q->where('title', 'LIKE', "%{$searchTerm}%")->orWhereRaw("JSON_SEARCH(data, 'one', ?) IS NOT NULL", [
+                    "%{$searchTerm}%",
+                ]);
             });
         }
 
@@ -108,10 +118,10 @@ class SearchRepository extends BaseRepository
             $query->where('status', $filters['status']);
         } else {
             // Default to published only
-            $query->where('status', 'published')
+            $query
+                ->where('status', 'published')
                 ->where(function ($q) {
-                    $q->whereNull('published_at')
-                        ->orWhere('published_at', '<=', now());
+                    $q->whereNull('published_at')->orWhere('published_at', '<=', now());
                 });
         }
 
@@ -168,9 +178,7 @@ class SearchRepository extends BaseRepository
         }
 
         // Validate direction
-        $sortDirection = in_array(strtolower($sortDirection), ['asc', 'desc'])
-            ? strtolower($sortDirection)
-            : 'desc';
+        $sortDirection = in_array(strtolower($sortDirection), ['asc', 'desc']) ? strtolower($sortDirection) : 'desc';
 
         $query->orderBy($sortBy, $sortDirection);
     }
@@ -291,8 +299,7 @@ class SearchRepository extends BaseRepository
             ->where('locale', $locale)
             ->where('status', 'published')
             ->where(function ($q) {
-                $q->whereNull('published_at')
-                    ->orWhere('published_at', '<=', now());
+                $q->whereNull('published_at')->orWhere('published_at', '<=', now());
             })
             ->groupBy('collection')
             ->orderBy('count', 'desc')
@@ -316,8 +323,7 @@ class SearchRepository extends BaseRepository
             ->where('entries.locale', $locale)
             ->where('entries.status', 'published')
             ->where(function ($q) {
-                $q->whereNull('entries.published_at')
-                    ->orWhere('entries.published_at', '<=', now());
+                $q->whereNull('entries.published_at')->orWhere('entries.published_at', '<=', now());
             })
             ->when(! empty($filters['collection']), function ($q) use ($filters) {
                 $q->where('entries.collection', $filters['collection']);
@@ -365,8 +371,7 @@ class SearchRepository extends BaseRepository
             ->where('locale', $locale)
             ->where('status', 'published')
             ->where(function ($q) {
-                $q->whereNull('published_at')
-                    ->orWhere('published_at', '<=', now());
+                $q->whereNull('published_at')->orWhere('published_at', '<=', now());
             })
             ->when(! empty($filters['collection']), function ($q) use ($filters) {
                 $q->where('collection', $filters['collection']);
@@ -409,13 +414,12 @@ class SearchRepository extends BaseRepository
         return DB::table('entries')
             ->select(
                 DB::raw("JSON_UNQUOTE(JSON_EXTRACT(data, '$.category')) as category"),
-                DB::raw('COUNT(*) as count')
+                DB::raw('COUNT(*) as count'),
             )
             ->where('locale', $locale)
             ->where('status', 'published')
             ->where(function ($q) {
-                $q->whereNull('published_at')
-                    ->orWhere('published_at', '<=', now());
+                $q->whereNull('published_at')->orWhere('published_at', '<=', now());
             })
             ->when(! empty($filters['collection']), function ($q) use ($filters) {
                 $q->where('collection', $filters['collection']);

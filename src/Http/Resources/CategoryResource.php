@@ -30,12 +30,10 @@ class CategoryResource extends JsonResource
             'meta_description' => $this->meta_description,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-
             // Relationships (recursive children)
             'parent' => new CategoryResource($this->whenLoaded('parent')),
             'children' => CategoryResource::collection($this->whenLoaded('children')),
             'products_count' => $this->when(isset($this->products_count), $this->products_count),
-
             // Tree info
             'has_children' => $this->when(isset($this->children_count), $this->children_count > 0),
             'children_count' => $this->when(isset($this->children_count), $this->children_count),

@@ -15,7 +15,7 @@ use Illuminate\Http\Request;
 class ChannelsController extends ApiController
 {
     public function __construct(
-        private readonly ChannelRepository $repository
+        private readonly ChannelRepository $repository,
     ) {}
 
     /**

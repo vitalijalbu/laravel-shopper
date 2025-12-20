@@ -27,8 +27,12 @@ if (! function_exists('market_route')) {
     /**
      * Generate a market-aware route.
      */
-    function market_route(string $name, array $parameters = [], ?Market $market = null, ?string $locale = null): string
-    {
+    function market_route(
+        string $name,
+        array $parameters = [],
+        ?Market $market = null,
+        ?string $locale = null,
+    ): string {
         return MarketRouteHelper::route($name, $parameters, $market, $locale);
     }
 }
@@ -37,8 +41,11 @@ if (! function_exists('switch_market')) {
     /**
      * Switch to a different market/locale.
      */
-    function switch_market(?Market $market = null, ?string $locale = null, ?string $returnUrl = null): string
-    {
+    function switch_market(
+        ?Market $market = null,
+        ?string $locale = null,
+        ?string $returnUrl = null,
+    ): string {
         return MarketRouteHelper::switchTo($market, $locale, $returnUrl);
     }
 }

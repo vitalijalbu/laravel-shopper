@@ -127,8 +127,7 @@ class Category implements Arrayable, ArrayAccess, AugmentableContract, Contract
 
     public function routes($routes = null)
     {
-        return $this
-            ->fluentlyGetOrSet('routes')
+        return $this->fluentlyGetOrSet('routes')
             ->getter(function ($routes) {
                 if ($this->cachedRoutes !== null) {
                     return $this->cachedRoutes;
@@ -203,8 +202,7 @@ class Category implements Arrayable, ArrayAccess, AugmentableContract, Contract
 
     public function sites($sites = null)
     {
-        return $this
-            ->fluentlyGetOrSet('sites')
+        return $this->fluentlyGetOrSet('sites')
             ->getter(function ($sites) {
                 return collect(Site::multiEnabled() ? $sites : [Site::default()->handle()]);
             })

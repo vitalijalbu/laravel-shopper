@@ -15,7 +15,7 @@ use Illuminate\Http\Request;
 class TransactionsController extends ApiController
 {
     public function __construct(
-        private readonly TransactionRepository $repository
+        private readonly TransactionRepository $repository,
     ) {}
 
     /**
@@ -60,7 +60,10 @@ class TransactionsController extends ApiController
         try {
             $updatedTransaction = $this->repository->updateOne($transaction->id, $request->validated());
 
-            return $this->successResponse(new TransactionResource($updatedTransaction), 'Transaction aggiornata con successo');
+            return $this->successResponse(
+                new TransactionResource($updatedTransaction),
+                'Transaction aggiornata con successo',
+            );
         } catch (\Exception $e) {
             return $this->errorResponse('Errore nell\'aggiornamento della transaction: '.$e->getMessage());
         }

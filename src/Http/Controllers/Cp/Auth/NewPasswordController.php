@@ -43,17 +43,20 @@ class NewPasswordController extends Controller
     public function store(Request $request): RedirectResponse
     {
         // Validate the request
-        $request->validate([
-            'token' => ['required'],
-            'email' => ['required', 'email'],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        ], [
-            'email.required' => __('cartino::auth.validation.email_required'),
-            'email.email' => __('cartino::auth.validation.email_invalid'),
-            'password.required' => __('cartino::auth.validation.password_required'),
-            'password.confirmed' => __('cartino::auth.validation.password_confirmed'),
-            'password.min' => __('cartino::auth.validation.password_min'),
-        ]);
+        $request->validate(
+            [
+                'token' => ['required'],
+                'email' => ['required', 'email'],
+                'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            ],
+            [
+                'email.required' => __('cartino::auth.validation.email_required'),
+                'email.email' => __('cartino::auth.validation.email_invalid'),
+                'password.required' => __('cartino::auth.validation.password_required'),
+                'password.confirmed' => __('cartino::auth.validation.password_confirmed'),
+                'password.min' => __('cartino::auth.validation.password_min'),
+            ],
+        );
 
         // Here we will attempt to reset the user's password. If it is successful we
         // will update the password on an actual user model and persist it to the
@@ -70,7 +73,7 @@ class NewPasswordController extends Controller
                 if (method_exists($user, 'clearUserSessions')) {
                     $user->clearUserSessions();
                 }
-            }
+            },
         );
 
         // If the password was successfully reset, we will redirect the user back to
@@ -84,7 +87,8 @@ class NewPasswordController extends Controller
 
         $this->flashError(__('cartino::auth.password_reset_invalid'));
 
-        return back()->withInput($request->only('email'))
+        return back()
+            ->withInput($request->only('email'))
             ->withErrors(['email' => __('cartino::auth.password_reset_invalid')]);
     }
 }

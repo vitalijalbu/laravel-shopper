@@ -38,9 +38,7 @@ trait HasAssets
      */
     public function getAssets(string $collection = 'images'): Collection
     {
-        return $this->assets()
-            ->wherePivot('collection', $collection)
-            ->get();
+        return $this->assets()->wherePivot('collection', $collection)->get();
     }
 
     /**
@@ -88,9 +86,7 @@ trait HasAssets
      */
     public function imageUrls(string $collection = 'images', ?string $preset = null): array
     {
-        return $this->getAssets($collection)
-            ->map(fn (Asset $asset) => $asset->glide([], $preset))
-            ->toArray();
+        return $this->getAssets($collection)->map(fn (Asset $asset) => $asset->glide([], $preset))->toArray();
     }
 
     /**
@@ -113,12 +109,9 @@ trait HasAssets
     /**
      * Attach asset to model
      */
-    public function attachAsset(
-        Asset|int $asset,
-        string $collection = 'images',
-        array $attributes = []
-    ): void {
-        $assetId = $asset instanceof Asset ? $asset->id : $asset;
+    public function attachAsset(Asset|int $asset, string $collection = 'images', array $attributes = []): void
+    {
+        $assetId = ($asset instanceof Asset) ? $asset->id : $asset;
 
         // Check if already attached
         $exists = $this->assets()
@@ -138,18 +131,22 @@ trait HasAssets
         $maxFiles = $this->assetCollections[$collection]['max_files'] ?? null;
 
         if ($maxFiles && $currentCount >= $maxFiles) {
-            throw new \InvalidArgumentException(
-                "Collection '{$collection}' has reached maximum of {$maxFiles} files"
-            );
+            throw new \InvalidArgumentException("Collection '{$collection}' has reached maximum of {$maxFiles} files");
         }
 
         // Attach with attributes
-        $this->assets()->attach($assetId, array_merge([
-            'collection' => $collection,
-            'sort_order' => $currentCount,
-            'is_primary' => $currentCount === 0, // First image is primary by default
-            'is_featured' => false,
-        ], $attributes));
+        $this->assets()->attach(
+            $assetId,
+            array_merge(
+                [
+                    'collection' => $collection,
+                    'sort_order' => $currentCount,
+                    'is_primary' => $currentCount === 0, // First image is primary by default
+                    'is_featured' => false,
+                ],
+                $attributes,
+            ),
+        );
     }
 
     /**
@@ -170,7 +167,7 @@ trait HasAssets
      */
     public function detachAsset(Asset|int $asset, ?string $collection = null): void
     {
-        $assetId = $asset instanceof Asset ? $asset->id : $asset;
+        $assetId = ($asset instanceof Asset) ? $asset->id : $asset;
 
         $query = $this->assets()->where('asset_id', $assetId);
 
@@ -205,17 +202,13 @@ trait HasAssets
      */
     public function setPrimaryAsset(Asset|int $asset, string $collection = 'images'): void
     {
-        $assetId = $asset instanceof Asset ? $asset->id : $asset;
+        $assetId = ($asset instanceof Asset) ? $asset->id : $asset;
 
         // Remove primary flag from all in collection
-        $this->assets()
-            ->wherePivot('collection', $collection)
-            ->update(['assetables.is_primary' => false]);
+        $this->assets()->wherePivot('collection', $collection)->update(['assetables.is_primary' => false]);
 
         // Set new primary
-        $this->assets()
-            ->wherePivot('collection', $collection)
-            ->updateExistingPivot($assetId, ['is_primary' => true]);
+        $this->assets()->wherePivot('collection', $collection)->updateExistingPivot($assetId, ['is_primary' => true]);
     }
 
     /**
@@ -223,11 +216,11 @@ trait HasAssets
      */
     public function setFeaturedAsset(Asset|int $asset, string $collection = 'images', bool $featured = true): void
     {
-        $assetId = $asset instanceof Asset ? $asset->id : $asset;
+        $assetId = ($asset instanceof Asset) ? $asset->id : $asset;
 
-        $this->assets()
-            ->wherePivot('collection', $collection)
-            ->updateExistingPivot($assetId, ['is_featured' => $featured]);
+        $this->assets()->wherePivot('collection', $collection)->updateExistingPivot($assetId, [
+            'is_featured' => $featured,
+        ]);
     }
 
     /**
@@ -252,15 +245,14 @@ trait HasAssets
             $assets = $this->getAssets($collection);
 
             foreach ($assets as $index => $asset) {
-                $this->assets()
-                    ->updateExistingPivot($asset->id, ['sort_order' => $index]);
+                $this->assets()->updateExistingPivot($asset->id, ['sort_order' => $index]);
             }
         } else {
             // Custom order: ['asset_id' => sort_order]
             foreach ($order as $assetId => $sortOrder) {
-                $this->assets()
-                    ->wherePivot('collection', $collection)
-                    ->updateExistingPivot($assetId, ['sort_order' => $sortOrder]);
+                $this->assets()->wherePivot('collection', $collection)->updateExistingPivot($assetId, [
+                    'sort_order' => $sortOrder,
+                ]);
             }
         }
     }
@@ -270,7 +262,7 @@ trait HasAssets
      */
     public function updateAssetMeta(Asset|int $asset, array $meta, string $collection = 'images'): void
     {
-        $assetId = $asset instanceof Asset ? $asset->id : $asset;
+        $assetId = ($asset instanceof Asset) ? $asset->id : $asset;
 
         $current = $this->assets()
             ->wherePivot('collection', $collection)
@@ -284,8 +276,7 @@ trait HasAssets
         $currentMeta = $current->pivot->meta ?? [];
         $newMeta = array_merge($currentMeta, $meta);
 
-        $this->assets()
-            ->updateExistingPivot($assetId, ['meta' => $newMeta]);
+        $this->assets()->updateExistingPivot($assetId, ['meta' => $newMeta]);
     }
 
     /**
@@ -293,9 +284,7 @@ trait HasAssets
      */
     public function assetCount(string $collection = 'images'): int
     {
-        return $this->assets()
-            ->wherePivot('collection', $collection)
-            ->count();
+        return $this->assets()->wherePivot('collection', $collection)->count();
     }
 
     /**
@@ -323,7 +312,7 @@ trait HasAssets
     {
         if (! isset($this->assetCollections[$collection])) {
             throw new \InvalidArgumentException(
-                "Asset collection '{$collection}' is not defined in \$assetCollections"
+                "Asset collection '{$collection}' is not defined in \$assetCollections",
             );
         }
     }

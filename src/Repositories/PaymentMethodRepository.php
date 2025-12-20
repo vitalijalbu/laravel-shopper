@@ -44,7 +44,8 @@ class PaymentMethodRepository extends BaseRepository
         $cacheKey = $this->getCacheKey('providers', 'all');
 
         return \Illuminate\Support\Facades\Cache::remember($cacheKey, $this->cacheTtl, function () {
-            return $this->model->select('provider')
+            return $this->model
+                ->select('provider')
                 ->distinct()
                 ->orderBy('provider')
                 ->pluck('provider')

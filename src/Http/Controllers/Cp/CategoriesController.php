@@ -19,7 +19,7 @@ class CategoriesController extends BaseController
 {
     public function __construct(
         protected SchemaRepository $schemas,
-        protected readonly CategoryRepository $repository
+        protected readonly CategoryRepository $repository,
     ) {}
 
     // public function __construct()
@@ -35,9 +35,7 @@ class CategoriesController extends BaseController
      */
     public function index(Request $request): Response
     {
-        $this->addDashboardBreadcrumb()
-            ->addBreadcrumb('Catalog', 'cp.categories.index')
-            ->addBreadcrumb('Collections');
+        $this->addDashboardBreadcrumb()->addBreadcrumb('Catalog', 'cp.categories.index')->addBreadcrumb('Collections');
 
         $filters = $request->all();
 
@@ -76,7 +74,6 @@ class CategoriesController extends BaseController
 
         return $this->inertiaResponse('collections/Create', [
             'page' => $page->compile(),
-
         ]);
     }
 
@@ -123,7 +120,6 @@ class CategoriesController extends BaseController
 
         return $this->inertiaResponse('collections/Show', [
             'page' => $page->compile(),
-
             'collection' => new CollectionResource($collection),
         ]);
     }
@@ -150,13 +146,16 @@ class CategoriesController extends BaseController
             ->tabs([
                 'general' => ['label' => 'General', 'component' => 'CollectionGeneralForm'],
                 'products' => ['label' => 'Products', 'component' => 'CollectionProductsForm'],
-                'conditions' => ['label' => 'Conditions', 'component' => 'CollectionConditionsForm', 'show_if' => 'collection_type === "smart"'],
+                'conditions' => [
+                    'label' => 'Conditions',
+                    'component' => 'CollectionConditionsForm',
+                    'show_if' => 'collection_type === "smart"',
+                ],
                 'seo' => ['label' => 'SEO', 'component' => 'CollectionSeoForm'],
             ]);
 
         return $this->inertiaResponse('collections/Edit', [
             'page' => $page->compile(),
-
             'collection' => new CollectionResource($collection),
         ]);
     }
@@ -220,9 +219,11 @@ class CategoriesController extends BaseController
         ]);
 
         foreach ($request->product_ids as $productId) {
-            $collection->products()->syncWithoutDetaching([$productId => [
-                'position' => $collection->products()->count() + 1,
-            ]]);
+            $collection
+                ->products()
+                ->syncWithoutDetaching([$productId => [
+                    'position' => $collection->products()->count() + 1,
+                ]]);
         }
 
         return $this->successResponse('Products added to collection successfully');
@@ -249,9 +250,11 @@ class CategoriesController extends BaseController
     protected function applySearchFilter($query, string $search): void
     {
         $query->where(function ($q) use ($search) {
-            $q->where('title', 'like', "%{$search}%")
-                ->orWhere('description', 'like', "%{$search}%")
-                ->orWhere('handle', 'like', "%{$search}%");
+            $q->where('title', 'like', "%{$search}%")->orWhere('description', 'like', "%{$search}%")->orWhere(
+                'handle',
+                'like',
+                "%{$search}%",
+            );
         });
     }
 

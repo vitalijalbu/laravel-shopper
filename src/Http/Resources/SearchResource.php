@@ -27,13 +27,11 @@ class SearchResource extends JsonResource
             'order' => $this->order,
             'url' => $this->url(),
             'is_published' => $this->isPublished(),
-
             // Extract commonly used fields from JSON data for easier access
             'category' => $this->get('category'),
             'tags' => $this->get('tags', []),
             'image' => $this->get('image'),
             'featured' => $this->get('featured', false),
-
             // Relationships with eager loading optimization
             'author' => $this->whenLoaded('author', function () {
                 return [
@@ -43,18 +41,18 @@ class SearchResource extends JsonResource
                 ];
             }),
             'parent' => $this->whenLoaded('parent', function () {
-                return $this->parent ? [
-                    'id' => $this->parent->id,
-                    'collection' => $this->parent->collection,
-                    'slug' => $this->parent->slug,
-                    'title' => $this->parent->title,
-                    'locale' => $this->parent->locale,
-                ] : null;
+                return $this->parent
+                    ? [
+                        'id' => $this->parent->id,
+                        'collection' => $this->parent->collection,
+                        'slug' => $this->parent->slug,
+                        'title' => $this->parent->title,
+                        'locale' => $this->parent->locale,
+                    ] : null;
             }),
             'children_count' => $this->whenLoaded('children', function () {
                 return $this->children->count();
             }),
-
             // Timestamps
             'created_at' => $this->created_at?->toISOString(),
             'updated_at' => $this->updated_at?->toISOString(),

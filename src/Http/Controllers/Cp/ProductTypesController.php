@@ -35,9 +35,11 @@ class ProductTypesController extends Controller
             // Search filter
             if ($search = $request->get('search')) {
                 $query->where(function ($q) use ($search) {
-                    $q->where('name', 'like', "%{$search}%")
-                        ->orWhere('slug', 'like', "%{$search}%")
-                        ->orWhere('description', 'like', "%{$search}%");
+                    $q->where('name', 'like', "%{$search}%")->orWhere('slug', 'like', "%{$search}%")->orWhere(
+                        'description',
+                        'like',
+                        "%{$search}%",
+                    );
                 });
             }
 
@@ -61,7 +63,6 @@ class ProductTypesController extends Controller
 
         return Inertia::render('product-types/index', [
             'page' => $page->compile(),
-
         ]);
     }
 
@@ -83,7 +84,6 @@ class ProductTypesController extends Controller
 
         return Inertia::render('product-types/Create', [
             'page' => $page->compile(),
-
         ]);
     }
 
@@ -109,7 +109,7 @@ class ProductTypesController extends Controller
             default => response()->json([
                 'message' => 'Product type created successfully',
                 'redirect' => '/cp/product-types',
-            ])
+            ]),
         };
     }
 
@@ -137,7 +137,6 @@ class ProductTypesController extends Controller
 
         return Inertia::render('product-types/Show', [
             'page' => $page->compile(),
-
             'productType' => new ProductTypeResource($productType),
         ]);
     }
@@ -164,7 +163,6 @@ class ProductTypesController extends Controller
 
         return Inertia::render('product-types/Edit', [
             'page' => $page->compile(),
-
             'productType' => new ProductTypeResource($productType),
         ]);
     }
@@ -219,7 +217,7 @@ class ProductTypesController extends Controller
             'enable' => $this->bulkEnable($productTypes),
             'disable' => $this->bulkDisable($productTypes),
             'delete' => $this->bulkDelete($productTypes),
-            default => response()->json(['error' => 'Unknown action'], 422)
+            default => response()->json(['error' => 'Unknown action'], 422),
         };
     }
 
@@ -249,7 +247,10 @@ class ProductTypesController extends Controller
     protected function bulkDelete($productTypes)
     {
         // Check if any product types have products
-        $typesWithProducts = $productTypes->withCount('products')->get()->filter(fn ($type) => $type->products_count > 0);
+        $typesWithProducts = $productTypes
+            ->withCount('products')
+            ->get()
+            ->filter(fn ($type) => $type->products_count > 0);
 
         if ($typesWithProducts->count() > 0) {
             return response()->json([
@@ -296,7 +297,14 @@ class ProductTypesController extends Controller
 
             // CSV headers
             fputcsv($file, [
-                'ID', 'Name', 'Slug', 'Description', 'Enabled', 'Sort Order', 'Products Count', 'Created At',
+                'ID',
+                'Name',
+                'Slug',
+                'Description',
+                'Enabled',
+                'Sort Order',
+                'Products Count',
+                'Created At',
             ]);
 
             // CSV data

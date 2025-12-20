@@ -28,7 +28,7 @@ class StoreController extends Controller
         } catch (\Exception $e) {
             $context = new PricingContext(
                 market: $market,
-                locale: $locale
+                locale: $locale,
             );
         }
 
@@ -36,20 +36,16 @@ class StoreController extends Controller
             'data' => [
                 // Current context
                 'context' => new PricingContextResource($context),
-
                 // Current market
                 'market' => $market ? new MarketResource($market) : null,
-
                 // Available options
                 'available' => [
                     'markets' => MarketResource::collection(MarketRouteHelper::availableMarkets()),
                     'locales' => $this->getAvailableLocalesData($market),
                     'currencies' => $this->getAvailableCurrenciesData($market),
                 ],
-
                 // Market switcher data (for UI)
                 'switcher' => MarketRouteHelper::getSwitcherData(),
-
                 // Store info
                 'store' => [
                     'name' => config('app.name'),
@@ -115,7 +111,7 @@ class StoreController extends Controller
             catalogId: $validated['catalog_id'] ?? session('catalog_id'),
             currency: $validated['currency'] ?? null,
             locale: $validated['locale'] ?? null,
-            countryCode: $validated['country_code'] ?? session('country_code')
+            countryCode: $validated['country_code'] ?? session('country_code'),
         );
 
         // Save to session

@@ -124,13 +124,16 @@ class CartRepository extends BaseRepository
         if (! empty($filters['search'])) {
             $search = $filters['search'];
             $query->where(function ($q) use ($search) {
-                $q->where('session_id', 'like', "%{$search}%")
-                    ->orWhere('email', 'like', "%{$search}%")
-                    ->orWhereHas('customer', function ($customerQuery) use ($search) {
-                        $customerQuery->where('email', 'like', "%{$search}%")
-                            ->orWhere('first_name', 'like', "%{$search}%")
-                            ->orWhere('last_name', 'like', "%{$search}%");
-                    });
+                $q->where('session_id', 'like', "%{$search}%")->orWhere('email', 'like', "%{$search}%")->orWhereHas(
+                    'customer',
+                    function ($customerQuery) use ($search) {
+                        $customerQuery->where('email', 'like', "%{$search}%")->orWhere(
+                            'first_name',
+                            'like',
+                            "%{$search}%",
+                        )->orWhere('last_name', 'like', "%{$search}%");
+                    },
+                );
             });
         }
 
@@ -142,10 +145,12 @@ class CartRepository extends BaseRepository
      */
     public function markAsAbandoned(int $cartId): bool
     {
-        $updated = $this->model->where('id', $cartId)->update([
-            'status' => CartStatus::ABANDONED,
-            'abandoned_at' => now(),
-        ]);
+        $updated = $this->model
+            ->where('id', $cartId)
+            ->update([
+                'status' => CartStatus::ABANDONED,
+                'abandoned_at' => now(),
+            ]);
 
         if ($updated) {
             $this->clearCache();
@@ -159,11 +164,13 @@ class CartRepository extends BaseRepository
      */
     public function markAsRecovered(int $cartId): bool
     {
-        $updated = $this->model->where('id', $cartId)->update([
-            'recovered' => true,
-            'recovered_at' => now(),
-            'status' => CartStatus::ACTIVE,
-        ]);
+        $updated = $this->model
+            ->where('id', $cartId)
+            ->update([
+                'recovered' => true,
+                'recovered_at' => now(),
+                'status' => CartStatus::ACTIVE,
+            ]);
 
         if ($updated) {
             $this->clearCache();
@@ -177,12 +184,14 @@ class CartRepository extends BaseRepository
      */
     public function markAsConverted(int $cartId, int $orderId): bool
     {
-        $updated = $this->model->where('id', $cartId)->update([
-            'status' => CartStatus::CONVERTED,
-            'converted_order_id' => $orderId,
-            'recovered' => true,
-            'recovered_at' => now(),
-        ]);
+        $updated = $this->model
+            ->where('id', $cartId)
+            ->update([
+                'status' => CartStatus::CONVERTED,
+                'converted_order_id' => $orderId,
+                'recovered' => true,
+                'recovered_at' => now(),
+            ]);
 
         if ($updated) {
             $this->clearCache();
@@ -204,7 +213,10 @@ class CartRepository extends BaseRepository
      */
     public function getAbandoned()
     {
-        return $this->model->abandoned()->with(['customer'])->get();
+        return $this->model
+            ->abandoned()
+            ->with(['customer'])
+            ->get();
     }
 
     /**
@@ -212,7 +224,10 @@ class CartRepository extends BaseRepository
      */
     public function getActive()
     {
-        return $this->model->active()->with(['customer'])->get();
+        return $this->model
+            ->active()
+            ->with(['customer'])
+            ->get();
     }
 
     /**
@@ -279,7 +294,8 @@ class CartRepository extends BaseRepository
      */
     public function getTopAbandonedProducts(int $limit = 10): array
     {
-        return $this->model->abandoned()
+        return $this->model
+            ->abandoned()
             ->whereNotNull('items')
             ->get()
             ->flatMap(function ($cart) {
@@ -340,10 +356,12 @@ class CartRepository extends BaseRepository
         $sent = 0;
 
         foreach ($cartIds as $cartId) {
-            $updated = $this->model->where('id', $cartId)->update([
-                'recovery_emails_sent' => DB::raw('COALESCE(recovery_emails_sent, 0) + 1'),
-                'last_recovery_email_sent_at' => now(),
-            ]);
+            $updated = $this->model
+                ->where('id', $cartId)
+                ->update([
+                    'recovery_emails_sent' => DB::raw('COALESCE(recovery_emails_sent, 0) + 1'),
+                    'last_recovery_email_sent_at' => now(),
+                ]);
 
             if ($updated) {
                 $sent++;
@@ -358,7 +376,8 @@ class CartRepository extends BaseRepository
      */
     public function getBySession(string $sessionId): ?Cart
     {
-        return $this->model->where('session_id', $sessionId)
+        return $this->model
+            ->where('session_id', $sessionId)
             ->where('status', CartStatus::ACTIVE)
             ->first();
     }
@@ -368,7 +387,8 @@ class CartRepository extends BaseRepository
      */
     public function getByCustomer(int $customerId): ?Cart
     {
-        return $this->model->where('customer_id', $customerId)
+        return $this->model
+            ->where('customer_id', $customerId)
             ->where('status', CartStatus::ACTIVE)
             ->first();
     }
@@ -378,9 +398,11 @@ class CartRepository extends BaseRepository
      */
     public function updateActivity(int $cartId): bool
     {
-        return $this->model->where('id', $cartId)->update([
-            'last_activity_at' => now(),
-        ]) > 0;
+        return $this->model
+            ->where('id', $cartId)
+            ->update([
+                'last_activity_at' => now(),
+            ]) > 0;
     }
 
     /**

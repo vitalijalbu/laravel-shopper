@@ -25,16 +25,13 @@ class ProcessOrderJob implements ShouldQueue
     public int $timeout = 120;
 
     public function __construct(
-        private Order $order
+        private Order $order,
     ) {
         $this->onQueue('orders');
     }
 
-    public function handle(
-        InventoryService $inventory,
-        NotificationService $notifications,
-        CacheService $cache
-    ): void {
+    public function handle(InventoryService $inventory, NotificationService $notifications, CacheService $cache): void
+    {
         Log::info('Processing order', ['order_id' => $this->order->id]);
 
         DB::transaction(function () use ($inventory, $notifications, $cache) {
@@ -60,7 +57,6 @@ class ProcessOrderJob implements ShouldQueue
                     'order_id' => $this->order->id,
                     'total' => $this->order->total_amount,
                 ]);
-
             } catch (\Exception $e) {
                 Log::error('Failed to process order', [
                     'order_id' => $this->order->id,

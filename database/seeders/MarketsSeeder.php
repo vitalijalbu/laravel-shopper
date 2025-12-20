@@ -22,7 +22,7 @@ class MarketsSeeder extends Seeder
                 'currency' => 'EUR',
                 'is_default' => true,
                 'status' => 'active',
-            ]
+            ],
         );
 
         $catalogB2B = Catalog::firstOrCreate(
@@ -35,7 +35,7 @@ class MarketsSeeder extends Seeder
                 'adjustment_direction' => 'decrease',
                 'adjustment_value' => 20, // 20% discount
                 'status' => 'active',
-            ]
+            ],
         );
 
         $catalogVIP = Catalog::firstOrCreate(
@@ -48,7 +48,7 @@ class MarketsSeeder extends Seeder
                 'adjustment_direction' => 'decrease',
                 'adjustment_value' => 10, // 10% discount
                 'status' => 'active',
-            ]
+            ],
         );
 
         // ============================================
@@ -76,7 +76,7 @@ class MarketsSeeder extends Seeder
                 'status' => 'active',
                 'is_default' => true,
                 'priority' => 100,
-            ]
+            ],
         );
 
         $marketIT_B2C = Market::firstOrCreate(
@@ -99,7 +99,7 @@ class MarketsSeeder extends Seeder
                 'shipping_methods' => ['standard', 'express', 'poste_italiane'],
                 'status' => 'active',
                 'priority' => 90,
-            ]
+            ],
         );
 
         $marketEU_B2B = Market::firstOrCreate(
@@ -122,7 +122,7 @@ class MarketsSeeder extends Seeder
                 'shipping_methods' => ['standard', 'express', 'freight'],
                 'status' => 'active',
                 'priority' => 80,
-            ]
+            ],
         );
 
         // ============================================
@@ -149,7 +149,7 @@ class MarketsSeeder extends Seeder
                 'shipping_methods' => ['standard', 'express', 'royal_mail'],
                 'status' => 'active',
                 'priority' => 70,
-            ]
+            ],
         );
 
         // ============================================
@@ -176,7 +176,7 @@ class MarketsSeeder extends Seeder
                 'shipping_methods' => ['standard', 'express', 'usps', 'ups', 'fedex'],
                 'status' => 'active',
                 'priority' => 60,
-            ]
+            ],
         );
 
         $marketUS_Wholesale = Market::firstOrCreate(
@@ -199,7 +199,7 @@ class MarketsSeeder extends Seeder
                 'shipping_methods' => ['freight', 'ups', 'fedex'],
                 'status' => 'active',
                 'priority' => 50,
-            ]
+            ],
         );
 
         // ============================================
@@ -226,7 +226,7 @@ class MarketsSeeder extends Seeder
                 'shipping_methods' => ['standard', 'express', 'dhl'],
                 'status' => 'active',
                 'priority' => 40,
-            ]
+            ],
         );
 
         // ============================================
@@ -249,7 +249,7 @@ class MarketsSeeder extends Seeder
                 'status' => 'active',
                 'is_default' => false,
                 'priority' => 10,
-            ]
+            ],
         );
 
         Site::firstOrCreate(
@@ -268,7 +268,7 @@ class MarketsSeeder extends Seeder
                 'status' => 'active',
                 'is_default' => true,
                 'priority' => 20,
-            ]
+            ],
         );
 
         Site::firstOrCreate(
@@ -287,7 +287,7 @@ class MarketsSeeder extends Seeder
                 'status' => 'active',
                 'is_default' => false,
                 'priority' => 15,
-            ]
+            ],
         );
 
         $this->command->info('✅ Markets and Sites seeded successfully!');

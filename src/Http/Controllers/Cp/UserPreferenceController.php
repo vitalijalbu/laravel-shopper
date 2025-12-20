@@ -15,9 +15,7 @@ class UserPreferenceController extends Controller
         $userId = auth()->id();
 
         // Get all user preferences grouped by type
-        $preferences = UserPreference::where('user_id', $userId)
-            ->get()
-            ->groupBy('type');
+        $preferences = UserPreference::where('user_id', $userId)->get()->groupBy('type');
 
         // Get default preferences structure
         $defaultPreferences = $this->getDefaultPreferencesStructure();
@@ -32,12 +30,7 @@ class UserPreferenceController extends Controller
     {
         $validated = $request->validated();
 
-        UserPreference::setForUser(
-            auth()->id(),
-            $validated['type'],
-            $validated['key'],
-            $validated['value']
-        );
+        UserPreference::setForUser(auth()->id(), $validated['type'], $validated['key'], $validated['value']);
 
         return response()->json([
             'message' => 'Preferences saved successfully',
@@ -87,7 +80,7 @@ class UserPreferenceController extends Controller
                 $userId,
                 $preferenceData['type'],
                 $preferenceData['key'],
-                $preferenceData['value']
+                $preferenceData['value'],
             );
         }
 

@@ -39,8 +39,12 @@ class CustomerGroupDiscountRule implements PricingRuleInterface
         return array_key_exists($customer->group->code, $this->discounts);
     }
 
-    public function calculateAdjustment(float $currentPrice, Product $product, int $quantity, array $context): ?array
-    {
+    public function calculateAdjustment(
+        float $currentPrice,
+        Product $product,
+        int $quantity,
+        array $context,
+    ): ?array {
         $customer = $context['customer'] ?? null;
 
         if (! $customer || ! $customer->group) {

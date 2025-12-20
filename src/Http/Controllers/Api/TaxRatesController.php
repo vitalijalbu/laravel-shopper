@@ -15,7 +15,7 @@ use Illuminate\Http\Request;
 class TaxRatesController extends ApiController
 {
     public function __construct(
-        private readonly TaxRateRepository $repository
+        private readonly TaxRateRepository $repository,
     ) {}
 
     /**

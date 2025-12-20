@@ -98,34 +98,37 @@ class PricingContext implements Arrayable, JsonSerializable
     {
         // Currency resolution: explicit > customer > market > site > channel > config
         if (! $this->currency) {
-            $this->currency = $this->customer?->preferred_currency
-                ?? $this->market?->default_currency
-                ?? $this->site?->default_currency
-                ?? $this->channel?->getDefaultCurrency()
-                ?? config('cartino.currency', 'EUR');
+            $this->currency =
+                $this->customer?->preferred_currency ??
+                $this->market?->default_currency ??
+                    $this->site?->default_currency ??
+                        $this->channel?->getDefaultCurrency() ?? config('cartino.currency', 'EUR');
         }
 
         // Locale resolution: explicit > customer > market > site > channel > app
         if (! $this->locale) {
-            $this->locale = $this->customer?->locale
-                ?? $this->market?->default_locale
-                ?? $this->site?->locale
-                ?? $this->channel?->getDefaultLocale()
-                ?? app()->getLocale();
+            $this->locale =
+                $this->customer?->locale ??
+                $this->market?->default_locale ??
+                    $this->site?->locale ?? $this->channel?->getDefaultLocale() ?? app()->getLocale();
         }
 
         // Catalog resolution: explicit > market > site default > customer group default
         if (! $this->catalog) {
-            $this->catalog = $this->market?->catalog
-                ?? $this->site?->defaultCatalog()->first()
-                ?? $this->customerGroup?->catalogs()->wherePivot('is_default', true)->first();
+            $this->catalog = $this->market?->catalog ?? $this->site?->defaultCatalog()->first() ?? $this->customerGroup
+                ?->catalogs()
+                ->wherePivot('is_default', true)
+                ->first();
         }
 
         // Country code resolution: explicit > customer > market > site
         if (! $this->countryCode) {
-            $this->countryCode = $this->customer?->addresses()->where('is_default', true)->first()?->country_code
-                ?? (! empty($this->market?->countries) ? $this->market->countries[0] : null)
-                ?? (! empty($this->site?->countries) ? $this->site->countries[0] : null);
+            $this->countryCode = $this->customer
+                ?->addresses()
+                ->where('is_default', true)
+                ->first()
+                ?->country_code ?? (! empty($this->market?->countries) ? $this->market->countries[0] : null) ??
+                (! empty($this->site?->countries) ? $this->site->countries[0] : null);
         }
 
         // Customer group resolution
@@ -206,7 +209,7 @@ class PricingContext implements Arrayable, JsonSerializable
             $this->catalog?->id ?? 'null',
             $this->customerGroup?->id ?? 'null',
             $this->currency ?? 'null',
-            $this->quantity
+            $this->quantity,
         );
     }
 
@@ -215,9 +218,9 @@ class PricingContext implements Arrayable, JsonSerializable
      */
     public function isTaxInclusive(): bool
     {
-        return $this->market?->tax_included_in_prices
-            ?? $this->site?->tax_included_in_prices
-            ?? config('cartino.tax_included_in_prices', false);
+        return
+            $this->market?->tax_included_in_prices ??
+            $this->site?->tax_included_in_prices ?? config('cartino.tax_included_in_prices', false);
     }
 
     /**
@@ -225,9 +228,7 @@ class PricingContext implements Arrayable, JsonSerializable
      */
     public function getTaxRegion(): ?string
     {
-        return $this->market?->tax_region
-            ?? $this->site?->tax_region
-            ?? $this->countryCode;
+        return $this->market?->tax_region ?? $this->site?->tax_region ?? $this->countryCode;
     }
 
     /**

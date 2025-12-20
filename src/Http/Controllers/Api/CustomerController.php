@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 class CustomersController extends ApiController
 {
     public function __construct(
-        protected CustomerRepository $customerRepository
+        protected CustomerRepository $customerRepository,
     ) {}
 
     /**

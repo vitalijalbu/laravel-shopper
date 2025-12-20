@@ -45,14 +45,11 @@ trait HandlesFlashMessages
      */
     protected function flashToast(string $type, string $message, array $toastData = [], array $extra = []): void
     {
-        Inertia::flash(array_merge(
-            $extra,
-            [
-                'toast' => array_merge([
-                    'type' => $type,
-                    'message' => $message,
-                ], $toastData),
-            ]
-        ));
+        Inertia::flash(array_merge($extra, [
+            'toast' => array_merge([
+                'type' => $type,
+                'message' => $message,
+            ], $toastData),
+        ]));
     }
 }

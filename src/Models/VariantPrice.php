@@ -89,9 +89,9 @@ class VariantPrice extends Model
         }
 
         if (isset($context['quantity'])) {
-            $query->where('min_quantity', '<=', $context['quantity'])
-                ->where(fn ($q) => $q->whereNull('max_quantity')
-                    ->orWhere('max_quantity', '>=', $context['quantity']));
+            $query
+                ->where('min_quantity', '<=', $context['quantity'])
+                ->where(fn ($q) => $q->whereNull('max_quantity')->orWhere('max_quantity', '>=', $context['quantity']));
         }
 
         return $query;

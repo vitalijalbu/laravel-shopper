@@ -104,7 +104,8 @@ class MenuRepository extends BaseRepository
         $cacheKey = $this->getCacheKey('active', 'all');
 
         return \Illuminate\Support\Facades\Cache::remember($cacheKey, $this->cacheTtl, function () {
-            return $this->model->where('is_active', true)
+            return $this->model
+                ->where('is_active', true)
                 ->orderBy('sort_order')
                 ->get();
         });
@@ -193,8 +194,7 @@ class MenuRepository extends BaseRepository
     {
         try {
             foreach ($menus as $menuData) {
-                $this->model->where('id', $menuData['id'])
-                    ->update(['sort_order' => $menuData['sort_order']]);
+                $this->model->where('id', $menuData['id'])->update(['sort_order' => $menuData['sort_order']]);
             }
 
             $this->clearCache();
@@ -210,7 +210,8 @@ class MenuRepository extends BaseRepository
      */
     public function getForSelect(): \Illuminate\Support\Collection
     {
-        return $this->model->select('id', 'title', 'handle')
+        return $this->model
+            ->select('id', 'title', 'handle')
             ->where('is_active', true)
             ->orderBy('title')
             ->get();

@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 class CurrencyController extends ApiController
 {
     public function __construct(
-        private readonly CurrencyRepository $currencyRepository
+        private readonly CurrencyRepository $currencyRepository,
     ) {}
 
     /**
@@ -98,9 +98,7 @@ class CurrencyController extends ApiController
 
             // Ensure only one default currency
             if ($validated['is_default'] ?? false) {
-                Currency::where('id', '!=', $id)
-                    ->where('is_default', true)
-                    ->update(['is_default' => false]);
+                Currency::where('id', '!=', $id)->where('is_default', true)->update(['is_default' => false]);
             }
 
             $currency->update($validated);

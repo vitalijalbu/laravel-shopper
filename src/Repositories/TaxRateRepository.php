@@ -103,25 +103,30 @@ class TaxRateRepository extends BaseRepository
     /**
      * Get active tax rates for a location
      */
-    public function getActiveForLocation(string $countryCode, ?string $stateCode = null, ?string $postcode = null): \Illuminate\Database\Eloquent\Category
-    {
+    public function getActiveForLocation(
+        string $countryCode,
+        ?string $stateCode = null,
+        ?string $postcode = null,
+    ): \Illuminate\Database\Eloquent\Category {
         $cacheKey = $this->getCacheKey('location', md5($countryCode.'_'.$stateCode.'_'.$postcode));
 
-        return \Illuminate\Support\Facades\Cache::remember($cacheKey, $this->cacheTtl, function () use ($countryCode, $stateCode, $postcode) {
+        return \Illuminate\Support\Facades\Cache::remember($cacheKey, $this->cacheTtl, function () use (
+            $countryCode,
+            $stateCode,
+            $postcode,
+        ) {
             $query = $this->model->active();
 
             // Filter by country
             $query->where(function ($q) use ($countryCode) {
-                $q->whereJsonContains('countries', strtoupper($countryCode))
-                    ->orWhereNull('countries');
+                $q->whereJsonContains('countries', strtoupper($countryCode))->orWhereNull('countries');
             });
 
             // Filter by state if provided
             if ($stateCode) {
                 $query->where(function ($q) use ($countryCode, $stateCode) {
                     $stateKey = strtoupper($countryCode.'_'.$stateCode);
-                    $q->whereJsonContains('states', $stateKey)
-                        ->orWhereNull('states');
+                    $q->whereJsonContains('states', $stateKey)->orWhereNull('states');
                 });
             }
 
@@ -131,7 +136,10 @@ class TaxRateRepository extends BaseRepository
                     $q->whereNull('postcodes');
 
                     // Check postcode patterns
-                    $taxRates = $this->model->active()->whereNotNull('postcodes')->get();
+                    $taxRates = $this->model
+                        ->active()
+                        ->whereNotNull('postcodes')
+                        ->get();
                     $matchingIds = [];
 
                     foreach ($taxRates as $rate) {
@@ -156,8 +164,13 @@ class TaxRateRepository extends BaseRepository
     /**
      * Calculate tax for an amount
      */
-    public function calculateTax(float $amount, string $countryCode, ?string $stateCode = null, ?string $postcode = null, array $productCategories = []): array
-    {
+    public function calculateTax(
+        float $amount,
+        string $countryCode,
+        ?string $stateCode = null,
+        ?string $postcode = null,
+        array $productCategories = [],
+    ): array {
         $taxRates = $this->getActiveForLocation($countryCode, $stateCode, $postcode);
 
         $totalTax = 0;
@@ -303,8 +316,7 @@ class TaxRateRepository extends BaseRepository
     {
         try {
             foreach ($taxRates as $taxRateData) {
-                $this->model->where('id', $taxRateData['id'])
-                    ->update(['priority' => $taxRateData['priority']]);
+                $this->model->where('id', $taxRateData['id'])->update(['priority' => $taxRateData['priority']]);
             }
 
             $this->clearCache();
@@ -381,7 +393,10 @@ class TaxRateRepository extends BaseRepository
      */
     public function bulkAction(string $action, array $ids, array $metadata = []): array
     {
-        $validatedIds = $this->model->whereIn('id', $ids)->pluck('id')->toArray();
+        $validatedIds = $this->model
+            ->whereIn('id', $ids)
+            ->pluck('id')
+            ->toArray();
         $processedCount = 0;
         $errors = [];
 

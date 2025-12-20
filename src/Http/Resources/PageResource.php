@@ -25,7 +25,6 @@ class PageResource extends JsonResource
             'published_at' => $this->published_at?->toISOString(),
             'created_at' => $this->created_at->toISOString(),
             'updated_at' => $this->updated_at->toISOString(),
-
             'site' => $this->whenLoaded('site', fn () => new SiteResource($this->site)),
         ];
     }

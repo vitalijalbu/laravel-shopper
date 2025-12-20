@@ -55,12 +55,7 @@ class CartController extends ApiController
                 ? ProductVariant::findOrFail($validated['product_variant_id'])
                 : null;
 
-            $line = $cart->addItem(
-                $product,
-                $validated['quantity'],
-                $variant,
-                $validated['options'] ?? []
-            );
+            $line = $cart->addItem($product, $validated['quantity'], $variant, $validated['options'] ?? []);
 
             return response()->json([
                 'message' => 'Prodotto aggiunto al carrello',
@@ -98,9 +93,7 @@ class CartController extends ApiController
                 $cart->removeItem($line);
                 $message = 'Prodotto rimosso dal carrello';
             } else {
-                $unitPrice = $line->product_variant_id
-                    ? $line->productVariant->price
-                    : $line->product->price;
+                $unitPrice = $line->product_variant_id ? $line->productVariant->price : $line->product->price;
 
                 $line->update([
                     'quantity' => $validated['quantity'],
@@ -243,16 +236,12 @@ class CartController extends ApiController
     private function getCurrentCart(Request $request): ?Cart
     {
         if ($customerId = $request->user('customers')?->id) {
-            return Cart::where('customer_id', $customerId)
-                ->where('status', 'active')
-                ->first();
+            return Cart::where('customer_id', $customerId)->where('status', 'active')->first();
         }
 
         $sessionId = $request->session()->getId();
 
-        return Cart::where('session_id', $sessionId)
-            ->where('status', 'active')
-            ->first();
+        return Cart::where('session_id', $sessionId)->where('status', 'active')->first();
     }
 
     /**

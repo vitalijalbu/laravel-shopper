@@ -221,7 +221,8 @@ class FidelitySystemTest extends TestCase
         $this->assertEquals(0, $card->available_points);
 
         // Verifica che sia stata creata una transazione di scadenza
-        $expirationTransaction = $card->transactions()
+        $expirationTransaction = $card
+            ->transactions()
             ->where('type', 'expired')
             ->where('reference_transaction_id', $expiredTransaction->id)
             ->first();

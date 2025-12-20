@@ -14,7 +14,7 @@ class DashboardResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $data = is_array($this->resource) ? $this->resource : (array) $this->resource;
+        $data = is_array($this->resource) ? $this->resource : ((array) $this->resource);
 
         return [
             'period' => $data['period'] ?? null,

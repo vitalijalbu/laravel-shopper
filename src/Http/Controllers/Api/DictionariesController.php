@@ -55,11 +55,14 @@ class DictionariesController extends ApiController
                 'title' => $dictionary->title() ?? ucfirst($handle),
                 'keywords' => $dictionary->keywords(),
                 'options' => $dictionary->options($search),
-                'items' => collect($items)->map(fn ($item) => [
-                    'value' => $item->value(),
-                    'label' => $item->label(),
-                    'extra' => $item->extra(),
-                ])->values()->all(),
+                'items' => collect($items)
+                    ->map(fn ($item) => [
+                        'value' => $item->value(),
+                        'label' => $item->label(),
+                        'extra' => $item->extra(),
+                    ])
+                    ->values()
+                    ->all(),
                 'total' => count($items),
             ];
         });
@@ -105,25 +108,31 @@ class DictionariesController extends ApiController
 
         $dictionaries = $this->getAllDictionaries();
 
-        $results = collect($dictionaries)->map(function ($class, $handle) use ($query) {
-            $dictionary = new $class;
-            $items = $dictionary->optionItems($query);
+        $results = collect($dictionaries)
+            ->map(function ($class, $handle) use ($query) {
+                $dictionary = new $class;
+                $items = $dictionary->optionItems($query);
 
-            if (empty($items)) {
-                return null;
-            }
+                if (empty($items)) {
+                    return null;
+                }
 
-            return [
-                'handle' => $handle,
-                'title' => $dictionary->title() ?? ucfirst($handle),
-                'items' => collect($items)->map(fn ($item) => [
-                    'value' => $item->value(),
-                    'label' => $item->label(),
-                    'extra' => $item->extra(),
-                ])->values()->all(),
-                'count' => count($items),
-            ];
-        })->filter()->values();
+                return [
+                    'handle' => $handle,
+                    'title' => $dictionary->title() ?? ucfirst($handle),
+                    'items' => collect($items)
+                        ->map(fn ($item) => [
+                            'value' => $item->value(),
+                            'label' => $item->label(),
+                            'extra' => $item->extra(),
+                        ])
+                        ->values()
+                        ->all(),
+                    'count' => count($items),
+                ];
+            })
+            ->filter()
+            ->values();
 
         return $this->successResponse([
             'query' => $query,

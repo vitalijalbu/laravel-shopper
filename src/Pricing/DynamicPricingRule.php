@@ -45,8 +45,12 @@ class DynamicPricingRule implements PricingRuleInterface
         return true;
     }
 
-    public function calculateAdjustment(float $currentPrice, Product $product, int $quantity, array $context): ?array
-    {
+    public function calculateAdjustment(
+        float $currentPrice,
+        Product $product,
+        int $quantity,
+        array $context,
+    ): ?array {
         $adjustment = $this->model->adjustment ?? [];
 
         if (empty($adjustment)) {
@@ -59,8 +63,13 @@ class DynamicPricingRule implements PricingRuleInterface
         ];
     }
 
-    protected function evaluateCondition(array $condition, Product $product, ?Customer $customer, int $quantity, array $context): bool
-    {
+    protected function evaluateCondition(
+        array $condition,
+        Product $product,
+        ?Customer $customer,
+        int $quantity,
+        array $context,
+    ): bool {
         $field = $condition['field'];
         $operator = $condition['operator'];
         $value = $condition['value'];

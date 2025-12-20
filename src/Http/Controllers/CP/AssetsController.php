@@ -16,7 +16,7 @@ use Inertia\Response;
 class AssetsController extends BaseController
 {
     public function __construct(
-        protected AssetService $assetService
+        protected AssetService $assetService,
     ) {}
 
     /**
@@ -40,9 +40,7 @@ class AssetsController extends BaseController
         $container = $request->get('container', $containers->first()?->handle ?? 'assets');
 
         // Build query
-        $query = Asset::query()
-            ->with(['containerModel', 'uploadedBy'])
-            ->inContainer($container);
+        $query = Asset::query()->with(['containerModel', 'uploadedBy'])->inContainer($container);
 
         // Folder filter
         if ($request->filled('folder')) {
@@ -74,9 +72,7 @@ class AssetsController extends BaseController
         $assets = $query->paginate($perPage)->withQueryString();
 
         // Get folders for current container
-        $folders = AssetFolder::where('container', $container)
-            ->orderBy('path')
-            ->get();
+        $folders = AssetFolder::where('container', $container)->orderBy('path')->get();
 
         return $this->inertiaResponse('assets/index', [
             'page' => $page->compile(),
@@ -136,7 +132,7 @@ class AssetsController extends BaseController
                     file: $file,
                     container: $request->container,
                     folder: $request->folder,
-                    userId: auth()->id()
+                    userId: auth()->id(),
                 );
                 $uploadedAssets[] = $asset;
             } catch (\Exception $e) {
@@ -154,15 +150,13 @@ class AssetsController extends BaseController
                     'failed' => count($errors),
                 ]),
                 [],
-                ['uploadErrors' => $errors]
+                ['uploadErrors' => $errors],
             );
 
             return redirect()->back();
         }
 
-        $this->flashSuccess(
-            __('flash.assets.upload_success', ['count' => count($uploadedAssets)])
-        );
+        $this->flashSuccess(__('flash.assets.upload_success', ['count' => count($uploadedAssets)]));
 
         return redirect()->route('cp.assets.index', ['container' => $request->container]);
     }
@@ -184,7 +178,8 @@ class AssetsController extends BaseController
         $asset->load(['containerModel', 'uploadedBy', 'transformations']);
 
         // Get asset transformations
-        $transformations = $asset->transformations()
+        $transformations = $asset
+            ->transformations()
             ->orderBy('access_count', 'desc')
             ->get()
             ->map(function ($transformation) {
@@ -271,7 +266,7 @@ class AssetsController extends BaseController
             $this->assetService->setFocusPoint(
                 $asset,
                 $request->input('focus_point.x'),
-                $request->input('focus_point.y')
+                $request->input('focus_point.y'),
             );
         }
 
@@ -320,9 +315,7 @@ class AssetsController extends BaseController
             }
         }
 
-        $this->flashSuccess(
-            __('flash.assets.bulk_deleted', ['count' => $deleted])
-        );
+        $this->flashSuccess(__('flash.assets.bulk_deleted', ['count' => $deleted]));
 
         return redirect()->back();
     }

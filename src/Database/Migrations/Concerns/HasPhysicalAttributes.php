@@ -13,7 +13,7 @@ trait HasPhysicalAttributes
         Blueprint $table,
         string $columnName = 'weight',
         string $defaultUnit = 'kg',
-        bool $nullable = true
+        bool $nullable = true,
     ): void {
         $column = $table->decimal($columnName, 8, 2);
 

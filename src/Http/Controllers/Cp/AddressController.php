@@ -14,7 +14,8 @@ class AddressController extends Controller
 {
     public function index(Customer $customer): Response
     {
-        $addresses = $customer->addresses()
+        $addresses = $customer
+            ->addresses()
             ->orderBy('is_default', 'desc')
             ->orderBy('type')
             ->orderBy('created_at', 'desc')

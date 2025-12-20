@@ -15,7 +15,7 @@ use Illuminate\Http\Request;
 class WishlistsController extends ApiController
 {
     public function __construct(
-        private readonly WishlistRepository $repository
+        private readonly WishlistRepository $repository,
     ) {}
 
     /**

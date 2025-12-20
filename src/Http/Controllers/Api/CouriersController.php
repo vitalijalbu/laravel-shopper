@@ -15,7 +15,7 @@ use Illuminate\Http\Request;
 class CouriersController extends ApiController
 {
     public function __construct(
-        private readonly CourierRepository $repository
+        private readonly CourierRepository $repository,
     ) {}
 
     /**
@@ -108,7 +108,10 @@ class CouriersController extends ApiController
         try {
             $updatedCourier = $this->repository->toggleEnabled($courier->id);
 
-            return $this->successResponse(new CourierResource($updatedCourier), 'Stato abilitazione del corriere aggiornato');
+            return $this->successResponse(
+                new CourierResource($updatedCourier),
+                'Stato abilitazione del corriere aggiornato',
+            );
         } catch (\Exception $e) {
             return $this->errorResponse('Errore nel cambio stato abilitazione: '.$e->getMessage());
         }

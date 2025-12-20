@@ -9,6 +9,7 @@ use Cartino\Helpers\EnumSerializable;
 enum ProductRelationType: string
 {
     use EnumSerializable;
+
     case UPSELL = 'upsell';
     case CROSS_SELL = 'cross_sell';
     case RELATED = 'related';

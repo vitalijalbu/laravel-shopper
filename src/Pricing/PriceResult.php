@@ -12,7 +12,7 @@ class PriceResult
         public float $originalPrice,
         public float $finalPrice,
         public Category $appliedRules,
-        public int $quantity = 1
+        public int $quantity = 1,
     ) {}
 
     /**

@@ -20,7 +20,7 @@ class OrderFactory extends Factory
         $tax = round($subtotal * 0.22, 2);
         $shipping = $this->faker->randomFloat(2, 0, 20);
         $discount = $this->faker->randomFloat(2, 0, 30);
-        $total = $subtotal + $tax + $shipping - $discount;
+        $total = ($subtotal + $tax + $shipping) - $discount;
 
         $firstName = $this->faker->firstName();
         $lastName = $this->faker->lastName();

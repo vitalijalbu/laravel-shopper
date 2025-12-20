@@ -19,8 +19,7 @@ class AssetContainersController extends BaseController
     {
         $this->addBreadcrumb('Asset Containers');
 
-        $page = Page::make('Asset Containers')
-            ->primaryAction('Create Container', route('cp.asset-containers.create'));
+        $page = Page::make('Asset Containers')->primaryAction('Create Container', route('cp.asset-containers.create'));
 
         $containers = AssetContainer::withCount('assets')
             ->get()
@@ -33,7 +32,9 @@ class AssetContainersController extends BaseController
                     'allow_uploads' => $container->allow_uploads,
                     'assets_count' => $container->assets_count,
                     'max_file_size' => $container->max_file_size,
-                    'max_file_size_mb' => $container->max_file_size ? round($container->max_file_size / 1024 / 1024, 2) : null,
+                    'max_file_size_mb' => $container->max_file_size
+                        ? round(($container->max_file_size / 1024) / 1024, 2)
+                        : null,
                     'allowed_extensions' => $container->allowed_extensions,
                     'url' => route('cp.asset-containers.show', $container),
                 ];
@@ -110,7 +111,11 @@ class AssetContainersController extends BaseController
             ->primaryAction('Browse Assets', route('cp.assets.index', ['container' => $assetContainer->handle]))
             ->secondaryActions([
                 ['label' => 'Edit', 'url' => route('cp.asset-containers.edit', $assetContainer)],
-                ['label' => 'Delete', 'url' => route('cp.asset-containers.destroy', $assetContainer), 'destructive' => true],
+                [
+                    'label' => 'Delete',
+                    'url' => route('cp.asset-containers.destroy', $assetContainer),
+                    'destructive' => true,
+                ],
             ]);
 
         $assetContainer->loadCount('assets');

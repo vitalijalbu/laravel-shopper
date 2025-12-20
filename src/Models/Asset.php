@@ -73,8 +73,7 @@ class Asset extends Model
 
     public function folderModel(): BelongsTo
     {
-        return $this->belongsTo(AssetFolder::class, 'folder', 'path')
-            ->where('container', $this->container);
+        return $this->belongsTo(AssetFolder::class, 'folder', 'path')->where('container', $this->container);
     }
 
     // Accessors
@@ -160,8 +159,7 @@ class Asset extends Model
     public function glide(array $params = [], ?string $preset = null): string
     {
         if ($preset) {
-            $presetParams = $this->containerModel?->getPreset($preset)
-                ?? config("media.presets.{$preset}", []);
+            $presetParams = $this->containerModel?->getPreset($preset) ?? config("media.presets.{$preset}", []);
             $params = array_merge($presetParams, $params);
         }
 
@@ -260,7 +258,8 @@ class Asset extends Model
     public function scopeSearch($query, string $search)
     {
         return $query->where(function ($q) use ($search) {
-            $q->where('filename', 'like', "%{$search}%")
+            $q
+                ->where('filename', 'like', "%{$search}%")
                 ->orWhere('basename', 'like', "%{$search}%")
                 ->orWhereRaw("meta->>'alt' like ?", ["%{$search}%"])
                 ->orWhereRaw("meta->>'title' like ?", ["%{$search}%"]);

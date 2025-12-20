@@ -22,7 +22,7 @@ class CartDto extends BaseDto
         public string $status = 'active',
         public ?DateTime $expires_at = null,
         public ?string $created_at = null,
-        public ?string $updated_at = null
+        public ?string $updated_at = null,
     ) {}
 
     /**
@@ -33,8 +33,8 @@ class CartDto extends BaseDto
         return new static(
             id: $data['id'] ?? null,
             session_id: $data['session_id'] ?? null,
-            customer_id: isset($data['customer_id']) ? (int) $data['customer_id'] : null,
-            currency_id: isset($data['currency_id']) ? (int) $data['currency_id'] : null,
+            customer_id: isset($data['customer_id']) ? ((int) $data['customer_id']) : null,
+            currency_id: isset($data['currency_id']) ? ((int) $data['currency_id']) : null,
             subtotal: (float) ($data['subtotal'] ?? 0.0),
             tax_total: (float) ($data['tax_total'] ?? 0.0),
             shipping_total: (float) ($data['shipping_total'] ?? 0.0),
@@ -55,24 +55,27 @@ class CartDto extends BaseDto
      */
     public function toArray(): array
     {
-        return array_filter([
-            'id' => $this->id,
-            'session_id' => $this->session_id,
-            'customer_id' => $this->customer_id,
-            'currency_id' => $this->currency_id,
-            'subtotal' => round($this->subtotal, 2),
-            'tax_total' => round($this->tax_total, 2),
-            'shipping_total' => round($this->shipping_total, 2),
-            'discount_total' => round($this->discount_total, 2),
-            'total' => round($this->total, 2),
-            'applied_discounts' => $this->applied_discounts,
-            'shipping_address' => $this->shipping_address,
-            'billing_address' => $this->billing_address,
-            'status' => $this->status,
-            'expires_at' => $this->expires_at?->format('Y-m-d H:i:s'),
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-        ], fn ($value) => $value !== null);
+        return array_filter(
+            [
+                'id' => $this->id,
+                'session_id' => $this->session_id,
+                'customer_id' => $this->customer_id,
+                'currency_id' => $this->currency_id,
+                'subtotal' => round($this->subtotal, 2),
+                'tax_total' => round($this->tax_total, 2),
+                'shipping_total' => round($this->shipping_total, 2),
+                'discount_total' => round($this->discount_total, 2),
+                'total' => round($this->total, 2),
+                'applied_discounts' => $this->applied_discounts,
+                'shipping_address' => $this->shipping_address,
+                'billing_address' => $this->billing_address,
+                'status' => $this->status,
+                'expires_at' => $this->expires_at?->format('Y-m-d H:i:s'),
+                'created_at' => $this->created_at,
+                'updated_at' => $this->updated_at,
+            ],
+            fn ($value) => $value !== null,
+        );
     }
 
     /**
@@ -171,8 +174,7 @@ class CartDto extends BaseDto
      */
     public function isExpired(): bool
     {
-        return $this->status === 'expired' ||
-               ($this->expires_at && $this->expires_at <= new DateTime);
+        return $this->status === 'expired' || $this->expires_at && $this->expires_at <= new DateTime;
     }
 
     /**
@@ -252,7 +254,7 @@ class CartDto extends BaseDto
      */
     public function calculateTotals(): void
     {
-        $this->total = $this->subtotal + $this->tax_total + $this->shipping_total - $this->discount_total;
+        $this->total = ($this->subtotal + $this->tax_total + $this->shipping_total) - $this->discount_total;
         $this->total = max(0, $this->total); // Ensure total is not negative
     }
 

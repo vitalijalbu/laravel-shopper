@@ -35,7 +35,7 @@ class SupplierDto extends BaseDto
         public ?string $currency_code = null,
         public ?int $site_id = null,
         public ?string $created_at = null,
-        public ?string $updated_at = null
+        public ?string $updated_at = null,
     ) {}
 
     /**
@@ -68,7 +68,7 @@ class SupplierDto extends BaseDto
             payment_terms: $data['payment_terms'] ?? [],
             shipping_terms: $data['shipping_terms'] ?? [],
             lead_time_days: $data['lead_time_days'] ?? null,
-            minimum_order_value: $data['minimum_order_value'] ? (float) $data['minimum_order_value'] : null,
+            minimum_order_value: $data['minimum_order_value'] ? ((float) $data['minimum_order_value']) : null,
             currency_code: $data['currency_code'] ?? null,
             site_id: $data['site_id'] ?? null,
             created_at: $data['created_at'] ?? null,
@@ -81,37 +81,40 @@ class SupplierDto extends BaseDto
      */
     public function toArray(): array
     {
-        return array_filter([
-            'id' => $this->id,
-            'name' => $this->name,
-            'code' => $this->code ?: $this->generateCode(),
-            'email' => $this->email,
-            'phone' => $this->phone,
-            'contact_person' => $this->contact_person,
-            'contact_email' => $this->contact_email,
-            'contact_phone' => $this->contact_phone,
-            'address' => $this->address,
-            'city' => $this->city,
-            'state' => $this->state,
-            'postal_code' => $this->postal_code,
-            'country_code' => $this->country_code,
-            'website' => $this->website,
-            'tax_number' => $this->tax_number,
-            'status' => $this->status,
-            'priority' => $this->priority,
-            'rating' => $this->rating,
-            'is_preferred' => $this->is_preferred,
-            'is_verified' => $this->is_verified,
-            'notes' => $this->notes,
-            'payment_terms' => $this->payment_terms,
-            'shipping_terms' => $this->shipping_terms,
-            'lead_time_days' => $this->lead_time_days,
-            'minimum_order_value' => $this->minimum_order_value,
-            'currency_code' => $this->currency_code,
-            'site_id' => $this->site_id,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-        ], fn ($value) => $value !== null);
+        return array_filter(
+            [
+                'id' => $this->id,
+                'name' => $this->name,
+                'code' => $this->code ?: $this->generateCode(),
+                'email' => $this->email,
+                'phone' => $this->phone,
+                'contact_person' => $this->contact_person,
+                'contact_email' => $this->contact_email,
+                'contact_phone' => $this->contact_phone,
+                'address' => $this->address,
+                'city' => $this->city,
+                'state' => $this->state,
+                'postal_code' => $this->postal_code,
+                'country_code' => $this->country_code,
+                'website' => $this->website,
+                'tax_number' => $this->tax_number,
+                'status' => $this->status,
+                'priority' => $this->priority,
+                'rating' => $this->rating,
+                'is_preferred' => $this->is_preferred,
+                'is_verified' => $this->is_verified,
+                'notes' => $this->notes,
+                'payment_terms' => $this->payment_terms,
+                'shipping_terms' => $this->shipping_terms,
+                'lead_time_days' => $this->lead_time_days,
+                'minimum_order_value' => $this->minimum_order_value,
+                'currency_code' => $this->currency_code,
+                'site_id' => $this->site_id,
+                'created_at' => $this->created_at,
+                'updated_at' => $this->updated_at,
+            ],
+            fn ($value) => $value !== null,
+        );
     }
 
     /**

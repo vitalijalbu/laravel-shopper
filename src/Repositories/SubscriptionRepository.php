@@ -62,10 +62,13 @@ class SubscriptionRepository extends BaseRepository
 
     public function findOne(int $id): ?Subscription
     {
-        return $this->getCachedData("subscription.{$id}", fn () => $this->model
-            ->with(['customer', 'product', 'variant', 'currency', 'orders'])
-            ->find($id)
-        );
+        return $this->getCachedData("subscription.{$id}", fn () => $this->model->with([
+            'customer',
+            'product',
+            'variant',
+            'currency',
+            'orders',
+        ])->find($id));
     }
 
     public function createOne(array $data): Subscription
@@ -124,8 +127,12 @@ class SubscriptionRepository extends BaseRepository
         return $subscription->fresh(['customer', 'product', 'variant']);
     }
 
-    public function cancel(int $id, ?string $reason = null, ?string $comment = null, bool $immediately = false): Subscription
-    {
+    public function cancel(
+        int $id,
+        ?string $reason = null,
+        ?string $comment = null,
+        bool $immediately = false,
+    ): Subscription {
         $subscription = $this->model->findOrFail($id);
         $subscription->cancel($reason, $comment, $immediately);
         $this->clearCache();
@@ -138,8 +145,7 @@ class SubscriptionRepository extends BaseRepository
         return $this->getCachedData('subscriptions.active', fn () => $this->model
             ->active()
             ->with(['customer', 'product', 'variant'])
-            ->get()
-        );
+            ->get());
     }
 
     public function getDueForBilling(): Collection
@@ -164,8 +170,7 @@ class SubscriptionRepository extends BaseRepository
             ->where('customer_id', $customerId)
             ->with(['product', 'variant', 'currency'])
             ->orderBy('created_at', 'desc')
-            ->get()
-        );
+            ->get());
     }
 
     public function getProductSubscriptions(int $productId): Collection
@@ -174,17 +179,13 @@ class SubscriptionRepository extends BaseRepository
             ->where('product_id', $productId)
             ->with(['customer', 'variant'])
             ->orderBy('created_at', 'desc')
-            ->get()
-        );
+            ->get());
     }
 
     public function getSubscriptionOrders(int $id): Collection
     {
         $subscription = $this->model->findOrFail($id);
 
-        return $subscription->orders()
-            ->with(['customer', 'lines'])
-            ->orderBy('created_at', 'desc')
-            ->get();
+        return $subscription->orders()->with(['customer', 'lines'])->orderBy('created_at', 'desc')->get();
     }
 }

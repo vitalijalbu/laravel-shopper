@@ -48,7 +48,8 @@ class SearchApiTest extends TestCase
             'q' => 'Laravel',
         ]);
 
-        $response->assertStatus(200)
+        $response
+            ->assertStatus(200)
             ->assertJsonStructure([
                 'success',
                 'data' => [
@@ -84,8 +85,7 @@ class SearchApiTest extends TestCase
             'collection' => 'blog',
         ]);
 
-        $response->assertStatus(200)
-            ->assertJsonPath('data.meta.total', 1);
+        $response->assertStatus(200)->assertJsonPath('data.meta.total', 1);
     }
 
     /** @test */
@@ -111,8 +111,7 @@ class SearchApiTest extends TestCase
             'tags' => ['php'],
         ]);
 
-        $response->assertStatus(200)
-            ->assertJsonPath('data.meta.total', 1);
+        $response->assertStatus(200)->assertJsonPath('data.meta.total', 1);
     }
 
     /** @test */
@@ -132,7 +131,8 @@ class SearchApiTest extends TestCase
             'category' => 'tutorial',
         ]);
 
-        $response->assertStatus(200)
+        $response
+            ->assertStatus(200)
             ->assertJsonStructure([
                 'data' => [
                     'breadcrumbs' => [
@@ -151,18 +151,21 @@ class SearchApiTest extends TestCase
     /** @test */
     public function it_returns_available_filters_when_requested()
     {
-        Entry::factory()->count(3)->create([
-            'collection' => 'blog',
-            'status' => 'published',
-            'locale' => 'it',
-            'author_id' => $this->author->id,
-        ]);
+        Entry::factory()
+            ->count(3)
+            ->create([
+                'collection' => 'blog',
+                'status' => 'published',
+                'locale' => 'it',
+                'author_id' => $this->author->id,
+            ]);
 
         $response = $this->postJson('/api/search', [
             'include_filters' => true,
         ]);
 
-        $response->assertStatus(200)
+        $response
+            ->assertStatus(200)
             ->assertJsonStructure([
                 'data' => [
                     'filters' => [
@@ -180,12 +183,14 @@ class SearchApiTest extends TestCase
     public function it_uses_eager_loading_to_prevent_n_plus_one()
     {
         // Create entries with relationships
-        Entry::factory()->count(5)->create([
-            'collection' => 'blog',
-            'status' => 'published',
-            'locale' => 'it',
-            'author_id' => $this->author->id,
-        ]);
+        Entry::factory()
+            ->count(5)
+            ->create([
+                'collection' => 'blog',
+                'status' => 'published',
+                'locale' => 'it',
+                'author_id' => $this->author->id,
+            ]);
 
         // Enable query log
         \DB::enableQueryLog();
@@ -210,19 +215,22 @@ class SearchApiTest extends TestCase
     /** @test */
     public function it_paginates_results()
     {
-        Entry::factory()->count(25)->create([
-            'collection' => 'blog',
-            'status' => 'published',
-            'locale' => 'it',
-            'author_id' => $this->author->id,
-        ]);
+        Entry::factory()
+            ->count(25)
+            ->create([
+                'collection' => 'blog',
+                'status' => 'published',
+                'locale' => 'it',
+                'author_id' => $this->author->id,
+            ]);
 
         $response = $this->postJson('/api/search', [
             'per_page' => 10,
             'page' => 2,
         ]);
 
-        $response->assertStatus(200)
+        $response
+            ->assertStatus(200)
             ->assertJsonPath('data.meta.current_page', 2)
             ->assertJsonPath('data.meta.per_page', 10)
             ->assertJsonPath('data.meta.total', 25)
@@ -253,8 +261,7 @@ class SearchApiTest extends TestCase
             'sort_direction' => 'asc',
         ]);
 
-        $response->assertStatus(200)
-            ->assertJsonPath('data.results.0.title', 'A Post');
+        $response->assertStatus(200)->assertJsonPath('data.results.0.title', 'A Post');
     }
 
     /** @test */
@@ -276,7 +283,6 @@ class SearchApiTest extends TestCase
 
         $response = $this->postJson('/api/search');
 
-        $response->assertStatus(200)
-            ->assertJsonPath('data.meta.total', 1);
+        $response->assertStatus(200)->assertJsonPath('data.meta.total', 1);
     }
 }

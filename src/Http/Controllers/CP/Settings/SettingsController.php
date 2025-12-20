@@ -11,13 +11,8 @@ class SettingsController extends Controller
 {
     public function index(): Response
     {
-        $page = Page::make(__('settings.title'))
-            ->breadcrumb('Home', '/cp')
-            ->breadcrumb(__('settings.title'));
+        $page = Page::make(__('settings.title'))->breadcrumb('Home', '/cp')->breadcrumb(__('settings.title'));
 
-        return Inertia::render(
-            'settings/index',
-            compact('page')
-        );
+        return Inertia::render('settings/index', compact('page'));
     }
 }

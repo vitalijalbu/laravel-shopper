@@ -13,8 +13,7 @@ class AbandonedCartController extends Controller
 {
     public function index(Request $request): Response
     {
-        $query = AbandonedCart::with(['customer', 'recoveredOrder'])
-            ->latest('abandoned_at');
+        $query = AbandonedCart::with(['customer', 'recoveredOrder'])->latest('abandoned_at');
 
         // Filters
         if ($request->filled('status')) {
@@ -35,10 +34,12 @@ class AbandonedCartController extends Controller
 
         if ($request->filled('search')) {
             $query->where(function ($q) use ($request) {
-                $q->where('email', 'like', "%{$request->search}%")
-                    ->orWhereHas('customer', function ($customerQuery) use ($request) {
+                $q->where('email', 'like', "%{$request->search}%")->orWhereHas(
+                    'customer',
+                    function ($customerQuery) use ($request) {
                         $customerQuery->where('name', 'like', "%{$request->search}%");
-                    });
+                    },
+                );
             });
         }
 

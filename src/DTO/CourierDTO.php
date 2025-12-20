@@ -17,7 +17,7 @@ class CourierDTO
         public readonly ?string $tracking_url = null,
         public readonly ?int $delivery_time_min = null,
         public readonly ?int $delivery_time_max = null,
-        public readonly ?int $id = null
+        public readonly ?int $id = null,
     ) {}
 
     public static function fromArray(array $data): self
@@ -33,25 +33,28 @@ class CourierDTO
             tracking_url: $data['tracking_url'] ?? null,
             delivery_time_min: $data['delivery_time_min'] ?? null,
             delivery_time_max: $data['delivery_time_max'] ?? null,
-            id: $data['id'] ?? null
+            id: $data['id'] ?? null,
         );
     }
 
     public function toArray(): array
     {
-        return array_filter([
-            'id' => $this->id,
-            'name' => $this->name,
-            'slug' => $this->slug,
-            'code' => $this->code,
-            'status' => $this->status,
-            'is_enabled' => $this->is_enabled,
-            'description' => $this->description,
-            'website' => $this->website,
-            'tracking_url' => $this->tracking_url,
-            'delivery_time_min' => $this->delivery_time_min,
-            'delivery_time_max' => $this->delivery_time_max,
-        ], fn ($value) => $value !== null);
+        return array_filter(
+            [
+                'id' => $this->id,
+                'name' => $this->name,
+                'slug' => $this->slug,
+                'code' => $this->code,
+                'status' => $this->status,
+                'is_enabled' => $this->is_enabled,
+                'description' => $this->description,
+                'website' => $this->website,
+                'tracking_url' => $this->tracking_url,
+                'delivery_time_min' => $this->delivery_time_min,
+                'delivery_time_max' => $this->delivery_time_max,
+            ],
+            fn ($value) => $value !== null,
+        );
     }
 
     public function toCreateArray(): array

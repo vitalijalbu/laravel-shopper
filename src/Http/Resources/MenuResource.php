@@ -20,7 +20,6 @@ class MenuResource extends JsonResource
             'sort_order' => $this->sort_order,
             'created_at' => $this->created_at->toISOString(),
             'updated_at' => $this->updated_at->toISOString(),
-
             'items' => MenuItemResource::collection($this->whenLoaded('items')),
         ];
     }

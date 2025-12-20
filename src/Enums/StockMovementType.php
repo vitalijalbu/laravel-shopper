@@ -42,8 +42,8 @@ enum StockMovementType: string
     public function affectsQuantity(): int
     {
         return match ($this) {
-            self::PURCHASE, self::RETURN => 1,  // aumenta
-            self::SALE, self::DAMAGE => -1,     // diminuisce
+            self::PURCHASE, self::RETURN => 1, // aumenta
+            self::SALE, self::DAMAGE => -1, // diminuisce
             self::TRANSFER, self::ADJUSTMENT => 0, // varia
         };
     }

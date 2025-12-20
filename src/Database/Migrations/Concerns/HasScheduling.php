@@ -12,7 +12,7 @@ trait HasScheduling
     public function addScheduling(
         Blueprint $table,
         string $startColumn = 'starts_at',
-        string $endColumn = 'ends_at'
+        string $endColumn = 'ends_at',
     ): void {
         $table->timestamp($startColumn)->nullable();
         $table->timestamp($endColumn)->nullable();

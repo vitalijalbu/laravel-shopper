@@ -31,8 +31,7 @@ class UserController extends ApiController
         // Search filter
         if ($search = $request->get('search')) {
             $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                    ->orWhere('email', 'like', "%{$search}%");
+                $q->where('name', 'like', "%{$search}%")->orWhere('email', 'like', "%{$search}%");
             });
         }
 
@@ -49,9 +48,7 @@ class UserController extends ApiController
         }
 
         $perPage = $request->get('per_page', 25);
-        $users = $query->with(['roles', 'permissions'])
-            ->orderBy('created_at', 'desc')
-            ->paginate($perPage);
+        $users = $query->with(['roles', 'permissions'])->orderBy('created_at', 'desc')->paginate($perPage);
 
         return response()->json([
             'data' => $users->items(),
@@ -332,15 +329,17 @@ class UserController extends ApiController
 
             switch ($validated['action']) {
                 case 'delete':
-                    $users->get()->each(function ($user) use (&$count, &$errors, $currentUserId) {
-                        if ($user->id == $currentUserId) {
-                            $errors[] = 'Non puoi eliminare il tuo account';
+                    $users
+                        ->get()
+                        ->each(function ($user) use (&$count, &$errors, $currentUserId) {
+                            if ($user->id == $currentUserId) {
+                                $errors[] = 'Non puoi eliminare il tuo account';
 
-                            return;
-                        }
-                        $user->delete();
-                        $count++;
-                    });
+                                return;
+                            }
+                            $user->delete();
+                            $count++;
+                        });
                     break;
 
                 case 'activate':
@@ -348,15 +347,17 @@ class UserController extends ApiController
                     break;
 
                 case 'deactivate':
-                    $users->get()->each(function ($user) use (&$count, &$errors, $currentUserId) {
-                        if ($user->id == $currentUserId) {
-                            $errors[] = 'Non puoi disattivare il tuo account';
+                    $users
+                        ->get()
+                        ->each(function ($user) use (&$count, &$errors, $currentUserId) {
+                            if ($user->id == $currentUserId) {
+                                $errors[] = 'Non puoi disattivare il tuo account';
 
-                            return;
-                        }
-                        $user->update(['is_active' => false]);
-                        $count++;
-                    });
+                                return;
+                            }
+                            $user->update(['is_active' => false]);
+                            $count++;
+                        });
                     break;
             }
 

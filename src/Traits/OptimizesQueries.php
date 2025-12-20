@@ -147,7 +147,8 @@ trait OptimizesQueries
 
         return $query->addSelect([
             $as => function ($query) use ($relation) {
-                return $query->selectRaw('1')
+                return $query
+                    ->selectRaw('1')
                     ->from($relation)
                     ->whereColumn($this->model->getTable().'.id', $relation.'.'.$this->model->getForeignKey())
                     ->limit(1);

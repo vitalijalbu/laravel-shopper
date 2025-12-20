@@ -91,9 +91,7 @@ class AssetableController extends Controller
 
             // If set as primary, remove primary from others
             if ($validated['is_primary'] ?? false) {
-                $model->assets()
-                    ->wherePivot('collection', $collection)
-                    ->update(['assetables.is_primary' => false]);
+                $model->assets()->wherePivot('collection', $collection)->update(['assetables.is_primary' => false]);
             }
 
             $model->attachAsset($asset, $collection, $attributes);
@@ -166,12 +164,8 @@ class AssetableController extends Controller
      *   "meta": {"alt": "Updated alt"}
      * }
      */
-    public function update(
-        Request $request,
-        string $modelType,
-        int $modelId,
-        int $assetId
-    ): JsonResponse {
+    public function update(Request $request, string $modelType, int $modelId, int $assetId): JsonResponse
+    {
         $model = $this->findModel($modelType, $modelId);
 
         $validated = $request->validate([
@@ -188,10 +182,7 @@ class AssetableController extends Controller
             DB::beginTransaction();
 
             // Check if asset is attached
-            $attached = $model->assets()
-                ->wherePivot('collection', $collection)
-                ->where('asset_id', $assetId)
-                ->exists();
+            $attached = $model->assets()->wherePivot('collection', $collection)->where('asset_id', $assetId)->exists();
 
             if (! $attached) {
                 return response()->json([
@@ -213,9 +204,7 @@ class AssetableController extends Controller
 
             // Update other pivot attributes
             if (! empty($validated)) {
-                $model->assets()
-                    ->wherePivot('collection', $collection)
-                    ->updateExistingPivot($assetId, $validated);
+                $model->assets()->wherePivot('collection', $collection)->updateExistingPivot($assetId, $validated);
             }
 
             DB::commit();
@@ -240,12 +229,8 @@ class AssetableController extends Controller
      *
      * DELETE /api/products/{id}/assets/{assetId}?collection=images
      */
-    public function detach(
-        Request $request,
-        string $modelType,
-        int $modelId,
-        int $assetId
-    ): JsonResponse {
+    public function detach(Request $request, string $modelType, int $modelId, int $assetId): JsonResponse
+    {
         $model = $this->findModel($modelType, $modelId);
 
         $collection = $request->get('collection');
@@ -292,12 +277,8 @@ class AssetableController extends Controller
      *
      * POST /api/products/{id}/assets/{assetId}/set-primary?collection=images
      */
-    public function setPrimary(
-        Request $request,
-        string $modelType,
-        int $modelId,
-        int $assetId
-    ): JsonResponse {
+    public function setPrimary(Request $request, string $modelType, int $modelId, int $assetId): JsonResponse
+    {
         $model = $this->findModel($modelType, $modelId);
 
         $collection = $request->get('collection', 'images');

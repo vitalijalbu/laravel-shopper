@@ -38,7 +38,7 @@ class TranslationsSeeder extends Seeder
                 'value' => 'Maglietta Classica',
                 'is_verified' => true,
                 'source' => 'manual',
-            ]
+            ],
         );
 
         Translation::firstOrCreate(
@@ -52,7 +52,7 @@ class TranslationsSeeder extends Seeder
                 'value' => 'Maglietta comoda in cotone 100%, perfetta per ogni giorno',
                 'is_verified' => true,
                 'source' => 'manual',
-            ]
+            ],
         );
 
         // French
@@ -67,7 +67,7 @@ class TranslationsSeeder extends Seeder
                 'value' => 'T-Shirt Classique',
                 'is_verified' => true,
                 'source' => 'manual',
-            ]
+            ],
         );
 
         Translation::firstOrCreate(
@@ -81,7 +81,7 @@ class TranslationsSeeder extends Seeder
                 'value' => 'T-shirt confortable en coton, parfait pour tous les jours',
                 'is_verified' => true,
                 'source' => 'manual',
-            ]
+            ],
         );
 
         // German
@@ -96,7 +96,7 @@ class TranslationsSeeder extends Seeder
                 'value' => 'Klassisches T-Shirt',
                 'is_verified' => true,
                 'source' => 'manual',
-            ]
+            ],
         );
 
         Translation::firstOrCreate(
@@ -110,7 +110,7 @@ class TranslationsSeeder extends Seeder
                 'value' => 'Bequemes Baumwoll-T-Shirt, perfekt für jeden Tag',
                 'is_verified' => true,
                 'source' => 'manual',
-            ]
+            ],
         );
 
         // Spanish
@@ -125,7 +125,7 @@ class TranslationsSeeder extends Seeder
                 'value' => 'Camiseta Clásica',
                 'is_verified' => true,
                 'source' => 'manual',
-            ]
+            ],
         );
 
         Translation::firstOrCreate(
@@ -139,7 +139,7 @@ class TranslationsSeeder extends Seeder
                 'value' => 'Camiseta cómoda de algodón, perfecta para todos los días',
                 'is_verified' => true,
                 'source' => 'manual',
-            ]
+            ],
         );
 
         // ===========================================
@@ -158,7 +158,7 @@ class TranslationsSeeder extends Seeder
                 'value' => 'Scarpe Sportive',
                 'is_verified' => true,
                 'source' => 'manual',
-            ]
+            ],
         );
 
         Translation::firstOrCreate(
@@ -172,7 +172,7 @@ class TranslationsSeeder extends Seeder
                 'value' => 'Scarpe sportive ad alte prestazioni per running e allenamento',
                 'is_verified' => true,
                 'source' => 'manual',
-            ]
+            ],
         );
 
         // French
@@ -187,7 +187,7 @@ class TranslationsSeeder extends Seeder
                 'value' => 'Baskets de Sport',
                 'is_verified' => true,
                 'source' => 'manual',
-            ]
+            ],
         );
 
         Translation::firstOrCreate(
@@ -201,7 +201,7 @@ class TranslationsSeeder extends Seeder
                 'value' => 'Baskets haute performance pour le running et l\'entraînement',
                 'is_verified' => true,
                 'source' => 'manual',
-            ]
+            ],
         );
 
         // German
@@ -216,7 +216,7 @@ class TranslationsSeeder extends Seeder
                 'value' => 'Sport Sneakers',
                 'is_verified' => true,
                 'source' => 'manual',
-            ]
+            ],
         );
 
         Translation::firstOrCreate(
@@ -230,7 +230,7 @@ class TranslationsSeeder extends Seeder
                 'value' => 'Hochleistungs-Sportschuhe für Laufen und Training',
                 'is_verified' => true,
                 'source' => 'manual',
-            ]
+            ],
         );
 
         // Spanish
@@ -245,7 +245,7 @@ class TranslationsSeeder extends Seeder
                 'value' => 'Zapatillas Deportivas',
                 'is_verified' => true,
                 'source' => 'manual',
-            ]
+            ],
         );
 
         Translation::firstOrCreate(
@@ -259,7 +259,7 @@ class TranslationsSeeder extends Seeder
                 'value' => 'Zapatillas deportivas de alto rendimiento para running y entrenamiento',
                 'is_verified' => true,
                 'source' => 'manual',
-            ]
+            ],
         );
 
         $this->command->info('✅ Translations seeded successfully!');

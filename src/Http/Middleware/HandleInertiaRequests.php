@@ -34,18 +34,18 @@ class HandleInertiaRequests
                     }
 
                     // Get user name safely
-                    $name = $user->name ??
-                           (isset($user->first_name) ? trim($user->first_name.' '.($user->last_name ?? '')) : null) ??
-                           'User';
+                    $name =
+                        $user->name ??
+                        (isset($user->first_name) ? trim($user->first_name.' '.($user->last_name ?? '')) : null) ??
+                            'User';
 
                     // Safely check CP access without causing issues
                     $canAccessCP = true; // Default to true to avoid blocking
 
                     try {
                         if (method_exists($user, 'can') && method_exists($user, 'hasRole')) {
-                            $canAccessCP = $user->can('access-cp') ||
-                                         $user->hasRole('admin') ||
-                                         $user->hasRole('super-admin');
+                            $canAccessCP =
+                                $user->can('access-cp') || $user->hasRole('admin') || $user->hasRole('super-admin');
                         } elseif (isset($user->can_access_cp)) {
                             $canAccessCP = (bool) $user->can_access_cp;
                         }
@@ -54,6 +54,7 @@ class HandleInertiaRequests
                             'error' => $e->getMessage(),
                             'user_id' => $user->id,
                         ]);
+
                         // Keep default true value
                     }
 

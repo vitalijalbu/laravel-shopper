@@ -104,14 +104,7 @@ class Supplier extends Model
      */
     public function products()
     {
-        return $this->hasManyThrough(
-            Product::class,
-            ProductSupplier::class,
-            'supplier_id',
-            'id',
-            'id',
-            'product_id'
-        );
+        return $this->hasManyThrough(Product::class, ProductSupplier::class, 'supplier_id', 'id', 'id', 'product_id');
     }
 
     /**
@@ -157,7 +150,9 @@ class Supplier extends Model
             $this->city,
             $this->state,
             $this->postal_code,
-        ])->filter()->implode(', ');
+        ])
+            ->filter()
+            ->implode(', ');
 
         if ($this->country_code) {
             $address .= ', '.$this->country_code;

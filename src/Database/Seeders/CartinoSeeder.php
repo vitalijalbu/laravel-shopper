@@ -116,7 +116,7 @@ class CartinoSeeder extends Seeder
                 'is_default' => true,
                 'status' => 'active',
                 'order' => 1,
-            ]
+            ],
         );
 
         Site::firstOrCreate(
@@ -129,7 +129,7 @@ class CartinoSeeder extends Seeder
                 'lang' => 'it',
                 'status' => 'active',
                 'order' => 2,
-            ]
+            ],
         );
 
         // Seed currencies (ensure uniqueness by code)
@@ -141,7 +141,7 @@ class CartinoSeeder extends Seeder
                 'symbol' => '€',
                 'is_default' => true,
                 'rate' => 1.0000,
-            ]
+            ],
         );
 
         $uniqueCurrencies = [
@@ -165,7 +165,7 @@ class CartinoSeeder extends Seeder
                     'symbol' => $c['symbol'],
                     'rate' => $c['rate'],
                     'is_default' => false,
-                ]
+                ],
             );
         }
 
@@ -201,17 +201,22 @@ class CartinoSeeder extends Seeder
 
         // Seed channels
         $this->command->info('📺 Seeding channels...');
-        Channel::factory()->state([
-            'site_id' => $mainSite->id,
-            'slug' => 'default',
-            'name' => 'Default Channel',
-            'is_default' => true,
-            'status' => 'active',
-        ])->create();
+        Channel::factory()
+            ->state([
+                'site_id' => $mainSite->id,
+                'slug' => 'default',
+                'name' => 'Default Channel',
+                'is_default' => true,
+                'status' => 'active',
+            ])
+            ->create();
 
-        Channel::factory()->count(10)->state([
-            'site_id' => $mainSite->id,
-        ])->create();
+        Channel::factory()
+            ->count(10)
+            ->state([
+                'site_id' => $mainSite->id,
+            ])
+            ->create();
 
         // Seed customer groups
         $this->command->info('👥 Seeding customer groups...');
@@ -226,7 +231,10 @@ class CartinoSeeder extends Seeder
         $this->command->info('📦 Seeding product types...');
         ProductType::factory()->state(['name' => 'Physical', 'slug' => 'physical', 'status' => 'active'])->create();
         ProductType::factory()->state(['name' => 'Digital', 'slug' => 'digital', 'status' => 'active'])->create();
-        ProductType::factory()->count(10)->active()->create();
+        ProductType::factory()
+            ->count(10)
+            ->active()
+            ->create();
 
         // Settings
         $this->command->info('⚙️ Seeding settings...');
@@ -242,9 +250,12 @@ class CartinoSeeder extends Seeder
 
         // Shipping zones and rates
         $this->command->info('🚚 Seeding shipping zones & rates...');
-        $zones = ShippingZone::factory()->count(10)->state([
-            'site_id' => $mainSite->id,
-        ])->create();
+        $zones = ShippingZone::factory()
+            ->count(10)
+            ->state([
+                'site_id' => $mainSite->id,
+            ])
+            ->create();
 
         foreach ($zones as $zone) {
             \Cartino\Database\Factories\ShippingRateFactory::new()
@@ -252,7 +263,8 @@ class CartinoSeeder extends Seeder
                 ->state([
                     'shipping_zone_id' => $zone->id,
                     'channel_id' => Channel::where('slug', 'default')->value('id'),
-                ])->create();
+                ])
+                ->create();
         }
 
         // Taxes
@@ -350,12 +362,18 @@ class CartinoSeeder extends Seeder
         $menus = Menu::factory()->count(5)->create();
 
         foreach ($menus as $menu) {
-            MenuItem::factory()->count(10)->state(['menu_id' => $menu->id])->create();
+            MenuItem::factory()
+                ->count(10)
+                ->state(['menu_id' => $menu->id])
+                ->create();
         }
 
         // Suppliers
         $this->command->info('🏭 Seeding suppliers...');
-        Supplier::factory()->count(30)->active()->create();
+        Supplier::factory()
+            ->count(30)
+            ->active()
+            ->create();
 
         // Couriers
         $this->command->info('🚚 Seeding couriers...');
@@ -370,7 +388,7 @@ class CartinoSeeder extends Seeder
                     'handle' => 'main',
                     'title' => 'Main Assets',
                     'disk' => 'public',
-                ]
+                ],
             );
         }
 
@@ -411,33 +429,41 @@ class CartinoSeeder extends Seeder
         ];
 
         foreach ($rootCategories as $rootData) {
-            $rootCat = Category::factory()->state([
-                'site_id' => $mainSite->id,
-                'name' => $rootData['name'],
-                'slug' => $rootData['slug'],
-                'parent_id' => null,
-                'level' => 0,
-                'left' => $rootData['left'],
-                'right' => $rootData['right'],
-            ])->create();
+            $rootCat = Category::factory()
+                ->state([
+                    'site_id' => $mainSite->id,
+                    'name' => $rootData['name'],
+                    'slug' => $rootData['slug'],
+                    'parent_id' => null,
+                    'level' => 0,
+                    'left' => $rootData['left'],
+                    'right' => $rootData['right'],
+                ])
+                ->create();
             $categories->push($rootCat);
 
             // Create subcategories for each root category
             for ($i = 0; $i < 5; $i++) {
-                $subCat = Category::factory()->state([
-                    'site_id' => $mainSite->id,
-                    'parent_id' => $rootCat->id,
-                    'level' => 1,
-                    'path' => $rootData['slug'].'/'.fake()->slug(2),
-                ])->create();
+                $subCat = Category::factory()
+                    ->state([
+                        'site_id' => $mainSite->id,
+                        'parent_id' => $rootCat->id,
+                        'level' => 1,
+                        'path' => $rootData['slug'].'/'.fake()->slug(2),
+                    ])
+                    ->create();
                 $categories->push($subCat);
             }
         }
 
         // Create even more categories
-        Category::factory()->count(50)->state([
-            'site_id' => $mainSite->id,
-        ])->create()->each(fn ($cat) => $categories->push($cat));
+        Category::factory()
+            ->count(50)
+            ->state([
+                'site_id' => $mainSite->id,
+            ])
+            ->create()
+            ->each(fn ($cat) => $categories->push($cat));
 
         $this->command->info('✅ Categories created: '.$categories->count());
 
@@ -468,10 +494,12 @@ class CartinoSeeder extends Seeder
             $productsBatch = [];
             $now = now();
 
-            for ($i = 0; $i < $batchSize && ($batch * $batchSize + $i) < $totalProducts; $i++) {
-                $raw = Product::factory()->state([
-                    'site_id' => $mainSite->id,
-                ])->raw();
+            for ($i = 0; $i < $batchSize && (($batch * $batchSize) + $i) < $totalProducts; $i++) {
+                $raw = Product::factory()
+                    ->state([
+                        'site_id' => $mainSite->id,
+                    ])
+                    ->raw();
                 // Ensure JSON fields are properly encoded for batch insert
                 foreach (['options', 'tags', 'data', 'seo'] as $jsonKey) {
                     if (array_key_exists($jsonKey, $raw) && is_array($raw[$jsonKey])) {
@@ -501,10 +529,12 @@ class CartinoSeeder extends Seeder
                 $productVariants = [];
 
                 for ($v = 0; $v < $variantCount; $v++) {
-                    $variantData = ProductVariant::factory()->state([
-                        'product_id' => $product->id,
-                        'site_id' => $product->site_id,
-                    ])->raw();
+                    $variantData = ProductVariant::factory()
+                        ->state([
+                            'product_id' => $product->id,
+                            'site_id' => $product->site_id,
+                        ])
+                        ->raw();
                     // Ensure JSON fields are properly encoded for batch insert
                     foreach (['options', 'data', 'dimensions'] as $jsonKey) {
                         if (array_key_exists($jsonKey, $variantData) && is_array($variantData[$jsonKey])) {
@@ -559,7 +589,7 @@ class CartinoSeeder extends Seeder
                     $pricesBatch = [];
                     foreach ($productVariants as $variant) {
                         $basePrice = (int) ($variant->price * 100); // Convert to cents
-                        $comparePrice = $basePrice > 2000 ? (int) ($basePrice * 1.25) : null;
+                        $comparePrice = $basePrice > 2000 ? ((int) ($basePrice * 1.25)) : null;
                         $costPrice = (int) ($basePrice * 0.6);
 
                         // Standard retail price (global, no site, no price list)
@@ -694,29 +724,41 @@ class CartinoSeeder extends Seeder
         $this->seedProductAssets($products);
 
         // Product Reviews - MASSIVE (guarded if tables/models exist)
-        if (\Schema::hasTable('product_reviews')
-            && class_exists(\Cartino\Models\ProductReview::class)
-            && class_exists(\Cartino\Models\ReviewMedia::class)
-            && class_exists(\Cartino\Models\ReviewVote::class)) {
+        if (
+            \Schema::hasTable('product_reviews') &&
+                class_exists(\Cartino\Models\ProductReview::class) &&
+                class_exists(\Cartino\Models\ReviewMedia::class) &&
+                class_exists(\Cartino\Models\ReviewVote::class)
+        ) {
             $this->command->info('⭐ Seeding product reviews...');
             $productIds = $products->pluck('id')->toArray();
 
             foreach (array_slice($productIds, 0, 200) as $productId) {
                 $reviewCount = rand(2, 15);
-                $reviews = ProductReview::factory()->count($reviewCount)->state([
-                    'product_id' => $productId,
-                ])->approved()->create();
+                $reviews = ProductReview::factory()
+                    ->count($reviewCount)
+                    ->state([
+                        'product_id' => $productId,
+                    ])
+                    ->approved()
+                    ->create();
 
                 foreach ($reviews->take(rand(1, 3)) as $review) {
-                    ReviewMedia::factory()->count(rand(1, 3))->state([
-                        'product_review_id' => $review->id,
-                    ])->create();
+                    ReviewMedia::factory()
+                        ->count(rand(1, 3))
+                        ->state([
+                            'product_review_id' => $review->id,
+                        ])
+                        ->create();
                 }
 
                 foreach ($reviews as $review) {
-                    ReviewVote::factory()->count(rand(0, 20))->state([
-                        'product_review_id' => $review->id,
-                    ])->create();
+                    ReviewVote::factory()
+                        ->count(rand(0, 20))
+                        ->state([
+                            'product_review_id' => $review->id,
+                        ])
+                        ->create();
                 }
             }
         } else {
@@ -727,9 +769,11 @@ class CartinoSeeder extends Seeder
         $this->command->info('⏭️ Skipping purchase orders (disabled in sandbox)');
 
         // Stock Notifications (guarded)
-        if (\Schema::hasTable('stock_notifications')
-            && \Schema::hasColumn('stock_notifications', 'product_variant_id')
-            && class_exists(\Cartino\Models\StockNotification::class)) {
+        if (
+            \Schema::hasTable('stock_notifications') &&
+                \Schema::hasColumn('stock_notifications', 'product_variant_id') &&
+                class_exists(\Cartino\Models\StockNotification::class)
+        ) {
             $this->command->info('🔔 Seeding stock notifications...');
             StockNotification::factory()->count(500)->create();
         } else {
@@ -738,9 +782,11 @@ class CartinoSeeder extends Seeder
 
         // Analytics Events
         $this->command->info('📊 Seeding analytics events...');
-        if (\Schema::hasTable('analytics_events')
-            && class_exists(\Cartino\Models\AnalyticsEvent::class)
-            && class_exists(\Cartino\Database\Factories\AnalyticsEventFactory::class)) {
+        if (
+            \Schema::hasTable('analytics_events') &&
+                class_exists(\Cartino\Models\AnalyticsEvent::class) &&
+                class_exists(\Cartino\Database\Factories\AnalyticsEventFactory::class)
+        ) {
             $this->command->info('📊 Seeding analytics events...');
             AnalyticsEvent::factory()->count(10000)->create();
         } else {
@@ -769,20 +815,26 @@ class CartinoSeeder extends Seeder
 
         // Create customers
         $this->command->info('👥 Creating 100 customers...');
-        $customers = Customer::factory()->count(100)->state([
-            'site_id' => $mainSite->id,
-            'status' => 'active',
-        ])->create();
+        $customers = Customer::factory()
+            ->count(100)
+            ->state([
+                'site_id' => $mainSite->id,
+                'status' => 'active',
+            ])
+            ->create();
 
         $this->command->info('✅ Customers seeded: '.$customers->count());
 
         // Create addresses for customers
         $this->command->info('📍 Creating customer addresses...');
         foreach ($customers as $customer) {
-            Address::factory()->count(rand(1, 2))->state([
-                'addressable_type' => Customer::class,
-                'addressable_id' => $customer->id,
-            ])->create();
+            Address::factory()
+                ->count(rand(1, 2))
+                ->state([
+                    'addressable_type' => Customer::class,
+                    'addressable_id' => $customer->id,
+                ])
+                ->create();
         }
 
         // Create subscriptions for some customers
@@ -796,14 +848,16 @@ class CartinoSeeder extends Seeder
                 $product = $products->random();
                 $variant = $product->variants->random();
 
-                \Cartino\Models\Subscription::factory()->state([
-                    'site_id' => $mainSite->id,
-                    'customer_id' => $customer->id,
-                    'product_id' => $product->id,
-                    'product_variant_id' => $variant->id,
-                    'currency_id' => $currency->id,
-                    'price' => $variant->price ?? rand(10, 100),
-                ])->create();
+                \Cartino\Models\Subscription::factory()
+                    ->state([
+                        'site_id' => $mainSite->id,
+                        'customer_id' => $customer->id,
+                        'product_id' => $product->id,
+                        'product_variant_id' => $variant->id,
+                        'currency_id' => $currency->id,
+                        'price' => $variant->price ?? rand(10, 100),
+                    ])
+                    ->create();
 
                 $subscriptionCount++;
             }
@@ -821,28 +875,32 @@ class CartinoSeeder extends Seeder
             $numBillingOrders = rand(1, 3);
 
             for ($b = 0; $b < $numBillingOrders; $b++) {
-                $order = Order::factory()->state([
-                    'customer_id' => $subscription->customer_id,
-                    'subscription_id' => $subscription->id,
-                    'site_id' => $subscription->site_id,
-                    'currency_id' => $subscription->currency_id,
-                ])->create();
+                $order = Order::factory()
+                    ->state([
+                        'customer_id' => $subscription->customer_id,
+                        'subscription_id' => $subscription->id,
+                        'site_id' => $subscription->site_id,
+                        'currency_id' => $subscription->currency_id,
+                    ])
+                    ->create();
 
                 // Create order line for subscription product
                 $quantity = 1; // subscriptions are usually quantity 1
                 $unitPrice = $subscription->price;
                 $lineTotal = $unitPrice * $quantity;
 
-                OrderLine::factory()->state([
-                    'order_id' => $order->id,
-                    'product_id' => $subscription->product_id,
-                    'product_variant_id' => $subscription->product_variant_id,
-                    'product_name' => $subscription->product->title ?? 'Subscription Product',
-                    'product_sku' => $subscription->variant->sku ?? 'SUB-SKU',
-                    'quantity' => $quantity,
-                    'unit_price' => $unitPrice,
-                    'line_total' => $lineTotal,
-                ])->create();
+                OrderLine::factory()
+                    ->state([
+                        'order_id' => $order->id,
+                        'product_id' => $subscription->product_id,
+                        'product_variant_id' => $subscription->product_variant_id,
+                        'product_name' => $subscription->product->title ?? 'Subscription Product',
+                        'product_sku' => $subscription->variant->sku ?? 'SUB-SKU',
+                        'quantity' => $quantity,
+                        'unit_price' => $unitPrice,
+                        'line_total' => $lineTotal,
+                    ])
+                    ->create();
 
                 // Update order totals
                 $taxTotal = round($lineTotal * 0.22, 2);
@@ -870,11 +928,13 @@ class CartinoSeeder extends Seeder
             $numOrders = rand(1, 3);
 
             for ($o = 0; $o < $numOrders; $o++) {
-                $order = Order::factory()->state([
-                    'customer_id' => $customer->id,
-                    'site_id' => $mainSite->id,
-                    'currency_id' => $currency->id,
-                ])->create();
+                $order = Order::factory()
+                    ->state([
+                        'customer_id' => $customer->id,
+                        'site_id' => $mainSite->id,
+                        'currency_id' => $currency->id,
+                    ])
+                    ->create();
 
                 // Create 1-5 order lines per order
                 $numLines = rand(1, 5);
@@ -888,16 +948,18 @@ class CartinoSeeder extends Seeder
                     $unitPrice = $variant->price ?? rand(10, 100);
                     $lineTotal = $unitPrice * $quantity;
 
-                    OrderLine::factory()->state([
-                        'order_id' => $order->id,
-                        'product_id' => $product->id,
-                        'product_variant_id' => $variant->id,
-                        'product_name' => $product->title,
-                        'product_sku' => $variant->sku,
-                        'quantity' => $quantity,
-                        'unit_price' => $unitPrice,
-                        'line_total' => $lineTotal,
-                    ])->create();
+                    OrderLine::factory()
+                        ->state([
+                            'order_id' => $order->id,
+                            'product_id' => $product->id,
+                            'product_variant_id' => $variant->id,
+                            'product_name' => $product->title,
+                            'product_sku' => $variant->sku,
+                            'quantity' => $quantity,
+                            'unit_price' => $unitPrice,
+                            'line_total' => $lineTotal,
+                        ])
+                        ->create();
 
                     $orderSubtotal += $lineTotal;
                 }
@@ -922,41 +984,54 @@ class CartinoSeeder extends Seeder
         return;
 
         foreach ($customers as $index => $customer) {
-            if ($index % 20 === 0) {
+            if (($index % 20) === 0) {
                 $this->command->info('  Processing customer '.($index + 1).' of '.$customers->count());
             }
 
             // Address using factory (1-3 addresses per customer)
-            Address::factory()->count(rand(1, 3))->state([
-                'addressable_type' => Customer::class,
-                'addressable_id' => $customer->id,
-            ])->create();
+            Address::factory()
+                ->count(rand(1, 3))
+                ->state([
+                    'addressable_type' => Customer::class,
+                    'addressable_id' => $customer->id,
+                ])
+                ->create();
 
             // Wishlist using factory
-            $wishlist = Wishlist::factory()->state([
-                'customer_id' => $customer->id,
-            ])->create();
+            $wishlist = Wishlist::factory()
+                ->state([
+                    'customer_id' => $customer->id,
+                ])
+                ->create();
 
             // Wishlist items using factory (3-15 items)
             $wishlistItemCount = rand(3, 15);
-            WishlistItem::factory()->count($wishlistItemCount)->state([
-                'wishlist_id' => $wishlist->id,
-                'product_id' => $products->random()->id,
-            ])->create();
+            WishlistItem::factory()
+                ->count($wishlistItemCount)
+                ->state([
+                    'wishlist_id' => $wishlist->id,
+                    'product_id' => $products->random()->id,
+                ])
+                ->create();
 
             // Favorites (guarded)
             if (\Schema::hasTable('favorites') && \Schema::hasColumn('favorites', 'favoriteable_type')) {
-                Favorite::factory()->count(rand(5, 20))->state([
-                    'customer_id' => $customer->id,
-                ])->create();
+                Favorite::factory()
+                    ->count(rand(5, 20))
+                    ->state([
+                        'customer_id' => $customer->id,
+                    ])
+                    ->create();
             }
 
             // Cart with lines using factory
-            $cart = Cart::factory()->state([
-                'customer_id' => $customer->id,
-                'status' => 'active',
-                'currency' => 'EUR',
-            ])->create();
+            $cart = Cart::factory()
+                ->state([
+                    'customer_id' => $customer->id,
+                    'status' => 'active',
+                    'currency' => 'EUR',
+                ])
+                ->create();
 
             $lineCount = rand(1, 8);
             $lineVariants = $products->flatMap(fn ($p) => $p->variants)->shuffle()->take($lineCount);
@@ -964,14 +1039,16 @@ class CartinoSeeder extends Seeder
 
             foreach ($lineVariants as $variant) {
                 $quantity = rand(1, 5);
-                $line = CartLine::factory()->state([
-                    'cart_id' => $cart->id,
-                    'product_id' => $variant->product_id,
-                    'product_variant_id' => $variant->id,
-                    'unit_price' => $variant->price,
-                    'quantity' => $quantity,
-                    'line_total' => $variant->price * $quantity,
-                ])->create();
+                $line = CartLine::factory()
+                    ->state([
+                        'cart_id' => $cart->id,
+                        'product_id' => $variant->product_id,
+                        'product_variant_id' => $variant->id,
+                        'unit_price' => $variant->price,
+                        'quantity' => $quantity,
+                        'line_total' => $variant->price * $quantity,
+                    ])
+                    ->create();
 
                 $totals['subtotal'] += $line->line_total;
             }
@@ -988,24 +1065,28 @@ class CartinoSeeder extends Seeder
             $orderCount = rand(1, 5);
 
             for ($o = 0; $o < $orderCount; $o++) {
-                $order = Order::factory()->state([
-                    'customer_id' => $customer->id,
-                    'site_id' => $mainSite->id,
-                    'currency_id' => $currency->id,
-                    'shipping_address' => $cart->shipping_address ?? [],
-                    'billing_address' => $cart->billing_address ?? [],
-                ])->create();
+                $order = Order::factory()
+                    ->state([
+                        'customer_id' => $customer->id,
+                        'site_id' => $mainSite->id,
+                        'currency_id' => $currency->id,
+                        'shipping_address' => $cart->shipping_address ?? [],
+                        'billing_address' => $cart->billing_address ?? [],
+                    ])
+                    ->create();
 
                 $orderLineCount = rand(1, 10);
                 $orderLineVariants = $products->flatMap(fn ($p) => $p->variants)->shuffle()->take($orderLineCount);
                 $orderSubtotal = 0;
 
                 foreach ($orderLineVariants as $variant) {
-                    $line = OrderLine::factory()->state([
-                        'order_id' => $order->id,
-                        'product_id' => $variant->product_id,
-                        'product_variant_id' => $variant->id,
-                    ])->create();
+                    $line = OrderLine::factory()
+                        ->state([
+                            'order_id' => $order->id,
+                            'product_id' => $variant->product_id,
+                            'product_variant_id' => $variant->id,
+                        ])
+                        ->create();
 
                     $orderSubtotal += $line->line_total;
                 }
@@ -1021,31 +1102,41 @@ class CartinoSeeder extends Seeder
                 ]);
 
                 // Transactions for orders
-                Transaction::factory()->count(rand(1, 2))->state([
-                    'order_id' => $order->id,
-                ])->successful()->create();
+                Transaction::factory()
+                    ->count(rand(1, 2))
+                    ->state([
+                        'order_id' => $order->id,
+                    ])
+                    ->successful()
+                    ->create();
             }
 
             // Fidelity card using factory
-            $card = $customer->fidelityCard()->create(
-                \Cartino\Database\Factories\FidelityCardFactory::new()->state([
-                    'total_points' => rand(100, 5000),
-                    'available_points' => rand(50, 3000),
-                    'total_earned' => rand(500, 10000),
-                    'total_redeemed' => rand(0, 2000),
-                    'is_active' => true,
-                    'issued_at' => now()->subMonths(rand(1, 24)),
-                ])->raw()
-            );
+            $card = $customer
+                ->fidelityCard()
+                ->create(
+                    \Cartino\Database\Factories\FidelityCardFactory::new()
+                        ->state([
+                            'total_points' => rand(100, 5000),
+                            'available_points' => rand(50, 3000),
+                            'total_earned' => rand(500, 10000),
+                            'total_redeemed' => rand(0, 2000),
+                            'is_active' => true,
+                            'issued_at' => now()->subMonths(rand(1, 24)),
+                        ])
+                        ->raw(),
+                );
 
             // Multiple fidelity transactions per customer
             for ($t = 0; $t < rand(5, 20); $t++) {
                 $card->transactions()->create(
-                    \Cartino\Database\Factories\FidelityTransactionFactory::new()->state([
-                        'type' => fake()->randomElement(['earned', 'redeemed', 'expired']),
-                        'points' => rand(10, 500),
-                        'expires_at' => fake()->boolean(70) ? now()->addYear() : null,
-                    ])->raw()
+                    \Cartino\Database\Factories\FidelityTransactionFactory::new()
+                        ->state([
+                            'type' => fake()->randomElement(['earned', 'redeemed', 'expired']),
+                            'points' => rand(10, 500),
+                            'expires_at' => fake()->boolean(70) ? now()->addYear() : null,
+                        ])
+                        ->raw(),
                 );
             }
         }
@@ -1069,50 +1160,42 @@ class CartinoSeeder extends Seeder
             // Dashboard
             'access-cp' => 'Access Control Panel',
             'view-dashboard' => 'View Dashboard',
-
             // Products
             'view-products' => 'View Products',
             'create-products' => 'Create Products',
             'edit-products' => 'Edit Products',
             'delete-products' => 'Delete Products',
             'manage-product-variants' => 'Manage Product Variants',
-
             // Categories
             'view-categories' => 'View Categories',
             'create-categories' => 'Create Categories',
             'edit-categories' => 'Edit Categories',
             'delete-categories' => 'Delete Categories',
-
             // Brands
             'view-brands' => 'View Brands',
             'create-brands' => 'Create Brands',
             'edit-brands' => 'Edit Brands',
             'delete-brands' => 'Delete Brands',
-
             // Collections
             'view-collections' => 'View Collections',
             'create-collections' => 'Create Collections',
             'edit-collections' => 'Edit Collections',
             'delete-collections' => 'Delete Collections',
-
             // Orders
             'view-orders' => 'View Orders',
             'edit-orders' => 'Edit Orders',
             'delete-orders' => 'Delete Orders',
             'manage-order-status' => 'Manage Order Status',
-
             // Customers
             'view-customers' => 'View Customers',
             'create-customers' => 'Create Customers',
             'edit-customers' => 'Edit Customers',
             'delete-customers' => 'Delete Customers',
-
             // Settings
             'view-settings' => 'View Settings',
             'edit-settings' => 'Edit Settings',
             'manage-sites' => 'Manage Sites',
             'manage-channels' => 'Manage Channels',
-
             // Users & Permissions
             'view-users' => 'View Users',
             'create-users' => 'Create Users',
@@ -1120,11 +1203,9 @@ class CartinoSeeder extends Seeder
             'delete-users' => 'Delete Users',
             'manage-roles' => 'Manage Roles',
             'manage-permissions' => 'Manage Permissions',
-
             // Analytics & Reports
             'view-analytics' => 'View Analytics',
             'view-reports' => 'View Reports',
-
             // Media
             'view-media' => 'View Media',
             'upload-media' => 'Upload Media',
@@ -1143,7 +1224,7 @@ class CartinoSeeder extends Seeder
                 [
                     'name' => $name,
                     'guard_name' => $guard,
-                ]
+                ],
             );
             $createdPermissions++;
         }
@@ -1160,41 +1241,87 @@ class CartinoSeeder extends Seeder
             'admin' => [
                 'description' => 'Administrator - Full access to store management',
                 'permissions' => [
-                    'access-cp', 'view-dashboard',
-                    'view-products', 'create-products', 'edit-products', 'delete-products', 'manage-product-variants',
-                    'view-categories', 'create-categories', 'edit-categories', 'delete-categories',
-                    'view-brands', 'create-brands', 'edit-brands', 'delete-brands',
-                    'view-collections', 'create-collections', 'edit-collections', 'delete-collections',
-                    'view-orders', 'edit-orders', 'manage-order-status',
-                    'view-customers', 'create-customers', 'edit-customers',
-                    'view-settings', 'edit-settings',
-                    'view-analytics', 'view-reports',
-                    'view-media', 'upload-media',
+                    'access-cp',
+                    'view-dashboard',
+                    'view-products',
+                    'create-products',
+                    'edit-products',
+                    'delete-products',
+                    'manage-product-variants',
+                    'view-categories',
+                    'create-categories',
+                    'edit-categories',
+                    'delete-categories',
+                    'view-brands',
+                    'create-brands',
+                    'edit-brands',
+                    'delete-brands',
+                    'view-collections',
+                    'create-collections',
+                    'edit-collections',
+                    'delete-collections',
+                    'view-orders',
+                    'edit-orders',
+                    'manage-order-status',
+                    'view-customers',
+                    'create-customers',
+                    'edit-customers',
+                    'view-settings',
+                    'edit-settings',
+                    'view-analytics',
+                    'view-reports',
+                    'view-media',
+                    'upload-media',
                 ],
             ],
             'manager' => [
                 'description' => 'Store Manager - Limited administrative access',
                 'permissions' => [
-                    'access-cp', 'view-dashboard',
-                    'view-products', 'create-products', 'edit-products',
-                    'view-categories', 'create-categories', 'edit-categories',
-                    'view-brands', 'create-brands', 'edit-brands',
-                    'view-collections', 'create-collections', 'edit-collections',
-                    'view-orders', 'edit-orders', 'manage-order-status',
-                    'view-customers', 'create-customers', 'edit-customers',
-                    'view-analytics', 'view-reports',
-                    'view-media', 'upload-media',
+                    'access-cp',
+                    'view-dashboard',
+                    'view-products',
+                    'create-products',
+                    'edit-products',
+                    'view-categories',
+                    'create-categories',
+                    'edit-categories',
+                    'view-brands',
+                    'create-brands',
+                    'edit-brands',
+                    'view-collections',
+                    'create-collections',
+                    'edit-collections',
+                    'view-orders',
+                    'edit-orders',
+                    'manage-order-status',
+                    'view-customers',
+                    'create-customers',
+                    'edit-customers',
+                    'view-analytics',
+                    'view-reports',
+                    'view-media',
+                    'upload-media',
                 ],
             ],
             'editor' => [
                 'description' => 'Content Editor - Content management only',
                 'permissions' => [
-                    'access-cp', 'view-dashboard',
-                    'view-products', 'create-products', 'edit-products',
-                    'view-categories', 'create-categories', 'edit-categories',
-                    'view-brands', 'create-brands', 'edit-brands',
-                    'view-collections', 'create-collections', 'edit-collections',
-                    'view-media', 'upload-media',
+                    'access-cp',
+                    'view-dashboard',
+                    'view-products',
+                    'create-products',
+                    'edit-products',
+                    'view-categories',
+                    'create-categories',
+                    'edit-categories',
+                    'view-brands',
+                    'create-brands',
+                    'edit-brands',
+                    'view-collections',
+                    'create-collections',
+                    'edit-collections',
+                    'view-media',
+                    'upload-media',
                 ],
             ],
         ];
@@ -1210,7 +1337,7 @@ class CartinoSeeder extends Seeder
                 [
                     'name' => $roleName,
                     'guard_name' => $guard,
-                ]
+                ],
             );
 
             // Sync permissions
@@ -1223,7 +1350,9 @@ class CartinoSeeder extends Seeder
             $this->command->info("  ✓ Created role: {$roleName} with {$availablePermissions->count()} permissions");
         }
 
-        $this->command->info("✅ Roles and permissions setup completed ({$createdRoles} roles, {$createdPermissions} permissions)");
+        $this->command->info(
+            "✅ Roles and permissions setup completed ({$createdRoles} roles, {$createdPermissions} permissions)",
+        );
     }
 
     /**
@@ -1436,23 +1565,27 @@ class CartinoSeeder extends Seeder
 
         foreach ($brands->take(20) as $brand) {
             // Logo (SVG or PNG)
-            $logoAsset = \Cartino\Models\Asset::factory()->state([
-                'container' => $assetContainer->handle,
-                'mime_type' => fake()->randomElement(['image/svg+xml', 'image/png']),
-                'width' => 200,
-                'height' => 200,
-            ])->create();
+            $logoAsset = \Cartino\Models\Asset::factory()
+                ->state([
+                    'container' => $assetContainer->handle,
+                    'mime_type' => fake()->randomElement(['image/svg+xml', 'image/png']),
+                    'width' => 200,
+                    'height' => 200,
+                ])
+                ->create();
 
             $brand->attachAsset($logoAsset, 'logo', ['is_primary' => true]);
 
             // Banner (optional, 70% chance)
             if (rand(1, 100) <= 70) {
-                $bannerAsset = \Cartino\Models\Asset::factory()->state([
-                    'container' => $assetContainer->handle,
-                    'mime_type' => 'image/jpeg',
-                    'width' => 1920,
-                    'height' => 600,
-                ])->create();
+                $bannerAsset = \Cartino\Models\Asset::factory()
+                    ->state([
+                        'container' => $assetContainer->handle,
+                        'mime_type' => 'image/jpeg',
+                        'width' => 1920,
+                        'height' => 600,
+                    ])
+                    ->create();
 
                 $brand->attachAsset($bannerAsset, 'banner', ['is_primary' => true]);
             }
@@ -1482,24 +1615,28 @@ class CartinoSeeder extends Seeder
         foreach ($categories->take(30) as $category) {
             // Featured image (80% chance)
             if (rand(1, 100) <= 80) {
-                $featuredAsset = \Cartino\Models\Asset::factory()->state([
-                    'container' => $assetContainer->handle,
-                    'mime_type' => 'image/webp',
-                    'width' => 800,
-                    'height' => 800,
-                ])->create();
+                $featuredAsset = \Cartino\Models\Asset::factory()
+                    ->state([
+                        'container' => $assetContainer->handle,
+                        'mime_type' => 'image/webp',
+                        'width' => 800,
+                        'height' => 800,
+                    ])
+                    ->create();
 
                 $category->attachAsset($featuredAsset, 'featured_image', ['is_primary' => true]);
             }
 
             // Banner (50% chance)
             if (rand(1, 100) <= 50) {
-                $bannerAsset = \Cartino\Models\Asset::factory()->state([
-                    'container' => $assetContainer->handle,
-                    'mime_type' => 'image/jpeg',
-                    'width' => 1920,
-                    'height' => 400,
-                ])->create();
+                $bannerAsset = \Cartino\Models\Asset::factory()
+                    ->state([
+                        'container' => $assetContainer->handle,
+                        'mime_type' => 'image/jpeg',
+                        'width' => 1920,
+                        'height' => 400,
+                    ])
+                    ->create();
 
                 $category->attachAsset($bannerAsset, 'banner', ['is_primary' => true]);
             }
@@ -1532,12 +1669,14 @@ class CartinoSeeder extends Seeder
             // Product images (1-5 images per product)
             $imageCount = rand(1, 5);
             for ($i = 0; $i < $imageCount; $i++) {
-                $imageAsset = \Cartino\Models\Asset::factory()->state([
-                    'container' => $assetContainer->handle,
-                    'mime_type' => fake()->randomElement(['image/jpeg', 'image/png', 'image/webp']),
-                    'width' => 1200,
-                    'height' => 1200,
-                ])->create();
+                $imageAsset = \Cartino\Models\Asset::factory()
+                    ->state([
+                        'container' => $assetContainer->handle,
+                        'mime_type' => fake()->randomElement(['image/jpeg', 'image/png', 'image/webp']),
+                        'width' => 1200,
+                        'height' => 1200,
+                    ])
+                    ->create();
 
                 $product->attachAsset($imageAsset, 'images', [
                     'is_primary' => $i === 0,
@@ -1549,12 +1688,14 @@ class CartinoSeeder extends Seeder
             if (rand(1, 100) <= 30) {
                 $galleryCount = rand(3, 8);
                 for ($g = 0; $g < $galleryCount; $g++) {
-                    $galleryAsset = \Cartino\Models\Asset::factory()->state([
-                        'container' => $assetContainer->handle,
-                        'mime_type' => 'image/webp',
-                        'width' => 1920,
-                        'height' => 1280,
-                    ])->create();
+                    $galleryAsset = \Cartino\Models\Asset::factory()
+                        ->state([
+                            'container' => $assetContainer->handle,
+                            'mime_type' => 'image/webp',
+                            'width' => 1920,
+                            'height' => 1280,
+                        ])
+                        ->create();
 
                     $product->attachAsset($galleryAsset, 'gallery', ['sort_order' => $g]);
                 }
@@ -1564,13 +1705,15 @@ class CartinoSeeder extends Seeder
             if (rand(1, 100) <= 20) {
                 $docCount = rand(1, 3);
                 for ($d = 0; $d < $docCount; $d++) {
-                    $docAsset = \Cartino\Models\Asset::factory()->state([
-                        'container' => $assetContainer->handle,
-                        'mime_type' => 'application/pdf',
-                        'width' => null,
-                        'height' => null,
-                        'size' => rand(100000, 5000000), // 100KB - 5MB
-                    ])->create();
+                    $docAsset = \Cartino\Models\Asset::factory()
+                        ->state([
+                            'container' => $assetContainer->handle,
+                            'mime_type' => 'application/pdf',
+                            'width' => null,
+                            'height' => null,
+                            'size' => rand(100000, 5000000), // 100KB - 5MB
+                        ])
+                        ->create();
 
                     $product->attachAsset($docAsset, 'documents', ['sort_order' => $d]);
                 }
@@ -1580,13 +1723,15 @@ class CartinoSeeder extends Seeder
             if (rand(1, 100) <= 10) {
                 $videoCount = rand(1, 2);
                 for ($v = 0; $v < $videoCount; $v++) {
-                    $videoAsset = \Cartino\Models\Asset::factory()->state([
-                        'container' => $assetContainer->handle,
-                        'mime_type' => fake()->randomElement(['video/mp4', 'video/webm']),
-                        'width' => 1920,
-                        'height' => 1080,
-                        'size' => rand(5000000, 50000000), // 5MB - 50MB
-                    ])->create();
+                    $videoAsset = \Cartino\Models\Asset::factory()
+                        ->state([
+                            'container' => $assetContainer->handle,
+                            'mime_type' => fake()->randomElement(['video/mp4', 'video/webm']),
+                            'width' => 1920,
+                            'height' => 1080,
+                            'size' => rand(5000000, 50000000), // 5MB - 50MB
+                        ])
+                        ->create();
 
                     $product->attachAsset($videoAsset, 'videos', ['sort_order' => $v]);
                 }

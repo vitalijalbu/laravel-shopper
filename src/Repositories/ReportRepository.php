@@ -95,9 +95,7 @@ class ReportRepository
      */
     public function getTotalRevenue(\DateTime $from, \DateTime $to): float
     {
-        return Order::whereBetween('created_at', [$from, $to])
-            ->where('status', '!=', 'cancelled')
-            ->sum('total') ?? 0;
+        return Order::whereBetween('created_at', [$from, $to])->where('status', '!=', 'cancelled')->sum('total') ?? 0;
     }
 
     /**
@@ -105,9 +103,7 @@ class ReportRepository
      */
     public function getTotalOrders(\DateTime $from, \DateTime $to): int
     {
-        return Order::whereBetween('created_at', [$from, $to])
-            ->where('status', '!=', 'cancelled')
-            ->count();
+        return Order::whereBetween('created_at', [$from, $to])->where('status', '!=', 'cancelled')->count();
     }
 
     /**
@@ -115,9 +111,7 @@ class ReportRepository
      */
     public function getAverageOrderValue(\DateTime $from, \DateTime $to): float
     {
-        return Order::whereBetween('created_at', [$from, $to])
-            ->where('status', '!=', 'cancelled')
-            ->avg('total') ?? 0;
+        return Order::whereBetween('created_at', [$from, $to])->where('status', '!=', 'cancelled')->avg('total') ?? 0;
     }
 
     /**
@@ -144,9 +138,14 @@ class ReportRepository
      */
     public function getReturningCustomers(\DateTime $from, \DateTime $to): int
     {
-        return Customer::whereHas('orders', function ($q) use ($from, $to) {
-            $q->whereBetween('created_at', [$from, $to]);
-        }, '>', 1)->count();
+        return Customer::whereHas(
+            'orders',
+            function ($q) use ($from, $to) {
+                $q->whereBetween('created_at', [$from, $to]);
+            },
+            '>',
+            1,
+        )->count();
     }
 
     /**
@@ -154,18 +153,21 @@ class ReportRepository
      */
     public function getAverageCustomerLifetimeValue(): float
     {
-        return Customer::selectRaw('AVG(total_spent) as avg_ltv')
-            ->value('avg_ltv') ?? 0;
+        return Customer::selectRaw('AVG(total_spent) as avg_ltv')->value('avg_ltv') ?? 0;
     }
 
     /**
      * Get sales time series data
      */
-    public function getSalesTimeSeries(\DateTime $from, \DateTime $to, string $groupBy = 'day'): \Illuminate\Support\Collection
-    {
+    public function getSalesTimeSeries(
+        \DateTime $from,
+        \DateTime $to,
+        string $groupBy = 'day',
+    ): \Illuminate\Support\Collection {
         $dateFormat = $this->getDateFormat($groupBy);
 
-        $results = DB::select("
+        $results = DB::select(
+            "
             SELECT
                 DATE_FORMAT(orders.created_at, '{$dateFormat}') as period,
                 COUNT(*) as orders_count,
@@ -179,25 +181,32 @@ class ReportRepository
             AND orders.status != 'cancelled'
             GROUP BY period
             ORDER BY period
-        ", [$from->format('Y-m-d H:i:s'), $to->format('Y-m-d H:i:s')]);
+        ",
+            [$from->format('Y-m-d H:i:s'), $to->format('Y-m-d H:i:s')],
+        );
 
-        return collect($results)->map(fn ($row) => [
-            'period' => $row->period,
-            'orders_count' => (int) $row->orders_count,
-            'revenue' => (float) $row->revenue,
-            'average_order_value' => (float) $row->average_order_value,
-            'items_sold' => (int) $row->items_sold,
-        ]);
+        return collect($results)
+            ->map(fn ($row) => [
+                'period' => $row->period,
+                'orders_count' => (int) $row->orders_count,
+                'revenue' => (float) $row->revenue,
+                'average_order_value' => (float) $row->average_order_value,
+                'items_sold' => (int) $row->items_sold,
+            ]);
     }
 
     /**
      * Get new customers time series
      */
-    public function getNewCustomersTimeSeries(\DateTime $from, \DateTime $to, string $groupBy = 'day'): \Illuminate\Support\Collection
-    {
+    public function getNewCustomersTimeSeries(
+        \DateTime $from,
+        \DateTime $to,
+        string $groupBy = 'day',
+    ): \Illuminate\Support\Collection {
         $dateFormat = $this->getDateFormat($groupBy);
 
-        $results = DB::select("
+        $results = DB::select(
+            "
             SELECT 
                 DATE_FORMAT(created_at, '{$dateFormat}') as period,
                 COUNT(*) as count
@@ -205,12 +214,15 @@ class ReportRepository
             WHERE created_at BETWEEN ? AND ?
             GROUP BY period
             ORDER BY period
-        ", [$from->format('Y-m-d H:i:s'), $to->format('Y-m-d H:i:s')]);
+        ",
+            [$from->format('Y-m-d H:i:s'), $to->format('Y-m-d H:i:s')],
+        );
 
-        return collect($results)->map(fn ($row) => [
-            'period' => $row->period,
-            'count' => (int) $row->count,
-        ]);
+        return collect($results)
+            ->map(fn ($row) => [
+                'period' => $row->period,
+                'count' => (int) $row->count,
+            ]);
     }
 
     /**
@@ -236,20 +248,24 @@ class ReportRepository
             LIMIT ?
         ", [$from->format('Y-m-d H:i:s'), $to->format('Y-m-d H:i:s'), $limit]);
 
-        return collect($results)->map(fn ($row) => [
-            'id' => $row->id,
-            'name' => trim($row->first_name.' '.$row->last_name),
-            'email' => $row->email,
-            'orders_count' => (int) $row->orders_count,
-            'total_spent' => (float) $row->total_spent,
-        ]);
+        return collect($results)
+            ->map(fn ($row) => [
+                'id' => $row->id,
+                'name' => trim($row->first_name.' '.$row->last_name),
+                'email' => $row->email,
+                'orders_count' => (int) $row->orders_count,
+                'total_spent' => (float) $row->total_spent,
+            ]);
     }
 
     /**
      * Get top selling products
      */
-    public function getTopSellingProducts(\DateTime $from, \DateTime $to, int $limit = 20): \Illuminate\Support\Collection
-    {
+    public function getTopSellingProducts(
+        \DateTime $from,
+        \DateTime $to,
+        int $limit = 20,
+    ): \Illuminate\Support\Collection {
         $results = DB::select("
             SELECT
                 p.id,
@@ -267,20 +283,24 @@ class ReportRepository
             LIMIT ?
         ", [$from->format('Y-m-d H:i:s'), $to->format('Y-m-d H:i:s'), $limit]);
 
-        return collect($results)->map(fn ($row) => [
-            'id' => $row->id,
-            'name' => $row->name,
-            'sku' => $row->sku,
-            'units_sold' => (int) $row->units_sold,
-            'revenue' => (float) $row->revenue,
-        ]);
+        return collect($results)
+            ->map(fn ($row) => [
+                'id' => $row->id,
+                'name' => $row->name,
+                'sku' => $row->sku,
+                'units_sold' => (int) $row->units_sold,
+                'revenue' => (float) $row->revenue,
+            ]);
     }
 
     /**
      * Get top revenue products
      */
-    public function getTopRevenueProducts(\DateTime $from, \DateTime $to, int $limit = 20): \Illuminate\Support\Collection
-    {
+    public function getTopRevenueProducts(
+        \DateTime $from,
+        \DateTime $to,
+        int $limit = 20,
+    ): \Illuminate\Support\Collection {
         $results = DB::select("
             SELECT
                 p.id,
@@ -298,23 +318,28 @@ class ReportRepository
             LIMIT ?
         ", [$from->format('Y-m-d H:i:s'), $to->format('Y-m-d H:i:s'), $limit]);
 
-        return collect($results)->map(fn ($row) => [
-            'id' => $row->id,
-            'name' => $row->name,
-            'sku' => $row->sku,
-            'units_sold' => (int) $row->units_sold,
-            'revenue' => (float) $row->revenue,
-        ]);
+        return collect($results)
+            ->map(fn ($row) => [
+                'id' => $row->id,
+                'name' => $row->name,
+                'sku' => $row->sku,
+                'units_sold' => (int) $row->units_sold,
+                'revenue' => (float) $row->revenue,
+            ]);
     }
 
     /**
      * Get revenue time series with breakdown
      */
-    public function getRevenueTimeSeries(\DateTime $from, \DateTime $to, string $groupBy = 'day'): \Illuminate\Support\Collection
-    {
+    public function getRevenueTimeSeries(
+        \DateTime $from,
+        \DateTime $to,
+        string $groupBy = 'day',
+    ): \Illuminate\Support\Collection {
         $dateFormat = $this->getDateFormat($groupBy);
 
-        $results = DB::select("
+        $results = DB::select(
+            "
             SELECT
                 DATE_FORMAT(created_at, '{$dateFormat}') as period,
                 COALESCE(SUM(subtotal), 0) as gross_sales,
@@ -328,17 +353,20 @@ class ReportRepository
             AND status != 'cancelled'
             GROUP BY period
             ORDER BY period
-        ", [$from->format('Y-m-d H:i:s'), $to->format('Y-m-d H:i:s')]);
+        ",
+            [$from->format('Y-m-d H:i:s'), $to->format('Y-m-d H:i:s')],
+        );
 
-        return collect($results)->map(fn ($row) => [
-            'period' => $row->period,
-            'gross_sales' => (float) $row->gross_sales,
-            'discounts' => (float) $row->discounts,
-            'taxes' => (float) $row->taxes,
-            'shipping' => (float) $row->shipping,
-            'net_sales' => (float) $row->net_sales,
-            'orders_count' => (int) $row->orders_count,
-        ]);
+        return collect($results)
+            ->map(fn ($row) => [
+                'period' => $row->period,
+                'gross_sales' => (float) $row->gross_sales,
+                'discounts' => (float) $row->discounts,
+                'taxes' => (float) $row->taxes,
+                'shipping' => (float) $row->shipping,
+                'net_sales' => (float) $row->net_sales,
+                'orders_count' => (int) $row->orders_count,
+            ]);
     }
 
     /**
@@ -443,9 +471,10 @@ class ReportRepository
             ->selectRaw('COALESCE(SUM(order_lines.line_total), 0) as revenue')
             ->leftJoin('order_lines', 'products.id', '=', 'order_lines.product_id')
             ->leftJoin('orders', function ($join) use ($from, $to) {
-                $join->on('order_lines.order_id', '=', 'orders.id')
-                    ->whereBetween('orders.created_at', [$from, $to])
-                    ->where('orders.status', '!=', 'cancelled');
+                $join->on('order_lines.order_id', '=', 'orders.id')->whereBetween('orders.created_at', [
+                    $from,
+                    $to,
+                ])->where('orders.status', '!=', 'cancelled');
             })
             ->groupBy('products.id')
             ->get()

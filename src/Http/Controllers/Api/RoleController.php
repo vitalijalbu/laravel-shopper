@@ -32,8 +32,7 @@ class RoleController extends ApiController
         try {
             $roles = Role::with(['permissions', 'users'])
                 ->when($request->search, function ($query, $search) {
-                    $query->where('name', 'like', "%{$search}%")
-                        ->orWhere('display_name', 'like', "%{$search}%");
+                    $query->where('name', 'like', "%{$search}%")->orWhere('display_name', 'like', "%{$search}%");
                 })
                 ->orderBy('name')
                 ->get()
@@ -71,7 +70,7 @@ class RoleController extends ApiController
 
             return $this->createdResponse(
                 $this->formatRoleData($role->load(['permissions', 'users'])),
-                'Ruolo creato con successo'
+                'Ruolo creato con successo',
             );
         } catch (\Exception $e) {
             return $this->errorResponse('Errore durante la creazione del ruolo');
@@ -121,7 +120,7 @@ class RoleController extends ApiController
 
             return $this->successResponse(
                 $this->formatRoleData($role->load(['permissions', 'users'])),
-                'Ruolo aggiornato con successo'
+                'Ruolo aggiornato con successo',
             );
         } catch (\Exception $e) {
             return $this->errorResponse('Errore durante l\'aggiornamento del ruolo');
@@ -144,7 +143,7 @@ class RoleController extends ApiController
             // Verifica che non ci siano utenti associati
             if ($role->users()->count() > 0) {
                 return $this->validationErrorResponse(
-                    'Non puoi eliminare un ruolo con utenti associati. Rimuovi prima tutti gli utenti.'
+                    'Non puoi eliminare un ruolo con utenti associati. Rimuovi prima tutti gli utenti.',
                 );
             }
 
@@ -171,7 +170,7 @@ class RoleController extends ApiController
 
             return $this->successResponse(
                 $this->formatRoleData($role->load(['permissions', 'users'])),
-                count($request->user_ids).' utenti assegnati al ruolo'
+                count($request->user_ids).' utenti assegnati al ruolo',
             );
         } catch (\Exception $e) {
             return $this->errorResponse('Errore durante l\'assegnazione degli utenti');
@@ -193,7 +192,7 @@ class RoleController extends ApiController
 
             return $this->successResponse(
                 $this->formatRoleData($role->load(['permissions', 'users'])),
-                count($request->user_ids).' utenti rimossi dal ruolo'
+                count($request->user_ids).' utenti rimossi dal ruolo',
             );
         } catch (\Exception $e) {
             return $this->errorResponse('Errore durante la rimozione degli utenti');
@@ -216,7 +215,7 @@ class RoleController extends ApiController
             $newRole = Role::create([
                 'name' => $request->name,
                 'guard_name' => 'api',
-                'display_name' => $request->display_name ?? $originalRole->display_name.' (Copia)',
+                'display_name' => $request->display_name ?? ($originalRole->display_name.' (Copia)'),
                 'description' => $originalRole->description.' (Clonato da '.$originalRole->name.')',
             ]);
 
@@ -225,7 +224,7 @@ class RoleController extends ApiController
 
             return $this->createdResponse(
                 $this->formatRoleData($newRole->load(['permissions', 'users'])),
-                'Ruolo clonato con successo'
+                'Ruolo clonato con successo',
             );
         } catch (\Exception $e) {
             return $this->errorResponse('Errore durante la clonazione del ruolo');
@@ -293,13 +292,16 @@ class RoleController extends ApiController
             'reports' => 'Reports & Analytics',
         ];
 
-        return collect($groups)->map(function ($label, $handle) {
-            return [
-                'handle' => $handle,
-                'label' => $label,
-                'permission_count' => Permission::where('name', 'like', "%{$handle}%")->count(),
-            ];
-        })->values()->toArray();
+        return collect($groups)
+            ->map(function ($label, $handle) {
+                return [
+                    'handle' => $handle,
+                    'label' => $label,
+                    'permission_count' => Permission::where('name', 'like', "%{$handle}%")->count(),
+                ];
+            })
+            ->values()
+            ->toArray();
     }
 
     private function getPermissionGroupsWithStatus(Role $role): array

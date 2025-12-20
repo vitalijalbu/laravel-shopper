@@ -88,17 +88,12 @@ trait HasInertiaActions
             $item = $this->repository()->createOne($request->validated());
             $resourceClass = $this->resourceClass();
 
-            return $this->successResponse(
-                $this->entityName().' created successfully',
-                [
-                    'data' => new $resourceClass($item),
-                    'redirect' => $this->getRedirectUrl('store', $item),
-                ]
-            );
+            return $this->successResponse($this->entityName().' created successfully', [
+                'data' => new $resourceClass($item),
+                'redirect' => $this->getRedirectUrl('store', $item),
+            ]);
         } catch (\Exception $e) {
-            return $this->errorResponse(
-                'Error creating '.$this->entityName().': '.$e->getMessage()
-            );
+            return $this->errorResponse('Error creating '.$this->entityName().': '.$e->getMessage());
         }
     }
 
@@ -155,14 +150,11 @@ trait HasInertiaActions
             $updated = $this->repository()->updateOne($model->id, $request->validated());
             $resourceClass = $this->resourceClass();
 
-            return $this->successResponse(
-                $this->entityName().' updated successfully',
-                ['data' => new $resourceClass($updated)]
-            );
+            return $this->successResponse($this->entityName().' updated successfully', [
+                'data' => new $resourceClass($updated),
+            ]);
         } catch (\Exception $e) {
-            return $this->errorResponse(
-                'Error updating '.$this->entityName().': '.$e->getMessage()
-            );
+            return $this->errorResponse('Error updating '.$this->entityName().': '.$e->getMessage());
         }
     }
 
@@ -173,22 +165,14 @@ trait HasInertiaActions
     {
         try {
             if (! $this->repository()->canDelete($model->id)) {
-                return $this->errorResponse(
-                    'Cannot delete '.$this->entityName().': has active relations',
-                    [],
-                    422
-                );
+                return $this->errorResponse('Cannot delete '.$this->entityName().': has active relations', [], 422);
             }
 
             $this->repository()->deleteOne($model->id);
 
-            return $this->successResponse(
-                $this->entityName().' deleted successfully'
-            );
+            return $this->successResponse($this->entityName().' deleted successfully');
         } catch (\Exception $e) {
-            return $this->errorResponse(
-                'Error deleting '.$this->entityName().': '.$e->getMessage()
-            );
+            return $this->errorResponse('Error deleting '.$this->entityName().': '.$e->getMessage());
         }
     }
 
@@ -216,7 +200,7 @@ trait HasInertiaActions
      */
     protected function buildShowPage($model): Page
     {
-        return Page::make($model->name ?? 'View '.$this->entityName());
+        return Page::make($model->name ?? ('View '.$this->entityName()));
     }
 
     /**
