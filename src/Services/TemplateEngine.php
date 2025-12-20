@@ -4,7 +4,7 @@ namespace Cartino\Services;
 
 use Cartino\Models\Site;
 use Cartino\Models\StorefrontTemplate;
-use Illuminate\Support\Category;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\View;
 
 class TemplateEngine
@@ -122,7 +122,7 @@ class TemplateEngine
     /**
      * Get available templates for a resource type
      */
-    public function getAvailableTemplates(string $resourceType): Category
+    public function getAvailableTemplates(string $resourceType): Collection
     {
         return StorefrontTemplate::where('site_id', $this->currentSite->id)
             ->where('type', $resourceType)

@@ -8,7 +8,6 @@ use Cartino\Models\Customer;
 use Cartino\Models\Discount;
 use Cartino\Models\DiscountApplication;
 use Cartino\Models\Order;
-use Illuminate\Database\Eloquent\Category;
 use Illuminate\Support\Str;
 
 class DiscountService

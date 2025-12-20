@@ -107,7 +107,7 @@ class TaxRateRepository extends BaseRepository
         string $countryCode,
         ?string $stateCode = null,
         ?string $postcode = null,
-    ): \Illuminate\Database\Eloquent\Category {
+    ): \Illuminate\Database\Eloquent\Collection {
         $cacheKey = $this->getCacheKey('location', md5($countryCode.'_'.$stateCode.'_'.$postcode));
 
         return \Illuminate\Support\Facades\Cache::remember($cacheKey, $this->cacheTtl, function () use (
@@ -274,7 +274,7 @@ class TaxRateRepository extends BaseRepository
     /**
      * Get all countries with tax rates
      */
-    public function getCountries(): \Illuminate\Support\Category
+    public function getCountries(): \Illuminate\Support\Collection
     {
         $cacheKey = $this->getCacheKey('countries', 'all');
 
@@ -348,7 +348,7 @@ class TaxRateRepository extends BaseRepository
     /**
      * Get applicable tax rates based on conditions
      */
-    public function getApplicableRates(array $conditions = []): \Illuminate\Database\Eloquent\Category
+    public function getApplicableRates(array $conditions = []): \Illuminate\Database\Eloquent\Collection
     {
         $query = $this->model->newQuery()->where('is_active', true);
 

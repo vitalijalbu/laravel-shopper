@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Cartino\Pricing;
 
-use Illuminate\Support\Category;
+use Illuminate\Support\Collection;
 
 class PriceResult
 {
     public function __construct(
         public float $originalPrice,
         public float $finalPrice,
-        public Category $appliedRules,
+        public Collection $appliedRules,
         public int $quantity = 1,
     ) {}
 

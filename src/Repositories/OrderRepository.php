@@ -220,7 +220,7 @@ class OrderRepository extends BaseRepository
     /**
      * Get customers for order creation
      */
-    public function getCustomersForSelect(): \Illuminate\Database\Eloquent\Category
+    public function getCustomersForSelect(): \Illuminate\Database\Eloquent\Collection
     {
         return Customer::select('id', 'first_name', 'last_name', 'email')
             ->where('is_active', true)
@@ -231,7 +231,7 @@ class OrderRepository extends BaseRepository
     /**
      * Get products for order creation
      */
-    public function getProductsForSelect(): \Illuminate\Database\Eloquent\Category
+    public function getProductsForSelect(): \Illuminate\Database\Eloquent\Collection
     {
         return Product::select('id', 'name', 'price')
             ->where('is_active', true)

@@ -6,7 +6,6 @@ use Cartino\Console\Commands\ExpireFidelityPoints;
 use Cartino\Console\Commands\GenerateApiKey;
 use Cartino\Console\Commands\OptimizeCommand;
 use Cartino\Console\Commands\ShowAdminUsersCommand;
-/** @phpstan-ignore-next-line */
 use Cartino\Console\CreateAdminUserCommand;
 use Cartino\Contracts\ProductRepositoryInterface;
 use Cartino\Providers\InertiaServiceProvider;

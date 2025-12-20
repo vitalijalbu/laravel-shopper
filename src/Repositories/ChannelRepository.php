@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Cartino\Repositories;
 
 use Cartino\Models\Channel;
-use Illuminate\Database\Eloquent\Category;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Spatie\QueryBuilder\QueryBuilder;

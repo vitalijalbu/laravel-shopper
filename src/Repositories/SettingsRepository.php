@@ -4,7 +4,7 @@ namespace Cartino\Repositories;
 
 use Cartino\Models\Setting;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Category;
+use Illuminate\Support\Collection;
 
 class SettingsRepository extends BaseRepository
 {
@@ -18,7 +18,7 @@ class SettingsRepository extends BaseRepository
     /**
      * Get all settings grouped by group
      */
-    public function getAllGrouped(): Category
+    public function getAllGrouped(): Collection
     {
         $cacheKey = $this->getCacheKey('all_grouped', 'all');
 
@@ -34,7 +34,7 @@ class SettingsRepository extends BaseRepository
     /**
      * Get settings by group
      */
-    public function getByGroup(string $group): Category
+    public function getByGroup(string $group): Collection
     {
         $cacheKey = $this->getCacheKey('group', $group);
 
@@ -122,7 +122,7 @@ class SettingsRepository extends BaseRepository
     /**
      * Get settings for a specific page (like general, checkout, etc.)
      */
-    public function getSettingsForPage(string $page): Category
+    public function getSettingsForPage(string $page): Collection
     {
         $groupMappings = [
             'general' => ['general', 'store', 'contact'],

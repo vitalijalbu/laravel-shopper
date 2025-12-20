@@ -10,15 +10,15 @@ use Cartino\Core\Addon\Events\PluginDeactivated;
 use Cartino\Core\Addon\Events\PluginInstalled;
 use Cartino\Core\Addon\Events\PluginUpdated;
 use Cartino\Core\Addon\Exceptions\AddonException;
-use Illuminate\Support\Category;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
 
 class AddonManager
 {
-    protected Category $addons;
+    protected Collection $addons;
 
-    protected Category $activePlugins;
+    protected Collection $activePlugins;
 
     protected string $addonsPath;
 
@@ -104,7 +104,7 @@ class AddonManager
     /**
      * Get all addons
      */
-    public function all(): Category
+    public function all(): Collection
     {
         return $this->addons;
     }
@@ -112,7 +112,7 @@ class AddonManager
     /**
      * Get active addons
      */
-    public function active(): Category
+    public function active(): Collection
     {
         return $this->activePlugins;
     }
@@ -369,7 +369,7 @@ class AddonManager
     /**
      * Get addons that depend on the given plugin
      */
-    protected function getDependents(string $id): Category
+    protected function getDependents(string $id): Collection
     {
         return $this->addons->filter(function (AddonInterface $addon) use ($id) {
             return array_key_exists($id, $addon->getDependencies());
@@ -379,7 +379,7 @@ class AddonManager
     /**
      * Get active addons that depend on the given plugin
      */
-    protected function getActiveDependents(string $id): Category
+    protected function getActiveDependents(string $id): Collection
     {
         return $this->activePlugins->filter(function (AddonInterface $addon) use ($id) {
             return array_key_exists($id, $addon->getDependencies());

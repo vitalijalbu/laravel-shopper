@@ -126,7 +126,7 @@ class CustomerRepository extends BaseRepository
     /**
      * Get customer groups for filters
      */
-    public function getCustomerGroups(): \Illuminate\Database\Eloquent\Category
+    public function getCustomerGroups(): \Illuminate\Database\Eloquent\Collection
     {
         return CustomerGroup::select('id', 'name')->orderBy('name')->get();
     }
@@ -346,7 +346,7 @@ class CustomerRepository extends BaseRepository
     /**
      * Get customer addresses
      */
-    public function getAddresses(int $customerId): \Illuminate\Database\Eloquent\Category
+    public function getAddresses(int $customerId): \Illuminate\Database\Eloquent\Collection
     {
         $cacheKey = $this->getCacheKey('addresses', $customerId);
 

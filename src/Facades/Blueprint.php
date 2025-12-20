@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Facade;
 
 /**
  * @method static \Cartino\Blueprints\Blueprint|null find(string $handle)
- * @method static \Illuminate\Support\Category all()
+ * @method static \Illuminate\Support\Collection all()
  * @method static \Cartino\Blueprints\Blueprint make(string $handle)
  * @method static void save(\Cartino\Blueprints\Blueprint $blueprint)
  *

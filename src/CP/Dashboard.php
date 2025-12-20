@@ -2,7 +2,7 @@
 
 namespace Cartino\Cp;
 
-use Illuminate\Support\Category;
+use Illuminate\Support\Collection;
 
 class Dashboard
 {
@@ -61,7 +61,7 @@ class Dashboard
     /**
      * Get all dashboard cards
      */
-    public static function cards(): Category
+    public static function cards(): Collection
     {
         return collect(static::$cards)->sortBy('order')->values();
     }
@@ -69,7 +69,7 @@ class Dashboard
     /**
      * Get all quick actions
      */
-    public static function quickActions(): Category
+    public static function quickActions(): Collection
     {
         return collect(static::$quickActions);
     }
@@ -77,7 +77,7 @@ class Dashboard
     /**
      * Get all metrics
      */
-    public static function metrics(): Category
+    public static function metrics(): Collection
     {
         return collect(static::$metrics)->map(function ($metric) {
             $metric['value'] = is_callable($metric['value']) ? call_user_func($metric['value']) : $metric['value'];
@@ -103,7 +103,7 @@ class Dashboard
     /**
      * Get recent orders
      */
-    protected static function getRecentOrders(): Category
+    protected static function getRecentOrders(): Collection
     {
         return collect(); // Will be implemented with Order model
     }

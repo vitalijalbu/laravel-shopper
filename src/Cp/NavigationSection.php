@@ -2,7 +2,7 @@
 
 namespace Cartino\Cp;
 
-use Illuminate\Support\Category;
+use Illuminate\Support\Collection;
 
 class NavigationSection
 {
@@ -57,7 +57,7 @@ class NavigationSection
     /**
      * Get items for this section
      */
-    public function items(): Category
+    public function items(): Collection
     {
         return collect(\Cartino\Cp\Navigation::$items ?? [])->filter(fn ($item) => $item->section === $this->name);
     }

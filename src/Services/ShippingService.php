@@ -6,7 +6,7 @@ namespace Cartino\Services;
 
 use Cartino\Models\ShippingRate;
 use Cartino\Models\ShippingZone;
-use Illuminate\Support\Category;
+use Illuminate\Support\Collection;
 
 class ShippingService
 {
@@ -21,7 +21,7 @@ class ShippingService
         float $totalWeight = 0,
         array $productIds = [],
         ?int $marketId = null,
-    ): Category {
+    ): Collection {
         // Find matching zones by priority
         $zones = ShippingZone::active()
             ->orderByDesc('priority')

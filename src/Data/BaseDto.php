@@ -5,7 +5,7 @@ namespace Cartino\Data;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Category;
+use Illuminate\Support\Collection;
 
 abstract class BaseDto implements Arrayable
 {
@@ -36,7 +36,7 @@ abstract class BaseDto implements Arrayable
     /**
      * Create collection of DTOs.
      */
-    public static function collect(array $items): Category
+    public static function collect(array $items): Collection
     {
         return collect($items)->map(fn ($item) => static::from($item));
     }
@@ -106,7 +106,7 @@ abstract class BaseDto implements Arrayable
         $array = [];
 
         foreach (get_object_vars($this) as $key => $value) {
-            if ($value instanceof Category) {
+            if ($value instanceof Collection) {
                 $array[$key] = $value->toArray();
             } elseif ($value instanceof Arrayable) {
                 $array[$key] = $value->toArray();

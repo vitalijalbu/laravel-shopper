@@ -3,7 +3,6 @@
 namespace Cartino\Repositories;
 
 use Cartino\Models\PaymentGateway;
-use Illuminate\Database\Eloquent\Category;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
 

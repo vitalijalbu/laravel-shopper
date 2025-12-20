@@ -27,7 +27,7 @@ interface EntryRepository
      * Get all entries in a collection
      *
      * @param  string  $collection
-     * @return \Illuminate\Support\Category
+     * @return \Illuminate\Support\Collection
      */
     public function whereCollection($collection);
 

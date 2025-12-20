@@ -6,7 +6,6 @@ namespace Cartino\Contracts;
 
 use Cartino\Models\Supplier;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Category;
 
 interface SupplierRepositoryInterface extends RepositoryInterface
 {

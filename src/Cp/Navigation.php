@@ -2,7 +2,7 @@
 
 namespace Cartino\Cp;
 
-use Illuminate\Support\Category;
+use Illuminate\Support\Collection;
 
 class Navigation
 {
@@ -35,7 +35,7 @@ class Navigation
     /**
      * Get all navigation items
      */
-    public static function items(): Category
+    public static function items(): Collection
     {
         return collect(static::$items)->filter(fn ($item) => $item->canView())->sortBy('order')->values();
     }
@@ -43,7 +43,7 @@ class Navigation
     /**
      * Get all navigation sections
      */
-    public static function sections(): Category
+    public static function sections(): Collection
     {
         return collect(static::$sections)
             ->map(function ($section) {

@@ -8,7 +8,7 @@ use Cartino\Models\Customer;
 use Cartino\Models\FidelityCard;
 use Cartino\Models\FidelityTransaction;
 use Cartino\Models\Order;
-use Illuminate\Support\Category;
+use Illuminate\Support\Collection;
 
 class FidelityService
 {
@@ -198,7 +198,7 @@ class FidelityService
     /**
      * Ottiene le transazioni recenti
      */
-    public function getRecentTransactions(FidelityCard $card, int $limit = 10): Category
+    public function getRecentTransactions(FidelityCard $card, int $limit = 10): Collection
     {
         return $card->transactions()->orderBy('created_at', 'desc')->limit($limit)->get();
     }
@@ -233,7 +233,7 @@ class FidelityService
     /**
      * Ottiene le carte con punti in scadenza
      */
-    public function getCardsWithExpiringPoints(int $days = 30): Category
+    public function getCardsWithExpiringPoints(int $days = 30): Collection
     {
         return FidelityCard::active()
             ->whereHas('transactions', function ($query) use ($days) {
