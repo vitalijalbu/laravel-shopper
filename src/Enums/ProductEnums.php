@@ -302,27 +302,6 @@ enum Gender: string
     }
 }
 
-enum StockStatus: string
-{
-    case IN_STOCK = 'in_stock';
-    case OUT_OF_STOCK = 'out_of_stock';
-    case ON_BACKORDER = 'on_backorder';
-
-    public function label(): string
-    {
-        return match ($this) {
-            self::IN_STOCK => 'In Stock',
-            self::OUT_OF_STOCK => 'Out of Stock',
-            self::ON_BACKORDER => 'On Backorder',
-        };
-    }
-
-    public function isAvailable(): bool
-    {
-        return in_array($this, [self::IN_STOCK, self::ON_BACKORDER]);
-    }
-}
-
 enum ProductStatus: string
 {
     case ACTIVE = 'active';

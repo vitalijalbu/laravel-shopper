@@ -60,7 +60,10 @@
     },
     "scripts": {
         "pint": "./vendor/bin/pint",
-        "analyse": "./vendor/bin/phpstan analyse --memory-limit=4G",
+        "analyse": [
+            "Composer\\Config::disableProcessTimeout",
+            "./vendor/bin/phpstan analyse src --memory-limit=-1"
+        ],
         "test": "vendor/bin/pest",
         "test-coverage": "vendor/bin/pest --coverage",
         "format": "vendor/bin/pint",

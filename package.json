@@ -35,7 +35,7 @@
   "devDependencies": {
     "@heroicons/vue": "^2.2.0",
     "@iconify/vue": "^5.0.0",
-    "@inertiajs/vue3": "^2.3.3",
+    "@inertiajs/vue3": "^2.3.4",
     "@tailwindcss/vite": "^4.1.18",
     "@types/node": "^25.0.3",
     "@vitejs/plugin-vue": "^6.0.3",

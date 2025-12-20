@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Cartino\Policies;
 
 use Cartino\Models\User;
-use Cartino\Models\User;
 
 class UserPolicy
 {
