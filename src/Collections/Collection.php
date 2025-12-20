@@ -4,9 +4,6 @@ namespace Cartino\Collections;
 
 use ArrayAccess;
 use Cartino\Contracts\Collections\Category as Contract;
-use Cartino\DTO\ContainsCascadingData;
-use Cartino\DTO\ExistsAsFile;
-use Cartino\DTO\HasAugmentedData;
 use Cartino\Events\Collections\CollectionCreated;
 use Cartino\Events\Collections\CollectionCreating;
 use Cartino\Events\Collections\CollectionDeleted;
@@ -20,6 +17,9 @@ use Cartino\Facades\Site;
 use Cartino\Facades\Stache;
 use Cartino\Support\Arr;
 use Cartino\Support\Traits\FluentlyGetsAndSets;
+use Cartino\Traits\ContainsCascadingData;
+use Cartino\Traits\ExistsAsFile;
+use Cartino\Traits\HasAugmentedData;
 use Illuminate\Contracts\Support\Arrayable;
 use Statamic\Contracts\Data\Augmentable as AugmentableContract;
 

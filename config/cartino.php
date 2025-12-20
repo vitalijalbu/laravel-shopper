@@ -24,6 +24,21 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | API Keys (DB + config)
+    |--------------------------------------------------------------------------
+    | Permette di definire chiavi statiche via config/.env per ambienti di
+    | sandbox o test, oltre alle chiavi gestite nel database.
+    */
+    'api_keys' => [
+        // Lista di chiavi statiche separata da virgola: CARTINO_STATIC_API_KEYS="key1,key2"
+        'static' => array_filter(array_map('trim', explode(',', (string) env('CARTINO_STATIC_API_KEYS', '')))),
+
+        // Chiave di test singola (manteniamo compatibilità con CARTINO_TEST_API_KEY)
+        'test' => env('CARTINO_TEST_API_KEY'),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Admin Panel Settings
     |--------------------------------------------------------------------------
     */

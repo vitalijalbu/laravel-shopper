@@ -5,9 +5,6 @@ namespace Cartino\Entries;
 use ArrayAccess;
 use Carbon\Carbon;
 use Cartino\Contracts\Entries\Entry as Contract;
-use Cartino\DTO\ContainsCascadingData;
-use Cartino\DTO\ExistsAsFile;
-use Cartino\DTO\HasAugmentedData;
 use Cartino\Events\Entries\EntryCreated;
 use Cartino\Events\Entries\EntryCreating;
 use Cartino\Events\Entries\EntryDeleted;
@@ -17,6 +14,9 @@ use Cartino\Events\Entries\EntrySaving;
 use Cartino\Facades\Category;
 use Cartino\Facades\Site;
 use Cartino\Support\Traits\FluentlyGetsAndSets;
+use Cartino\Traits\ContainsCascadingData;
+use Cartino\Traits\ExistsAsFile;
+use Cartino\Traits\HasAugmentedData;
 use Illuminate\Contracts\Support\Arrayable;
 
 class Entry implements Arrayable, ArrayAccess, Contract

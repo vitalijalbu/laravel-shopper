@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Cartino\DTO;
+namespace Cartino\Traits;
 
 trait HasAugmentedData
 {
