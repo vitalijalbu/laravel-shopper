@@ -93,8 +93,9 @@ class AssetContainersController extends BaseController
             'allowed_extensions' => $request->allowed_extensions,
         ]);
 
-        return redirect()->route('cp.asset-containers.show', $container)
-            ->with('success', 'Container created successfully');
+        $this->flashSuccess(__('flash.asset_containers.created'));
+
+        return redirect()->route('cp.asset-containers.show', $container);
     }
 
     /**
@@ -176,8 +177,9 @@ class AssetContainersController extends BaseController
             'allowed_extensions' => $request->allowed_extensions,
         ]);
 
-        return redirect()->route('cp.asset-containers.show', $assetContainer)
-            ->with('success', 'Container updated successfully');
+        $this->flashSuccess(__('flash.asset_containers.updated'));
+
+        return redirect()->route('cp.asset-containers.show', $assetContainer);
     }
 
     /**
@@ -187,13 +189,15 @@ class AssetContainersController extends BaseController
     {
         // Check if container has assets
         if ($assetContainer->assets()->count() > 0) {
-            return redirect()->back()
-                ->with('error', 'Cannot delete container with assets. Delete assets first.');
+            $this->flashError(__('flash.asset_containers.delete_blocked'));
+
+            return redirect()->back();
         }
 
         $assetContainer->delete();
 
-        return redirect()->route('cp.asset-containers.index')
-            ->with('success', 'Container deleted successfully');
+        $this->flashSuccess(__('flash.asset_containers.deleted'));
+
+        return redirect()->route('cp.asset-containers.index');
     }
 }

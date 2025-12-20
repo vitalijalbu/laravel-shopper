@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Cartino\Http\Controllers\Cp;
 
 use Cartino\Http\Controllers\Controller;
+use Cartino\Http\Controllers\Cp\Concerns\HandlesFlashMessages;
 use Cartino\Http\Requests\DiscountRequest;
 use Cartino\Models\Discount;
 use Cartino\Services\DiscountService;
@@ -14,6 +15,8 @@ use Inertia\Response;
 
 class DiscountController extends Controller
 {
+    use HandlesFlashMessages;
+
     public function __construct(
         protected DiscountService $discountService
     ) {}
@@ -71,9 +74,10 @@ class DiscountController extends Controller
     {
         $discount = $this->discountService->createDiscount($request->validated());
 
+        $this->flashSuccess(__('discount.messages.created_successfully'));
+
         return redirect()
-            ->route('cp.discounts.show', $discount)
-            ->with('success', __('discount.messages.created_successfully'));
+            ->route('cp.discounts.show', $discount);
     }
 
     public function show(Discount $discount): Response
@@ -98,9 +102,10 @@ class DiscountController extends Controller
     {
         $this->discountService->updateDiscount($discount, $request->validated());
 
+        $this->flashSuccess(__('discount.messages.updated_successfully'));
+
         return redirect()
-            ->route('cp.discounts.show', $discount)
-            ->with('success', __('discount.messages.updated_successfully'));
+            ->route('cp.discounts.show', $discount);
     }
 
     public function destroy(Discount $discount)
@@ -108,12 +113,15 @@ class DiscountController extends Controller
         $deleted = $this->discountService->deleteDiscount($discount);
 
         if ($deleted) {
+            $this->flashSuccess(__('discount.messages.deleted_successfully'));
+
             return redirect()
-                ->route('cp.discounts.index')
-                ->with('success', __('discount.messages.deleted_successfully'));
+                ->route('cp.discounts.index');
         }
 
-        return back()->with('error', __('discount.messages.delete_failed'));
+        $this->flashError(__('discount.messages.delete_failed'));
+
+        return back();
     }
 
     protected function getDiscountTypes(): array

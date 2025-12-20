@@ -148,13 +148,23 @@ class AssetsController extends BaseController
         }
 
         if (count($errors) > 0) {
-            return redirect()->back()
-                ->with('warning', count($uploadedAssets).' files uploaded, '.count($errors).' failed')
-                ->with('errors', $errors);
+            $this->flashWarning(
+                __('flash.assets.upload_partial', [
+                    'uploaded' => count($uploadedAssets),
+                    'failed' => count($errors),
+                ]),
+                [],
+                ['uploadErrors' => $errors]
+            );
+
+            return redirect()->back();
         }
 
-        return redirect()->route('cp.assets.index', ['container' => $request->container])
-            ->with('success', count($uploadedAssets).' assets uploaded successfully');
+        $this->flashSuccess(
+            __('flash.assets.upload_success', ['count' => count($uploadedAssets)])
+        );
+
+        return redirect()->route('cp.assets.index', ['container' => $request->container]);
     }
 
     /**
@@ -270,8 +280,9 @@ class AssetsController extends BaseController
             $this->assetService->move($asset, $request->folder);
         }
 
-        return redirect()->route('cp.assets.show', $asset)
-            ->with('success', 'Asset updated successfully');
+        $this->flashSuccess(__('flash.assets.updated'));
+
+        return redirect()->route('cp.assets.show', $asset);
     }
 
     /**
@@ -283,8 +294,9 @@ class AssetsController extends BaseController
 
         $this->assetService->delete($asset);
 
-        return redirect()->route('cp.assets.index', ['container' => $container])
-            ->with('success', 'Asset deleted successfully');
+        $this->flashSuccess(__('flash.assets.deleted'));
+
+        return redirect()->route('cp.assets.index', ['container' => $container]);
     }
 
     /**
@@ -308,8 +320,11 @@ class AssetsController extends BaseController
             }
         }
 
-        return redirect()->back()
-            ->with('success', "{$deleted} assets deleted successfully");
+        $this->flashSuccess(
+            __('flash.assets.bulk_deleted', ['count' => $deleted])
+        );
+
+        return redirect()->back();
     }
 
     /**

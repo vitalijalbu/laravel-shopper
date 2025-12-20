@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Cartino\Http\Controllers\Cp;
 
+use Cartino\Http\Controllers\Cp\Concerns\HandlesFlashMessages;
 use Cartino\Traits\HasBreadcrumbs;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -15,7 +16,7 @@ use Inertia\Response;
 
 abstract class BaseController extends Controller
 {
-    use AuthorizesRequests, HasBreadcrumbs, ValidatesRequests;
+    use AuthorizesRequests, HasBreadcrumbs, HandlesFlashMessages, ValidatesRequests;
 
     /**
      * Return success JSON response.
@@ -48,12 +49,6 @@ abstract class BaseController extends Controller
     {
         return Inertia::render($component, array_merge([
             'breadcrumbs' => $this->getBreadcrumbs(),
-            'flash' => [
-                'success' => session('success'),
-                'error' => session('error'),
-                'warning' => session('warning'),
-                'info' => session('info'),
-            ],
         ], $props));
     }
 
@@ -62,8 +57,9 @@ abstract class BaseController extends Controller
      */
     protected function redirectWithSuccess(string $route, string $message, array $parameters = []): RedirectResponse
     {
-        return redirect()->route($route, $parameters)
-            ->with('success', $message);
+        $this->flashSuccess($message);
+
+        return redirect()->route($route, $parameters);
     }
 
     /**
@@ -71,8 +67,9 @@ abstract class BaseController extends Controller
      */
     protected function redirectWithError(string $route, string $message, array $parameters = []): RedirectResponse
     {
-        return redirect()->route($route, $parameters)
-            ->with('error', $message);
+        $this->flashError($message);
+
+        return redirect()->route($route, $parameters);
     }
 
     /**

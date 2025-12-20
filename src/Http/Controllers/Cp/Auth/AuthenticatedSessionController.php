@@ -3,6 +3,7 @@
 namespace Cartino\Http\Controllers\Cp\Auth;
 
 use Cartino\Http\Controllers\Controller;
+use Cartino\Http\Controllers\Cp\Concerns\HandlesFlashMessages;
 use Cartino\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -14,6 +15,8 @@ use Inertia\Response;
 
 class AuthenticatedSessionController extends Controller
 {
+    use HandlesFlashMessages;
+
     /**
      * Display the login view.
      */
@@ -132,7 +135,9 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerateToken();
 
         // Clear Inertia user data
-        return redirect()->route('cp.cp.login')->with('status', __('cartino::auth.logged_out'));
+        $this->flashSuccess(__('cartino::auth.logged_out'));
+
+        return redirect()->route('cp.cp.login');
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace Cartino\Http\Controllers\Cp\Auth;
 
 use Cartino\Http\Controllers\Controller;
+use Cartino\Http\Controllers\Cp\Concerns\HandlesFlashMessages;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
@@ -14,6 +15,8 @@ use Inertia\Response;
 
 class PasswordResetLinkController extends Controller
 {
+    use HandlesFlashMessages;
+
     /**
      * Display the password reset link request view.
      */
@@ -63,10 +66,16 @@ class PasswordResetLinkController extends Controller
             RateLimiter::hit($this->throttleKey($request));
         }
 
-        return $status === Password::RESET_LINK_SENT
-            ? back()->with('status', __('cartino::auth.password_reset_sent'))
-            : back()->withInput($request->only('email'))
-                ->withErrors(['email' => __('cartino::auth.password_reset_failed')]);
+        if ($status === Password::RESET_LINK_SENT) {
+            $this->flashSuccess(__('cartino::auth.password_reset_sent'));
+
+            return back();
+        }
+
+        $this->flashError(__('cartino::auth.password_reset_failed'));
+
+        return back()->withInput($request->only('email'))
+            ->withErrors(['email' => __('cartino::auth.password_reset_failed')]);
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace Cartino\Http\Controllers\Cp\Auth;
 
 use Cartino\Http\Controllers\Controller;
+use Cartino\Http\Controllers\Cp\Concerns\HandlesFlashMessages;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -14,6 +15,8 @@ use Inertia\Response;
 
 class NewPasswordController extends Controller
 {
+    use HandlesFlashMessages;
+
     /**
      * Display the password reset view.
      */
@@ -73,9 +76,15 @@ class NewPasswordController extends Controller
         // If the password was successfully reset, we will redirect the user back to
         // the application's home authenticated view. If there is an error we can
         // redirect them back to where they came from with their error message.
-        return $status === Password::PASSWORD_RESET
-            ? redirect()->route('cp.cp.login')->with('status', __('cartino::auth.password_reset_success'))
-            : back()->withInput($request->only('email'))
-                ->withErrors(['email' => __('cartino::auth.password_reset_invalid')]);
+        if ($status === Password::PASSWORD_RESET) {
+            $this->flashSuccess(__('cartino::auth.password_reset_success'));
+
+            return redirect()->route('cp.cp.login');
+        }
+
+        $this->flashError(__('cartino::auth.password_reset_invalid'));
+
+        return back()->withInput($request->only('email'))
+            ->withErrors(['email' => __('cartino::auth.password_reset_invalid')]);
     }
 }
