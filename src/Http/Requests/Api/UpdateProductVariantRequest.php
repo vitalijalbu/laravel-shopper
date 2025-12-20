@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Cartino\Http\Requests\Api;
 
+use Cartino\Enums\Status;
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateProductVariantRequest extends FormRequest
@@ -28,7 +30,7 @@ class UpdateProductVariantRequest extends FormRequest
             'stock_quantity' => ['nullable', 'integer', 'min:0'],
             'requires_shipping' => ['boolean'],
             'taxable' => ['boolean'],
-            'status' => ['sometimes', 'in:active,inactive'],
+            'status' => ['sometimes', Rule::enum(Status::class)],
         ];
     }
 }

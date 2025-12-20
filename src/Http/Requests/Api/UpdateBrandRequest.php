@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Cartino\Http\Requests\Api;
 
+use Cartino\Enums\Status;
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateBrandRequest extends FormRequest
@@ -25,7 +27,7 @@ class UpdateBrandRequest extends FormRequest
             'description' => ['nullable', 'string'],
             'website' => ['nullable', 'url', 'max:255'],
             'email' => ['nullable', 'email', 'max:255'],
-            'status' => ['sometimes', 'in:active,inactive'],
+            'status' => ['sometimes', Rule::enum(Status::class)],
             'is_featured' => ['nullable', 'boolean'],
         ];
     }

@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Cartino\Http\Requests\CP;
 
+use Cartino\Models\Brand;
+use Cartino\Models\Collection;
+use Cartino\Models\Media;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -62,15 +65,15 @@ class StoreProductRequest extends FormRequest
             'height' => ['nullable', 'numeric', 'min:0'],
             'requires_shipping' => ['boolean'],
             // Relationships
-            'brand_id' => ['nullable', 'exists:brands,id'],
+            'brand_id' => ['nullable', Rule::exists(Brand::class, 'id')],
             'collection_ids' => ['nullable', 'array'],
-            'collection_ids.*' => ['exists:collections,id'],
+            'collection_ids.*' => [Rule::exists(Collection::class, 'id')],
             // SEO
             'seo_title' => ['nullable', 'string', 'max:60'],
             'seo_description' => ['nullable', 'string', 'max:160'],
             // Media
             'media' => ['nullable', 'array'],
-            'media.*.id' => ['nullable', 'exists:media,id'],
+            'media.*.id' => ['nullable', Rule::exists(Media::class, 'id')],
             'media.*.alt' => ['nullable', 'string', 'max:255'],
             'media.*.position' => ['nullable', 'integer', 'min:0'],
             // Variants (for variable products)

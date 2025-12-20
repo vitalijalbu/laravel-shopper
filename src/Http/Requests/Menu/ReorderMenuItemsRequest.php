@@ -2,6 +2,8 @@
 
 namespace Cartino\Http\Requests\Menu;
 
+use Cartino\Models\MenuItem;
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ReorderMenuItemsRequest extends FormRequest
@@ -15,7 +17,7 @@ class ReorderMenuItemsRequest extends FormRequest
     {
         return [
             'items' => 'required|array',
-            'items.*.id' => 'required|integer|exists:menu_items,id',
+            'items.*.id' => ['required|integer|', Rule::exists(MenuItem::class, 'id')],
             'items.*.children' => 'nullable|array',
         ];
     }

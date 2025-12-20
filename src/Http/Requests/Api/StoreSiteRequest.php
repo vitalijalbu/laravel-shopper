@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Cartino\Http\Requests\Api;
 
+use Cartino\Enums\Status;
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreSiteRequest extends FormRequest
@@ -20,7 +22,7 @@ class StoreSiteRequest extends FormRequest
             'name' => ['required', 'string', 'max:255'],
             'locale' => ['required', 'string', 'max:10'],
             'is_default' => ['nullable', 'boolean'],
-            'status' => ['nullable', 'in:active,inactive'],
+            'status' => ['nullable', Rule::enum(Status::class)],
         ];
     }
 }

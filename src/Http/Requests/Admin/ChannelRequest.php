@@ -19,7 +19,7 @@ class ChannelRequest extends FormRequest
         $channelId = $this->route('channel')?->id;
 
         return [
-            'site_id' => 'required|exists:sites,id',
+            'site_id' => ['required|', Rule::exists(Site::class, 'id')],
             'name' => 'required|string|max:255',
             'slug' => [
                 'required',

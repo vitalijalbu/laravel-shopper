@@ -4,7 +4,16 @@ declare(strict_types=1);
 
 namespace Cartino\Http\Requests\CP;
 
+use Cartino\Enums\FulfillmentStatus;
+use Cartino\Enums\OrderStatus;
+use Cartino\Enums\PaymentStatus;
+use Cartino\Models\Country;
+use Cartino\Models\Customer;
+use Cartino\Models\Product;
+use Cartino\Models\ProductVariant;
+use Cartino\Models\ShippingMethod;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreOrderRequest extends FormRequest
 {
@@ -22,13 +31,13 @@ class StoreOrderRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'customer_id' => ['nullable', 'exists:customers,id'],
+            'customer_id' => ['nullable', Rule::exists(Customer::class, 'id')],
             'number' => ['nullable', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255'],
             'phone' => ['nullable', 'string', 'max:20'],
-            'status' => ['required', 'string', 'in:pending,processing,shipped,delivered,cancelled,refunded'],
-            'payment_status' => ['required', 'string', 'in:pending,paid,partially_paid,refunded,cancelled'],
-            'fulfillment_status' => ['nullable', 'string', 'in:pending,fulfilled,partially_fulfilled,cancelled'],
+            'status' => ['required', 'string', Rule::enum(OrderStatus::class)],
+            'payment_status' => ['required', 'string', Rule::enum(PaymentStatus::class)],
+            'fulfillment_status' => ['nullable', 'string', Rule::enum(FulfillmentStatus::class)],
             'currency' => ['required', 'string', 'size:3'],
             'notes' => ['nullable', 'string'],
             'tags' => ['nullable', 'array'],
@@ -41,8 +50,8 @@ class StoreOrderRequest extends FormRequest
             'total' => ['required', 'numeric', 'min:0'],
             // Order items
             'items' => ['required', 'array', 'min:1'],
-            'items.*.product_id' => ['required', 'exists:products,id'],
-            'items.*.product_variant_id' => ['nullable', 'exists:product_variants,id'],
+            'items.*.product_id' => ['required', Rule::exists(Product::class, 'id')],
+            'items.*.product_variant_id' => ['nullable', Rule::exists(ProductVariant::class, 'id')],
             'items.*.quantity' => ['required', 'integer', 'min:1'],
             'items.*.price' => ['required', 'numeric', 'min:0'],
             'items.*.name' => ['required', 'string', 'max:255'],
@@ -57,7 +66,7 @@ class StoreOrderRequest extends FormRequest
             'shipping_address.city' => ['nullable', 'string', 'max:255'],
             'shipping_address.state' => ['nullable', 'string', 'max:255'],
             'shipping_address.postal_code' => ['nullable', 'string', 'max:20'],
-            'shipping_address.country_id' => ['nullable', 'exists:countries,id'],
+            'shipping_address.country_id' => ['nullable', Rule::exists(Country::class, 'id')],
             'shipping_address.phone' => ['nullable', 'string', 'max:20'],
             // Billing address
             'billing_address' => ['nullable', 'array'],
@@ -69,10 +78,10 @@ class StoreOrderRequest extends FormRequest
             'billing_address.city' => ['nullable', 'string', 'max:255'],
             'billing_address.state' => ['nullable', 'string', 'max:255'],
             'billing_address.postal_code' => ['nullable', 'string', 'max:20'],
-            'billing_address.country_id' => ['nullable', 'exists:countries,id'],
+            'billing_address.country_id' => ['nullable', Rule::exists(Country::class, 'id')],
             'billing_address.phone' => ['nullable', 'string', 'max:20'],
             // Shipping method
-            'shipping_method_id' => ['nullable', 'exists:shipping_methods,id'],
+            'shipping_method_id' => ['nullable', Rule::exists(ShippingMethod::class, 'id')],
             'shipping_method_name' => ['nullable', 'string', 'max:255'],
             'shipping_method_price' => ['nullable', 'numeric', 'min:0'],
             // Payment method

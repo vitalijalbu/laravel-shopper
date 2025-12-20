@@ -4,7 +4,12 @@ declare(strict_types=1);
 
 namespace Cartino\Http\Requests\Api;
 
+use Cartino\Models\Currency;
+use Cartino\Models\Customer;
+use Cartino\Models\Product;
+use Cartino\Models\Site;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreOrderRequest extends FormRequest
 {
@@ -16,11 +21,11 @@ class StoreOrderRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'customer_id' => ['nullable', 'exists:customers,id'],
+            'customer_id' => ['nullable', Rule::exists(Customer::class, 'id')],
             'customer_email' => ['required', 'email'],
             'customer_details' => ['required', 'array'],
-            'currency_id' => ['required', 'exists:currencies,id'],
-            'site_id' => ['nullable', 'exists:sites,id'],
+            'currency_id' => ['required', Rule::exists(Currency::class, 'id')],
+            'site_id' => ['nullable', Rule::exists(Site::class, 'id')],
             'subtotal' => ['required', 'numeric', 'min:0'],
             'tax_total' => ['required', 'numeric', 'min:0'],
             'shipping_total' => ['required', 'numeric', 'min:0'],
@@ -28,7 +33,7 @@ class StoreOrderRequest extends FormRequest
             'shipping_address' => ['required', 'array'],
             'billing_address' => ['required', 'array'],
             'lines' => ['required', 'array', 'min:1'],
-            'lines.*.product_id' => ['required', 'exists:products,id'],
+            'lines.*.product_id' => ['required', Rule::exists(Product::class, 'id')],
             'lines.*.quantity' => ['required', 'integer', 'min:1'],
             'lines.*.unit_price' => ['required', 'numeric', 'min:0'],
         ];

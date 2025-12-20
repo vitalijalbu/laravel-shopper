@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Cartino\Http\Requests\Api;
 
+use Cartino\Models\Site;
+use Cartino\Enums\Status;
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreBrandRequest extends FormRequest
@@ -21,9 +24,9 @@ class StoreBrandRequest extends FormRequest
             'description' => ['nullable', 'string'],
             'website' => ['nullable', 'url', 'max:255'],
             'email' => ['nullable', 'email', 'max:255'],
-            'status' => ['nullable', 'in:active,inactive'],
+            'status' => ['nullable', Rule::enum(Status::class)],
             'is_featured' => ['nullable', 'boolean'],
-            'site_id' => ['nullable', 'exists:sites,id'],
+            'site_id' => ['nullable', Rule::exists(Site::class, 'id')],
         ];
     }
 }

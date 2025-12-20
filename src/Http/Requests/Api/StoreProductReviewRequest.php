@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Cartino\Http\Requests\Api;
 
+use Cartino\Models\Customer;
+use Cartino\Models\Product;
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreProductReviewRequest extends FormRequest
@@ -16,8 +19,8 @@ class StoreProductReviewRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'product_id' => ['required', 'integer', 'exists:products,id'],
-            'customer_id' => ['required', 'integer', 'exists:customers,id'],
+            'product_id' => ['required', 'integer', Rule::exists(Product::class, 'id')],
+            'customer_id' => ['required', 'integer', Rule::exists(Customer::class, 'id')],
             'rating' => ['required', 'integer', 'min:1', 'max:5'],
             'title' => ['required', 'string', 'max:255'],
             'content' => ['required', 'string'],

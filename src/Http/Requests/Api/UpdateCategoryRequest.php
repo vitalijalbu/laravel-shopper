@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Cartino\Http\Requests\Api;
 
+use Cartino\Models\Category;
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateCategoryRequest extends FormRequest
@@ -23,7 +25,7 @@ class UpdateCategoryRequest extends FormRequest
             'name' => ['sometimes', 'string', 'max:255'],
             'slug' => ['sometimes', 'string', 'max:255', "unique:categories,slug,{$categoryId}"],
             'description' => ['nullable', 'string'],
-            'parent_id' => ['nullable', 'exists:categories,id'],
+            'parent_id' => ['nullable', Rule::exists(Category::class, 'id')],
             'sort_order' => ['nullable', 'integer', 'min:0'],
             'is_active' => ['nullable', 'boolean'],
             'is_visible' => ['nullable', 'boolean'],

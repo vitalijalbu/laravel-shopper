@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace Cartino\Http\Requests\Api;
 
+use Cartino\Models\Catalog;
+use Cartino\Models\Channel;
+use Cartino\Models\Market;
+use Cartino\Models\Site;
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class SetMarketContextRequest extends FormRequest
@@ -16,11 +21,11 @@ class SetMarketContextRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'market_id' => ['sometimes', 'integer', 'exists:markets,id'],
-            'market_code' => ['sometimes', 'string', 'exists:markets,code'],
-            'site_id' => ['sometimes', 'integer', 'exists:sites,id'],
-            'channel_id' => ['sometimes', 'integer', 'exists:channels,id'],
-            'catalog_id' => ['sometimes', 'integer', 'exists:catalogs,id'],
+            'market_id' => ['sometimes', 'integer', Rule::exists(Market::class, 'id')],
+            'market_code' => ['sometimes', 'string', Rule::exists(Market::class, 'code')],
+            'site_id' => ['sometimes', 'integer', Rule::exists(Site::class, 'id')],
+            'channel_id' => ['sometimes', 'integer', Rule::exists(Channel::class, 'id')],
+            'catalog_id' => ['sometimes', 'integer', Rule::exists(Catalog::class, 'id')],
             'currency' => ['sometimes', 'string', 'size:3'],
             'locale' => ['sometimes', 'string', 'max:10'],
             'country_code' => ['sometimes', 'string', 'size:2'],

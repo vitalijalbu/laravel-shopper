@@ -32,13 +32,13 @@ class RoleRequest extends FormRequest
                 'display_name' => 'required|string|max:255',
                 'description' => 'nullable|string|max:500',
                 'permissions' => 'nullable|array',
-                'permissions.*' => 'string|exists:permissions,name',
+                'permissions.*' => ['string|', Rule::exists(Permission::class, 'name')],
             ],
             'update' => [
                 'display_name' => 'required|string|max:255',
                 'description' => 'nullable|string|max:500',
                 'permissions' => 'nullable|array',
-                'permissions.*' => 'string|exists:permissions,name',
+                'permissions.*' => ['string|', Rule::exists(Permission::class, 'name')],
             ],
             default => [],
         };

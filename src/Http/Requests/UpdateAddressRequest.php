@@ -2,6 +2,9 @@
 
 namespace Cartino\Http\Requests;
 
+use Cartino\Models\Country;
+use Cartino\Enums\AddressType;
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateAddressRequest extends FormRequest
@@ -20,7 +23,7 @@ class UpdateAddressRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'type' => ['required', 'in:billing,shipping'],
+            'type' => ['required', Rule::enum(AddressType::class)],
             'first_name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
             'company' => ['nullable', 'string', 'max:255'],
@@ -29,7 +32,7 @@ class UpdateAddressRequest extends FormRequest
             'city' => ['required', 'string', 'max:255'],
             'state' => ['nullable', 'string', 'max:255'],
             'postal_code' => ['required', 'string', 'max:20'],
-            'country_id' => ['required', 'exists:countries,id'],
+            'country_id' => ['required', Rule::exists(Country::class, 'id')],
             'phone' => ['nullable', 'string', 'max:20'],
             'is_default' => ['boolean'],
         ];

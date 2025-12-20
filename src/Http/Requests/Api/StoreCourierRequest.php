@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Cartino\Http\Requests\Api;
 
+use Cartino\Models\Site;
+use Cartino\Enums\Status;
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreCourierRequest extends FormRequest
@@ -24,9 +27,9 @@ class StoreCourierRequest extends FormRequest
             'tracking_url' => ['nullable', 'url', 'max:500'],
             'delivery_time_min' => ['nullable', 'integer', 'min:0'],
             'delivery_time_max' => ['nullable', 'integer', 'min:0', 'gte:delivery_time_min'],
-            'status' => ['nullable', 'in:active,inactive'],
+            'status' => ['nullable', Rule::enum(Status::class)],
             'is_enabled' => ['nullable', 'boolean'],
-            'site_id' => ['nullable', 'exists:sites,id'],
+            'site_id' => ['nullable', Rule::exists(Site::class, 'id')],
             'seo' => ['nullable', 'array'],
             'meta' => ['nullable', 'array'],
             'data' => ['nullable', 'array'],

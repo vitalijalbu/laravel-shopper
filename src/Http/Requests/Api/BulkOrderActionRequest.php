@@ -2,7 +2,9 @@
 
 namespace Cartino\Http\Requests\Api;
 
+use Cartino\Models\Order;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class BulkOrderActionRequest extends FormRequest
 {
@@ -22,7 +24,7 @@ class BulkOrderActionRequest extends FormRequest
         return [
             'action' => 'required|in:cancel,mark_paid,mark_shipped,mark_delivered,export',
             'ids' => 'required|array|min:1',
-            'ids.*' => 'integer|exists:orders,id',
+            'ids.*' => ['integer', Rule::exists(Order::class, 'id')],
             'metadata' => 'nullable|array', // Per dati aggiuntivi come numeri di tracking
         ];
     }

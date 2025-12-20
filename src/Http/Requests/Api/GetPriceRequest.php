@@ -4,7 +4,13 @@ declare(strict_types=1);
 
 namespace Cartino\Http\Requests\Api;
 
+use Cartino\Models\Catalog;
+use Cartino\Models\Channel;
+use Cartino\Models\Market;
+use Cartino\Models\ProductVariant;
+use Cartino\Models\Site;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class GetPriceRequest extends FormRequest
 {
@@ -17,14 +23,14 @@ class GetPriceRequest extends FormRequest
     {
         return [
             // Variant identification
-            'variant_id' => ['sometimes', 'integer', 'exists:product_variants,id'],
-            'sku' => ['sometimes', 'string', 'exists:product_variants,sku'],
+            'variant_id' => ['sometimes', 'integer', Rule::exists(ProductVariant::class, 'id')],
+            'sku' => ['sometimes', 'string', Rule::exists(ProductVariant::class, 'sku')],
             // Context (optional, will use session if not provided)
-            'market_id' => ['sometimes', 'integer', 'exists:markets,id'],
-            'market_code' => ['sometimes', 'string', 'exists:markets,code'],
-            'site_id' => ['sometimes', 'integer', 'exists:sites,id'],
-            'channel_id' => ['sometimes', 'integer', 'exists:channels,id'],
-            'catalog_id' => ['sometimes', 'integer', 'exists:catalogs,id'],
+            'market_id' => ['sometimes', 'integer', Rule::exists(Market::class, 'id')],
+            'market_code' => ['sometimes', 'string', Rule::exists(Market::class, 'code')],
+            'site_id' => ['sometimes', 'integer', Rule::exists(Site::class, 'id')],
+            'channel_id' => ['sometimes', 'integer', Rule::exists(Channel::class, 'id')],
+            'catalog_id' => ['sometimes', 'integer', Rule::exists(Catalog::class, 'id')],
             'currency' => ['sometimes', 'string', 'size:3'],
             'locale' => ['sometimes', 'string', 'max:10'],
             'quantity' => ['sometimes', 'integer', 'min:1', 'max:10000'],

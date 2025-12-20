@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Cartino\Http\Requests\Api;
 
+use Cartino\Models\ShippingMethod;
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateCartShippingRequest extends FormRequest
@@ -16,7 +18,7 @@ class UpdateCartShippingRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'shipping_method_id' => ['required', 'integer', 'exists:shipping_methods,id'],
+            'shipping_method_id' => ['required', 'integer', Rule::exists(ShippingMethod::class, 'id')],
             'shipping_address' => ['required', 'array'],
             'shipping_address.first_name' => ['required', 'string', 'max:255'],
             'shipping_address.last_name' => ['required', 'string', 'max:255'],

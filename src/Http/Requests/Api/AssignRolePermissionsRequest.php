@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Cartino\Http\Requests\Api;
 
+use Cartino\Models\Permission;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class AssignRolePermissionsRequest extends FormRequest
 {
@@ -17,7 +19,7 @@ class AssignRolePermissionsRequest extends FormRequest
     {
         return [
             'permission_ids' => ['required', 'array'],
-            'permission_ids.*' => ['integer', 'exists:permissions,id'],
+            'permission_ids.*' => ['integer', Rule::exists(Permission::class, 'id')],
         ];
     }
 }

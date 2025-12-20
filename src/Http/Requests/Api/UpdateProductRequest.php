@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Cartino\Http\Requests\Api;
 
+use Cartino\Models\Brand;
+use Cartino\Models\ProductType;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateProductRequest extends FormRequest
 {
@@ -26,8 +29,8 @@ class UpdateProductRequest extends FormRequest
             'excerpt' => ['nullable', 'string'],
             'description' => ['nullable', 'string'],
             'product_type' => ['sometimes', 'in:physical,digital,service'],
-            'brand_id' => ['nullable', 'exists:brands,id'],
-            'product_type_id' => ['nullable', 'exists:product_types,id'],
+            'brand_id' => ['nullable', Rule::exists(Brand::class, 'id')],
+            'product_type_id' => ['nullable', Rule::exists(ProductType::class, 'id')],
             'status' => ['sometimes', 'in:draft,published,archived'],
             'meta_title' => ['nullable', 'string', 'max:255'],
             'meta_description' => ['nullable', 'string', 'max:500'],

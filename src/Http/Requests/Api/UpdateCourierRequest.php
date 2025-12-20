@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Cartino\Http\Requests\Api;
 
+use Cartino\Enums\Status;
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateCourierRequest extends FormRequest
@@ -28,7 +30,7 @@ class UpdateCourierRequest extends FormRequest
             'tracking_url' => ['nullable', 'url', 'max:500'],
             'delivery_time_min' => ['nullable', 'integer', 'min:0'],
             'delivery_time_max' => ['nullable', 'integer', 'min:0', 'gte:delivery_time_min'],
-            'status' => ['sometimes', 'in:active,inactive'],
+            'status' => ['sometimes', Rule::enum(Status::class)],
             'is_enabled' => ['nullable', 'boolean'],
             'seo' => ['nullable', 'array'],
             'meta' => ['nullable', 'array'],

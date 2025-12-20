@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Cartino\Http\Requests\Api;
 
+use Cartino\Models\Customer;
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateCartRequest extends FormRequest
@@ -16,7 +18,7 @@ class UpdateCartRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'customer_id' => ['nullable', 'integer', 'exists:customers,id'],
+            'customer_id' => ['nullable', 'integer', Rule::exists(Customer::class, 'id')],
             'email' => ['nullable', 'email', 'max:255'],
             'status' => ['sometimes', 'in:active,abandoned,recovered,completed'],
         ];

@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Cartino\Http\Requests\Api;
 
+use Cartino\Models\Category;
+use Cartino\Models\Site;
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreCategoryRequest extends FormRequest
@@ -19,8 +22,8 @@ class StoreCategoryRequest extends FormRequest
             'name' => ['required', 'string', 'max:255'],
             'slug' => ['required', 'string', 'max:255', 'unique:categories,slug'],
             'description' => ['nullable', 'string'],
-            'parent_id' => ['nullable', 'exists:categories,id'],
-            'site_id' => ['required', 'exists:sites,id'],
+            'parent_id' => ['nullable', Rule::exists(Category::class, 'id')],
+            'site_id' => ['required', Rule::exists(Site::class, 'id')],
             'sort_order' => ['nullable', 'integer', 'min:0'],
             'is_active' => ['nullable', 'boolean'],
             'is_visible' => ['nullable', 'boolean'],

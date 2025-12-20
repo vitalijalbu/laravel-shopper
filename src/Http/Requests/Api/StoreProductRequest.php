@@ -4,7 +4,11 @@ declare(strict_types=1);
 
 namespace Cartino\Http\Requests\Api;
 
+use Cartino\Models\Brand;
+use Cartino\Models\ProductType;
+use Cartino\Models\Site;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreProductRequest extends FormRequest
 {
@@ -22,9 +26,9 @@ class StoreProductRequest extends FormRequest
             'excerpt' => ['nullable', 'string'],
             'description' => ['nullable', 'string'],
             'product_type' => ['required', 'in:physical,digital,service'],
-            'brand_id' => ['nullable', 'exists:brands,id'],
-            'product_type_id' => ['nullable', 'exists:product_types,id'],
-            'site_id' => ['required', 'exists:sites,id'],
+            'brand_id' => ['nullable', Rule::exists(Brand::class, 'id')],
+            'product_type_id' => ['nullable', Rule::exists(ProductType::class, 'id')],
+            'site_id' => ['required', Rule::exists(Site::class, 'id')],
             'status' => ['required', 'in:draft,published,archived'],
             'meta_title' => ['nullable', 'string', 'max:255'],
             'meta_description' => ['nullable', 'string', 'max:500'],

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Cartino\Http\Requests\Api;
 
+use Cartino\Enums\Status;
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateSiteRequest extends FormRequest
@@ -24,7 +26,7 @@ class UpdateSiteRequest extends FormRequest
             'name' => ['sometimes', 'string', 'max:255'],
             'locale' => ['sometimes', 'string', 'max:10'],
             'is_default' => ['nullable', 'boolean'],
-            'status' => ['sometimes', 'in:active,inactive'],
+            'status' => ['sometimes', Rule::enum(Status::class)],
         ];
     }
 }

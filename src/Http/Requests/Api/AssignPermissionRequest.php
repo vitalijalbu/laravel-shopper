@@ -2,7 +2,9 @@
 
 namespace Cartino\Http\Requests\Api;
 
+use Cartino\Models\Permission;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class AssignPermissionRequest extends FormRequest
 {
@@ -21,7 +23,7 @@ class AssignPermissionRequest extends FormRequest
     {
         return [
             'permissions' => 'required|array',
-            'permissions.*' => 'string|exists:permissions,name',
+            'permissions.*' => ['string', Rule::exists(Permission::class, 'name')],
         ];
     }
 

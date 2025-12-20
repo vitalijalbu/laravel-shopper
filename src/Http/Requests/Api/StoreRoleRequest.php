@@ -2,6 +2,8 @@
 
 namespace Cartino\Http\Requests\Api;
 
+use Cartino\Models\Permission;
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreRoleRequest extends FormRequest
@@ -24,7 +26,7 @@ class StoreRoleRequest extends FormRequest
             'display_name' => 'nullable|string|max:255',
             'description' => 'nullable|string',
             'permissions' => 'nullable|array',
-            'permissions.*' => 'string|exists:permissions,name',
+            'permissions.*' => ['string|', Rule::exists(Permission::class, 'name')],
         ];
     }
 
