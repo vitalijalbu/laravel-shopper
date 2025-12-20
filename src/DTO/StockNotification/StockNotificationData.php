@@ -1,6 +1,6 @@
 <?php
 
-namespace Cartino\Data\StockNotification;
+namespace Cartino\DTO\StockNotification;
 
 class StockNotificationData
 {

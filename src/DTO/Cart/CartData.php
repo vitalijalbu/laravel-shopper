@@ -1,6 +1,6 @@
 <?php
 
-namespace Cartino\Data\Cart;
+namespace Cartino\DTO\Cart;
 
 use Cartino\Enums\CartStatus;
 use Cartino\Models\Cart;

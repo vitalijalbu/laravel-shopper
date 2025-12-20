@@ -311,7 +311,7 @@ Note: Using configuration file /Users/vitali/Documents/GitHub/@cartino/cartino/p
          💡  See:                                                               
          https://phpstan.org/blog/solving-phpstan-error-unsafe-usage-of-new-st  
          atic                                                                   
-  39     Method Cartino\Data\BaseDto::collect() has invalid return type         
+  39     Method Cartino\DTO\BaseDto::collect() has invalid return type         
          Illuminate\Support\Category.                                           
          🪪  class.notFound                                                     
   109    Class Illuminate\Support\Category not found.                           
@@ -8340,21 +8340,21 @@ Note: Using configuration file /Users/vitali/Documents/GitHub/@cartino/cartino/p
          🪪  class.notFound                                                     
          💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
   20     Method Cartino\Services\AbandonedCartService::createAbandonedCart()    
-         has invalid return type Cartino\Data\AbandonedCart\AbandonedCartData.  
+         has invalid return type Cartino\DTO\AbandonedCart\AbandonedCartData.  
          🪪  class.notFound                                                     
   24     Call to static method fromModel() on an unknown class                  
-         Cartino\Data\AbandonedCart\AbandonedCartData.                          
+         Cartino\DTO\AbandonedCart\AbandonedCartData.                          
          🪪  class.notFound                                                     
          💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
   30     Method Cartino\Services\AbandonedCartService::updateAbandonedCart()    
-         has invalid return type Cartino\Data\AbandonedCart\AbandonedCartData.  
+         has invalid return type Cartino\DTO\AbandonedCart\AbandonedCartData.  
          🪪  class.notFound                                                     
   30     Parameter $cart of method                                              
          Cartino\Services\AbandonedCartService::updateAbandonedCart() has       
          invalid type Cartino\Models\AbandonedCart.                             
          🪪  class.notFound                                                     
   34     Call to static method fromModel() on an unknown class                  
-         Cartino\Data\AbandonedCart\AbandonedCartData.                          
+         Cartino\DTO\AbandonedCart\AbandonedCartData.                          
          🪪  class.notFound                                                     
          💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
   40     Parameter $cart of method                                              
@@ -8373,7 +8373,7 @@ Note: Using configuration file /Users/vitali/Documents/GitHub/@cartino/cartino/p
          Cartino\Jobs\SendAbandonedCartEmail::dispatchNow().                    
          🪪  staticMethod.notFound                                              
   85     Call to static method fromModel() on an unknown class                  
-         Cartino\Data\AbandonedCart\AbandonedCartData.                          
+         Cartino\DTO\AbandonedCart\AbandonedCartData.                          
          🪪  class.notFound                                                     
          💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
   97     Call to static method find() on an unknown class                       

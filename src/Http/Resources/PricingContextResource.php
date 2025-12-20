@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Cartino\Http\Resources;
 
-use Cartino\DataTransferObjects\PricingContext;
+use Cartino\DTO\PricingContext;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 

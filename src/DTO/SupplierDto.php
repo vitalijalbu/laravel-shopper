@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Cartino\Data;
+namespace Cartino\DTO;
 
 class SupplierDto extends BaseDto
 {

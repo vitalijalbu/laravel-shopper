@@ -1,6 +1,6 @@
 <?php
 
-namespace Cartino\Data;
+namespace Cartino\DTO;
 
 use DateTime;
 use Illuminate\Support\Str;

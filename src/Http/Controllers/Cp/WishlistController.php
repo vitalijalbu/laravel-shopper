@@ -2,7 +2,7 @@
 
 namespace Cartino\Http\Controllers\Cp;
 
-use Cartino\Data\Wishlist\WishlistData;
+use Cartino\DTO\Wishlist\WishlistData;
 use Cartino\Http\Controllers\Controller;
 use Cartino\Http\Requests\Wishlist\StoreWishlistRequest;
 use Cartino\Http\Requests\Wishlist\UpdateWishlistRequest;

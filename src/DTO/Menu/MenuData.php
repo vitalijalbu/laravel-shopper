@@ -1,6 +1,6 @@
 <?php
 
-namespace Cartino\Data\Menu;
+namespace Cartino\DTO\Menu;
 
 class MenuData
 {

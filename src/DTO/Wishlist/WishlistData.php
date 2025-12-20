@@ -1,6 +1,6 @@
 <?php
 
-namespace Cartino\Data\Wishlist;
+namespace Cartino\DTO\Wishlist;
 
 use Cartino\Models\Wishlist;
 

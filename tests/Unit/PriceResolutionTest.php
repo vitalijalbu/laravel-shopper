@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Cartino\Tests\Unit;
 
-use Cartino\DataTransferObjects\PricingContext;
+use Cartino\DTO\PricingContext;
 use Cartino\Models\Channel;
 use Cartino\Models\Market;
 use Cartino\Models\Price;

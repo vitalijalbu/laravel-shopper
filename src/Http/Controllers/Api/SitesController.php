@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Cartino\Http\Controllers\Api;
 
-use Cartino\DTO\BrandDTO;
+use Cartino\DTO\BrandDto;
 use Cartino\DTO\BulkOperationDTO;
 use Cartino\Http\Requests\Api\BulkActionRequest;
 use Cartino\Http\Requests\Api\CreateManyBrandsRequest;
@@ -57,10 +57,10 @@ class SitesController extends ApiController
     {
         try {
             $brandDTOs = collect($request->getBrandsData())
-                ->map(fn (array $data) => BrandDTO::fromArray($data))
+                ->map(fn (array $data) => BrandDto::fromArray($data))
                 ->toArray();
 
-            $brandsData = collect($brandDTOs)->map(fn (BrandDTO $dto) => $dto->toCreateArray())->toArray();
+            $brandsData = collect($brandDTOs)->map(fn (BrandDto $dto) => $dto->toCreateArray())->toArray();
 
             $brands = $this->repository->createMany($brandsData);
 

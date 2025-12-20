@@ -4,9 +4,9 @@ namespace Cartino\Collections;
 
 use ArrayAccess;
 use Cartino\Contracts\Collections\Category as Contract;
-use Cartino\Data\ContainsCascadingData;
-use Cartino\Data\ExistsAsFile;
-use Cartino\Data\HasAugmentedData;
+use Cartino\DTO\ContainsCascadingData;
+use Cartino\DTO\ExistsAsFile;
+use Cartino\DTO\HasAugmentedData;
 use Cartino\Events\Collections\CollectionCreated;
 use Cartino\Events\Collections\CollectionCreating;
 use Cartino\Events\Collections\CollectionDeleted;

@@ -3,7 +3,7 @@
 namespace Cartino\Http\Controllers\Cp;
 
 use Cartino\Cp\Page;
-use Cartino\Data\PageDto;
+use Cartino\DTO\PageDto;
 use Cartino\Http\Controllers\Controller;
 use Cartino\Models\Page as ShopperPage;
 use Illuminate\Http\Request;

@@ -140,10 +140,10 @@ Route::group([
         'names' => 'api.discounts',
     ]);
 
-    // Couriers resource
-    Route::apiResource('couriers', CouriersController::class, [
-        'names' => 'api.couriers',
-    ]);
+    // Couriers resource (public read-only access)
+    Route::get('couriers', [CouriersController::class, 'index'])->name('api.couriers.index');
+    Route::get('couriers/{courier}', [CouriersController::class, 'show'])->name('api.couriers.show');
+    Route::get('couriers-enabled', [CouriersController::class, 'enabled'])->name('api.couriers.enabled.public');
 
     // Subscriptions resource (public read access)
     Route::get('subscriptions', [\Cartino\Http\Controllers\Api\SubscriptionsController::class, 'index'])->name('api.subscriptions.index');
@@ -371,7 +371,10 @@ Route::group([
         Route::post('brands/{brand}/toggle-status', [BrandsController::class, 'toggleStatus'])->name('api.brands.toggleStatus');
         Route::get('brands/{brand}/products', [BrandsController::class, 'products'])->name('api.brands.products');
 
-        // Courier Management (Admin) resource
+        // Courier Management (Admin)
+        // Specific routes first to avoid conflicts with {courier} parameter
+        Route::get('couriers/enabled', [CouriersController::class, 'enabled'])->name('api.couriers.enabled');
+
         Route::apiResource('couriers', CouriersController::class, [
             'names' => 'api.couriers',
         ]);
@@ -380,7 +383,6 @@ Route::group([
         Route::post('couriers/{courier}/toggle-status', [CouriersController::class, 'toggleStatus'])->name('api.couriers.toggleStatus');
         Route::post('couriers/{courier}/toggle-enabled', [CouriersController::class, 'toggleEnabled'])->name('api.couriers.toggleEnabled');
         Route::get('couriers/{courier}/orders', [CouriersController::class, 'orders'])->name('api.couriers.orders');
-        Route::get('couriers/enabled', [CouriersController::class, 'enabled'])->name('api.couriers.enabled');
 
         // Subscription Management (Admin)
         Route::apiResource('subscriptions', \Cartino\Http\Controllers\Api\SubscriptionsController::class, [

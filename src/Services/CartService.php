@@ -2,7 +2,7 @@
 
 namespace Cartino\Services;
 
-use Cartino\Data\Cart\CartData;
+use Cartino\DTO\Cart\CartData;
 use Cartino\Enums\CartStatus;
 use Cartino\Jobs\SendCartRecoveryEmail;
 use Cartino\Models\Cart;

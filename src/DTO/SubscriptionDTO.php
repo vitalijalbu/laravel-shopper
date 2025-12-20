@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Cartino\DTO;
 
-class SubscriptionDTO
+class SubscriptionDto
 {
     public function __construct(
         public readonly ?int $id = null,

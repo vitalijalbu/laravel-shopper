@@ -1,6 +1,6 @@
 <?php
 
-namespace Cartino\Data\CustomerAddress;
+namespace Cartino\DTO\CustomerAddress;
 
 class CustomerAddressData
 {

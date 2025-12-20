@@ -2,7 +2,7 @@
 
 namespace Cartino\Services;
 
-use Cartino\Data\StockNotification\StockNotificationData;
+use Cartino\DTO\StockNotification\StockNotificationData;
 use Cartino\Jobs\SendStockNotificationEmail;
 use Cartino\Models\StockNotification;
 use Cartino\Repositories\StockNotificationRepository;

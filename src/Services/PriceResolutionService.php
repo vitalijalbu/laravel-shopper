@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Cartino\Services;
 
-use Cartino\DataTransferObjects\PricingContext;
+use Cartino\DTO\PricingContext;
 use Cartino\Models\Price;
 use Cartino\Models\PriceList;
 use Cartino\Models\ProductVariant;

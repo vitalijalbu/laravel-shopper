@@ -3,7 +3,7 @@
 namespace Cartino\Http\Controllers\Cp;
 
 use Cartino\Cp\Page;
-use Cartino\Data\ProductDto;
+use Cartino\DTO\ProductDto;
 use Cartino\Http\Controllers\Controller;
 use Cartino\Http\Resources\ProductResource;
 use Cartino\Models\Brand;

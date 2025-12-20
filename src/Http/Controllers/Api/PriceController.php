@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Cartino\Http\Controllers\Api;
 
-use Cartino\DataTransferObjects\PricingContext;
+use Cartino\DTO\PricingContext;
 use Cartino\Http\Controllers\Controller;
 use Cartino\Http\Requests\Api\GetPriceRequest;
 use Cartino\Http\Resources\PriceResource;

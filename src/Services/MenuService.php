@@ -2,8 +2,8 @@
 
 namespace Cartino\Services;
 
-use Cartino\Data\Menu\MenuData;
-use Cartino\Data\Menu\MenuItemData;
+use Cartino\DTO\Menu\MenuData;
+use Cartino\DTO\Menu\MenuItemData;
 use Cartino\Models\Menu;
 use Cartino\Models\MenuItem;
 use Illuminate\Support\Str;

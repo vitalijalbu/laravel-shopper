@@ -70,7 +70,7 @@ Market::create([
 Il **PricingContext** è un Value Object che rappresenta il contesto di pricing:
 
 ```php
-use Cartino\DataTransferObjects\PricingContext;
+use Cartino\DTO\PricingContext;
 
 $context = PricingContext::fromRequest();
 // or

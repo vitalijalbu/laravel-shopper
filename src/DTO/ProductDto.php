@@ -1,6 +1,6 @@
 <?php
 
-namespace Cartino\Data;
+namespace Cartino\DTO;
 
 class ProductDto extends BaseDto
 {

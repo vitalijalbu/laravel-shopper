@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Cartino\Data\Customer;
+namespace Cartino\DTO\Customer;
 
 use Cartino\Models\Customer;
 

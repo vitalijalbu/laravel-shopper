@@ -1,6 +1,8 @@
 <?php
 
-namespace Cartino\Data;
+declare(strict_types=1);
+
+namespace Cartino\DTO;
 
 class AddressDto extends BaseDto
 {

@@ -2,7 +2,7 @@
 
 namespace Cartino\Services;
 
-use Cartino\Data\AbandonedCart\AbandonedCartData;
+use Cartino\DTO\AbandonedCart\AbandonedCartData;
 use Cartino\Jobs\SendAbandonedCartEmail;
 use Cartino\Models\AbandonedCart;
 use Cartino\Repositories\AbandonedCartRepository;

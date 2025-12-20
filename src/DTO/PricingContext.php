@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Cartino\DataTransferObjects;
+namespace Cartino\DTO;
 
 use Cartino\Models\Catalog;
 use Cartino\Models\Channel;

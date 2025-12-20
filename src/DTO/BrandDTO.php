@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Cartino\DTO;
 
-class BrandDTO
+class BrandDto
 {
     public function __construct(
         public readonly string $name,
