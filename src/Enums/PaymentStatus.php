@@ -1,12 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Cartino\Enums;
 
 use Cartino\Helpers\EnumSerializable;
+use Cartino\Traits\TranslatableEnum;
 
 enum PaymentStatus: string
 {
     use EnumSerializable;
+    use TranslatableEnum;
 
     case PENDING = 'pending';
     case CONFIRMED = 'confirmed';
@@ -15,17 +19,4 @@ enum PaymentStatus: string
     case DELIVERED = 'delivered';
     case CANCELLED = 'cancelled';
     case REFUNDED = 'refunded';
-
-    public function label(): string
-    {
-        return match ($this) {
-            self::PENDING => __('cartino::payment.status.pending'),
-            self::CONFIRMED => __('cartino::payment.status.confirmed'),
-            self::PROCESSING => __('cartino::payment.status.processing'),
-            self::SHIPPED => __('cartino::payment.status.shipped'),
-            self::DELIVERED => __('cartino::payment.status.delivered'),
-            self::CANCELLED => __('cartino::payment.status.cancelled'),
-            self::REFUNDED => __('cartino::payment.status.refunded'),
-        };
-    }
 }

@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace Cartino\Enums;
 
 use Cartino\Helpers\EnumSerializable;
+use Cartino\Traits\TranslatableEnum;
 
 enum StockMovementType: string
 {
     use EnumSerializable;
+    use TranslatableEnum;
 
     case PURCHASE = 'purchase';
     case SALE = 'sale';
@@ -16,18 +18,6 @@ enum StockMovementType: string
     case TRANSFER = 'transfer';
     case ADJUSTMENT = 'adjustment';
     case DAMAGE = 'damage';
-
-    public function label(): string
-    {
-        return match ($this) {
-            self::PURCHASE => __('cartino::stock.movement.purchase'),
-            self::SALE => __('cartino::stock.movement.sale'),
-            self::RETURN => __('cartino::stock.movement.return'),
-            self::TRANSFER => __('cartino::stock.movement.transfer'),
-            self::ADJUSTMENT => __('cartino::stock.movement.adjustment'),
-            self::DAMAGE => __('cartino::stock.movement.damage'),
-        };
-    }
 
     public function color(): string
     {

@@ -5,25 +5,17 @@ declare(strict_types=1);
 namespace Cartino\Enums;
 
 use Cartino\Helpers\EnumSerializable;
+use Cartino\Traits\TranslatableEnum;
 
 enum AppInstallationStatus: string
 {
     use EnumSerializable;
+    use TranslatableEnum;
 
     case ACTIVE = 'active';
     case INACTIVE = 'inactive';
     case SUSPENDED = 'suspended';
     case CANCELLED = 'cancelled';
-
-    public function label(): string
-    {
-        return match ($this) {
-            self::ACTIVE => __('cartino::app.installation.active'),
-            self::INACTIVE => __('cartino::app.installation.inactive'),
-            self::SUSPENDED => __('cartino::app.installation.suspended'),
-            self::CANCELLED => __('cartino::app.installation.cancelled'),
-        };
-    }
 
     public function color(): string
     {

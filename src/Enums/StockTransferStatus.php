@@ -5,25 +5,17 @@ declare(strict_types=1);
 namespace Cartino\Enums;
 
 use Cartino\Helpers\EnumSerializable;
+use Cartino\Traits\TranslatableEnum;
 
 enum StockTransferStatus: string
 {
     use EnumSerializable;
+    use TranslatableEnum;
 
     case PENDING = 'pending';
     case IN_TRANSIT = 'in_transit';
     case RECEIVED = 'received';
     case CANCELLED = 'cancelled';
-
-    public function label(): string
-    {
-        return match ($this) {
-            self::PENDING => __('cartino::stock.transfer.pending'),
-            self::IN_TRANSIT => __('cartino::stock.transfer.in_transit'),
-            self::RECEIVED => __('cartino::stock.transfer.received'),
-            self::CANCELLED => __('cartino::stock.transfer.cancelled'),
-        };
-    }
 
     public function color(): string
     {

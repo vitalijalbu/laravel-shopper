@@ -5,27 +5,18 @@ declare(strict_types=1);
 namespace Cartino\Enums;
 
 use Cartino\Helpers\EnumSerializable;
+use Cartino\Traits\TranslatableEnum;
 
 enum StockStatus: string
 {
     use EnumSerializable;
+    use TranslatableEnum;
 
     case InStock = 'in_stock';
     case OutOfStock = 'out_of_stock';
     case OnBackorder = 'on_backorder';
     case LowStock = 'low_stock';
     case Discontinued = 'discontinued';
-
-    public function label(): string
-    {
-        return match ($this) {
-            self::InStock => 'In Stock',
-            self::OutOfStock => 'Out of Stock',
-            self::OnBackorder => 'On Backorder',
-            self::LowStock => 'Low Stock',
-            self::Discontinued => 'Discontinued',
-        };
-    }
 
     public function color(): string
     {

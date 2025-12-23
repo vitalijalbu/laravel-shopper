@@ -5,23 +5,16 @@ declare(strict_types=1);
 namespace Cartino\Enums;
 
 use Cartino\Helpers\EnumSerializable;
+use Cartino\Traits\TranslatableEnum;
 
 enum SupplierStatus: string
 {
     use EnumSerializable;
+    use TranslatableEnum;
 
     case ACTIVE = 'active';
     case INACTIVE = 'inactive';
     case SUSPENDED = 'suspended';
-
-    public function label(): string
-    {
-        return match ($this) {
-            self::ACTIVE => __('cartino::supplier.status.active'),
-            self::INACTIVE => __('cartino::supplier.status.inactive'),
-            self::SUSPENDED => __('cartino::supplier.status.suspended'),
-        };
-    }
 
     public function color(): string
     {
