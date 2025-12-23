@@ -132,6 +132,24 @@ class Order extends Model
         return $this->belongsTo(Currency::class);
     }
 
+    public function statusVocabulary(): BelongsTo
+    {
+        return $this->belongsTo(Vocabulary::class, 'status', 'code')
+            ->where('group', 'order_status');
+    }
+
+    public function paymentStatusVocabulary(): BelongsTo
+    {
+        return $this->belongsTo(Vocabulary::class, 'payment_status', 'code')
+            ->where('group', 'payment_status');
+    }
+
+    public function fulfillmentStatusVocabulary(): BelongsTo
+    {
+        return $this->belongsTo(Vocabulary::class, 'fulfillment_status', 'code')
+            ->where('group', 'fulfillment_status');
+    }
+
     public function lines(): HasMany
     {
         return $this->hasMany(OrderLine::class);
@@ -140,6 +158,38 @@ class Order extends Model
     public function getTotalItemsAttribute(): int
     {
         return $this->lines->sum('quantity');
+    }
+
+    /**
+     * Get the translated status label.
+     */
+    public function getStatusLabelAttribute(): string
+    {
+        return $this->statusVocabulary?->getLabel() ?? $this->status;
+    }
+
+    /**
+     * Get the translated payment status label.
+     */
+    public function getPaymentStatusLabelAttribute(): string
+    {
+        return $this->paymentStatusVocabulary?->getLabel() ?? $this->payment_status;
+    }
+
+    /**
+     * Get the translated fulfillment status label.
+     */
+    public function getFulfillmentStatusLabelAttribute(): string
+    {
+        return $this->fulfillmentStatusVocabulary?->getLabel() ?? $this->fulfillment_status;
+    }
+
+    /**
+     * Get status color from vocabulary metadata.
+     */
+    public function getStatusColorAttribute(): ?string
+    {
+        return $this->statusVocabulary?->getColor();
     }
 
     public function isPaid(): bool
