@@ -23,13 +23,50 @@ class VocabularyService
     public function getCommonVocabularies(?string $locale = null): array
     {
         return Vocabulary::getMultipleGroups([
+            // Order & Payment
             'order_status',
             'payment_status',
             'fulfillment_status',
             'shipping_status',
             'return_status',
+            'return_reason',
+
+            // Products
             'product_type',
+            'product_relation_type',
+            'attribute_type',
+
+            // Stock & Inventory
             'stock_status',
+            'stock_movement_type',
+            'stock_reservation_status',
+            'stock_transfer_status',
+            'inventory_location_type',
+
+            // Discounts & Pricing
+            'discount_type',
+            'discount_target_type',
+            'pricing_rule_type',
+
+            // Shipping
+            'shipping_method_type',
+            'shipping_calculation_method',
+
+            // Suppliers & Purchase Orders
+            'supplier_status',
+            'purchase_order_status',
+
+            // Transactions
+            'transaction_type',
+            'transaction_status',
+
+            // Shopping
+            'cart_status',
+            'wishlist_status',
+
+            // Apps
+            'app_status',
+            'app_installation_status',
         ], $locale);
     }
 
