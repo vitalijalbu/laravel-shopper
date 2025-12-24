@@ -28,9 +28,8 @@ class OrderApprovalCollection extends ResourceCollection
                 'pending_count' => $this->collection->where('status', 'pending')->count(),
                 'approved_count' => $this->collection->where('status', 'approved')->count(),
                 'rejected_count' => $this->collection->where('status', 'rejected')->count(),
-                'expired_count' => $this->collection->filter(fn ($item) => 
-                    $item->status === 'pending' && 
-                    $item->expires_at && 
+                'expired_count' => $this->collection->filter(fn ($item) => $item->status === 'pending' &&
+                    $item->expires_at &&
                     now()->isAfter($item->expires_at)
                 )->count(),
                 'total_amount_pending' => $this->collection
@@ -46,16 +45,14 @@ class OrderApprovalCollection extends ResourceCollection
      */
     protected function getAverageApprovalTime(): ?float
     {
-        $approvedItems = $this->collection->filter(fn ($item) => 
-            $item->status === 'approved' && $item->approved_at
+        $approvedItems = $this->collection->filter(fn ($item) => $item->status === 'approved' && $item->approved_at
         );
 
         if ($approvedItems->isEmpty()) {
             return null;
         }
 
-        $totalHours = $approvedItems->sum(fn ($item) => 
-            $item->created_at->diffInHours($item->approved_at)
+        $totalHours = $approvedItems->sum(fn ($item) => $item->created_at->diffInHours($item->approved_at)
         );
 
         return round($totalHours / $approvedItems->count(), 2);

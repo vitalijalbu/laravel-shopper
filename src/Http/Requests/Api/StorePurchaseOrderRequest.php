@@ -6,8 +6,8 @@ namespace Cartino\Http\Requests\Api;
 
 use Cartino\Models\Product;
 use Cartino\Models\Supplier;
-use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StorePurchaseOrderRequest extends FormRequest
 {

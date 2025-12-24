@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Cartino\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 
 /**
@@ -141,8 +141,6 @@ class Vocabulary extends Model
     /**
      * Get vocabularies for a group as select options.
      *
-     * @param string $group
-     * @param string|null $locale
      * @return array<int, array{value: string, label: string, color: string|null, meta: array|null}>
      */
     public static function getSelectOptions(string $group, ?string $locale = null): array
@@ -169,8 +167,6 @@ class Vocabulary extends Model
     /**
      * Get vocabularies for a group as simple key-value pairs.
      *
-     * @param string $group
-     * @param string|null $locale
      * @return array<string, string>
      */
     public static function getOptions(string $group, ?string $locale = null): array
@@ -192,8 +188,7 @@ class Vocabulary extends Model
     /**
      * Get all vocabularies for multiple groups (for Inertia).
      *
-     * @param array $groups List of groups to fetch
-     * @param string|null $locale
+     * @param  array  $groups  List of groups to fetch
      * @return array<string, array>
      */
     public static function getMultipleGroups(array $groups, ?string $locale = null): array

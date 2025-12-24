@@ -3,8 +3,8 @@
 namespace Cartino\Http\Requests\Api;
 
 use Cartino\Models\Role;
-use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class PermissionRequest extends FormRequest
 {

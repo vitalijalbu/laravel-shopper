@@ -8,8 +8,8 @@ use Cartino\Models\Currency;
 use Cartino\Models\Customer;
 use Cartino\Models\Product;
 use Cartino\Models\ProductVariant;
-use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreSubscriptionRequest extends FormRequest
 {

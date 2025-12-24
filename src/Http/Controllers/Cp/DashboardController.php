@@ -136,10 +136,12 @@ class DashboardController extends BaseController
 
     /**
      * Get recent orders.
+     * Optimized: Select only needed columns to reduce memory usage and improve performance
      */
     protected function getRecentOrders(): array
     {
-        return Order::with('customer')
+        return Order::select(['id', 'number', 'customer_id', 'total', 'status', 'created_at'])
+            ->with('customer:id,first_name,last_name,email')
             ->latest()
             ->limit(5)
             ->get()
@@ -160,10 +162,12 @@ class DashboardController extends BaseController
 
     /**
      * Get low stock products.
+     * Optimized: Select only needed columns to reduce memory usage and improve performance
      */
     protected function getLowStockProducts(): array
     {
-        return Product::where('track_inventory', true)
+        return Product::select(['id', 'name', 'sku', 'stock_quantity', 'image_url'])
+            ->where('track_inventory', true)
             ->where('stock_quantity', '<=', 10)
             ->orderBy('stock_quantity')
             ->limit(5)
@@ -183,12 +187,14 @@ class DashboardController extends BaseController
 
     /**
      * Get top selling products.
+     * Optimized: Select only needed columns to reduce memory usage and improve performance
      */
     protected function getTopProducts(): array
     {
         // This would typically use order items to calculate
         // For now, return products ordered by created_at
-        return Product::where('status', 'published')
+        return Product::select(['id', 'name', 'price', 'image_url', 'status'])
+            ->where('status', 'published')
             ->latest()
             ->limit(5)
             ->get()
@@ -208,13 +214,15 @@ class DashboardController extends BaseController
 
     /**
      * Get recent activities.
+     * Optimized: Select only needed columns to reduce memory usage and improve performance
      */
     protected function getRecentActivities(): array
     {
         $activities = [];
 
         // Recent orders
-        $recentOrders = Order::with('customer')
+        $recentOrders = Order::select(['id', 'number', 'customer_id', 'created_at'])
+            ->with('customer:id,first_name,last_name')
             ->latest()
             ->limit(3)
             ->get();
@@ -231,7 +239,10 @@ class DashboardController extends BaseController
         }
 
         // Recent customers
-        $recentCustomers = Customer::latest()->limit(2)->get();
+        $recentCustomers = Customer::select(['id', 'first_name', 'last_name', 'email', 'created_at'])
+            ->latest()
+            ->limit(2)
+            ->get();
         foreach ($recentCustomers as $customer) {
             $activities[] = [
                 'id' => 'customer_'.$customer->id,
@@ -245,7 +256,10 @@ class DashboardController extends BaseController
         }
 
         // Recent products
-        $recentProducts = Product::latest()->limit(2)->get();
+        $recentProducts = Product::select(['id', 'name', 'updated_at'])
+            ->latest()
+            ->limit(2)
+            ->get();
         foreach ($recentProducts as $product) {
             $activities[] = [
                 'id' => 'product_'.$product->id,

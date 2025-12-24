@@ -15,7 +15,7 @@ class UpdateCompanyRequest extends FormRequest
     public function authorize(): bool
     {
         $company = $this->route('company');
-        
+
         return $this->user()->can('update', $company);
     }
 
@@ -31,7 +31,7 @@ class UpdateCompanyRequest extends FormRequest
             'name' => ['sometimes', 'required', 'string', 'max:255'],
             'handle' => ['sometimes', 'nullable', 'string', 'max:255', Rule::unique('companies')->ignore($companyId)],
             'legal_name' => ['sometimes', 'nullable', 'string', 'max:255'],
-            
+
             // Tax Information
             'vat_number' => ['sometimes', 'nullable', 'string', 'max:50'],
             'tax_id' => ['sometimes', 'nullable', 'string', 'max:50'],
@@ -40,27 +40,27 @@ class UpdateCompanyRequest extends FormRequest
             'tax_exemptions.reason' => ['required_if:tax_exempt,true', 'string', 'in:nonprofit,government,resale,other'],
             'tax_exemptions.certificate_number' => ['required_if:tax_exempt,true', 'string', 'max:100'],
             'tax_exemptions.expires_at' => ['nullable', 'date', 'after:today'],
-            
+
             // Contact Information
             'email' => ['sometimes', 'required', 'email', 'max:255'],
             'phone' => ['sometimes', 'nullable', 'string', 'max:50'],
             'website' => ['sometimes', 'nullable', 'url', 'max:255'],
-            
+
             // Company Classification
             'type' => ['sometimes', 'required', 'string', Rule::in(['standard', 'enterprise', 'wholesale', 'reseller'])],
             'status' => ['sometimes', 'nullable', 'string', Rule::in(['active', 'suspended'])],
             'risk_level' => ['sometimes', 'nullable', 'string', Rule::in(['low', 'medium', 'high'])],
-            
+
             // Financial Information
             'credit_limit' => ['sometimes', 'nullable', 'numeric', 'min:0', 'max:99999999.99'],
             'outstanding_balance' => ['sometimes', 'nullable', 'numeric', 'min:0', 'max:99999999.99'],
             'payment_terms_days' => ['sometimes', 'nullable', 'integer', 'min:0', 'max:365'],
             'payment_method' => ['sometimes', 'nullable', 'string', Rule::in(['invoice', 'card', 'wire', 'check'])],
-            
+
             // Approval Settings
             'approval_threshold' => ['sometimes', 'nullable', 'numeric', 'min:0', 'max:99999999.99'],
             'requires_approval' => ['sometimes', 'nullable', 'boolean'],
-            
+
             // Addresses
             'billing_address' => ['sometimes', 'nullable', 'array'],
             'billing_address.street' => ['required_with:billing_address', 'string', 'max:255'],
@@ -68,14 +68,14 @@ class UpdateCompanyRequest extends FormRequest
             'billing_address.state' => ['nullable', 'string', 'max:255'],
             'billing_address.zip' => ['required_with:billing_address', 'string', 'max:20'],
             'billing_address.country' => ['required_with:billing_address', 'string', 'size:2'],
-            
+
             'shipping_address' => ['sometimes', 'nullable', 'array'],
             'shipping_address.street' => ['required_with:shipping_address', 'string', 'max:255'],
             'shipping_address.city' => ['required_with:shipping_address', 'string', 'max:255'],
             'shipping_address.state' => ['nullable', 'string', 'max:255'],
             'shipping_address.zip' => ['required_with:shipping_address', 'string', 'max:20'],
             'shipping_address.country' => ['required_with:shipping_address', 'string', 'size:2'],
-            
+
             // Hierarchy
             'parent_company_id' => [
                 'sometimes',
@@ -83,12 +83,12 @@ class UpdateCompanyRequest extends FormRequest
                 'exists:companies,id',
                 Rule::notIn([$companyId]), // Cannot be parent of itself
             ],
-            
+
             // Statistics (usually updated by system, but can be manually adjusted)
             'lifetime_value' => ['sometimes', 'nullable', 'numeric', 'min:0'],
             'order_count' => ['sometimes', 'nullable', 'integer', 'min:0'],
             'last_order_at' => ['sometimes', 'nullable', 'date'],
-            
+
             // Additional
             'notes' => ['sometimes', 'nullable', 'string', 'max:5000'],
             'settings' => ['sometimes', 'nullable', 'array'],

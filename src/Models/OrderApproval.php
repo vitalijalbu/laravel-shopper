@@ -123,7 +123,7 @@ class OrderApproval extends Model
         return $query->where('status', 'pending')
             ->where(function ($q) {
                 $q->whereNull('expires_at')
-                  ->orWhere('expires_at', '>', now());
+                    ->orWhere('expires_at', '>', now());
             });
     }
 
@@ -167,8 +167,8 @@ class OrderApproval extends Model
     {
         return $query->whereHas('company.users', function ($q) use ($userId) {
             $q->where('users.id', $userId)
-              ->wherePivot('can_approve_orders', true)
-              ->wherePivot('status', 'active');
+                ->wherePivot('can_approve_orders', true)
+                ->wherePivot('status', 'active');
         });
     }
 

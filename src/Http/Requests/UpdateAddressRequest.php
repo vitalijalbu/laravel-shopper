@@ -2,10 +2,10 @@
 
 namespace Cartino\Http\Requests;
 
-use Cartino\Models\Country;
 use Cartino\Enums\AddressType;
-use Illuminate\Validation\Rule;
+use Cartino\Models\Country;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateAddressRequest extends FormRequest
 {

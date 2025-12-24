@@ -27,7 +27,7 @@ class StoreCompanyRequest extends FormRequest
             'name' => ['required', 'string', 'max:255'],
             'handle' => ['nullable', 'string', 'max:255', 'unique:companies,handle'],
             'legal_name' => ['nullable', 'string', 'max:255'],
-            
+
             // Tax Information
             'vat_number' => ['nullable', 'string', 'max:50'],
             'tax_id' => ['nullable', 'string', 'max:50'],
@@ -36,26 +36,26 @@ class StoreCompanyRequest extends FormRequest
             'tax_exemptions.reason' => ['required_if:tax_exempt,true', 'string', 'in:nonprofit,government,resale,other'],
             'tax_exemptions.certificate_number' => ['required_if:tax_exempt,true', 'string', 'max:100'],
             'tax_exemptions.expires_at' => ['nullable', 'date', 'after:today'],
-            
+
             // Contact Information
             'email' => ['required', 'email', 'max:255'],
             'phone' => ['nullable', 'string', 'max:50'],
             'website' => ['nullable', 'url', 'max:255'],
-            
+
             // Company Classification
             'type' => ['required', 'string', Rule::in(['standard', 'enterprise', 'wholesale', 'reseller'])],
             'status' => ['nullable', 'string', Rule::in(['active', 'suspended'])],
             'risk_level' => ['nullable', 'string', Rule::in(['low', 'medium', 'high'])],
-            
+
             // Financial Information
             'credit_limit' => ['nullable', 'numeric', 'min:0', 'max:99999999.99'],
             'payment_terms_days' => ['nullable', 'integer', 'min:0', 'max:365'],
             'payment_method' => ['nullable', 'string', Rule::in(['invoice', 'card', 'wire', 'check'])],
-            
+
             // Approval Settings
             'approval_threshold' => ['nullable', 'numeric', 'min:0', 'max:99999999.99'],
             'requires_approval' => ['nullable', 'boolean'],
-            
+
             // Addresses
             'billing_address' => ['nullable', 'array'],
             'billing_address.street' => ['required_with:billing_address', 'string', 'max:255'],
@@ -63,17 +63,17 @@ class StoreCompanyRequest extends FormRequest
             'billing_address.state' => ['nullable', 'string', 'max:255'],
             'billing_address.zip' => ['required_with:billing_address', 'string', 'max:20'],
             'billing_address.country' => ['required_with:billing_address', 'string', 'size:2'],
-            
+
             'shipping_address' => ['nullable', 'array'],
             'shipping_address.street' => ['required_with:shipping_address', 'string', 'max:255'],
             'shipping_address.city' => ['required_with:shipping_address', 'string', 'max:255'],
             'shipping_address.state' => ['nullable', 'string', 'max:255'],
             'shipping_address.zip' => ['required_with:shipping_address', 'string', 'max:20'],
             'shipping_address.country' => ['required_with:shipping_address', 'string', 'size:2'],
-            
+
             // Hierarchy
             'parent_company_id' => ['nullable', 'exists:companies,id'],
-            
+
             // Additional
             'notes' => ['nullable', 'string', 'max:5000'],
             'settings' => ['nullable', 'array'],
@@ -117,7 +117,7 @@ class StoreCompanyRequest extends FormRequest
     protected function prepareForValidation(): void
     {
         // Auto-generate handle from name if not provided
-        if (!$this->handle && $this->name) {
+        if (! $this->handle && $this->name) {
             $this->merge([
                 'handle' => \Illuminate\Support\Str::slug($this->name),
             ]);

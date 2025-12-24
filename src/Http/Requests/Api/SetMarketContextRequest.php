@@ -8,8 +8,8 @@ use Cartino\Models\Catalog;
 use Cartino\Models\Channel;
 use Cartino\Models\Market;
 use Cartino\Models\Site;
-use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class SetMarketContextRequest extends FormRequest
 {

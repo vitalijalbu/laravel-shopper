@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Cartino\Http\Requests\Api;
 
 use Cartino\Models\ShippingMethod;
-use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateCartShippingRequest extends FormRequest
 {

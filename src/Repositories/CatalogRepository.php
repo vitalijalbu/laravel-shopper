@@ -8,6 +8,7 @@ use Cartino\Models\Catalog;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
@@ -37,12 +38,18 @@ class CatalogRepository extends BaseRepository
                 AllowedFilter::exact('is_default'),
                 AllowedFilter::scope('published'),
                 AllowedFilter::scope('active'),
+                // Optimized: WHERE EXISTS instead of whereHas for better performance
                 AllowedFilter::callback('site', function ($query, $value) {
-                    // Filter by site ID or slug
-                    $query->whereHas('sites', function ($q) use ($value) {
-                        $q->where('sites.id', $value)
-                          ->orWhere('sites.slug', $value)
-                          ->orWhere('sites.handle', $value);
+                    $query->whereExists(function ($q) use ($value) {
+                        $q->select(DB::raw(1))
+                            ->from('catalog_site')
+                            ->join('sites', 'catalog_site.site_id', '=', 'sites.id')
+                            ->whereColumn('catalog_site.catalog_id', 'catalogs.id')
+                            ->where(function ($q2) use ($value) {
+                                $q2->where('sites.id', $value)
+                                    ->orWhere('sites.slug', $value)
+                                    ->orWhere('sites.handle', $value);
+                            });
                     });
                 }),
             ])
@@ -92,7 +99,8 @@ class CatalogRepository extends BaseRepository
         $catalog->update($data);
         $this->clearModelCache();
 
-        return $catalog->fresh();
+        // Optimized: Use with() for eager loading instead of fresh()
+        return Catalog::with(['sites', 'products'])->findOrFail($id);
     }
 
     /**

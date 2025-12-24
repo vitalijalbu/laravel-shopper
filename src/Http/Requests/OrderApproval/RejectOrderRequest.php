@@ -14,7 +14,7 @@ class RejectOrderRequest extends FormRequest
     public function authorize(): bool
     {
         $orderApproval = $this->route('orderApproval');
-        
+
         return $this->user()->can('reject', $orderApproval);
     }
 

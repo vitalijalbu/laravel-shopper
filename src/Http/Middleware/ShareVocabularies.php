@@ -17,8 +17,7 @@ class ShareVocabularies
 {
     public function __construct(
         protected VocabularyService $vocabularyService
-    ) {
-    }
+    ) {}
 
     /**
      * Handle an incoming request.

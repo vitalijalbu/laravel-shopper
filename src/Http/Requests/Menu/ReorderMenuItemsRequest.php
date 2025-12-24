@@ -3,8 +3,8 @@
 namespace Cartino\Http\Requests\Menu;
 
 use Cartino\Models\MenuItem;
-use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class ReorderMenuItemsRequest extends FormRequest
 {

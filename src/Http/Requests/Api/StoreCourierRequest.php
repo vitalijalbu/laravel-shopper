@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Cartino\Http\Requests\Api;
 
-use Cartino\Models\Site;
 use Cartino\Enums\Status;
-use Illuminate\Validation\Rule;
+use Cartino\Models\Site;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreCourierRequest extends FormRequest
 {

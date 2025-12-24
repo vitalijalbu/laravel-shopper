@@ -17,7 +17,6 @@ class VocabularyService
     /**
      * Get vocabularies for all common groups (for Inertia global props).
      *
-     * @param string|null $locale
      * @return array<string, array>
      */
     public function getCommonVocabularies(?string $locale = null): array
@@ -73,8 +72,6 @@ class VocabularyService
     /**
      * Get vocabularies for specific groups.
      *
-     * @param array $groups
-     * @param string|null $locale
      * @return array<string, array>
      */
     public function getVocabularies(array $groups, ?string $locale = null): array
@@ -84,10 +81,6 @@ class VocabularyService
 
     /**
      * Get a single vocabulary group.
-     *
-     * @param string $group
-     * @param string|null $locale
-     * @return array
      */
     public function getGroup(string $group, ?string $locale = null): array
     {
@@ -97,8 +90,6 @@ class VocabularyService
     /**
      * Get simple options (value => label) for a group.
      *
-     * @param string $group
-     * @param string|null $locale
      * @return array<string, string>
      */
     public function getOptions(string $group, ?string $locale = null): array
