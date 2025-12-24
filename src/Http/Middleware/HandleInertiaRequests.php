@@ -89,7 +89,6 @@ class HandleInertiaRequests
             },
             'locale' => app()->getLocale(),
             'locales' => config('cartino.locales', ['en', 'it']),
-            'translations' => $this->getTranslations(),
             'app' => [
                 'name' => config('app.name'),
                 'url' => config('app.url'),
@@ -132,47 +131,6 @@ class HandleInertiaRequests
 
         // Default: allow if user exists
         return true;
-    }
-
-    /**
-     * Get translations for current locale using Laravel's translator.
-     */
-    protected function getTranslations(): array
-    {
-        $translator = app('translator');
-        $locale = app()->getLocale();
-
-        // Load all Cartino translations using Laravel's __() function
-        $translationKeys = [
-            'cartino::auth',
-            'cartino::cp',
-            'cartino::general',
-            'cartino::validation',
-            'cartino::brands',
-            'cartino::products',
-            'cartino::cart',
-            'cartino::categories',
-            'cartino::pages',
-            'cartino::storefront',
-            'cartino::social',
-            'cartino::apps',
-            'cartino::address',
-        ];
-
-        $translations = [];
-
-        foreach ($translationKeys as $key) {
-            $translation = __($key);
-
-            // Only include if it's actually a translation array (not the key returned)
-            if (is_array($translation)) {
-                // Convert cartino::auth to cartino.auth for JS
-                $jsKey = str_replace('::', '.', $key);
-                data_set($translations, $jsKey, $translation);
-            }
-        }
-
-        return $translations;
     }
 
     /**

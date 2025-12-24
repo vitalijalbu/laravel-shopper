@@ -184,6 +184,9 @@ class CartinoServiceProvider extends ServiceProvider
         $this->registerPolicies();
 
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'cartino');
+
+        // Register View Composers (Statamic-style translations injection)
+        $this->app['view']->composer('cartino::app', \Cartino\Http\View\Composers\TranslationComposer::class);
     }
 
     protected function configureAuthentication(): void

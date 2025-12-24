@@ -6,6 +6,9 @@ import CpLayout from "@/layouts/cp-layout.vue";
 // Import Cartino configuration fallbacks
 import { defaultCartinoConfig } from "@/config/cartino-config.js";
 
+// Import translation plugin (Statamic-style)
+import translationsPlugin from "@/plugins/translations";
+
 // Import global styles
 import "../css/app.css";
 
@@ -32,7 +35,8 @@ createInertiaApp({
   setup({ el, App, props, plugin }) {
     const app = createApp({ render: () => h(App, props) })
       .use(plugin)
-      .use(createPinia());
+      .use(createPinia())
+      .use(translationsPlugin); // Statamic-style translations
 
     // Configure CSRF token for Inertia requests
     if (window.Laravel && window.Laravel.csrfToken) {
