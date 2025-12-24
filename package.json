@@ -51,7 +51,7 @@
     "vite": "^7.3.0",
     "vue": "^3.5.26",
     "vue-chartjs": "^5.3.3",
-    "vue-tsc": "^3.1.8"
+    "vue-tsc": "^3.2.1"
   },
   "dependencies": {
     "@cartino/ui": "file:../ui",
@@ -64,7 +64,7 @@
     "lodash": "^4.17.21",
     "lodash-es": "^4.17.22",
     "lucide-vue-next": "^0.562.0",
-    "reka-ui": "^2.6.1",
+    "reka-ui": "^2.7.0",
     "tailwind-merge": "^3.4.0",
     "vue-chartjs": "^5.3.3",
     "vue-draggable-plus": "^0.6.0",

@@ -7,6 +7,7 @@ use Cartino\Http\Controllers\Api\AssetController;
 use Cartino\Http\Controllers\Api\AuthController;
 use Cartino\Http\Controllers\Api\BrandsController;
 use Cartino\Http\Controllers\Api\CartController;
+use Cartino\Http\Controllers\Api\CatalogController;
 use Cartino\Http\Controllers\Api\CategoriesController;
 use Cartino\Http\Controllers\Api\ChannelController;
 use Cartino\Http\Controllers\Api\CountryController;
@@ -115,6 +116,14 @@ Route::group([
     ]);
     Route::apiResource('sites', SitesController::class, [
         'names' => 'api.sites',
+    ]);
+
+    // Catalogs custom routes (before resource to avoid conflicts)
+    Route::get('catalogs/active', [CatalogController::class, 'active'])->name('api.catalogs.active');
+    Route::get('catalogs/published', [CatalogController::class, 'published'])->name('api.catalogs.published');
+
+    Route::apiResource('catalogs', CatalogController::class, [
+        'names' => 'api.catalogs',
     ]);
 
     // Categories custom routes (before resource to avoid conflicts)
