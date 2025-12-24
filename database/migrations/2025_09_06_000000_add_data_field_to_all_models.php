@@ -45,10 +45,10 @@ return new class extends Migration
             $table->timestamps();
 
             // Indexes
-            $table->index(['revisionable_type', 'revisionable_id', 'created_at']);
+            $table->index(['revisionable_type', 'revisionable_id', 'created_at'], 'revisions_rev_created_idx');
             $table->index(['user_id', 'created_at']);
             $table->index(['action', 'created_at']);
-            $table->index(['is_working_copy', 'revisionable_type', 'revisionable_id']);
+            $table->index(['is_working_copy', 'revisionable_type', 'revisionable_id'], 'revisions_working_rev_idx');
             $table->index(['is_published', 'published_at']);
         });
 
@@ -59,7 +59,7 @@ return new class extends Migration
             $table->string('handle');
             $table->string('title');
             $table->text('description')->nullable();
-            $table->jsonb('data')->nullable()->comment('Custom fields data');
+            $table->jsonb('data')->nullable();
             $table->jsonb('settings')->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamps();
@@ -77,7 +77,7 @@ return new class extends Migration
             $table->string('title');
             $table->text('description')->nullable();
             $table->integer('order')->default(0);
-            $table->jsonb('data')->nullable()->comment('Custom fields data');
+            $table->jsonb('data')->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamps();
             $table->softDeletes();
@@ -143,19 +143,16 @@ return new class extends Migration
         ];
 
         foreach ($tables as $table) {
-            if (Schema::hasTable($table) && !Schema::hasColumn($table, 'data')) {
+            if (Schema::hasTable($table) && ! Schema::hasColumn($table, 'data')) {
                 Schema::table($table, function (Blueprint $table) {
                     // Add JSONB field for custom data
                     // This will store schema-defined custom fields as JSON
-                    $table->jsonb('data')->nullable()->comment('Custom fields data');
+                    $table->jsonb('data')->nullable();
 
                     // Add index for better query performance on data field
                     if (config('database.default') === 'pgsql') {
                         // PostgreSQL specific JSONB index
                         $table->index('data', null, 'gin');
-                    } else {
-                        // MySQL JSON index (MySQL 5.7+)
-                        $table->index('data');
                     }
                 });
             }

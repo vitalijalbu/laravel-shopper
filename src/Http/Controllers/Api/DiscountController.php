@@ -13,13 +13,12 @@ use Illuminate\Http\Request;
 class DiscountController extends ApiController
 {
     public function __construct(
-        private readonly DiscountService $discountService
+        private readonly DiscountService $discountService,
     ) {}
 
     public function index(Request $request): JsonResponse
     {
-        $query = Discount::with(['applications'])
-            ->orderBy('created_at', 'desc');
+        $query = Discount::with(['applications'])->orderBy('created_at', 'desc');
 
         // Filter by type
         if ($request->has('type')) {
@@ -30,8 +29,7 @@ class DiscountController extends ApiController
         if ($request->has('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                    ->orWhere('code', 'like', "%{$search}%");
+                $q->where('name', 'like', "%{$search}%")->orWhere('code', 'like', "%{$search}%");
             });
         }
 
@@ -39,11 +37,13 @@ class DiscountController extends ApiController
         $discounts = $query->paginate($perPage);
 
         // Add statistics to each discount
-        $discounts->getCollection()->transform(function ($discount) {
-            $discount->statistics = $this->discountService->getDiscountStatistics($discount);
+        $discounts
+            ->getCollection()
+            ->transform(function ($discount) {
+                $discount->statistics = $this->discountService->getDiscountStatistics($discount);
 
-            return $discount;
-        });
+                return $discount;
+            });
 
         return response()->json($discounts);
     }
@@ -105,17 +105,13 @@ class DiscountController extends ApiController
             'customer_id' => 'nullable|integer|exists:customers,id',
         ]);
 
-        $validation = $this->discountService->validateDiscountCode(
-            $request->code,
-            $request->customer_id
-        );
+        $validation = $this->discountService->validateDiscountCode($request->code, $request->customer_id);
 
         return response()->json($validation);
     }
 
     public function toggle(Discount $discount): JsonResponse
     {
-
         $status = $discount->is_enabled ? 'enabled' : 'disabled';
 
         return response()->json([
@@ -150,9 +146,7 @@ class DiscountController extends ApiController
             'active_discounts' => Discount::where('is_enabled', true)->count(),
             'total_applications' => \Cartino\Models\DiscountApplication::count(),
             'total_discount_amount' => \Cartino\Models\DiscountApplication::sum('discount_amount'),
-            'by_type' => Discount::selectRaw('type, COUNT(*) as count')
-                ->groupBy('type')
-                ->pluck('count', 'type'),
+            'by_type' => Discount::selectRaw('type, COUNT(*) as count')->groupBy('type')->pluck('count', 'type'),
             'recent_activity' => \Cartino\Models\DiscountApplication::with(['discount', 'applicable'])
                 ->latest()
                 ->limit(10)

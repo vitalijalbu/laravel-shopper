@@ -1,6 +1,6 @@
 <?php
 
-namespace Cartino\CP;
+namespace Cartino\Cp;
 
 class Page
 {
@@ -170,7 +170,7 @@ class Page
                 $name,
                 $config['label'] ?? ucfirst($name),
                 $config['component'] ?? 'DefaultComponent',
-                $config['props'] ?? []
+                $config['props'] ?? [],
             );
         }
 

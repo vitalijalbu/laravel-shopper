@@ -27,11 +27,11 @@ class ReviewController extends ApiController
         // Search filter
         if ($search = $request->get('search')) {
             $query->where(function ($q) use ($search) {
-                $q->where('title', 'like', "%{$search}%")
+                $q
+                    ->where('title', 'like', "%{$search}%")
                     ->orWhere('content', 'like', "%{$search}%")
                     ->orWhereHas('customer', function ($q) use ($search) {
-                        $q->where('name', 'like', "%{$search}%")
-                            ->orWhere('email', 'like', "%{$search}%");
+                        $q->where('name', 'like', "%{$search}%")->orWhere('email', 'like', "%{$search}%");
                     })
                     ->orWhereHas('product', function ($q) use ($search) {
                         $q->where('name', 'like', "%{$search}%");
@@ -78,8 +78,13 @@ class ReviewController extends ApiController
         $sortDirection = $request->get('sort_direction', 'desc');
 
         $allowedSorts = [
-            'created_at', 'rating', 'helpful_count', 'unhelpful_count',
-            'title', 'is_approved', 'is_featured',
+            'created_at',
+            'rating',
+            'helpful_count',
+            'unhelpful_count',
+            'title',
+            'is_approved',
+            'is_featured',
         ];
 
         if (in_array($sortBy, $allowedSorts)) {
@@ -156,7 +161,6 @@ class ReviewController extends ApiController
                 'message' => 'Review created successfully',
                 'data' => $review,
             ], 201);
-
         } catch (\Exception $e) {
             DB::rollBack();
 
@@ -205,8 +209,12 @@ class ReviewController extends ApiController
 
             $originalRating = $review->rating;
             $updateData = $request->only([
-                'rating', 'title', 'content', 'is_approved',
-                'is_featured', 'is_verified_purchase',
+                'rating',
+                'title',
+                'content',
+                'is_approved',
+                'is_featured',
+                'is_verified_purchase',
             ]);
 
             // Handle reply
@@ -237,7 +245,6 @@ class ReviewController extends ApiController
                 'message' => 'Review updated successfully',
                 'data' => $review,
             ]);
-
         } catch (\Exception $e) {
             DB::rollBack();
 
@@ -264,7 +271,6 @@ class ReviewController extends ApiController
             return $this->successResponse([
                 'message' => 'Review deleted successfully',
             ]);
-
         } catch (\Exception $e) {
             DB::rollBack();
 
@@ -284,7 +290,6 @@ class ReviewController extends ApiController
                 'message' => 'Review approved successfully',
                 'data' => $review,
             ]);
-
         } catch (\Exception $e) {
             return $this->errorResponse('Failed to approve review: '.$e->getMessage(), 500);
         }
@@ -302,7 +307,6 @@ class ReviewController extends ApiController
                 'message' => 'Review unapproved successfully',
                 'data' => $review,
             ]);
-
         } catch (\Exception $e) {
             return $this->errorResponse('Failed to unapprove review: '.$e->getMessage(), 500);
         }
@@ -323,14 +327,12 @@ class ReviewController extends ApiController
         }
 
         try {
-            $updated = ProductReview::whereIn('id', $request->review_ids)
-                ->update(['is_approved' => true]);
+            $updated = ProductReview::whereIn('id', $request->review_ids)->update(['is_approved' => true]);
 
             return $this->successResponse([
                 'message' => "{$updated} reviews approved successfully",
                 'updated_count' => $updated,
             ]);
-
         } catch (\Exception $e) {
             return $this->errorResponse('Failed to approve reviews: '.$e->getMessage(), 500);
         }
@@ -354,9 +356,7 @@ class ReviewController extends ApiController
             DB::beginTransaction();
 
             // Get product IDs before deletion for rating updates
-            $productIds = ProductReview::whereIn('id', $request->review_ids)
-                ->pluck('product_id')
-                ->unique();
+            $productIds = ProductReview::whereIn('id', $request->review_ids)->pluck('product_id')->unique();
 
             $deleted = ProductReview::whereIn('id', $request->review_ids)->delete();
 
@@ -371,7 +371,6 @@ class ReviewController extends ApiController
                 'message' => "{$deleted} reviews deleted successfully",
                 'deleted_count' => $deleted,
             ]);
-
         } catch (\Exception $e) {
             DB::rollBack();
 
@@ -426,7 +425,8 @@ class ReviewController extends ApiController
                 ->orderBy('date')
                 ->get()
                 ->keyBy('date')
-                ->map->count;
+                ->map
+                ->count;
 
             // Most reviewed products
             $topProducts = Product::withCount([
@@ -463,7 +463,6 @@ class ReviewController extends ApiController
                     'top_products' => $topProducts,
                 ],
             ]);
-
         } catch (\Exception $e) {
             return $this->errorResponse('Failed to load analytics: '.$e->getMessage(), 500);
         }
@@ -480,8 +479,7 @@ class ReviewController extends ApiController
             // Apply same filters as index
             if ($search = $request->get('search')) {
                 $query->where(function ($q) use ($search) {
-                    $q->where('title', 'like', "%{$search}%")
-                        ->orWhere('content', 'like', "%{$search}%");
+                    $q->where('title', 'like', "%{$search}%")->orWhere('content', 'like', "%{$search}%");
                 });
             }
 
@@ -509,9 +507,18 @@ class ReviewController extends ApiController
 
                 // CSV headers
                 fputcsv($file, [
-                    'ID', 'Product', 'Customer', 'Rating', 'Title', 'Content',
-                    'Approved', 'Featured', 'Verified Purchase', 'Helpful Count',
-                    'Unhelpful Count', 'Created At',
+                    'ID',
+                    'Product',
+                    'Customer',
+                    'Rating',
+                    'Title',
+                    'Content',
+                    'Approved',
+                    'Featured',
+                    'Verified Purchase',
+                    'Helpful Count',
+                    'Unhelpful Count',
+                    'Created At',
                 ]);
 
                 // CSV data
@@ -536,7 +543,6 @@ class ReviewController extends ApiController
             };
 
             return response()->stream($callback, 200, $headers);
-
         } catch (\Exception $e) {
             return $this->errorResponse('Failed to export reviews: '.$e->getMessage(), 500);
         }
@@ -552,8 +558,7 @@ class ReviewController extends ApiController
             return;
         }
 
-        $reviews = ProductReview::where('product_id', $productId)
-            ->where('is_approved', true);
+        $reviews = ProductReview::where('product_id', $productId)->where('is_approved', true);
 
         $averageRating = $reviews->avg('rating');
         $reviewCount = $reviews->count();

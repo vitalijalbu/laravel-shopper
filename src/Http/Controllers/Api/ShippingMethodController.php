@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 class ShippingMethodController extends ApiController
 {
     public function __construct(
-        protected ShippingMethodRepository $shippingMethodRepository
+        protected ShippingMethodRepository $shippingMethodRepository,
     ) {}
 
     /**
@@ -181,7 +181,7 @@ class ShippingMethodController extends ApiController
         try {
             $shippingMethods = $this->shippingMethodRepository->getAvailableForLocation(
                 $validated['country'],
-                $validated['state'] ?? null
+                $validated['state'] ?? null,
             );
 
             return response()->json([
@@ -219,10 +219,7 @@ class ShippingMethodController extends ApiController
                 'destination' => $validated['destination'],
             ];
 
-            $cost = $this->shippingMethodRepository->calculateShippingCost(
-                $validated['method_id'],
-                $cartData
-            );
+            $cost = $this->shippingMethodRepository->calculateShippingCost($validated['method_id'], $cartData);
 
             return response()->json([
                 'data' => [

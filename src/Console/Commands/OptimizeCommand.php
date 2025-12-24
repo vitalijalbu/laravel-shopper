@@ -123,8 +123,12 @@ class OptimizeCommand extends Command
     {
         $this->task('Setting up image optimization', function () {
             // Configure image optimization settings
-            $this->info('  - WebP format enabled: '.(Config::get('cartino-performance.images.formats.webp') ? 'Yes' : 'No'));
-            $this->info('  - Image quality: '.Config::get('cartino-performance.images.optimization.quality', 85).'%');
+            $this->info(
+                '  - WebP format enabled: '.(Config::get('cartino-performance.images.formats.webp') ? 'Yes' : 'No'),
+            );
+            $this->info('  - Image quality: '.
+            Config::get('cartino-performance.images.optimization.quality', 85).
+                '%');
 
             return true;
         });
@@ -246,12 +250,12 @@ class OptimizeCommand extends Command
         $this->table(
             ['Option', 'Description'],
             [
-                ['--cache', 'Optimize cache configuration and warm up'],
+                ['--cache',    'Optimize cache configuration and warm up'],
                 ['--database', 'Optimize database queries and indexes'],
-                ['--images', 'Configure image optimization settings'],
-                ['--all', 'Run all optimizations'],
-                ['--clear', 'Clear all optimizations'],
-            ]
+                ['--images',   'Configure image optimization settings'],
+                ['--all',      'Run all optimizations'],
+                ['--clear',    'Clear all optimizations'],
+            ],
         );
 
         $this->newLine();
@@ -263,10 +267,11 @@ class OptimizeCommand extends Command
 
     protected function hasOptions(): bool
     {
-        return $this->option('cache') ||
-               $this->option('database') ||
-               $this->option('images') ||
-               $this->option('all') ||
-               $this->option('clear');
+        return
+            $this->option('cache') ||
+            $this->option('database') ||
+            $this->option('images') ||
+            $this->option('all') ||
+            $this->option('clear');
     }
 }

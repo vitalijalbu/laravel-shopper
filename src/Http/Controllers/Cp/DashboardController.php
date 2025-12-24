@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Cartino\Http\Controllers\CP;
+namespace Cartino\Http\Controllers\Cp;
 
-use Cartino\CP\Page;
+use Cartino\Cp\Page;
 use Cartino\Models\Customer;
 use Cartino\Models\Order;
 use Cartino\Models\Product;
@@ -21,16 +21,15 @@ class DashboardController extends BaseController
         $this->addBreadcrumb('Dashboard');
 
         $page = Page::make('Dashboard')
-            ->primaryAction('Quick order', route('cartino.orders.create'))
+            ->primaryAction('Quick order', route('cp.orders.create'))
             ->secondaryActions([
-                ['label' => 'Add product', 'url' => route('cartino.products.create')],
-                ['label' => 'Add customer', 'url' => route('cartino.customers.create')],
-                ['label' => 'View reports', 'url' => route('cartino.reports.index')],
+                ['label' => 'Add product', 'url' => route('cp.products.create')],
+                ['label' => 'Add customer', 'url' => route('cp.customers.create')],
+                ['label' => 'View reports', 'url' => route('cp.reports.index')],
             ]);
 
-        return $this->inertiaResponse('dashboard/Index', [
+        return $this->inertiaResponse('dashboard/index', [
             'page' => $page->compile(),
-
             'stats' => $this->getDashboardStats(),
             'charts' => $this->getChartData(),
             'recent_orders' => $this->getRecentOrders(),
@@ -56,9 +55,7 @@ class DashboardController extends BaseController
 
         // This month stats
         $ordersThisMonth = Order::whereMonth('created_at', $now->month)->count();
-        $revenueThisMonth = Order::whereMonth('created_at', $now->month)
-            ->where('status', 'completed')
-            ->sum('total');
+        $revenueThisMonth = Order::whereMonth('created_at', $now->month)->where('status', 'completed')->sum('total');
         $customersThisMonth = Customer::whereMonth('created_at', $now->month)->count();
 
         // Last month stats for comparison
@@ -101,10 +98,8 @@ class DashboardController extends BaseController
                 'low_stock' => Product::where('stock_quantity', '<=', 10)->count(),
             ],
             'average_order_value' => [
-                'value' => $totalOrders > 0 ? $totalRevenue / $totalOrders : 0,
-                'formatted' => $totalOrders > 0
-                    ? number_format($totalRevenue / $totalOrders, 2).' €'
-                    : '0 €',
+                'value' => $totalOrders > 0 ? ($totalRevenue / $totalOrders) : 0,
+                'formatted' => $totalOrders > 0 ? (number_format($totalRevenue / $totalOrders, 2).' €') : '0 €',
             ],
         ];
     }
@@ -114,17 +109,18 @@ class DashboardController extends BaseController
      */
     protected function getChartData(): array
     {
-        $days = collect(range(0, 29))->map(function ($day) {
-            $date = now()->subDays($day);
+        $days = collect(range(0, 29))
+            ->map(function ($day) {
+                $date = now()->subDays($day);
 
-            return [
-                'date' => $date->format('Y-m-d'),
-                'orders' => Order::whereDate('created_at', $date)->count(),
-                'revenue' => Order::whereDate('created_at', $date)
-                    ->where('status', 'completed')
-                    ->sum('total'),
-            ];
-        })->reverse()->values();
+                return [
+                    'date' => $date->format('Y-m-d'),
+                    'orders' => Order::whereDate('created_at', $date)->count(),
+                    'revenue' => Order::whereDate('created_at', $date)->where('status', 'completed')->sum('total'),
+                ];
+            })
+            ->reverse()
+            ->values();
 
         return [
             'orders' => [
@@ -140,10 +136,12 @@ class DashboardController extends BaseController
 
     /**
      * Get recent orders.
+     * Optimized: Select only needed columns to reduce memory usage and improve performance
      */
     protected function getRecentOrders(): array
     {
-        return Order::with('customer')
+        return Order::select(['id', 'number', 'customer_id', 'total', 'status', 'created_at'])
+            ->with('customer:id,first_name,last_name,email')
             ->latest()
             ->limit(5)
             ->get()
@@ -156,7 +154,7 @@ class DashboardController extends BaseController
                     'formatted_total' => number_format($order->total, 2).' €',
                     'status' => $order->status,
                     'created_at' => $order->created_at->format('Y-m-d H:i'),
-                    'url' => route('cartino.orders.show', $order),
+                    'url' => route('cp.orders.show', $order),
                 ];
             })
             ->toArray();
@@ -164,10 +162,12 @@ class DashboardController extends BaseController
 
     /**
      * Get low stock products.
+     * Optimized: Select only needed columns to reduce memory usage and improve performance
      */
     protected function getLowStockProducts(): array
     {
-        return Product::where('track_inventory', true)
+        return Product::select(['id', 'name', 'sku', 'stock_quantity', 'image_url'])
+            ->where('track_inventory', true)
             ->where('stock_quantity', '<=', 10)
             ->orderBy('stock_quantity')
             ->limit(5)
@@ -179,7 +179,7 @@ class DashboardController extends BaseController
                     'sku' => $product->sku,
                     'stock_quantity' => $product->stock_quantity,
                     'image_url' => $product->image_url,
-                    'url' => route('cartino.products.show', $product),
+                    'url' => route('cp.products.show', $product),
                 ];
             })
             ->toArray();
@@ -187,12 +187,14 @@ class DashboardController extends BaseController
 
     /**
      * Get top selling products.
+     * Optimized: Select only needed columns to reduce memory usage and improve performance
      */
     protected function getTopProducts(): array
     {
         // This would typically use order items to calculate
         // For now, return products ordered by created_at
-        return Product::where('status', 'published')
+        return Product::select(['id', 'name', 'price', 'image_url', 'status'])
+            ->where('status', 'published')
             ->latest()
             ->limit(5)
             ->get()
@@ -204,7 +206,7 @@ class DashboardController extends BaseController
                     'formatted_price' => number_format($product->price, 2).' €',
                     'image_url' => $product->image_url,
                     'sales' => rand(10, 100), // TODO: Calculate real sales
-                    'url' => route('cartino.products.show', $product),
+                    'url' => route('cp.products.show', $product),
                 ];
             })
             ->toArray();
@@ -212,28 +214,35 @@ class DashboardController extends BaseController
 
     /**
      * Get recent activities.
+     * Optimized: Select only needed columns to reduce memory usage and improve performance
      */
     protected function getRecentActivities(): array
     {
         $activities = [];
 
         // Recent orders
-        $recentOrders = Order::with('customer')->latest()->limit(3)->get();
+        $recentOrders = Order::select(['id', 'number', 'customer_id', 'created_at'])
+            ->with('customer:id,first_name,last_name')
+            ->latest()
+            ->limit(3)
+            ->get();
         foreach ($recentOrders as $order) {
             $activities[] = [
                 'id' => 'order_'.$order->id,
                 'type' => 'order',
                 'icon' => 'shopping-bag',
                 'title' => 'New order received',
-                'description' => "Order #{$order->number} from ".
-                    ($order->customer?->full_name ?? 'Guest'),
+                'description' => "Order #{$order->number} from ".($order->customer?->full_name ?? 'Guest'),
                 'time' => $order->created_at->diffForHumans(),
-                'url' => route('cartino.orders.show', $order),
+                'url' => route('cp.orders.show', $order),
             ];
         }
 
         // Recent customers
-        $recentCustomers = Customer::latest()->limit(2)->get();
+        $recentCustomers = Customer::select(['id', 'first_name', 'last_name', 'email', 'created_at'])
+            ->latest()
+            ->limit(2)
+            ->get();
         foreach ($recentCustomers as $customer) {
             $activities[] = [
                 'id' => 'customer_'.$customer->id,
@@ -242,12 +251,15 @@ class DashboardController extends BaseController
                 'title' => 'New customer registered',
                 'description' => $customer->full_name.' ('.$customer->email.')',
                 'time' => $customer->created_at->diffForHumans(),
-                'url' => route('cartino.customers.show', $customer),
+                'url' => route('cp.customers.show', $customer),
             ];
         }
 
         // Recent products
-        $recentProducts = Product::latest()->limit(2)->get();
+        $recentProducts = Product::select(['id', 'name', 'updated_at'])
+            ->latest()
+            ->limit(2)
+            ->get();
         foreach ($recentProducts as $product) {
             $activities[] = [
                 'id' => 'product_'.$product->id,
@@ -256,7 +268,7 @@ class DashboardController extends BaseController
                 'title' => 'Product updated',
                 'description' => $product->name,
                 'time' => $product->updated_at->diffForHumans(),
-                'url' => route('cartino.products.show', $product),
+                'url' => route('cp.products.show', $product),
             ];
         }
 

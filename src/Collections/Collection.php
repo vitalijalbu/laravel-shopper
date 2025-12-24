@@ -4,9 +4,6 @@ namespace Cartino\Collections;
 
 use ArrayAccess;
 use Cartino\Contracts\Collections\Category as Contract;
-use Cartino\Data\ContainsCascadingData;
-use Cartino\Data\ExistsAsFile;
-use Cartino\Data\HasAugmentedData;
 use Cartino\Events\Collections\CollectionCreated;
 use Cartino\Events\Collections\CollectionCreating;
 use Cartino\Events\Collections\CollectionDeleted;
@@ -20,6 +17,9 @@ use Cartino\Facades\Site;
 use Cartino\Facades\Stache;
 use Cartino\Support\Arr;
 use Cartino\Support\Traits\FluentlyGetsAndSets;
+use Cartino\Traits\ContainsCascadingData;
+use Cartino\Traits\ExistsAsFile;
+use Cartino\Traits\HasAugmentedData;
 use Illuminate\Contracts\Support\Arrayable;
 use Statamic\Contracts\Data\Augmentable as AugmentableContract;
 
@@ -127,8 +127,7 @@ class Category implements Arrayable, ArrayAccess, AugmentableContract, Contract
 
     public function routes($routes = null)
     {
-        return $this
-            ->fluentlyGetOrSet('routes')
+        return $this->fluentlyGetOrSet('routes')
             ->getter(function ($routes) {
                 if ($this->cachedRoutes !== null) {
                     return $this->cachedRoutes;
@@ -203,8 +202,7 @@ class Category implements Arrayable, ArrayAccess, AugmentableContract, Contract
 
     public function sites($sites = null)
     {
-        return $this
-            ->fluentlyGetOrSet('sites')
+        return $this->fluentlyGetOrSet('sites')
             ->getter(function ($sites) {
                 return collect(Site::multiEnabled() ? $sites : [Site::default()->handle()]);
             })

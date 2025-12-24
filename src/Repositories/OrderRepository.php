@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Cartino\Repositories;
 
 use Cartino\Models\Customer;
@@ -7,10 +9,12 @@ use Cartino\Models\Order;
 use Cartino\Models\Product;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class OrderRepository extends BaseRepository
 {
-    protected array $with = ['customer', 'items', 'items.product'];
+    protected array $with = ['customer'];
 
     protected string $cachePrefix = 'orders';
 
@@ -24,48 +28,92 @@ class OrderRepository extends BaseRepository
      */
     public function findAll(array $filters = []): LengthAwarePaginator
     {
-        $query = $this->model->newQuery()
-            ->with(['customer', 'items.product']);
+        $perPage = $filters['per_page'] ?? config('settings.pagination.per_page', 15);
 
-        // Search filter
-        if (! empty($filters['search'])) {
-            $search = $filters['search'];
-            $query->where(function ($q) use ($search) {
-                $q->where('order_number', 'like', "%{$search}%")
-                    ->orWhereHas('customer', function ($customerQuery) use ($search) {
-                        $customerQuery->where('first_name', 'like', "%{$search}%")
-                            ->orWhere('last_name', 'like', "%{$search}%")
-                            ->orWhere('email', 'like', "%{$search}%");
-                    });
-            });
+        return QueryBuilder::for(Order::class)
+            ->with([
+                'customer',
+                'lines',
+            ])
+            ->allowedFilters([
+                'order_number',
+                'status',
+                'payment_status',
+                AllowedFilter::exact('customer_id'),
+                AllowedFilter::scope('date_from'),
+                AllowedFilter::scope('date_to'),
+            ])
+            ->allowedSorts(['order_number', 'created_at', 'total_amount', 'status'])
+            ->allowedIncludes(['customer', 'lines', 'lines.product', 'shipping_address', 'billing_address'])
+            ->defaultSort('-created_at')
+            ->paginate($perPage)
+            ->appends($filters);
+    }
+
+    /**
+     * Find one by ID or order number
+     */
+    public function findOne(int|string $orderNumberOrId): ?Order
+    {
+        $cacheKey = "order:{$orderNumberOrId}";
+
+        return $this->cacheQuery($cacheKey, function () use ($orderNumberOrId) {
+            return $this->model
+                ->with(['customer', 'items.product', 'shippingAddress', 'billingAddress'])
+                ->where('id', $orderNumberOrId)
+                ->orWhere('order_number', $orderNumberOrId)
+                ->firstOrFail();
+        });
+    }
+
+    /**
+     * Create one
+     */
+    public function createOne(array $data): Order
+    {
+        // Generate order number if not provided
+        if (empty($data['order_number'])) {
+            $data['order_number'] = $this->generateOrderNumber();
         }
 
-        // Status filter
-        if (! empty($filters['status'])) {
-            $query->where('status', $filters['status']);
-        }
+        $order = $this->model->create($data);
+        $this->clearModelCache();
 
-        // Payment status filter
-        if (! empty($filters['payment_status'])) {
-            $query->where('payment_status', $filters['payment_status']);
-        }
+        return $order;
+    }
 
-        // Date range filters
-        if (! empty($filters['date_from'])) {
-            $query->whereDate('created_at', '>=', $filters['date_from']);
-        }
+    /**
+     * Update one
+     */
+    public function updateOne(int $id, array $data): Order
+    {
+        $order = $this->findOrFail($id);
+        $order->update($data);
+        $this->clearModelCache();
 
-        if (! empty($filters['date_to'])) {
-            $query->whereDate('created_at', '<=', $filters['date_to']);
-        }
+        return $order->fresh(['customer', 'items.product']);
+    }
 
-        // Sorting
-        $sortField = $filters['sort'] ?? 'created_at';
-        $sortDirection = $filters['direction'] ?? 'desc';
+    /**
+     * Delete one
+     */
+    public function deleteOne(int $id): bool
+    {
+        $order = $this->findOrFail($id);
+        $deleted = $order->delete();
+        $this->clearModelCache();
 
-        $query->orderBy($sortField, $sortDirection);
+        return $deleted;
+    }
 
-        return $query->paginate($perPage);
+    /**
+     * Check if can delete
+     */
+    public function canDelete(int $id): bool
+    {
+        $order = $this->findOrFail($id);
+
+        return in_array($order->status, ['draft', 'cancelled']);
     }
 
     /**
@@ -91,12 +139,14 @@ class OrderRepository extends BaseRepository
 
         // Add order items
         foreach ($items as $item) {
-            $order->items()->create([
-                'product_id' => $item['product_id'],
-                'quantity' => $item['quantity'],
-                'unit_price' => $item['unit_price'],
-                'total_price' => $item['quantity'] * $item['unit_price'],
-            ]);
+            $order
+                ->items()
+                ->create([
+                    'product_id' => $item['product_id'],
+                    'quantity' => $item['quantity'],
+                    'unit_price' => $item['unit_price'],
+                    'total_price' => $item['quantity'] * $item['unit_price'],
+                ]);
         }
 
         return $order->load(['customer', 'items.product']);
@@ -124,12 +174,14 @@ class OrderRepository extends BaseRepository
         $order->items()->delete();
 
         foreach ($items as $item) {
-            $order->items()->create([
-                'product_id' => $item['product_id'],
-                'quantity' => $item['quantity'],
-                'unit_price' => $item['unit_price'],
-                'total_price' => $item['quantity'] * $item['unit_price'],
-            ]);
+            $order
+                ->items()
+                ->create([
+                    'product_id' => $item['product_id'],
+                    'quantity' => $item['quantity'],
+                    'unit_price' => $item['unit_price'],
+                    'total_price' => $item['quantity'] * $item['unit_price'],
+                ]);
         }
 
         return $order->load(['customer', 'items.product']);
@@ -168,7 +220,7 @@ class OrderRepository extends BaseRepository
     /**
      * Get customers for order creation
      */
-    public function getCustomersForSelect(): \Illuminate\Database\Eloquent\Category
+    public function getCustomersForSelect(): \Illuminate\Database\Eloquent\Collection
     {
         return Customer::select('id', 'first_name', 'last_name', 'email')
             ->where('is_active', true)
@@ -179,7 +231,7 @@ class OrderRepository extends BaseRepository
     /**
      * Get products for order creation
      */
-    public function getProductsForSelect(): \Illuminate\Database\Eloquent\Category
+    public function getProductsForSelect(): \Illuminate\Database\Eloquent\Collection
     {
         return Product::select('id', 'name', 'price')
             ->where('is_active', true)
@@ -321,7 +373,7 @@ class OrderRepository extends BaseRepository
 
             $totalOrders = $orders->count();
             $totalRevenue = $orders->sum('total_amount');
-            $averageOrderValue = $totalOrders > 0 ? $totalRevenue / $totalOrders : 0;
+            $averageOrderValue = $totalOrders > 0 ? ($totalRevenue / $totalOrders) : 0;
 
             $statusCounts = $orders->groupBy('status')->map->count()->toArray();
             $paymentStatusCounts = $orders->groupBy('payment_status')->map->count()->toArray();
@@ -341,7 +393,10 @@ class OrderRepository extends BaseRepository
      */
     public function bulkAction(string $action, array $ids, array $metadata = []): array
     {
-        $validatedIds = $this->model->whereIn('id', $ids)->pluck('id')->toArray();
+        $validatedIds = $this->model
+            ->whereIn('id', $ids)
+            ->pluck('id')
+            ->toArray();
         $processedCount = 0;
         $errors = [];
 

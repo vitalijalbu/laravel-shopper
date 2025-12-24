@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace Cartino\Enums;
 
 use Cartino\Helpers\EnumSerializable;
+use Cartino\Traits\TranslatableEnum;
 
 enum ReturnStatus: string
 {
     use EnumSerializable;
+    use TranslatableEnum;
 
     case REQUESTED = 'requested';
     case APPROVED = 'approved';
@@ -17,19 +19,6 @@ enum ReturnStatus: string
     case RECEIVED = 'received';
     case PROCESSED = 'processed';
     case REFUNDED = 'refunded';
-
-    public function label(): string
-    {
-        return match ($this) {
-            self::REQUESTED => __('cartino::return.status.requested'),
-            self::APPROVED => __('cartino::return.status.approved'),
-            self::REJECTED => __('cartino::return.status.rejected'),
-            self::IN_TRANSIT => __('cartino::return.status.in_transit'),
-            self::RECEIVED => __('cartino::return.status.received'),
-            self::PROCESSED => __('cartino::return.status.processed'),
-            self::REFUNDED => __('cartino::return.status.refunded'),
-        };
-    }
 
     public function color(): string
     {

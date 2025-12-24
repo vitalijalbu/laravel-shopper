@@ -92,14 +92,13 @@ class TaxRate extends Model
     {
         $now = now()->toDateString();
 
-        return $query->where('is_enabled', true)
+        return $query
+            ->where('is_enabled', true)
             ->where(function ($q) use ($now) {
-                $q->whereNull('effective_from')
-                    ->orWhere('effective_from', '<=', $now);
+                $q->whereNull('effective_from')->orWhere('effective_from', '<=', $now);
             })
             ->where(function ($q) use ($now) {
-                $q->whereNull('effective_until')
-                    ->orWhere('effective_until', '>=', $now);
+                $q->whereNull('effective_until')->orWhere('effective_until', '>=', $now);
             });
     }
 }

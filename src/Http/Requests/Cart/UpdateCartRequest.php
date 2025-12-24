@@ -19,7 +19,7 @@ class UpdateCartRequest extends FormRequest
             'email' => 'sometimes|email|max:255',
             'status' => ['sometimes', Rule::enum(CartStatus::class)],
             'items' => 'sometimes|array',
-            'items.*.product_id' => 'required|exists:products,id',
+            'items.*.product_id' => ['required|', Rule::exists(Product::class, 'id')],
             'items.*.quantity' => 'required|integer|min:1|max:999',
             'items.*.price' => 'required|numeric|min:0',
             'subtotal' => 'sometimes|numeric|min:0',

@@ -8,5 +8,7 @@ use Cartino\Core\Addon\AddonInterface;
 
 class PluginInstalled
 {
-    public function __construct(public AddonInterface $addon) {}
+    public function __construct(
+        public AddonInterface $addon,
+    ) {}
 }

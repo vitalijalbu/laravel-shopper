@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Cartino\Http\Controllers\CP;
+namespace Cartino\Http\Controllers\Cp;
 
+use Cartino\Http\Controllers\Cp\Concerns\HandlesFlashMessages;
 use Cartino\Traits\HasBreadcrumbs;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -15,13 +16,15 @@ use Inertia\Response;
 
 abstract class BaseController extends Controller
 {
-    use AuthorizesRequests, HasBreadcrumbs, ValidatesRequests;
+    use AuthorizesRequests, HandlesFlashMessages, HasBreadcrumbs, ValidatesRequests;
 
     /**
      * Return success JSON response.
      */
-    protected function successResponse(string $message = 'Operation completed successfully', array $data = []): JsonResponse
-    {
+    protected function successResponse(
+        string $message = 'Operation completed successfully',
+        array $data = [],
+    ): JsonResponse {
         return response()->json([
             'success' => true,
             'message' => $message,
@@ -32,8 +35,11 @@ abstract class BaseController extends Controller
     /**
      * Return error JSON response.
      */
-    protected function errorResponse(string $message = 'Operation failed', array $errors = [], int $status = 422): JsonResponse
-    {
+    protected function errorResponse(
+        string $message = 'Operation failed',
+        array $errors = [],
+        int $status = 422,
+    ): JsonResponse {
         return response()->json([
             'success' => false,
             'message' => $message,
@@ -48,12 +54,6 @@ abstract class BaseController extends Controller
     {
         return Inertia::render($component, array_merge([
             'breadcrumbs' => $this->getBreadcrumbs(),
-            'flash' => [
-                'success' => session('success'),
-                'error' => session('error'),
-                'warning' => session('warning'),
-                'info' => session('info'),
-            ],
         ], $props));
     }
 
@@ -62,8 +62,9 @@ abstract class BaseController extends Controller
      */
     protected function redirectWithSuccess(string $route, string $message, array $parameters = []): RedirectResponse
     {
-        return redirect()->route($route, $parameters)
-            ->with('success', $message);
+        $this->flashSuccess($message);
+
+        return redirect()->route($route, $parameters);
     }
 
     /**
@@ -71,8 +72,9 @@ abstract class BaseController extends Controller
      */
     protected function redirectWithError(string $route, string $message, array $parameters = []): RedirectResponse
     {
-        return redirect()->route($route, $parameters)
-            ->with('error', $message);
+        $this->flashError($message);
+
+        return redirect()->route($route, $parameters);
     }
 
     /**
@@ -95,27 +97,6 @@ abstract class BaseController extends Controller
                 'links' => $paginated->linkCollection()->toArray(),
             ],
         ];
-    }
-
-    /**
-     * Handle bulk operations.
-     */
-    protected function handleBulkOperation(string $action, array $ids, callable $callback): JsonResponse
-    {
-        try {
-            $result = $callback($action, $ids);
-
-            return $this->successResponse(
-                "Bulk {$action} completed successfully",
-                ['affected_count' => $result]
-            );
-        } catch (\Exception $e) {
-            return $this->errorResponse(
-                "Bulk {$action} failed: ".$e->getMessage(),
-                [],
-                500
-            );
-        }
     }
 
     /**

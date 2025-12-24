@@ -35,7 +35,7 @@ class UpdateCustomerRequest extends FormRequest
             'gender' => 'nullable|in:male,female,other',
             'status' => 'string|in:active,inactive',
             'accepts_marketing' => 'boolean',
-            'customer_group_id' => 'nullable|integer|exists:customer_groups,id',
+            'customer_group_id' => ['nullable|integer|', Rule::exists(CustomerGroup::class, 'id')],
             'notes' => 'nullable|string',
             'tags' => 'nullable|array',
             'tags.*' => 'string|max:100',

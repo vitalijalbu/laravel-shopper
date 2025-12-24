@@ -1,6 +1,6 @@
 <?php
 
-namespace Cartino\Http\Controllers\CP;
+namespace Cartino\Http\Controllers\Cp;
 
 use Cartino\Http\Controllers\Controller;
 use Cartino\Models\Customer;
@@ -14,13 +14,14 @@ class AddressController extends Controller
 {
     public function index(Customer $customer): Response
     {
-        $addresses = $customer->addresses()
+        $addresses = $customer
+            ->addresses()
             ->orderBy('is_default', 'desc')
             ->orderBy('type')
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return Inertia::render('CP/Customers/Addresses/Index', [
+        return Inertia::render('customers/addresses/index', [
             'customer' => $customer,
             'addresses' => $addresses,
         ]);
@@ -28,7 +29,7 @@ class AddressController extends Controller
 
     public function create(Customer $customer): Response
     {
-        return Inertia::render('CP/Customers/Addresses/Create', [
+        return Inertia::render('customers/addresses/Create', [
             'customer' => $customer,
         ]);
     }
@@ -69,7 +70,7 @@ class AddressController extends Controller
     {
         $this->authorize('view', $address);
 
-        return Inertia::render('CP/Customers/Addresses/Show', [
+        return Inertia::render('customers/addresses/Show', [
             'customer' => $customer,
             'address' => $address,
         ]);
@@ -79,7 +80,7 @@ class AddressController extends Controller
     {
         $this->authorize('update', $address);
 
-        return Inertia::render('CP/Customers/Addresses/Edit', [
+        return Inertia::render('customers/addresses/Edit', [
             'customer' => $customer,
             'address' => $address,
         ]);

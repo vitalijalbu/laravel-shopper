@@ -1,8 +1,8 @@
 <?php
 
-namespace Cartino\Http\Controllers\CP;
+namespace Cartino\Http\Controllers\Cp;
 
-use Cartino\CP\Page;
+use Cartino\Cp\Page;
 use Cartino\Http\Controllers\Controller;
 use Cartino\Models\PaymentGateway;
 use Cartino\Repositories\PaymentGatewayRepository;
@@ -37,7 +37,6 @@ class PaymentGatewaysController extends Controller
 
         return Inertia::render('settings-payment-gateways', [
             'page' => $page->compile(),
-
             'gateways' => $gateways,
             'providers' => $providers,
             'filters' => $filters,
@@ -97,7 +96,6 @@ class PaymentGatewaysController extends Controller
 
         return Inertia::render('payment-gateway-show', [
             'page' => $page->compile(),
-
             'gateway' => $paymentGateway,
         ]);
     }
@@ -197,10 +195,7 @@ class PaymentGatewaysController extends Controller
         ]);
 
         try {
-            $updatedGateway = $this->paymentGatewayRepository->updateConfig(
-                $paymentGateway->id,
-                $validated['config']
-            );
+            $updatedGateway = $this->paymentGatewayRepository->updateConfig($paymentGateway->id, $validated['config']);
 
             return response()->json([
                 'success' => true,

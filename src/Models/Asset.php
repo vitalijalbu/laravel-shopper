@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Cartino\Models;
 
+use Cartino\Services\GlideService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -72,8 +73,7 @@ class Asset extends Model
 
     public function folderModel(): BelongsTo
     {
-        return $this->belongsTo(AssetFolder::class, 'folder', 'path')
-            ->where('container', $this->container);
+        return $this->belongsTo(AssetFolder::class, 'folder', 'path')->where('container', $this->container);
     }
 
     // Accessors
@@ -159,8 +159,7 @@ class Asset extends Model
     public function glide(array $params = [], ?string $preset = null): string
     {
         if ($preset) {
-            $presetParams = $this->containerModel?->getPreset($preset)
-                ?? config("media.presets.{$preset}", []);
+            $presetParams = $this->containerModel?->getPreset($preset) ?? config("media.presets.{$preset}", []);
             $params = array_merge($presetParams, $params);
         }
 
@@ -169,7 +168,7 @@ class Asset extends Model
             $params['crop'] = $this->focus_css;
         }
 
-        return app(\Cartino\Services\GlideService::class)->url($this->path, $params);
+        return app(GlideService::class)->url($this->path, $params);
     }
 
     public function responsive(?array $breakpoints = null): array
@@ -259,7 +258,8 @@ class Asset extends Model
     public function scopeSearch($query, string $search)
     {
         return $query->where(function ($q) use ($search) {
-            $q->where('filename', 'like', "%{$search}%")
+            $q
+                ->where('filename', 'like', "%{$search}%")
                 ->orWhere('basename', 'like', "%{$search}%")
                 ->orWhereRaw("meta->>'alt' like ?", ["%{$search}%"])
                 ->orWhereRaw("meta->>'title' like ?", ["%{$search}%"]);

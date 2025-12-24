@@ -4,8 +4,8 @@ namespace Cartino\Tests;
 
 use Cartino\CartinoServiceProvider;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Orchestra\Testbench\Concerns\WithWorkbench;
+use Orchestra\Testbench\TestCase as BaseTestCase;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -14,9 +14,6 @@ abstract class TestCase extends BaseTestCase
     protected function setUp(): void
     {
         parent::setUp();
-
-        $this->artisan('migrate:fresh', ['--force' => true])->run();
-        $this->seed();
     }
 
     protected function getPackageProviders($app): array

@@ -4,8 +4,12 @@ declare(strict_types=1);
 
 namespace Cartino\Enums;
 
+use Cartino\Traits\TranslatableEnum;
+
 enum Status: string
 {
+    use TranslatableEnum;
+
     case Active = 'active';
     case Inactive = 'inactive';
     case Draft = 'draft';
@@ -17,18 +21,6 @@ enum Status: string
     case Discontinued = 'discontinued';
     case Hidden = 'hidden';
     case Restricted = 'restricted';
-
-    public function label(): string
-    {
-        return match ($this) {
-            self::Active => 'Active',
-            self::Inactive => 'Inactive',
-            self::Draft => 'Draft',
-            self::Archived => 'Archived',
-            self::Pending => 'Pending',
-            self::Suspended => 'Suspended',
-        };
-    }
 
     public function color(): string
     {

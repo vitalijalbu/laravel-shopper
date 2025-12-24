@@ -36,25 +36,15 @@ abstract class Migration extends BaseMigration
     public function addShippingFields(Blueprint $table): void
     {
         $table->string('weight_unit')->default(Weight::KG());
-        $table->decimal('weight_value', 10)->nullable()
-            ->default(0.00)
-            ->unsigned();
+        $table->decimal('weight_value', 10)->nullable()->default(0.00)->unsigned();
         $table->string('height_unit')->default(Length::CM());
-        $table->decimal('height_value', 10)->nullable()
-            ->default(0.00)
-            ->unsigned();
+        $table->decimal('height_value', 10)->nullable()->default(0.00)->unsigned();
         $table->string('width_unit')->default(Length::CM());
-        $table->decimal('width_value', 10)->nullable()
-            ->default(0.00)
-            ->unsigned();
+        $table->decimal('width_value', 10)->nullable()->default(0.00)->unsigned();
         $table->string('depth_unit')->default(Length::CM());
-        $table->decimal('depth_value', 10)->nullable()
-            ->default(0.00)
-            ->unsigned();
+        $table->decimal('depth_value', 10)->nullable()->default(0.00)->unsigned();
         $table->string('volume_unit')->default(Volume::L());
-        $table->decimal('volume_value', 10)->nullable()
-            ->default(0.00)
-            ->unsigned();
+        $table->decimal('volume_value', 10)->nullable()->default(0.00)->unsigned();
     }
 
     public function addForeignKey(Blueprint $table, string $column, string $tableName, bool $nullable = true): void

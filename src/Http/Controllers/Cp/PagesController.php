@@ -1,9 +1,9 @@
 <?php
 
-namespace Cartino\Http\Controllers\CP;
+namespace Cartino\Http\Controllers\Cp;
 
-use Cartino\CP\Page;
-use Cartino\Data\PageDto;
+use Cartino\Cp\Page;
+use Cartino\DTO\PageDto;
 use Cartino\Http\Controllers\Controller;
 use Cartino\Models\Page as ShopperPage;
 use Illuminate\Http\Request;
@@ -27,9 +27,18 @@ class PagesController extends Controller
             ]);
 
         $pages = ShopperPage::select([
-            'id', 'title', 'handle', 'status', 'show_title',
-            'seo_title', 'seo_description', 'published_at',
-            'author_id', 'template_id', 'created_at', 'updated_at',
+            'id',
+            'title',
+            'handle',
+            'status',
+            'show_title',
+            'seo_title',
+            'seo_description',
+            'published_at',
+            'author_id',
+            'template_id',
+            'created_at',
+            'updated_at',
         ])
             ->with(['author:id,name', 'template:id,name'])
             ->orderBy('created_at', 'desc')
@@ -37,7 +46,6 @@ class PagesController extends Controller
 
         return Inertia::render('Pages/index', [
             'page' => $page->compile(),
-
             'pages' => $pages,
         ]);
     }
@@ -61,7 +69,6 @@ class PagesController extends Controller
 
         return Inertia::render('Pages/Create', [
             'page' => $page->compile(),
-
             'templates' => $this->getAvailableTemplates(),
         ]);
     }
@@ -112,7 +119,7 @@ class PagesController extends Controller
             default => response()->json([
                 'message' => 'Page created successfully',
                 'redirect' => '/cp/pages',
-            ])
+            ]),
         };
     }
 
@@ -142,7 +149,6 @@ class PagesController extends Controller
 
         return Inertia::render('Pages/Edit', [
             'page' => $pageBuilder->compile(),
-
             'pageData' => $page,
             'templates' => $this->getAvailableTemplates(),
         ]);
@@ -207,13 +213,16 @@ class PagesController extends Controller
             ->backUrl('/cp/pages')
             ->primaryAction('Save', null, ['form' => 'page-builder-form'])
             ->secondaryActions([
-                ['label' => 'Preview', 'url' => $page ? "/pages/{$page->handle}?preview=true" : '#', 'external' => true],
+                [
+                    'label' => 'Preview',
+                    'url' => $page ? "/pages/{$page->handle}?preview=true" : '#',
+                    'external' => true,
+                ],
                 ['label' => 'Publish', 'action' => 'publish'],
             ]);
 
         return Inertia::render('Pages/Builder', [
             'page' => $pageBuilder->compile(),
-
             'pageData' => $page,
             'sections' => $this->getAvailableSections(),
         ]);
@@ -239,7 +248,7 @@ class PagesController extends Controller
             'private' => $this->bulkPrivate($pages),
             'delete' => $this->bulkDelete($pages),
             'duplicate' => $this->bulkDuplicate($pages),
-            default => response()->json(['error' => 'Unknown action'], 422)
+            default => response()->json(['error' => 'Unknown action'], 422),
         };
     }
 
@@ -331,15 +340,17 @@ class PagesController extends Controller
     protected function bulkDuplicate($pages)
     {
         $count = 0;
-        $pages->get()->each(function ($page) use (&$count) {
-            $pageDto = PageDto::from($page->toArray());
-            $pageDto->title = $pageDto->title.' (Copy)';
-            $pageDto->handle = '';
-            $pageDto->status = 'draft';
+        $pages
+            ->get()
+            ->each(function ($page) use (&$count) {
+                $pageDto = PageDto::from($page->toArray());
+                $pageDto->title = $pageDto->title.' (Copy)';
+                $pageDto->handle = '';
+                $pageDto->status = 'draft';
 
-            ShopperPage::create($pageDto->toArray());
-            $count++;
-        });
+                ShopperPage::create($pageDto->toArray());
+                $count++;
+            });
 
         return response()->json(['message' => "Duplicated {$count} pages"]);
     }

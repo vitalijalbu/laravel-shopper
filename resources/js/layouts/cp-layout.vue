@@ -9,7 +9,7 @@
 
       <!-- Page Content -->
       <div class="cp-content">
-        <router-view />
+        <slot></slot>
       </div>
 
     </div>

@@ -172,9 +172,7 @@ class Cart extends Model
      */
     protected function itemsCount(): Attribute
     {
-        return Attribute::make(
-            get: fn () => collect($this->items ?? [])->sum('quantity')
-        );
+        return Attribute::make(get: fn () => collect($this->items ?? [])->sum('quantity'));
     }
 
     /**
@@ -182,9 +180,7 @@ class Cart extends Model
      */
     protected function ageInHours(): Attribute
     {
-        return Attribute::make(
-            get: fn () => $this->created_at->diffInHours(now())
-        );
+        return Attribute::make(get: fn () => $this->created_at->diffInHours(now()));
     }
 
     /**
@@ -192,11 +188,14 @@ class Cart extends Model
      */
     public function isEligibleForRecovery(): bool
     {
-        return $this->isAbandoned()
-            && ! $this->recovered
-            && $this->recovery_emails_sent < 3
-            && ($this->last_recovery_email_sent_at === null ||
-                $this->last_recovery_email_sent_at->diffInHours(now()) >= 24);
+        return
+            $this->isAbandoned() &&
+            ! $this->recovered &&
+            $this->recovery_emails_sent < 3 &&
+            (
+                $this->last_recovery_email_sent_at === null ||
+                    $this->last_recovery_email_sent_at->diffInHours(now()) >= 24
+            );
     }
 
     /**
@@ -220,13 +219,14 @@ class Cart extends Model
      */
     public function scopeCanBeAbandoned($query, int $hoursThreshold = 1)
     {
-        return $query->where('status', CartStatus::ACTIVE)
+        return $query
+            ->where('status', CartStatus::ACTIVE)
             ->where(function ($q) use ($hoursThreshold) {
-                $q->where('last_activity_at', '<=', now()->subHours($hoursThreshold))
-                    ->orWhere(function ($subQ) use ($hoursThreshold) {
-                        $subQ->whereNull('last_activity_at')
-                            ->where('updated_at', '<=', now()->subHours($hoursThreshold));
-                    });
+                $q->where('last_activity_at', '<=', now()->subHours($hoursThreshold))->orWhere(function ($subQ) use (
+                    $hoursThreshold,
+                ) {
+                    $subQ->whereNull('last_activity_at')->where('updated_at', '<=', now()->subHours($hoursThreshold));
+                });
             });
     }
 
@@ -235,12 +235,16 @@ class Cart extends Model
      */
     public function scopeEligibleForRecovery($query)
     {
-        return $query->abandoned()
+        return $query
+            ->abandoned()
             ->where('recovered', false)
             ->where('recovery_emails_sent', '<', 3)
             ->where(function ($q) {
-                $q->whereNull('last_recovery_email_sent_at')
-                    ->orWhere('last_recovery_email_sent_at', '<=', now()->subHours(24));
+                $q->whereNull('last_recovery_email_sent_at')->orWhere(
+                    'last_recovery_email_sent_at',
+                    '<=',
+                    now()->subHours(24),
+                );
             });
     }
 }

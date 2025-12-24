@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Cartino\Repositories;
 
 use Cartino\Models\Brand;
-use Illuminate\Database\Eloquent\Category;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Spatie\QueryBuilder\QueryBuilder;
@@ -25,8 +24,9 @@ class BrandRepository extends BaseRepository
     public function findAll(array $filters = []): LengthAwarePaginator
     {
         return $query = QueryBuilder::for(Brand::class)
-            ->allowedFilters(['name', 'email'])
+            ->allowedFilters(['name', 'slug', 'status'])
             ->allowedSorts(['name', 'created_at', 'status'])
+            ->allowedIncludes(['products'])
             ->paginate($filters['per_page'] ?? config('settings.pagination.per_page'))
             ->appends($filters);
     }
@@ -43,6 +43,51 @@ class BrandRepository extends BaseRepository
     }
 
     /**
+     * Create one
+     */
+    public function createOne(array $data): Brand
+    {
+        $brand = $this->model->create($data);
+        $this->clearCache();
+
+        return $brand;
+    }
+
+    /**
+     * Update one
+     */
+    public function updateOne(int $id, array $data): Brand
+    {
+        $brand = $this->findOrFail($id);
+        $brand->update($data);
+        $this->clearCache();
+
+        return $brand->fresh();
+    }
+
+    /**
+     * Delete one
+     */
+    public function deleteOne(int $id): bool
+    {
+        $brand = $this->findOrFail($id);
+        $deleted = $brand->delete();
+        $this->clearCache();
+
+        return $deleted;
+    }
+
+    /**
+     * Check if can delete
+     */
+    public function canDelete(int $id): bool
+    {
+        $brand = $this->findOrFail($id);
+
+        return ! $brand->products()->exists();
+    }
+
+    /**
      * Toggle brand status
      */
     public function toggleStatus(int $id): Brand
@@ -50,22 +95,15 @@ class BrandRepository extends BaseRepository
         $brand = $this->findOrFail($id);
         $newStatus = $brand->status === 'active' ? 'inactive' : 'active';
         $brand->update(['status' => $newStatus]);
-
         $this->clearCache();
 
         return $brand->fresh();
     }
 
-    public function createOne(array $data): Brand
-    {
-        $brand = $this->model->create($data);
-
-        $this->clearCache();
-
-        return $brand;
-    }
-
-    public function createMany(array $dataArray): Category
+    /**
+     * Create many brands
+     */
+    public function createMany(array $dataArray): \Illuminate\Support\Collection
     {
         $brands = collect();
 
@@ -78,16 +116,6 @@ class BrandRepository extends BaseRepository
         return $brands;
     }
 
-    public function updateOne(int $id, array $data): Brand
-    {
-        $brand = $this->findOrFail($id);
-        $brand->update($data);
-
-        $this->clearCache();
-
-        return $brand->fresh();
-    }
-
     public function updateMany(array $ids, array $data): int
     {
         $updated = $this->model->whereIn('id', $ids)->update($data);
@@ -95,16 +123,6 @@ class BrandRepository extends BaseRepository
         $this->clearCache();
 
         return $updated;
-    }
-
-    public function deleteOne(int $id): bool
-    {
-        $brand = $this->findOrFail($id);
-        $result = $brand->delete();
-
-        $this->clearCache();
-
-        return $result;
     }
 
     public function deleteMany(array $ids): int
@@ -119,7 +137,7 @@ class BrandRepository extends BaseRepository
     /**
      * Find brands by IDs
      */
-    public function findByIds(array $ids): Category
+    public function findByIds(array $ids): \Illuminate\Support\Collection
     {
         return $this->model->whereIn('id', $ids)->get();
     }

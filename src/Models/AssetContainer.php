@@ -76,7 +76,7 @@ class AssetContainer extends Model
         }
 
         if ($this->max_file_size && $file->getSize() > $this->max_file_size) {
-            $maxMb = round($this->max_file_size / 1024 / 1024, 2);
+            $maxMb = round(($this->max_file_size / 1024) / 1024, 2);
             throw new \InvalidArgumentException("File size exceeds maximum allowed size of {$maxMb}MB.");
         }
     }

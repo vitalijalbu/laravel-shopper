@@ -5,25 +5,17 @@ declare(strict_types=1);
 namespace Cartino\Enums;
 
 use Cartino\Helpers\EnumSerializable;
+use Cartino\Traits\TranslatableEnum;
 
 enum TransactionType: string
 {
     use EnumSerializable;
+    use TranslatableEnum;
 
     case PAYMENT = 'payment';
     case REFUND = 'refund';
     case CAPTURE = 'capture';
     case VOID = 'void';
-
-    public function label(): string
-    {
-        return match ($this) {
-            self::PAYMENT => __('cartino::transaction.type.payment'),
-            self::REFUND => __('cartino::transaction.type.refund'),
-            self::CAPTURE => __('cartino::transaction.type.capture'),
-            self::VOID => __('cartino::transaction.type.void'),
-        };
-    }
 
     public function color(): string
     {

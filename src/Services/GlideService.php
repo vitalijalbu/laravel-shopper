@@ -118,7 +118,7 @@ class GlideService
 
     public function cleanupCache(?int $olderThanDays = null): int
     {
-        $olderThanDays = $olderThanDays ?? (config('media.glide.cache_cleanup_older_than') / 60 / 60 / 24);
+        $olderThanDays = $olderThanDays ?? (((config('media.glide.cache_cleanup_older_than') / 60) / 60) / 24);
 
         $transformations = AssetTransformation::olderThan($olderThanDays)->get();
         $deleted = 0;

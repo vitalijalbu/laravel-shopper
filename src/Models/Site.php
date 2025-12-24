@@ -3,17 +3,21 @@
 namespace Cartino\Models;
 
 use Cartino\Support\HasHandle;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Site extends Model
 {
+    use HasFactory;
     use HasHandle;
     use SoftDeletes;
 
     protected $fillable = [
+        'market_id',
         'handle',
         'name',
         'description',
@@ -47,7 +51,30 @@ class Site extends Model
         'attributes' => 'array',
     ];
 
-    // Relationships
+    /**
+     * Create a new factory instance for the model.
+     * /**
+     * Create a new factory instance for the model.
+     */
+    protected static function newFactory(): \Illuminate\Database\Eloquent\Factories\Factory
+    {
+        // Prefer package factory
+        if (class_exists(\Cartino\Database\Factories\SiteFactory::class)) {
+            return \Cartino\Database\Factories\SiteFactory::new();
+        }
+
+        // Fallback to application factory namespace
+        if (class_exists(\Database\Factories\SiteFactory::class)) {
+            return \Database\Factories\SiteFactory::new();
+        }
+
+        throw new \RuntimeException('SiteFactory not found');
+    }
+
+    public function market(): BelongsTo
+    {
+        return $this->belongsTo(Market::class);
+    }
 
     public function channels(): HasMany
     {
@@ -63,9 +90,7 @@ class Site extends Model
 
     public function activeCatalogs(): BelongsToMany
     {
-        return $this->catalogs()
-            ->wherePivot('is_active', true)
-            ->orderByPivot('priority', 'desc');
+        return $this->catalogs()->wherePivot('is_active', true)->orderByPivot('priority', 'desc');
     }
 
     public function defaultCatalog(): BelongsToMany
@@ -90,41 +115,37 @@ class Site extends Model
 
     public function scopePublished($query)
     {
-        return $query->where('status', 'active')
+        return $query
+            ->where('status', 'active')
             ->where(function ($q) {
-                $q->whereNull('published_at')
-                    ->orWhere('published_at', '<=', now());
+                $q->whereNull('published_at')->orWhere('published_at', '<=', now());
             })
             ->where(function ($q) {
-                $q->whereNull('unpublished_at')
-                    ->orWhere('unpublished_at', '>=', now());
+                $q->whereNull('unpublished_at')->orWhere('unpublished_at', '>=', now());
             });
     }
 
     public function scopeDefault($query)
     {
-        return $query->where('is_default', true)
-            ->active()
-            ->orderByDesc('priority')
-            ->limit(1);
+        return $query->where('is_default', true)->active()->orderByDesc('priority')->limit(1);
     }
 
     public function scopeForCountry($query, string $countryCode)
     {
-        return $query->where('status', 'active')
+        return $query
+            ->where('status', 'active')
             ->where(function ($q) use ($countryCode) {
-                $q->whereJsonContains('countries', $countryCode)
-                    ->orWhereNull('countries'); // Global sites
+                $q->whereJsonContains('countries', $countryCode)->orWhereNull('countries'); // Global sites
             })
             ->orderByDesc('priority');
     }
 
     public function scopeForDomain($query, string $domain)
     {
-        return $query->where('status', 'active')
+        return $query
+            ->where('status', 'active')
             ->where(function ($q) use ($domain) {
-                $q->where('domain', $domain)
-                    ->orWhereJsonContains('domains', $domain);
+                $q->where('domain', $domain)->orWhereJsonContains('domains', $domain);
             });
     }
 

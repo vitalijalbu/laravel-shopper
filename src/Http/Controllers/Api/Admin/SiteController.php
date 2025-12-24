@@ -25,9 +25,11 @@ class SiteController extends Controller
 
         if ($request->filled('search')) {
             $query->where(function ($q) use ($request) {
-                $q->where('name', 'like', "%{$request->search}%")
-                    ->orWhere('handle', 'like', "%{$request->search}%")
-                    ->orWhere('domain', 'like', "%{$request->search}%");
+                $q->where('name', 'like', "%{$request->search}%")->orWhere(
+                    'handle',
+                    'like',
+                    "%{$request->search}%",
+                )->orWhere('domain', 'like', "%{$request->search}%");
             });
         }
 
@@ -47,9 +49,7 @@ class SiteController extends Controller
         // Pagination
         $perPage = min($request->get('per_page', 15), 100);
 
-        return SiteResource::collection(
-            $query->paginate($perPage)
-        );
+        return SiteResource::collection($query->paginate($perPage));
     }
 
     public function store(SiteRequest $request): JsonResponse
@@ -58,8 +58,7 @@ class SiteController extends Controller
 
         // If marked as default, unset other defaults
         if ($site->is_default) {
-            Site::where('id', '!=', $site->id)
-                ->update(['is_default' => false]);
+            Site::where('id', '!=', $site->id)->update(['is_default' => false]);
         }
 
         return response()->json([
@@ -70,9 +69,7 @@ class SiteController extends Controller
 
     public function show(Site $site): SiteResource
     {
-        return new SiteResource(
-            $site->load(['channels', 'catalogs'])
-        );
+        return new SiteResource($site->load(['channels', 'catalogs']));
     }
 
     public function update(SiteRequest $request, Site $site): JsonResponse
@@ -81,8 +78,7 @@ class SiteController extends Controller
 
         // If marked as default, unset other defaults
         if ($site->is_default) {
-            Site::where('id', '!=', $site->id)
-                ->update(['is_default' => false]);
+            Site::where('id', '!=', $site->id)->update(['is_default' => false]);
         }
 
         return response()->json([
@@ -155,9 +151,10 @@ class SiteController extends Controller
 
         // If marked as default, unset other defaults
         if ($validated['is_default'] ?? false) {
-            $site->catalogs()
-                ->wherePivot('catalog_id', '!=', $validated['catalog_id'])
-                ->updateExistingPivot($site->catalogs->pluck('id'), ['is_default' => false]);
+            $site->catalogs()->wherePivot('catalog_id', '!=', $validated['catalog_id'])->updateExistingPivot(
+                $site->catalogs->pluck('id'),
+                ['is_default' => false],
+            );
         }
 
         return response()->json([
@@ -202,9 +199,10 @@ class SiteController extends Controller
 
         // If marked as default, unset other defaults
         if ($validated['is_default'] ?? false) {
-            $site->catalogs()
-                ->wherePivot('catalog_id', '!=', $catalogId)
-                ->updateExistingPivot($site->catalogs->pluck('id'), ['is_default' => false]);
+            $site->catalogs()->wherePivot('catalog_id', '!=', $catalogId)->updateExistingPivot(
+                $site->catalogs->pluck('id'),
+                ['is_default' => false],
+            );
         }
 
         return response()->json([

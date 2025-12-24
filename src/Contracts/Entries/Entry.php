@@ -81,7 +81,7 @@ interface Entry
      * Get or set data
      *
      * @param  array|null  $data
-     * @return \Illuminate\Support\Category|$this
+     * @return \Illuminate\Support\Collection|$this
      */
     public function data($data = null);
 

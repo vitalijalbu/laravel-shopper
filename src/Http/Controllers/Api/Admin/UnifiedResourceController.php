@@ -150,14 +150,12 @@ class UnifiedResourceController extends ApiController
 
             case 'activate':
             case 'enable':
-                $count = $this->modelClass::whereIn('id', $request->ids)
-                    ->update(['is_enabled' => true]);
+                $count = $this->modelClass::whereIn('id', $request->ids)->update(['is_enabled' => true]);
                 break;
 
             case 'deactivate':
             case 'disable':
-                $count = $this->modelClass::whereIn('id', $request->ids)
-                    ->update(['is_enabled' => false]);
+                $count = $this->modelClass::whereIn('id', $request->ids)->update(['is_enabled' => false]);
                 break;
         }
 

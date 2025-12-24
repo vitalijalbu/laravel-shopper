@@ -1,6 +1,6 @@
 <?php
 
-namespace Cartino\Http\Controllers\CP;
+namespace Cartino\Http\Controllers\Cp;
 
 use Cartino\Http\Controllers\Controller;
 use Cartino\Models\AbandonedCart;
@@ -13,8 +13,7 @@ class AbandonedCartController extends Controller
 {
     public function index(Request $request): Response
     {
-        $query = AbandonedCart::with(['customer', 'recoveredOrder'])
-            ->latest('abandoned_at');
+        $query = AbandonedCart::with(['customer', 'recoveredOrder'])->latest('abandoned_at');
 
         // Filters
         if ($request->filled('status')) {
@@ -35,10 +34,12 @@ class AbandonedCartController extends Controller
 
         if ($request->filled('search')) {
             $query->where(function ($q) use ($request) {
-                $q->where('email', 'like', "%{$request->search}%")
-                    ->orWhereHas('customer', function ($customerQuery) use ($request) {
+                $q->where('email', 'like', "%{$request->search}%")->orWhereHas(
+                    'customer',
+                    function ($customerQuery) use ($request) {
                         $customerQuery->where('name', 'like', "%{$request->search}%");
-                    });
+                    },
+                );
             });
         }
 
@@ -55,7 +56,7 @@ class AbandonedCartController extends Controller
                 : 0,
         ];
 
-        return Inertia::render('CP/AbandonedCarts/Index', [
+        return Inertia::render('CP/AbandonedCarts/index', [
             'abandonedCarts' => $abandonedCarts,
             'stats' => $stats,
             'filters' => $request->only(['status', 'date_from', 'date_to', 'search']),

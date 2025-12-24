@@ -39,7 +39,9 @@ class AssetResource extends JsonResource
                 'id' => $this->uploadedBy->id,
                 'name' => $this->uploadedBy->name,
             ]),
-            'transformations' => $this->whenLoaded('transformations', fn () => AssetTransformationResource::collection($this->transformations)
+            'transformations' => $this->whenLoaded(
+                'transformations',
+                fn () => AssetTransformationResource::collection($this->transformations),
             ),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

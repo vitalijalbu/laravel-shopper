@@ -7,11 +7,11 @@ namespace Cartino\Pricing;
 use Cartino\Models\Customer;
 use Cartino\Models\Product;
 use Cartino\Pricing\Rules\PricingRuleInterface;
-use Illuminate\Support\Category;
+use Illuminate\Support\Collection;
 
 class PricingEngine
 {
-    protected Category $rules;
+    protected Collection $rules;
 
     protected ?Customer $customer = null;
 
@@ -28,9 +28,7 @@ class PricingEngine
      */
     protected function loadRules(): void
     {
-        $rules = \Cartino\Models\PricingRule::where('is_active', true)
-            ->orderBy('priority', 'desc')
-            ->get();
+        $rules = \Cartino\Models\PricingRule::where('is_active', true)->orderBy('priority', 'desc')->get();
 
         foreach ($rules as $ruleModel) {
             $rule = $this->instantiateRule($ruleModel);
@@ -106,14 +104,14 @@ class PricingEngine
             originalPrice: $originalPrice,
             finalPrice: max(0, $basePrice),
             appliedRules: $appliedRules,
-            quantity: $quantity
+            quantity: $quantity,
         );
     }
 
     /**
      * Calculate prices for multiple products (bulk pricing)
      */
-    public function calculateBulkPrices(array $items): Category
+    public function calculateBulkPrices(array $items): Collection
     {
         return collect($items)->map(function ($item) {
             return $this->calculatePrice($item['product'], $item['quantity'] ?? 1);
@@ -123,7 +121,7 @@ class PricingEngine
     /**
      * Get tiered pricing for a product
      */
-    public function getTieredPricing(Product $product): Category
+    public function getTieredPricing(Product $product): Collection
     {
         $tiers = collect([
             ['min_quantity' => 1, 'max_quantity' => 9],

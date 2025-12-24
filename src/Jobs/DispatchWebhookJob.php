@@ -23,7 +23,7 @@ class DispatchWebhookJob implements ShouldQueue
 
     public function __construct(
         private Webhook $webhook,
-        private array $payload
+        private array $payload,
     ) {
         $this->onQueue('webhooks');
     }
@@ -57,11 +57,9 @@ class DispatchWebhookJob implements ShouldQueue
                 // Update webhook success stats
                 $this->webhook->increment('success_count');
                 $this->webhook->update(['last_success_at' => now()]);
-
             } else {
                 throw new \Exception("HTTP {$response->status()}: {$response->body()}");
             }
-
         } catch (\Exception $e) {
             Log::error('Webhook dispatch failed', [
                 'webhook_id' => $this->webhook->id,

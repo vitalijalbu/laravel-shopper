@@ -61,9 +61,7 @@ class ExpireFidelityPoints extends Command
 
                 foreach ($expiringCards as $card) {
                     $customer = $card->customer;
-                    $expiringPoints = $card->transactions()
-                        ->expiring(7)
-                        ->sum('points');
+                    $expiringPoints = $card->transactions()->expiring(7)->sum('points');
 
                     $this->line("  - {$customer->full_name} ({$customer->email}): {$expiringPoints} points expiring");
 
@@ -90,7 +88,8 @@ class ExpireFidelityPoints extends Command
 
             foreach ($expiredCards as $card) {
                 $customer = $card->customer;
-                $expiredPoints = $card->transactions()
+                $expiredPoints = $card
+                    ->transactions()
                     ->where('type', 'earned')
                     ->where('expired', false)
                     ->whereNotNull('expires_at')
@@ -98,7 +97,9 @@ class ExpireFidelityPoints extends Command
                     ->sum('points');
 
                 if ($expiredPoints > 0) {
-                    $this->line("  - {$customer->full_name} ({$customer->email}): {$expiredPoints} points would expire");
+                    $this->line(
+                        "  - {$customer->full_name} ({$customer->email}): {$expiredPoints} points would expire",
+                    );
                 }
             }
         }

@@ -20,8 +20,10 @@ class Order extends Model
     use SoftDeletes;
 
     protected $fillable = [
+        'site_id',
         'order_number',
         'customer_id',
+        'subscription_id',
         'customer_email',
         'customer_details',
         'currency_id',
@@ -120,9 +122,32 @@ class Order extends Model
         return $this->belongsTo(Customer::class);
     }
 
+    public function subscription(): BelongsTo
+    {
+        return $this->belongsTo(Subscription::class);
+    }
+
     public function currency(): BelongsTo
     {
         return $this->belongsTo(Currency::class);
+    }
+
+    public function statusVocabulary(): BelongsTo
+    {
+        return $this->belongsTo(Vocabulary::class, 'status', 'code')
+            ->where('group', 'order_status');
+    }
+
+    public function paymentStatusVocabulary(): BelongsTo
+    {
+        return $this->belongsTo(Vocabulary::class, 'payment_status', 'code')
+            ->where('group', 'payment_status');
+    }
+
+    public function fulfillmentStatusVocabulary(): BelongsTo
+    {
+        return $this->belongsTo(Vocabulary::class, 'fulfillment_status', 'code')
+            ->where('group', 'fulfillment_status');
     }
 
     public function lines(): HasMany
@@ -133,6 +158,38 @@ class Order extends Model
     public function getTotalItemsAttribute(): int
     {
         return $this->lines->sum('quantity');
+    }
+
+    /**
+     * Get the translated status label.
+     */
+    public function getStatusLabelAttribute(): string
+    {
+        return $this->statusVocabulary?->getLabel() ?? $this->status;
+    }
+
+    /**
+     * Get the translated payment status label.
+     */
+    public function getPaymentStatusLabelAttribute(): string
+    {
+        return $this->paymentStatusVocabulary?->getLabel() ?? $this->payment_status;
+    }
+
+    /**
+     * Get the translated fulfillment status label.
+     */
+    public function getFulfillmentStatusLabelAttribute(): string
+    {
+        return $this->fulfillmentStatusVocabulary?->getLabel() ?? $this->fulfillment_status;
+    }
+
+    /**
+     * Get status color from vocabulary metadata.
+     */
+    public function getStatusColorAttribute(): ?string
+    {
+        return $this->statusVocabulary?->getColor();
     }
 
     public function isPaid(): bool
@@ -162,15 +219,15 @@ class Order extends Model
 
     public function canBeCancelled(): bool
     {
-        return in_array($this->status, ['pending', 'confirmed']) &&
-               $this->payment_status !== 'paid';
+        return in_array($this->status, ['pending', 'confirmed']) && $this->payment_status !== 'paid';
     }
 
     public function canBeShipped(): bool
     {
-        return $this->status === 'confirmed' &&
-               $this->payment_status === 'paid' &&
-               $this->fulfillment_status === 'unfulfilled';
+        return
+            $this->status === 'confirmed' &&
+            $this->payment_status === 'paid' &&
+            $this->fulfillment_status === 'unfulfilled';
     }
 
     protected static function boot()

@@ -16,6 +16,13 @@ class User extends Authenticatable implements MustVerifyEmail
     use HasApiTokens, HasFactory, HasRoles, Notifiable;
 
     /**
+     * The guard name for Spatie Permission.
+     *
+     * @var string
+     */
+    protected $guard_name = 'web';
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
@@ -85,8 +92,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function userGroups(): BelongsToMany
     {
-        return $this->belongsToMany(UserGroup::class, 'user_group_user', 'user_id', 'user_group_id')
-            ->withTimestamps();
+        return $this->belongsToMany(UserGroup::class, 'user_group_user', 'user_id', 'user_group_id')->withTimestamps();
     }
 
     /**
@@ -102,8 +108,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function getDefaultGroup(): ?UserGroup
     {
-        return $this->userGroups()->where('is_default', true)->first()
-               ?? UserGroup::where('is_default', true)->first();
+        return $this->userGroups()->where('is_default', true)->first() ?? UserGroup::where('is_default', true)->first();
     }
 
     /**
@@ -119,9 +124,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function getConnectedProvidersAttribute(): array
     {
-        return $this->socialAccounts()
-            ->pluck('provider')
-            ->toArray();
+        return $this->socialAccounts()->pluck('provider')->toArray();
     }
 
     /**
@@ -188,8 +191,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function scopeOAuth($query)
     {
-        return $query->whereNotNull('provider')
-            ->orWhereHas('socialAccounts');
+        return $query->whereNotNull('provider')->orWhereHas('socialAccounts');
     }
 
     /**
@@ -197,8 +199,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function scopeRegular($query)
     {
-        return $query->whereNull('provider')
-            ->whereDoesntHave('socialAccounts');
+        return $query->whereNull('provider')->whereDoesntHave('socialAccounts');
     }
 
     /**

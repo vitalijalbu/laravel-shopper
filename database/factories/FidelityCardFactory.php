@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Database\Factories\Cartino\Models;
+namespace Cartino\Database\Factories;
 
 use Cartino\Models\Customer;
 use Cartino\Models\FidelityCard;
@@ -18,7 +18,9 @@ class FidelityCardFactory extends Factory
             'customer_id' => Customer::factory(),
             'total_points' => $this->faker->numberBetween(0, 5000),
             'available_points' => fn (array $attributes) => $this->faker->numberBetween(0, $attributes['total_points']),
-            'total_earned' => fn (array $attributes) => $attributes['total_points'] + $this->faker->numberBetween(0, 2000),
+            'total_earned' => fn (array $attributes) => (
+                $attributes['total_points'] + $this->faker->numberBetween(0, 2000)
+            ),
             'total_redeemed' => fn (array $attributes) => $attributes['total_earned'] - $attributes['total_points'],
             'total_spent_amount' => $this->faker->randomFloat(2, 0, 10000),
             'is_active' => true,
@@ -39,7 +41,10 @@ class FidelityCardFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'total_points' => $this->faker->numberBetween(5000, 15000),
-            'available_points' => fn (array $attributes) => $this->faker->numberBetween(1000, $attributes['total_points']),
+            'available_points' => fn (array $attributes) => $this->faker->numberBetween(
+                1000,
+                $attributes['total_points'],
+            ),
             'total_spent_amount' => $this->faker->randomFloat(2, 5000, 50000),
         ]);
     }

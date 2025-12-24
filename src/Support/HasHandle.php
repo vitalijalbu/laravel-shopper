@@ -30,9 +30,7 @@ trait HasHandle
     public function resolveRouteBinding($value, $field = null)
     {
         // Try to find by slug first, then by ID
-        return $this->where('slug', $value)
-            ->orWhere($this->getKeyName(), $value)
-            ->first() ?? abort(404);
+        return $this->where('slug', $value)->orWhere($this->getKeyName(), $value)->first() ?? abort(404);
     }
 
     /**

@@ -34,8 +34,11 @@ trait ApiResponseTrait
     /**
      * Return a success response
      */
-    protected function successResponse($data = null, string $message = 'Operazione completata con successo', int $status = 200): JsonResponse
-    {
+    protected function successResponse(
+        $data = null,
+        string $message = 'Operazione completata con successo',
+        int $status = 200,
+    ): JsonResponse {
         $response = ['success' => true, 'message' => $message];
 
         if ($data !== null) {
@@ -48,8 +51,11 @@ trait ApiResponseTrait
     /**
      * Return an error response
      */
-    protected function errorResponse(string $message = 'Si è verificato un errore', int $status = 500, $errors = null): JsonResponse
-    {
+    protected function errorResponse(
+        string $message = 'Si è verificato un errore',
+        int $status = 500,
+        $errors = null,
+    ): JsonResponse {
         $response = [
             'success' => false,
             'message' => $message,

@@ -1,8 +1,8 @@
 <?php
 
-namespace Cartino\Http\Controllers\CP;
+namespace Cartino\Http\Controllers\Cp;
 
-use Cartino\CP\Page;
+use Cartino\Cp\Page;
 use Cartino\Http\Controllers\Controller;
 use Cartino\Models\ShippingMethod;
 use Cartino\Repositories\ShippingMethodRepository;
@@ -38,7 +38,6 @@ class ShippingMethodsController extends Controller
 
         return Inertia::render('settings-shipping-methods', [
             'page' => $page->compile(),
-
             'shippingMethods' => $shippingMethods,
             'zones' => $zones,
             'types' => $types,
@@ -97,7 +96,6 @@ class ShippingMethodsController extends Controller
 
         return Inertia::render('shipping-method-show', [
             'page' => $page->compile(),
-
             'shippingMethod' => $shippingMethod,
         ]);
     }
@@ -214,7 +212,7 @@ class ShippingMethodsController extends Controller
                 $validated['destination'],
                 $validated['weight'] ?? 0,
                 $validated['dimensions'] ?? [],
-                $validated['order_total'] ?? 0
+                $validated['order_total'] ?? 0,
             );
 
             return response()->json([

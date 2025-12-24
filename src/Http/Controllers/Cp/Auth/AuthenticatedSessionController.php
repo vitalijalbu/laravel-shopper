@@ -1,8 +1,9 @@
 <?php
 
-namespace Cartino\Http\Controllers\CP\Auth;
+namespace Cartino\Http\Controllers\Cp\Auth;
 
 use Cartino\Http\Controllers\Controller;
+use Cartino\Http\Controllers\Cp\Concerns\HandlesFlashMessages;
 use Cartino\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -14,6 +15,8 @@ use Inertia\Response;
 
 class AuthenticatedSessionController extends Controller
 {
+    use HandlesFlashMessages;
+
     /**
      * Display the login view.
      */
@@ -97,7 +100,6 @@ class AuthenticatedSessionController extends Controller
 
             // Redirect to dashboard
             return redirect()->route('cp.dashboard');
-
         } catch (ValidationException $e) {
             Log::warning('Authentication failed', [
                 'email' => $request->input('email'),
@@ -132,7 +134,9 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerateToken();
 
         // Clear Inertia user data
-        return redirect()->route('cartino.cp.login')->with('status', __('cartino::auth.logged_out'));
+        $this->flashSuccess(__('cartino::auth.logged_out'));
+
+        return redirect()->route('cp.cp.login');
     }
 
     /**
@@ -154,24 +158,20 @@ class AuthenticatedSessionController extends Controller
         //         return true;
         //     }
         // }
-
         // Check if user has roles (Spatie Permission)
         // if (method_exists($user, 'hasRole')) {
         //     if ($user->hasRole('admin') || $user->hasRole('super-admin')) {
         //         return true;
         //     }
         // }
-
         // Check if user has specific field
         // if (isset($user->can_access_cp)) {
         //     return (bool) $user->can_access_cp;
         // }
-
         // Check if user is admin type
         // if (isset($user->is_admin)) {
         //     return (bool) $user->is_admin;
         // }
-
         // Default: allow if user exists (configure based on your needs)
         // return true;
     }

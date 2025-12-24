@@ -5,6 +5,8 @@ namespace Cartino\Repositories;
 use Cartino\Models\PaymentMethod;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class PaymentMethodRepository extends BaseRepository
 {
@@ -20,85 +22,18 @@ class PaymentMethodRepository extends BaseRepository
      */
     public function findAll(array $filters = []): LengthAwarePaginator
     {
-        $query = $this->model->newQuery();
-
-        // Search filter
-        if (! empty($filters['search'])) {
-            $search = $filters['search'];
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                    ->orWhere('provider', 'like', "%{$search}%")
-                    ->orWhere('description', 'like', "%{$search}%");
-            });
-        }
-
-        // Status filter
-        if (! empty($filters['status'])) {
-            $isEnabled = $filters['status'] === 'enabled';
-            $query->where('is_enabled', $isEnabled);
-        }
-
-        // Provider filter
-        if (! empty($filters['provider'])) {
-            $query->where('provider', $filters['provider']);
-        }
-
-        // Test mode filter
-        if (isset($filters['test_mode'])) {
-            $query->where('is_test_mode', (bool) $filters['test_mode']);
-        }
-
-        // Sorting
-        $sortField = $filters['sort'] ?? 'sort_order';
-        $sortDirection = $filters['direction'] ?? 'asc';
-
-        if ($sortField === 'sort_order') {
-            $query->orderBy('sort_order')->orderBy('name');
-        } else {
-            $query->orderBy($sortField, $sortDirection);
-        }
-
-        return $query->paginate($perPage);
-    }
-
-    /**
-     * Get enabled payment methods ordered by sort order
-     */
-    public function getEnabled(): \Illuminate\Database\Eloquent\Category
-    {
-        $cacheKey = $this->getCacheKey('enabled', 'all');
-
-        return \Illuminate\Support\Facades\Cache::remember($cacheKey, $this->cacheTtl, function () {
-            return $this->model->enabled()->ordered()->get();
-        });
-    }
-
-    /**
-     * Get payment methods for a specific currency and country
-     */
-    public function getAvailableFor(string $currency, ?string $country = null): \Illuminate\Database\Eloquent\Category
-    {
-        $cacheKey = $this->getCacheKey('available', md5($currency.'_'.$country));
-
-        return \Illuminate\Support\Facades\Cache::remember($cacheKey, $this->cacheTtl, function () use ($currency, $country) {
-            $query = $this->model->enabled()->ordered();
-
-            // Filter by currency support
-            $query->where(function ($q) use ($currency) {
-                $q->whereJsonContains('supported_currencies', strtoupper($currency))
-                    ->orWhereNull('supported_currencies');
-            });
-
-            // Filter by country support if provided
-            if ($country) {
-                $query->where(function ($q) use ($country) {
-                    $q->whereJsonContains('supported_countries', strtoupper($country))
-                        ->orWhereNull('supported_countries');
-                });
-            }
-
-            return $query->get();
-        });
+        return QueryBuilder::for(PaymentMethod::class)
+            ->allowedFilters([
+                'title',
+                'slug',
+                'status',
+                AllowedFilter::exact('site_id'),
+                AllowedFilter::scope('published'),
+            ])
+            ->allowedSorts(['title', 'created_at', 'published_at'])
+            ->allowedIncludes(['site'])
+            ->paginate($filters['per_page'] ?? config('settings.pagination.per_page', 15))
+            ->appends($filters);
     }
 
     /**
@@ -109,7 +44,8 @@ class PaymentMethodRepository extends BaseRepository
         $cacheKey = $this->getCacheKey('providers', 'all');
 
         return \Illuminate\Support\Facades\Cache::remember($cacheKey, $this->cacheTtl, function () {
-            return $this->model->select('provider')
+            return $this->model
+                ->select('provider')
                 ->distinct()
                 ->orderBy('provider')
                 ->pluck('provider')

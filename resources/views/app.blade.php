@@ -14,7 +14,7 @@
     <script>
         window.CartinoConfig = {
             locale: @json(app()->getLocale()),
-            translations: {},
+            translations: @json($translations ?? []),
             csrf_token: @json(csrf_token()),
             app_url: @json(config('app.url')),
             timezone: @json(config('app.timezone')),

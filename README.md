@@ -220,7 +220,7 @@ $template = StorefrontTemplate::create([
 ### 4. Build Custom CP Pages
 
 ```php
-use Cartino\CP\Page;
+use Cartino\Cp\Page;
 
 $page = Page::make('My Custom Page')
     ->primaryAction('Save', '/save-url')
@@ -286,7 +286,7 @@ $section = StorefrontSection::create([
 ### Custom Dashboard Cards
 
 ```php
-use Cartino\CP\Dashboard;
+use Cartino\Cp\Dashboard;
 
 Dashboard::card('SalesChart', [
     'title' => 'Sales Overview',
@@ -301,7 +301,7 @@ Dashboard::metric('Total Sales', function () {
 ### Navigation Items
 
 ```php
-use Cartino\CP\Navigation;
+use Cartino\Cp\Navigation;
 
 Navigation::section('custom', 'My Section')
     ->order(50);
@@ -317,7 +317,7 @@ Navigation::item('custom.reports')
 ### Extensible Pages
 
 ```php
-use Cartino\CP\Page;
+use Cartino\Cp\Page;
 
 $page = Page::make('Advanced Product')
     ->primaryAction('Save Product', null, ['form' => 'product-form'])

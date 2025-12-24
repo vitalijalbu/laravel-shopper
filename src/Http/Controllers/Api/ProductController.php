@@ -12,7 +12,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class ProductController extends ApiController
 {
     public function __construct(
-        private readonly ProductRepository $repository
+        private readonly ProductRepository $repository,
     ) {}
 
     /**
@@ -43,8 +43,7 @@ class ProductController extends ApiController
         $params = $this->filterService->parseRequest($request->all());
         $params['search'] = $request->get('q');
 
-        $products = Product::where('status', 'published')
-            ->paginateFilter($params);
+        $products = Product::where('status', 'published')->paginateFilter($params);
 
         return $this->success([
             'data' => ProductResource::collection($products->items()),
@@ -61,8 +60,7 @@ class ProductController extends ApiController
         $params = $this->filterService->parseRequest($request->all());
         $params['is_featured'] = true;
 
-        $products = Product::where('status', 'published')
-            ->paginateFilter($params, 12);
+        $products = Product::where('status', 'published')->paginateFilter($params, 12);
 
         return $this->success([
             'data' => ProductResource::collection($products->items()),
@@ -108,8 +106,7 @@ class ProductController extends ApiController
         $related = Product::where('status', 'published')
             ->where('id', '!=', $product->id)
             ->where(function ($query) use ($product) {
-                $query->where('brand_id', $product->brand_id)
-                    ->orWhere('product_type_id', $product->product_type_id);
+                $query->where('brand_id', $product->brand_id)->orWhere('product_type_id', $product->product_type_id);
             })
             ->limit($limit)
             ->get();

@@ -5,9 +5,6 @@ namespace Cartino\Entries;
 use ArrayAccess;
 use Carbon\Carbon;
 use Cartino\Contracts\Entries\Entry as Contract;
-use Cartino\Data\ContainsCascadingData;
-use Cartino\Data\ExistsAsFile;
-use Cartino\Data\HasAugmentedData;
 use Cartino\Events\Entries\EntryCreated;
 use Cartino\Events\Entries\EntryCreating;
 use Cartino\Events\Entries\EntryDeleted;
@@ -17,6 +14,9 @@ use Cartino\Events\Entries\EntrySaving;
 use Cartino\Facades\Category;
 use Cartino\Facades\Site;
 use Cartino\Support\Traits\FluentlyGetsAndSets;
+use Cartino\Traits\ContainsCascadingData;
+use Cartino\Traits\ExistsAsFile;
+use Cartino\Traits\HasAugmentedData;
 use Illuminate\Contracts\Support\Arrayable;
 
 class Entry implements Arrayable, ArrayAccess, Contract
@@ -91,7 +91,7 @@ class Entry implements Arrayable, ArrayAccess, Contract
     public function collection($collection = null)
     {
         if (func_num_args() === 0) {
-            return $this->collection instanceof \Cartino\Collections\Category
+            return ($this->collection instanceof \Cartino\Collections\Category)
                 ? $this->collection
                 : Category::findByHandle($this->collection);
         }
@@ -103,7 +103,7 @@ class Entry implements Arrayable, ArrayAccess, Contract
 
     public function collectionHandle()
     {
-        return $this->collection instanceof \Cartino\Collections\Category
+        return ($this->collection instanceof \Cartino\Collections\Category)
             ? $this->collection->handle()
             : $this->collection;
     }
@@ -244,7 +244,7 @@ class Entry implements Arrayable, ArrayAccess, Contract
 
     protected function cpUrl($route)
     {
-        if (! $id = $this->id()) {
+        if (! ($id = $this->id())) {
             return null;
         }
 
@@ -278,7 +278,7 @@ class Entry implements Arrayable, ArrayAccess, Contract
 
     public function absoluteUrl()
     {
-        if (! $uri = $this->uri()) {
+        if (! ($uri = $this->uri())) {
             return null;
         }
 
@@ -290,7 +290,7 @@ class Entry implements Arrayable, ArrayAccess, Contract
 
     public function url()
     {
-        if (! $uri = $this->uri()) {
+        if (! ($uri = $this->uri())) {
             return null;
         }
 

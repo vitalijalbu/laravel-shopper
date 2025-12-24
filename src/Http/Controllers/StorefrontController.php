@@ -24,11 +24,7 @@ class StorefrontController extends Controller
     {
         $site = app('laravel-cartino.site');
 
-        $content = $this->templateEngine->render(
-            'index',
-            null,
-            $request->attributes->get('custom_template')
-        );
+        $content = $this->templateEngine->render('index', null, $request->attributes->get('custom_template'));
 
         return response($content);
     }
@@ -38,9 +34,7 @@ class StorefrontController extends Controller
      */
     public function productIndex(Request $request): Response
     {
-        $products = Product::active()
-            ->with(['media', 'variants', 'category'])
-            ->paginate(20);
+        $products = Product::active()->with(['media', 'variants', 'category'])->paginate(20);
 
         $content = $this->templateEngine->render(
             'collection',
@@ -50,7 +44,7 @@ class StorefrontController extends Controller
                 'products' => $products,
                 'type' => 'products',
             ],
-            $request->attributes->get('custom_template')
+            $request->attributes->get('custom_template'),
         );
 
         return response($content);
@@ -66,11 +60,7 @@ class StorefrontController extends Controller
             ->active()
             ->firstOrFail();
 
-        $content = $this->templateEngine->render(
-            'product',
-            $product,
-            $request->attributes->get('custom_template')
-        );
+        $content = $this->templateEngine->render('product', $product, $request->attributes->get('custom_template'));
 
         return response($content);
     }
@@ -93,7 +83,7 @@ class StorefrontController extends Controller
                 'collections' => $categories,
                 'type' => 'collections',
             ],
-            $request->attributes->get('custom_template')
+            $request->attributes->get('custom_template'),
         );
 
         return response($content);
@@ -109,18 +99,11 @@ class StorefrontController extends Controller
             ->active()
             ->firstOrFail();
 
-        $products = $category->products()
-            ->active()
-            ->with(['media', 'variants'])
-            ->paginate(20);
+        $products = $category->products()->active()->with(['media', 'variants'])->paginate(20);
 
         $category->products = $products;
 
-        $content = $this->templateEngine->render(
-            'collection',
-            $category,
-            $request->attributes->get('custom_template')
-        );
+        $content = $this->templateEngine->render('collection', $category, $request->attributes->get('custom_template'));
 
         return response($content);
     }
@@ -138,11 +121,7 @@ class StorefrontController extends Controller
             'content' => "Content for {$handle} page",
         ];
 
-        $content = $this->templateEngine->render(
-            'page',
-            $page,
-            $request->attributes->get('custom_template')
-        );
+        $content = $this->templateEngine->render('page', $page, $request->attributes->get('custom_template'));
 
         return response($content);
     }
@@ -159,11 +138,7 @@ class StorefrontController extends Controller
             'articles' => collect([]),
         ];
 
-        $content = $this->templateEngine->render(
-            'blog',
-            $blog,
-            $request->attributes->get('custom_template')
-        );
+        $content = $this->templateEngine->render('blog', $blog, $request->attributes->get('custom_template'));
 
         return response($content);
     }
@@ -180,11 +155,7 @@ class StorefrontController extends Controller
             'content' => "Article content for {$handle}",
         ];
 
-        $content = $this->templateEngine->render(
-            'article',
-            $article,
-            $request->attributes->get('custom_template')
-        );
+        $content = $this->templateEngine->render('article', $article, $request->attributes->get('custom_template'));
 
         return response($content);
     }
@@ -214,10 +185,7 @@ class StorefrontController extends Controller
             'total_results' => $results->count(),
         ];
 
-        $content = $this->templateEngine->render(
-            'search',
-            $searchData
-        );
+        $content = $this->templateEngine->render('search', $searchData);
 
         return response($content);
     }
@@ -234,10 +202,7 @@ class StorefrontController extends Controller
             'item_count' => 0,
         ];
 
-        $content = $this->templateEngine->render(
-            'cart',
-            $cart
-        );
+        $content = $this->templateEngine->render('cart', $cart);
 
         return response($content);
     }
@@ -301,13 +266,36 @@ class StorefrontController extends Controller
         ];
 
         $shippingMethods = [
-            ['id' => 'standard', 'name' => 'Standard Shipping', 'description' => '5-7 business days', 'price' => 500, 'price_formatted' => '$5.00'],
-            ['id' => 'express', 'name' => 'Express Shipping', 'description' => '2-3 business days', 'price' => 1500, 'price_formatted' => '$15.00'],
-            ['id' => 'overnight', 'name' => 'Overnight Shipping', 'description' => 'Next business day', 'price' => 2500, 'price_formatted' => '$25.00'],
+            [
+                'id' => 'standard',
+                'name' => 'Standard Shipping',
+                'description' => '5-7 business days',
+                'price' => 500,
+                'price_formatted' => '$5.00',
+            ],
+            [
+                'id' => 'express',
+                'name' => 'Express Shipping',
+                'description' => '2-3 business days',
+                'price' => 1500,
+                'price_formatted' => '$15.00',
+            ],
+            [
+                'id' => 'overnight',
+                'name' => 'Overnight Shipping',
+                'description' => 'Next business day',
+                'price' => 2500,
+                'price_formatted' => '$25.00',
+            ],
         ];
 
         $paymentMethods = [
-            ['id' => 'stripe', 'name' => 'Credit Card', 'description' => 'Pay with Visa, Mastercard, Amex', 'icon' => null],
+            [
+                'id' => 'stripe',
+                'name' => 'Credit Card',
+                'description' => 'Pay with Visa, Mastercard, Amex',
+                'icon' => null,
+            ],
             ['id' => 'paypal', 'name' => 'PayPal', 'description' => 'Pay with your PayPal account', 'icon' => null],
         ];
 
@@ -317,7 +305,7 @@ class StorefrontController extends Controller
                 'cart' => $cart,
                 'shippingMethods' => $shippingMethods,
                 'paymentMethods' => $paymentMethods,
-            ]
+            ],
         );
 
         return response($content);
@@ -441,7 +429,7 @@ class StorefrontController extends Controller
                 'customer' => $customer,
                 'stats' => $stats,
                 'recentOrders' => $recentOrders,
-            ]
+            ],
         );
 
         return response($content);
@@ -472,7 +460,7 @@ class StorefrontController extends Controller
             (object) [
                 'customer' => $customer,
                 'orders' => $orders,
-            ]
+            ],
         );
 
         return response($content);
@@ -491,7 +479,7 @@ class StorefrontController extends Controller
             (object) [
                 'customer' => $customer,
                 'order' => null, // Replace with actual $order
-            ]
+            ],
         );
 
         return response($content);
@@ -510,7 +498,7 @@ class StorefrontController extends Controller
             (object) [
                 'customer' => $customer,
                 'order' => null, // Replace with actual $order
-            ]
+            ],
         );
 
         return response($content);
@@ -543,7 +531,7 @@ class StorefrontController extends Controller
             (object) [
                 'customer' => $customer,
                 'addresses' => $addresses,
-            ]
+            ],
         );
 
         return response($content);
@@ -624,7 +612,7 @@ class StorefrontController extends Controller
             'account/settings',
             (object) [
                 'customer' => $customer,
-            ]
+            ],
         );
 
         return response($content);
@@ -683,8 +671,6 @@ class StorefrontController extends Controller
             'content' => 'This is a preview of the template.',
         ];
 
-        return response(
-            $this->templateEngine->preview($template, $sampleData)
-        );
+        return response($this->templateEngine->preview($template, $sampleData));
     }
 }

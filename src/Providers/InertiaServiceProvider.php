@@ -33,14 +33,12 @@ class InertiaServiceProvider extends ServiceProvider
                     'info' => Session::get('info'),
                 ];
             },
-
             // Authentication
             'auth' => function () {
                 return [
                     'user' => auth()->user(),
                 ];
             },
-
             // Translations - Direct file loading approach
             'translations' => function () {
                 $locale = App::getLocale();
@@ -71,23 +69,19 @@ class InertiaServiceProvider extends ServiceProvider
                 return [
                     // Shopper specific translations (load directly)
                     'cartino' => $loadTranslations('cartino', $locale),
-
                     // Core admin translations
                     'admin' => $loadTranslations('admin', $locale),
-
                     // Module-specific translations
                     'products' => $loadTranslations('products', $locale),
                     'categories' => $loadTranslations('categories', $locale),
                     'brands' => $loadTranslations('brands', $locale),
                     'pages' => $loadTranslations('pages', $locale),
-
                     // Laravel system translations (use Lang facade)
                     'validation' => Lang::get('validation', [], $locale),
                     'auth' => Lang::get('auth', [], $locale),
                     'pagination' => Lang::get('pagination', [], $locale),
                 ];
             },
-
             // Application config
             'config' => function () {
                 return [

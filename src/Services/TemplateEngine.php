@@ -4,7 +4,7 @@ namespace Cartino\Services;
 
 use Cartino\Models\Site;
 use Cartino\Models\StorefrontTemplate;
-use Illuminate\Support\Category;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\View;
 
 class TemplateEngine
@@ -41,8 +41,11 @@ class TemplateEngine
     /**
      * Resolve the appropriate template for a resource
      */
-    protected function resolveTemplate(string $resourceType, mixed $resource = null, ?string $customTemplate = null): ?StorefrontTemplate
-    {
+    protected function resolveTemplate(
+        string $resourceType,
+        mixed $resource = null,
+        ?string $customTemplate = null,
+    ): ?StorefrontTemplate {
         // 1. Custom template specified
         if ($customTemplate) {
             $template = StorefrontTemplate::where('site_id', $this->currentSite->id)
@@ -100,24 +103,26 @@ class TemplateEngine
      */
     protected function getGlobalSettings(): array
     {
-        $themeSettings = $this->currentSite->themeSettings()
+        $themeSettings = $this->currentSite
+            ->themeSettings()
             ->where('is_active', true)
             ->first();
 
-        return $themeSettings ? [
-            'global' => $themeSettings->global_settings ?? [],
-            'navigation' => $themeSettings->navigation_menus ?? [],
-            'social' => $themeSettings->social_links ?? [],
-            'seo' => $themeSettings->seo_settings ?? [],
-            'custom_css' => $themeSettings->custom_css ?? [],
-            'custom_js' => $themeSettings->custom_js ?? [],
-        ] : [];
+        return $themeSettings
+            ? [
+                'global' => $themeSettings->global_settings ?? [],
+                'navigation' => $themeSettings->navigation_menus ?? [],
+                'social' => $themeSettings->social_links ?? [],
+                'seo' => $themeSettings->seo_settings ?? [],
+                'custom_css' => $themeSettings->custom_css ?? [],
+                'custom_js' => $themeSettings->custom_js ?? [],
+            ] : [];
     }
 
     /**
      * Get available templates for a resource type
      */
-    public function getAvailableTemplates(string $resourceType): Category
+    public function getAvailableTemplates(string $resourceType): Collection
     {
         return StorefrontTemplate::where('site_id', $this->currentSite->id)
             ->where('type', $resourceType)

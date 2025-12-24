@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 class CountryController extends ApiController
 {
     public function __construct(
-        private readonly CountryRepository $countryRepository
+        private readonly CountryRepository $countryRepository,
     ) {}
 
     /**

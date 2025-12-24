@@ -193,9 +193,10 @@ class Customer extends Authenticatable
     // Fidelity Card Methods
     public function getOrCreateFidelityCard(): FidelityCard
     {
-        return $this->fidelityCard ?: $this->fidelityCard()->create([
-            'is_active' => true,
-        ]);
+        return
+            $this->fidelityCard ?: $this->fidelityCard()->create([
+                'is_active' => true,
+            ]);
     }
 
     public function getFidelityCardNumber(): ?string
@@ -208,8 +209,11 @@ class Customer extends Authenticatable
         return $this->fidelity_points;
     }
 
-    public function addFidelityPoints(int $points, ?string $reason = null, ?int $orderId = null): ?FidelityTransaction
-    {
+    public function addFidelityPoints(
+        int $points,
+        ?string $reason = null,
+        ?int $orderId = null,
+    ): ?FidelityTransaction {
         if (! config('cartino.fidelity.enabled')) {
             return null;
         }
@@ -219,8 +223,11 @@ class Customer extends Authenticatable
         return $card->addPoints($points, $reason, $orderId);
     }
 
-    public function redeemFidelityPoints(int $points, ?string $reason = null, ?int $orderId = null): ?FidelityTransaction
-    {
+    public function redeemFidelityPoints(
+        int $points,
+        ?string $reason = null,
+        ?int $orderId = null,
+    ): ?FidelityTransaction {
         if (! config('cartino.fidelity.enabled') || ! $this->fidelityCard) {
             return null;
         }

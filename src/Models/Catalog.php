@@ -116,10 +116,10 @@ class Catalog extends Model
      */
     public function scopePublished($query)
     {
-        return $query->where('status', 'active')
+        return $query
+            ->where('status', 'active')
             ->where(function ($q) {
-                $q->whereNull('published_at')
-                    ->orWhere('published_at', '<=', now());
+                $q->whereNull('published_at')->orWhere('published_at', '<=', now());
             });
     }
 
@@ -144,8 +144,7 @@ class Catalog extends Model
      */
     public function getIsPublishedAttribute(): bool
     {
-        return $this->status === 'active' &&
-            ($this->published_at === null || $this->published_at->isPast());
+        return $this->status === 'active' && ($this->published_at === null || $this->published_at->isPast());
     }
 
     /**

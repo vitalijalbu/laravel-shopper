@@ -3,6 +3,7 @@
 namespace Cartino\Http\Requests\Wishlist;
 
 use Cartino\Enums\WishlistStatus;
+use Cartino\Models\Customer;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -16,7 +17,7 @@ class StoreWishlistRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'customer_id' => 'required|exists:customers,id',
+            'customer_id' => ['required', Rule::exists(Customer::class, 'id')],
             'name' => 'required|string|max:255',
             'description' => 'nullable|string|max:1000',
             'status' => ['nullable', Rule::enum(WishlistStatus::class)],

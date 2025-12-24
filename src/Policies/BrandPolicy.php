@@ -1,47 +1,27 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Cartino\Policies;
 
 use Cartino\Models\Brand;
-use Cartino\Models\User;
-use Illuminate\Auth\Access\HandlesAuthorization;
+use Cartino\Policies\Concerns\HasStandardAuthorization;
+use Illuminate\Database\Eloquent\Model;
 
 class BrandPolicy
 {
-    use HandlesAuthorization;
+    use HasStandardAuthorization;
 
-    public function viewAny(User $user): bool
+    protected function getPermissionPrefix(): string
     {
-        return $user->can('view-brands');
+        return 'brands';
     }
 
-    public function view(User $user, Brand $brand): bool
+    /**
+     * Brands can't be deleted if they have products
+     */
+    protected function canDeleteModel(Model|Brand $model): bool
     {
-        return $user->can('view-brands');
-    }
-
-    public function create(User $user): bool
-    {
-        return $user->can('create-brands');
-    }
-
-    public function update(User $user, Brand $brand): bool
-    {
-        return $user->can('edit-brands');
-    }
-
-    public function delete(User $user, Brand $brand): bool
-    {
-        return $user->can('delete-brands') && ! $brand->hasProducts();
-    }
-
-    public function restore(User $user, Brand $brand): bool
-    {
-        return $user->can('restore-brands');
-    }
-
-    public function forceDelete(User $user, Brand $brand): bool
-    {
-        return $user->can('force-delete-brands');
+        return ! $model->products()->exists();
     }
 }

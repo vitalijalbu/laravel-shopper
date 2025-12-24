@@ -8,7 +8,7 @@ use Cartino\Models\Customer;
 use Cartino\Models\FidelityCard;
 use Cartino\Models\FidelityTransaction;
 use Cartino\Models\Order;
-use Illuminate\Support\Category;
+use Illuminate\Support\Collection;
 
 class FidelityService
 {
@@ -42,9 +42,11 @@ class FidelityService
             return $customer->fidelityCard;
         }
 
-        return $customer->fidelityCard()->create([
-            'is_active' => true,
-        ]);
+        return $customer
+            ->fidelityCard()
+            ->create([
+                'is_active' => true,
+            ]);
     }
 
     /**
@@ -52,9 +54,7 @@ class FidelityService
      */
     public function findCardByNumber(string $cardNumber): ?FidelityCard
     {
-        return FidelityCard::where('card_number', $cardNumber)
-            ->where('is_active', true)
-            ->first();
+        return FidelityCard::where('card_number', $cardNumber)->where('is_active', true)->first();
     }
 
     /**
@@ -75,11 +75,7 @@ class FidelityService
             // Aggiorna l'importo totale speso
             $card->increment('total_spent_amount', $order->total);
 
-            return $card->addPoints(
-                $points,
-                "Points earned from order #{$order->number}",
-                $order->id
-            );
+            return $card->addPoints($points, "Points earned from order #{$order->number}", $order->id);
         }
 
         return null;
@@ -128,8 +124,12 @@ class FidelityService
     /**
      * Riscatta punti
      */
-    public function redeemPoints(FidelityCard $card, int $points, ?string $reason = null, ?int $orderId = null): FidelityTransaction
-    {
+    public function redeemPoints(
+        FidelityCard $card,
+        int $points,
+        ?string $reason = null,
+        ?int $orderId = null,
+    ): FidelityTransaction {
         if (! $this->arePointsEnabled()) {
             throw new \InvalidArgumentException('Fidelity points system is disabled.');
         }
@@ -198,12 +198,9 @@ class FidelityService
     /**
      * Ottiene le transazioni recenti
      */
-    public function getRecentTransactions(FidelityCard $card, int $limit = 10): Category
+    public function getRecentTransactions(FidelityCard $card, int $limit = 10): Collection
     {
-        return $card->transactions()
-            ->orderBy('created_at', 'desc')
-            ->limit($limit)
-            ->get();
+        return $card->transactions()->orderBy('created_at', 'desc')->limit($limit)->get();
     }
 
     /**
@@ -236,18 +233,22 @@ class FidelityService
     /**
      * Ottiene le carte con punti in scadenza
      */
-    public function getCardsWithExpiringPoints(int $days = 30): Category
+    public function getCardsWithExpiringPoints(int $days = 30): Collection
     {
         return FidelityCard::active()
             ->whereHas('transactions', function ($query) use ($days) {
-                $query->where('type', 'earned')
+                $query
+                    ->where('type', 'earned')
                     ->where('expired', false)
                     ->whereNotNull('expires_at')
                     ->whereBetween('expires_at', [now(), now()->addDays($days)]);
             })
-            ->with(['customer', 'transactions' => function ($query) use ($days) {
-                $query->expiring($days);
-            }])
+            ->with([
+                'customer',
+                'transactions' => function ($query) use ($days) {
+                    $query->expiring($days);
+                },
+            ])
             ->get();
     }
 

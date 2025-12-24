@@ -59,6 +59,6 @@ trait HasBreadcrumbs
      */
     protected function addDashboardBreadcrumb(): self
     {
-        return $this->addBreadcrumb('Dashboard', 'cartino.dashboard');
+        return $this->addBreadcrumb('Dashboard', 'cp.dashboard');
     }
 }

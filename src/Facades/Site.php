@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static \Cartino\Models\Site|null find(int $id)
  * @method static \Cartino\Models\Site default()
  * @method static \Cartino\Models\Site current()
- * @method static \Illuminate\Support\Category all()
+ * @method static \Illuminate\Support\Collection all()
  * @method static \Cartino\Models\Site selected()
  * @method static void setCurrent(string $handle)
  * @method static bool hasMultiple()

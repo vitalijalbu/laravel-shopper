@@ -1,8 +1,8 @@
 <?php
 
-namespace Cartino\CP;
+namespace Cartino\Cp;
 
-use Illuminate\Support\Category;
+use Illuminate\Support\Collection;
 
 class Dashboard
 {
@@ -27,8 +27,12 @@ class Dashboard
     /**
      * Register a quick action
      */
-    public static function quickAction(string $label, string $url, ?string $icon = null, array $permissions = []): void
-    {
+    public static function quickAction(
+        string $label,
+        string $url,
+        ?string $icon = null,
+        array $permissions = [],
+    ): void {
         static::$quickActions[] = [
             'label' => $label,
             'url' => $url,
@@ -40,8 +44,12 @@ class Dashboard
     /**
      * Register a metric
      */
-    public static function metric(string $label, callable $value, ?string $icon = null, string $color = 'blue'): void
-    {
+    public static function metric(
+        string $label,
+        callable $value,
+        ?string $icon = null,
+        string $color = 'blue',
+    ): void {
         static::$metrics[] = [
             'label' => $label,
             'value' => $value,
@@ -53,17 +61,15 @@ class Dashboard
     /**
      * Get all dashboard cards
      */
-    public static function cards(): Category
+    public static function cards(): Collection
     {
-        return collect(static::$cards)
-            ->sortBy('order')
-            ->values();
+        return collect(static::$cards)->sortBy('order')->values();
     }
 
     /**
      * Get all quick actions
      */
-    public static function quickActions(): Category
+    public static function quickActions(): Collection
     {
         return collect(static::$quickActions);
     }
@@ -71,12 +77,10 @@ class Dashboard
     /**
      * Get all metrics
      */
-    public static function metrics(): Category
+    public static function metrics(): Collection
     {
         return collect(static::$metrics)->map(function ($metric) {
-            $metric['value'] = is_callable($metric['value'])
-                ? call_user_func($metric['value'])
-                : $metric['value'];
+            $metric['value'] = is_callable($metric['value']) ? call_user_func($metric['value']) : $metric['value'];
 
             return $metric;
         });
@@ -99,7 +103,7 @@ class Dashboard
     /**
      * Get recent orders
      */
-    protected static function getRecentOrders(): Category
+    protected static function getRecentOrders(): Collection
     {
         return collect(); // Will be implemented with Order model
     }

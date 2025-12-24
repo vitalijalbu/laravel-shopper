@@ -1,6 +1,6 @@
 <?php
 
-namespace Cartino\Http\Controllers\CP;
+namespace Cartino\Http\Controllers\Cp;
 
 use Cartino\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -27,19 +27,15 @@ class LocaleController extends Controller
         $translations = [
             // Core admin translations
             'admin' => Lang::get('admin', [], $locale),
-
             // Module-specific translations
             'products' => Lang::get('products', [], $locale),
             'categories' => Lang::get('categories', [], $locale),
             'brands' => Lang::get('brands', [], $locale),
             'pages' => Lang::get('pages', [], $locale),
-
             // Laravel validation messages
             'validation' => Lang::get('validation', [], $locale),
-
             // Auth messages
             'auth' => Lang::get('auth', [], $locale),
-
             // Pagination
             'pagination' => Lang::get('pagination', [], $locale),
         ];
@@ -86,9 +82,11 @@ class LocaleController extends Controller
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
-        auth()->user()->update([
-            'locale' => $request->locale,
-        ]);
+        auth()
+            ->user()
+            ->update([
+                'locale' => $request->locale,
+            ]);
 
         Session::put('locale', $request->locale);
 

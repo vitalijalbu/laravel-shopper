@@ -1,8 +1,8 @@
 <?php
 
-namespace Cartino\Http\Controllers\CP;
+namespace Cartino\Http\Controllers\Cp;
 
-use Cartino\CP\Page;
+use Cartino\Cp\Page;
 use Cartino\Http\Controllers\Controller;
 use Cartino\Models\App;
 use Cartino\Models\AppReview;
@@ -47,9 +47,11 @@ class AppsController extends Controller
 
         if ($request->filled('search')) {
             $query->where(function ($q) use ($request) {
-                $q->where('name', 'like', "%{$request->search}%")
-                    ->orWhere('description', 'like', "%{$request->search}%")
-                    ->orWhereJsonContains('tags', $request->search);
+                $q->where('name', 'like', "%{$request->search}%")->orWhere(
+                    'description',
+                    'like',
+                    "%{$request->search}%",
+                )->orWhereJsonContains('tags', $request->search);
             });
         }
 
@@ -102,7 +104,6 @@ class AppsController extends Controller
 
         return Inertia::render('Apps/Store', [
             'page' => $page->compile(),
-
             'apps' => $apps,
             'categories' => $categories,
             'stats' => $stats,
@@ -141,7 +142,6 @@ class AppsController extends Controller
 
         return Inertia::render('Apps/Installed', [
             'page' => $page->compile(),
-
             'apps' => $apps,
             'filters' => $request->only(['status', 'search']),
         ]);
@@ -175,19 +175,19 @@ class AppsController extends Controller
 
         // Add install/uninstall actions
         if ($app->is_installed) {
-            $page->primaryAction(__('apps.actions.configure'), "/cp/apps/{$app->id}/configure")
-                ->secondaryActions([
-                    ['label' => $app->is_active ? __('apps.actions.deactivate') : __('apps.actions.activate'),
-                        'action' => $app->is_active ? 'deactivate' : 'activate'],
-                    ['label' => __('apps.actions.uninstall'), 'action' => 'uninstall', 'destructive' => true],
-                ]);
+            $page->primaryAction(__('apps.actions.configure'), "/cp/apps/{$app->id}/configure")->secondaryActions([
+                [
+                    'label' => $app->is_active ? __('apps.actions.deactivate') : __('apps.actions.activate'),
+                    'action' => $app->is_active ? 'deactivate' : 'activate',
+                ],
+                ['label' => __('apps.actions.uninstall'), 'action' => 'uninstall', 'destructive' => true],
+            ]);
         } else {
             $page->primaryAction(__('apps.actions.install'), null, ['action' => 'install']);
         }
 
         return Inertia::render('Apps/Show', [
             'page' => $page->compile(),
-
             'app' => $app,
             'relatedApps' => $relatedApps,
             'canInstall' => $app->is_compatible && ! $app->is_installed,
@@ -216,7 +216,6 @@ class AppsController extends Controller
                 'installation' => $installation,
                 'redirect' => "/cp/apps/{$app->id}/configure",
             ]);
-
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
@@ -234,7 +233,6 @@ class AppsController extends Controller
                 'message' => __('apps.messages.uninstalled', ['name' => $app->name]),
                 'redirect' => '/cp/apps?view=installed',
             ]);
-
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
@@ -251,7 +249,6 @@ class AppsController extends Controller
             return response()->json([
                 'message' => __('apps.messages.activated', ['name' => $app->name]),
             ]);
-
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
@@ -268,7 +265,6 @@ class AppsController extends Controller
             return response()->json([
                 'message' => __('apps.messages.deactivated', ['name' => $app->name]),
             ]);
-
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
@@ -294,7 +290,6 @@ class AppsController extends Controller
 
         return Inertia::render('Apps/Configure', [
             'page' => $page->compile(),
-
             'app' => $app,
             'installation' => $installation,
             'settings' => $installation->settings ?? [],
@@ -324,7 +319,8 @@ class AppsController extends Controller
      */
     public function reviews(App $app)
     {
-        $reviews = $app->reviews()
+        $reviews = $app
+            ->reviews()
             ->approved()
             ->with('user')
             ->orderBy('is_featured', 'desc')
@@ -335,7 +331,8 @@ class AppsController extends Controller
         $stats = [
             'average_rating' => $app->rating,
             'total_reviews' => $app->review_count,
-            'rating_distribution' => $app->reviews()
+            'rating_distribution' => $app
+                ->reviews()
                 ->approved()
                 ->selectRaw('rating, COUNT(*) as count')
                 ->groupBy('rating')
@@ -353,7 +350,6 @@ class AppsController extends Controller
 
         return Inertia::render('Apps/Reviews', [
             'page' => $page->compile(),
-
             'app' => $app,
             'reviews' => $reviews,
             'stats' => $stats,
@@ -403,8 +399,9 @@ class AppsController extends Controller
             'last_used' => $installation->last_used_at,
             'error_count' => $installation->error_count,
             'last_error' => $installation->last_error_at,
-            'uptime' => $installation->error_count === 0 ? 100 :
-                       max(0, 100 - ($installation->error_count / max(1, $installation->usage_count) * 100)),
+            'uptime' => $installation->error_count === 0
+                ? 100
+                : max(0, 100 - (($installation->error_count / max(1, $installation->usage_count)) * 100)),
         ];
 
         return response()->json($analytics);

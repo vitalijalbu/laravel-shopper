@@ -8,19 +8,19 @@ use Illuminate\Support\Facades\Cache;
 class CacheService
 {
     // Cache TTL constants (in seconds)
-    const PRODUCT_TTL = 3600;       // 1 hour
+    const PRODUCT_TTL = 3600; // 1 hour
 
-    const BRAND_TTL = 7200;         // 2 hours
+    const BRAND_TTL = 7200; // 2 hours
 
-    const COLLECTION_TTL = 3600;     // 1 hour
+    const COLLECTION_TTL = 3600; // 1 hour
 
-    const USER_TTL = 1800;           // 30 minutes
+    const USER_TTL = 1800; // 30 minutes
 
-    const SETTINGS_TTL = 86400;      // 24 hours
+    const SETTINGS_TTL = 86400; // 24 hours
 
-    const NAVIGATION_TTL = 3600;     // 1 hour
+    const NAVIGATION_TTL = 3600; // 1 hour
 
-    const STATS_TTL = 600;           // 10 minutes
+    const STATS_TTL = 600; // 10 minutes
 
     // Cache tags for better invalidation
     const PRODUCT_TAG = 'products';
@@ -300,9 +300,7 @@ class CacheService
 
         // Warm up featured products
         $this->rememberProduct('featured', function () {
-            return \Cartino\Models\Product::where('is_featured', true)
-                ->with(['brand'])
-                ->get();
+            return \Cartino\Models\Product::where('is_featured', true)->with(['brand'])->get();
         });
 
         // Warm up navigation (using collections instead of categories)

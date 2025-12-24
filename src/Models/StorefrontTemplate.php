@@ -43,18 +43,13 @@ class StorefrontTemplate extends Model
 
     public function templateSections(): HasMany
     {
-        return $this->hasMany(StorefrontTemplateSection::class, 'template_id')
-            ->orderBy('sort_order');
+        return $this->hasMany(StorefrontTemplateSection::class, 'template_id')->orderBy('sort_order');
     }
 
     public function sections(): BelongsToMany
     {
-        return $this->belongsToMany(
-            StorefrontSection::class,
-            'shopper_template_sections',
-            'template_id',
-            'section_id'
-        )->withPivot(['settings', 'blocks_data', 'sort_order', 'is_visible', 'section_key'])
+        return $this->belongsToMany(StorefrontSection::class, 'shopper_template_sections', 'template_id', 'section_id')
+            ->withPivot(['settings', 'blocks_data', 'sort_order', 'is_visible', 'section_key'])
             ->withTimestamps()
             ->orderBy('pivot_sort_order');
     }
