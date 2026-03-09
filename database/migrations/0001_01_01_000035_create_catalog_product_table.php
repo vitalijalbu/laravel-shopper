@@ -16,9 +16,8 @@ return new class extends Migration
             // Product inclusion/exclusion
             $table->boolean('is_included')->default(true);
 
-            // Fixed pricing (overrides catalog-level adjustments)
-            $table->decimal('fixed_price', 10, 4)->nullable();
-            $table->decimal('compare_at_price', 10, 4)->nullable();
+            // Pricing per catalog gestita in variant_prices (con catalog_id valorizzato).
+            // Rimossi fixed_price e compare_at_price — unica fonte di pricing e' variant_prices.
 
             // Quantity rules for B2B
             $table->integer('quantity_increment')->nullable()->comment('Items must be purchased in multiples of this quantity');
@@ -40,7 +39,6 @@ return new class extends Migration
             $table->unique(['catalog_id', 'product_id']);
             $table->index(['catalog_id', 'is_included', 'is_published']);
             $table->index(['product_id', 'is_included']);
-            $table->index(['fixed_price']);
         });
     }
 

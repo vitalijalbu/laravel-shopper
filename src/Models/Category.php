@@ -8,6 +8,7 @@ use Cartino\Support\HasHandle;
 use Cartino\Support\HasSite;
 use Cartino\Traits\HasAssets;
 use Cartino\Traits\HasCustomFields;
+use Cartino\Traits\Translatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -23,6 +24,7 @@ class Category extends Model
     use HasHandle;
     use HasSite;
     use SoftDeletes;
+    use Translatable;
 
     protected $fillable = [
         'site_id',
@@ -50,6 +52,13 @@ class Category extends Model
         'seo' => 'array',
         'disjunctive' => 'boolean',
         'published_at' => 'datetime',
+    ];
+
+    protected array $translatable = [
+        'title',
+        'description',
+        'meta_title',
+        'meta_description',
     ];
 
     protected $appends = [

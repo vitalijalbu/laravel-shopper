@@ -49,11 +49,8 @@ return new class extends Migration
             $table->index(['created_at', 'status']);
             $table->index(['total', 'status']);
 
-            $table->index('subtotal');
-            $table->index('tax_total');
-            $table->index('shipping_total');
-            $table->index('discount_total');
-            $table->index('updated_at');
+            // Indici singoli su decimali aggregati rimossi (inutili per il query planner)
+            // Usare gli indici compositi sotto per query di reporting
 
             $table->index(['status', 'created_at']);
             $table->index(['payment_status', 'status']);

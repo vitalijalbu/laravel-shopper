@@ -32,8 +32,8 @@ return new class extends Migration
             $table->string('sku')->index();
             $table->string('barcode')->nullable();
 
-            // Option Values (up to 3 options per variant)
-            // Note: New system uses product_variant_option_value table instead
+            // Option Values (fino a 3 opzioni per variante, coerente con product_options)
+            // Le definizioni delle opzioni stanno in product_options (tabella normalizzata)
             $table->string('option1')->nullable(); // e.g., "Red"
             $table->string('option2')->nullable(); // e.g., "Large"
             $table->string('option3')->nullable(); // e.g., "Cotton"
@@ -43,10 +43,12 @@ return new class extends Migration
             $table->decimal('compare_at_price', 15, 2)->nullable(); // Compare price
             $table->decimal('cost', 15, 2)->nullable(); // Cost price
 
-            // INVENTORY - I dati principali stanno qui nelle varianti
-            $table->integer('inventory_quantity')->default(0);
+            // INVENTORY
+            // inventory_quantity e' una CACHE AGGREGATA di location_inventories.available_quantity.
+            // Aggiornata automaticamente da LocationInventoryObserver. Non scrivere direttamente.
+            $table->integer('inventory_quantity')->default(0)->comment('CACHE: somma di location_inventories.available_quantity');
             $table->boolean('track_quantity')->default(true);
-            $table->string('inventory_management')->default('shopify'); // shopify, not_managed, fulfillment_service
+            $table->string('inventory_management')->default('managed')->comment('managed, not_managed, fulfillment_service');
             $table->string('inventory_policy')->default('deny'); // deny, continue
             $table->string('fulfillment_service')->default('manual');
             $table->integer('inventory_quantity_adjustment')->default(0);
@@ -93,6 +95,7 @@ return new class extends Migration
 
             $table->foreign('site_id')->references('id')->on('sites')->onDelete('cascade');
         });
+
     }
 
     public function down(): void

@@ -24,6 +24,7 @@ return new class extends Migration
             $table->index(['site_id', 'status']);
             $table->index(['status', 'name']);
         });
+
     }
 
     public function down(): void

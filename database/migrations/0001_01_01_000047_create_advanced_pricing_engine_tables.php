@@ -8,26 +8,9 @@ return new class extends Migration
 {
     public function up(): void
     {
-        // Advanced pricing tiers
-        Schema::create('price_tiers', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('product_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('variant_id')->nullable()->constrained('product_variants')->cascadeOnDelete();
-            $table->foreignId('customer_group_id')->nullable()->constrained()->nullOnDelete();
-            $table->char('currency_code', 3);
-            $table->integer('min_quantity')->default(1);
-            $table->integer('max_quantity')->nullable();
-            $table->decimal('price', 15, 2);
-            $table->decimal('discount_percentage', 5, 2)->nullable();
-            $table->timestamp('valid_from')->nullable();
-            $table->timestamp('valid_until')->nullable();
-            $table->boolean('is_active')->default(true);
-            $table->timestamps();
-
-            $table->index(['product_id', 'customer_group_id', 'min_quantity']);
-            $table->index(['currency_code', 'valid_from', 'valid_until']);
-            $table->index(['is_active', 'valid_from', 'valid_until']);
-        });
+        // price_tiers rimossa: era un duplicato esatto di variant_prices.
+        // Usare variant_prices (con min_quantity, max_quantity, customer_group_id,
+        // currency, starts_at, ends_at, priority) come unica fonte per il tiered pricing.
 
         // Dynamic pricing rules engine
         Schema::create('pricing_rules', function (Blueprint $table) {
@@ -100,6 +83,5 @@ return new class extends Migration
         Schema::dropIfExists('pricing_rule_customer_groups');
         Schema::dropIfExists('pricing_rule_products');
         Schema::dropIfExists('pricing_rules');
-        Schema::dropIfExists('price_tiers');
     }
 };

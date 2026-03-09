@@ -140,14 +140,16 @@ return new class extends Migration
     }
 
     /**
-     * Check if an index exists on a table
+     * Check if an index exists on a table (Laravel 11+ compatible, no Doctrine).
      */
     protected function hasIndex(string $table, string $index): bool
     {
-        $connection = Schema::getConnection();
-        $doctrineSchemaManager = $connection->getDoctrineSchemaManager();
-        $doctrineTable = $doctrineSchemaManager->introspectTable($table);
+        try {
+            $indexes = Schema::getIndexes($table);
 
-        return $doctrineTable->hasIndex($index);
+            return collect($indexes)->contains(fn ($idx) => $idx['name'] === $index);
+        } catch (\Throwable) {
+            return false;
+        }
     }
 };

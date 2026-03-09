@@ -36,8 +36,7 @@ return new class extends Migration
             $table->foreignId('brand_id')->nullable()->constrained('brands')->nullOnDelete();
             $table->foreignId('product_type_id')->nullable()->constrained('product_types')->nullOnDelete();
 
-            // Product Options & Tags
-            $table->jsonb('options')->nullable()->comment('[{"name": "Color", "values": ["Red", "Blue"]}]');
+            // Tags (opzioni prodotto definite in product_options — tabella relazionale normalizzata)
             $table->jsonb('tags')->nullable();
 
             // SEO
@@ -77,6 +76,7 @@ return new class extends Migration
                 $table->fullText(['title', 'description', 'excerpt']);
             }
         });
+
     }
 
     public function down(): void

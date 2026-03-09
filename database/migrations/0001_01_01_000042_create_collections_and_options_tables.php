@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('collections', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('site_id')->nullable();
-            $table->unsignedBigInteger('channel_id');
+            $table->foreignId('channel_id')->constrained('channels')->cascadeOnDelete();
             $table->string('title');
             $table->string('slug');
             $table->string('handle')->nullable();
@@ -58,6 +58,9 @@ return new class extends Migration
             }
 
             $table->foreign('site_id')->references('id')->on('sites')->onDelete('cascade');
+
+            // Rimuovere body_html se non necessario — semanticamente sovrapposto a description
+            // Lasciato per compatibilita' con import da Shopify
         });
 
         // Product Options (Color, Size, Material variants)
@@ -78,7 +81,7 @@ return new class extends Migration
         });
 
         // Many-to-many relationship between collections and products
-        Schema::create('category_products', function (Blueprint $table) {
+        Schema::create('collection_products', function (Blueprint $table) {
             $table->id();
             $table->foreignId('collection_id')->constrained('collections')->cascadeOnDelete();
             $table->foreignId('product_id')->constrained('products')->cascadeOnDelete();
@@ -95,7 +98,7 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('category_products');
+        Schema::dropIfExists('collection_products');
         Schema::dropIfExists('product_options');
         Schema::dropIfExists('collections');
     }

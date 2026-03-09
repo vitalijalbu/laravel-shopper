@@ -39,7 +39,8 @@ return new class extends Migration
 
             $table->boolean('include_in_menu')->default(true);
             $table->boolean('include_in_search')->default(true);
-            $table->integer('products_count')->default(0);
+            // products_count rimossa — era un counter cache non sicuro (out-of-sync).
+            // Usare withCount('products') via Eloquent o una query aggregata.
 
             $table->string('template')->nullable();
             $table->jsonb('layout_settings')->nullable();
