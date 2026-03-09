@@ -4,22 +4,20 @@ declare(strict_types=1);
 
 namespace Cartino\Models;
 
+use Cartino\Traits\HasAssets;
 use Cartino\Traits\HasCustomFields;
 use Cartino\Traits\HasOptimizedFilters;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Spatie\MediaLibrary\HasMedia;
-use Spatie\MediaLibrary\InteractsWithMedia;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class Brand extends Model implements HasMedia
+class Brand extends Model
 {
+    use HasAssets;
     use HasCustomFields;
     use HasFactory;
     use HasOptimizedFilters;
-    use InteractsWithMedia;
     use SoftDeletes;
 
     protected $fillable = [
@@ -76,28 +74,29 @@ class Brand extends Model implements HasMedia
         'description',
     ];
 
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+
+        /**
+         * Asset collections configuration
+         */
+        $this->assetCollections = [
+            'logo' => [
+                'multiple' => false,
+                'max_files' => 1,
+                'mime_types' => ['image/svg+xml', 'image/png', 'image/jpeg', 'image/webp'],
+            ],
+            'banner' => [
+                'multiple' => false,
+                'max_files' => 1,
+                'mime_types' => ['image/jpeg', 'image/png', 'image/webp'],
+            ],
+        ];
+    }
+
     public function products(): HasMany
     {
         return $this->hasMany(Product::class);
-    }
-
-    public function registerMediaConversions(?Media $media = null): void
-    {
-        $this->addMediaConversion('thumb')
-            ->width(300)
-            ->height(300)
-            ->sharpen(10);
-
-        $this->addMediaConversion('large')
-            ->width(800)
-            ->height(600)
-            ->sharpen(10);
-    }
-
-    public function registerMediaCollections(): void
-    {
-        $this->addMediaCollection('logo')
-            ->singleFile()
-            ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/webp']);
     }
 }

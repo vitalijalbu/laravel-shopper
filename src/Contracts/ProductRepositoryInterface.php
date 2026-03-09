@@ -6,7 +6,6 @@ namespace Cartino\Contracts;
 
 use Cartino\Models\Product;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Category;
 
 interface ProductRepositoryInterface extends RepositoryInterface
 {

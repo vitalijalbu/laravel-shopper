@@ -58,7 +58,6 @@ class PermissionController extends ApiController
                 'permission_groups' => $permissionGroups,
                 'inherited_from' => $this->getInheritedRoles($role),
             ]);
-
         } catch (\Exception $e) {
             return $this->notFoundResponse('Ruolo non trovato');
         }
@@ -95,10 +94,7 @@ class PermissionController extends ApiController
                 $this->setRoleInheritance($role, $validated['inherit_from']);
             }
 
-            return $this->successResponse(
-                $role->load('permissions'),
-                'Permessi del ruolo aggiornati con successo'
-            );
+            return $this->successResponse($role->load('permissions'), 'Permessi del ruolo aggiornati con successo');
         } catch (\Exception $e) {
             return $this->errorResponse('Errore durante l\'aggiornamento dei permessi');
         }
@@ -121,7 +117,7 @@ class PermissionController extends ApiController
                             'display_name' => $permission['label'],
                             'description' => $permission['description'] ?? null,
                             'group' => $group['handle'],
-                        ]
+                        ],
                     );
 
                     if ($perm->wasRecentlyCreated) {
@@ -130,12 +126,14 @@ class PermissionController extends ApiController
                 }
             }
 
-            return $this->successResponse([
-                'created_permissions' => $createdPermissions,
-                'count' => count($createdPermissions),
-                'structure' => $permissionStructure,
-            ], count($createdPermissions).' permessi creati con successo');
-
+            return $this->successResponse(
+                [
+                    'created_permissions' => $createdPermissions,
+                    'count' => count($createdPermissions),
+                    'structure' => $permissionStructure,
+                ],
+                count($createdPermissions).' permessi creati con successo',
+            );
         } catch (\Exception $e) {
             return $this->errorResponse('Errore durante la generazione dei permessi');
         }
@@ -152,7 +150,7 @@ class PermissionController extends ApiController
                 [
                     'display_name' => 'Super User',
                     'description' => 'Accesso completo a tutte le funzionalità del sistema',
-                ]
+                ],
             );
 
             // Assegna tutti i permessi
@@ -161,9 +159,8 @@ class PermissionController extends ApiController
 
             return $this->successResponse(
                 $superRole->load('permissions'),
-                'Ruolo Super User '.($superRole->wasRecentlyCreated ? 'creato' : 'aggiornato').' con successo'
+                'Ruolo Super User '.($superRole->wasRecentlyCreated ? 'creato' : 'aggiornato').' con successo',
             );
-
         } catch (\Exception $e) {
             return $this->errorResponse('Errore durante la creazione del ruolo Super User');
         }
@@ -182,7 +179,6 @@ class PermissionController extends ApiController
                 'total_groups' => count($tree),
                 'total_permissions' => collect($tree)->sum(fn ($group) => count($group['permissions'])),
             ]);
-
         } catch (\Exception $e) {
             return $this->errorResponse('Errore durante la generazione dell\'albero dei permessi');
         }
@@ -201,11 +197,27 @@ class PermissionController extends ApiController
                 'icon' => 'content-writing',
                 'permissions' => [
                     ['handle' => 'view content', 'label' => 'View Content', 'description' => 'Visualizzare contenuti'],
-                    ['handle' => 'create content', 'label' => 'Create Content', 'description' => 'Creare nuovi contenuti'],
-                    ['handle' => 'edit content', 'label' => 'Edit Content', 'description' => 'Modificare contenuti esistenti'],
+                    [
+                        'handle' => 'create content',
+                        'label' => 'Create Content',
+                        'description' => 'Creare nuovi contenuti',
+                    ],
+                    [
+                        'handle' => 'edit content',
+                        'label' => 'Edit Content',
+                        'description' => 'Modificare contenuti esistenti',
+                    ],
                     ['handle' => 'delete content', 'label' => 'Delete Content', 'description' => 'Eliminare contenuti'],
-                    ['handle' => 'publish content', 'label' => 'Publish Content', 'description' => 'Pubblicare contenuti'],
-                    ['handle' => 'edit other authors content', 'label' => 'Edit Other Authors Content', 'description' => 'Modificare contenuti di altri autori'],
+                    [
+                        'handle' => 'publish content',
+                        'label' => 'Publish Content',
+                        'description' => 'Pubblicare contenuti',
+                    ],
+                    [
+                        'handle' => 'edit other authors content',
+                        'label' => 'Edit Other Authors Content',
+                        'description' => 'Modificare contenuti di altri autori',
+                    ],
                 ],
             ],
             [
@@ -317,7 +329,11 @@ class PermissionController extends ApiController
                     ['handle' => 'edit roles', 'label' => 'Edit Roles'],
                     ['handle' => 'delete roles', 'label' => 'Delete Roles'],
                     ['handle' => 'assign roles', 'label' => 'Assign Roles'],
-                    ['handle' => 'super', 'label' => 'Super User', 'description' => 'Accesso completo senza restrizioni'],
+                    [
+                        'handle' => 'super',
+                        'label' => 'Super User',
+                        'description' => 'Accesso completo senza restrizioni',
+                    ],
                 ],
             ],
             [

@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\DB;
 class AssetController extends Controller
 {
     public function __construct(
-        protected AssetService $assetService
+        protected AssetService $assetService,
     ) {}
 
     public function index(Request $request): JsonResponse
@@ -89,7 +89,7 @@ class AssetController extends Controller
                 $request->file('file'),
                 $request->container,
                 $request->folder,
-                $request->user()?->id
+                $request->user()?->id,
             );
 
             return response()->json([
@@ -121,7 +121,7 @@ class AssetController extends Controller
                     $file,
                     $request->container,
                     $request->folder,
-                    $request->user()?->id
+                    $request->user()?->id,
                 );
                 $uploadedAssets[] = new AssetResource($asset);
             } catch (\Exception $e) {
@@ -167,7 +167,7 @@ class AssetController extends Controller
                 $this->assetService->setFocusPoint(
                     $asset,
                     $request->input('focus_point.x'),
-                    $request->input('focus_point.y')
+                    $request->input('focus_point.y'),
                 );
             }
 

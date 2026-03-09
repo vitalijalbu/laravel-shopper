@@ -5,27 +5,18 @@ declare(strict_types=1);
 namespace Cartino\Enums;
 
 use Cartino\Helpers\EnumSerializable;
+use Cartino\Traits\TranslatableEnum;
 
 enum ShippingCalculationMethod: string
 {
     use EnumSerializable;
+    use TranslatableEnum;
 
     case FLAT_RATE = 'flat_rate';
     case PER_ITEM = 'per_item';
     case WEIGHT_BASED = 'weight_based';
     case PRICE_BASED = 'price_based';
     case CARRIER_CALCULATED = 'carrier_calculated';
-
-    public function label(): string
-    {
-        return match ($this) {
-            self::FLAT_RATE => __('cartino::shipping.calculation.flat_rate'),
-            self::PER_ITEM => __('cartino::shipping.calculation.per_item'),
-            self::WEIGHT_BASED => __('cartino::shipping.calculation.weight_based'),
-            self::PRICE_BASED => __('cartino::shipping.calculation.price_based'),
-            self::CARRIER_CALCULATED => __('cartino::shipping.calculation.carrier_calculated'),
-        };
-    }
 
     public function requiresWeight(): bool
     {

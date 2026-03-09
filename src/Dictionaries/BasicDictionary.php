@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Cartino\Dictionaries;
 
-use Illuminate\Support\Category;
+use Illuminate\Support\Collection;
 
 abstract class BasicDictionary extends Dictionary
 {
@@ -28,18 +28,19 @@ abstract class BasicDictionary extends Dictionary
 
     public function optionItems(?string $search = null): array
     {
-        return $this
-            ->getFilteredItems()
-            ->when($search, fn ($collection) => $collection->filter(fn ($item) => $this->matchesSearchQuery($search, $item)))
+        return $this->getFilteredItems()
+            ->when($search, fn ($collection) => $collection->filter(
+                fn ($item) => $this->matchesSearchQuery($search, $item),
+            ))
             ->all();
     }
 
-    protected function getFilteredItems(): Category
+    protected function getFilteredItems(): Collection
     {
         return $this->collectItems();
     }
 
-    protected function collectItems(): Category
+    protected function collectItems(): Collection
     {
         return collect($this->getItems())->mapWithKeys(function ($arr) {
             $item = new Item($key = $this->getItemValue($arr), $this->getItemLabel($arr), $arr);

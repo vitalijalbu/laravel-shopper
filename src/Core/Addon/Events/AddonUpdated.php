@@ -11,6 +11,6 @@ class PluginUpdated
     public function __construct(
         public AddonInterface $addon,
         public string $fromVersion,
-        public string $toVersion
+        public string $toVersion,
     ) {}
 }

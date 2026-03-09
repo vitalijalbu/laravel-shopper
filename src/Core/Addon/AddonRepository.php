@@ -15,9 +15,7 @@ class AddonRepository
      */
     public function exists(string $id): bool
     {
-        return DB::table($this->table)
-            ->where('id', $id)
-            ->exists();
+        return DB::table($this->table)->where('id', $id)->exists();
     }
 
     /**
@@ -36,9 +34,7 @@ class AddonRepository
      */
     public function getVersion(string $id): ?string
     {
-        return DB::table($this->table)
-            ->where('id', $id)
-            ->value('version');
+        return DB::table($this->table)->where('id', $id)->value('version');
     }
 
     /**
@@ -57,9 +53,7 @@ class AddonRepository
      */
     public function delete(string $id): void
     {
-        DB::table($this->table)
-            ->where('id', $id)
-            ->delete();
+        DB::table($this->table)->where('id', $id)->delete();
     }
 
     /**

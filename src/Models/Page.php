@@ -54,10 +54,10 @@ class Page extends Model
     // Scopes
     public function scopePublished($query)
     {
-        return $query->where('status', 'published')
+        return $query
+            ->where('status', 'published')
             ->where(function ($q) {
-                $q->whereNull('published_at')
-                    ->orWhere('published_at', '<=', now());
+                $q->whereNull('published_at')->orWhere('published_at', '<=', now());
             });
     }
 
@@ -74,8 +74,7 @@ class Page extends Model
     // Accessors
     public function getIsPublishedAttribute(): bool
     {
-        return $this->status === 'published' &&
-               ($this->published_at === null || $this->published_at <= now());
+        return $this->status === 'published' && ($this->published_at === null || $this->published_at <= now());
     }
 
     public function getIsDraftAttribute(): bool
@@ -90,9 +89,7 @@ class Page extends Model
 
     public function getIsScheduledAttribute(): bool
     {
-        return $this->status === 'published' &&
-               $this->published_at &&
-               $this->published_at > now();
+        return $this->status === 'published' && $this->published_at && $this->published_at > now();
     }
 
     public function getSeoTitleAttribute(): string

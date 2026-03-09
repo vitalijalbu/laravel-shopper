@@ -1,12 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Cartino\Enums;
 
 use Cartino\Helpers\EnumSerializable;
+use Cartino\Traits\TranslatableEnum;
 
 enum FulfillmentStatus: string
 {
     use EnumSerializable;
+    use TranslatableEnum;
 
     case UNFULFILLED = 'unfulfilled';
     case PENDING = 'pending';
@@ -15,19 +19,6 @@ enum FulfillmentStatus: string
     case DELIVERED = 'delivered';
     case FAILED = 'failed';
     case CANCELLED = 'cancelled';
-
-    public function label(): string
-    {
-        return match ($this) {
-            self::UNFULFILLED => 'Unfulfilled',
-            self::PENDING => 'Pending',
-            self::IN_PROGRESS => 'In Progress',
-            self::SHIPPED => 'Shipped',
-            self::DELIVERED => 'Delivered',
-            self::FAILED => 'Failed',
-            self::CANCELLED => 'Cancelled',
-        };
-    }
 
     public function isComplete(): bool
     {

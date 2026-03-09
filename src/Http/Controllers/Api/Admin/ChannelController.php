@@ -33,8 +33,7 @@ class ChannelController extends Controller
 
         if ($request->filled('search')) {
             $query->where(function ($q) use ($request) {
-                $q->where('name', 'like', "%{$request->search}%")
-                    ->orWhere('slug', 'like', "%{$request->search}%");
+                $q->where('name', 'like', "%{$request->search}%")->orWhere('slug', 'like', "%{$request->search}%");
             });
         }
 
@@ -46,9 +45,7 @@ class ChannelController extends Controller
         // Pagination
         $perPage = min($request->get('per_page', 15), 100);
 
-        return ChannelResource::collection(
-            $query->paginate($perPage)
-        );
+        return ChannelResource::collection($query->paginate($perPage));
     }
 
     public function store(ChannelRequest $request): JsonResponse
@@ -108,8 +105,7 @@ class ChannelController extends Controller
 
     public function setDefault(Channel $channel): JsonResponse
     {
-        Channel::where('site_id', $channel->site_id)
-            ->update(['is_default' => false]);
+        Channel::where('site_id', $channel->site_id)->update(['is_default' => false]);
 
         $channel->update(['is_default' => true]);
 

@@ -119,9 +119,7 @@ class ProductSupplier extends Model
     public function setAsPrimary(): void
     {
         // Remove primary status from other suppliers for this product
-        static::where('product_id', $this->product_id)
-            ->where('id', '!=', $this->id)
-            ->update(['is_primary' => false]);
+        static::where('product_id', $this->product_id)->where('id', '!=', $this->id)->update(['is_primary' => false]);
 
         // Set this as primary
         $this->update(['is_primary' => true]);

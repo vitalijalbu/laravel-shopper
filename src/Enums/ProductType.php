@@ -4,24 +4,17 @@ declare(strict_types=1);
 
 namespace Cartino\Enums;
 
+use Cartino\Traits\TranslatableEnum;
+
 enum ProductType: string
 {
+    use TranslatableEnum;
+
     case Physical = 'physical';
     case Digital = 'digital';
     case Service = 'service';
     case Subscription = 'subscription';
     case Bundle = 'bundle';
-
-    public function label(): string
-    {
-        return match ($this) {
-            self::Physical => 'Physical Product',
-            self::Digital => 'Digital Product',
-            self::Service => 'Service',
-            self::Subscription => 'Subscription',
-            self::Bundle => 'Product Bundle',
-        };
-    }
 
     public function requiresShipping(): bool
     {

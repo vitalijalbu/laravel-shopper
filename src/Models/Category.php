@@ -6,20 +6,25 @@ namespace Cartino\Models;
 
 use Cartino\Support\HasHandle;
 use Cartino\Support\HasSite;
+use Cartino\Traits\HasAssets;
 use Cartino\Traits\HasCustomFields;
+use Cartino\Traits\Translatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Category extends Model
 {
+    use HasAssets;
     use HasCustomFields;
     use HasFactory;
     use HasHandle;
     use HasSite;
     use SoftDeletes;
+    use Translatable;
 
     protected $fillable = [
         'site_id',
@@ -49,10 +54,38 @@ class Category extends Model
         'published_at' => 'datetime',
     ];
 
+    protected array $translatable = [
+        'title',
+        'description',
+        'meta_title',
+        'meta_description',
+    ];
+
     protected $appends = [
         'url',
         'image_url',
     ];
+
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+
+        /**
+         * Asset collections configuration
+         */
+        $this->assetCollections = [
+            'featured_image' => [
+                'multiple' => false,
+                'max_files' => 1,
+                'mime_types' => ['image/jpeg', 'image/png', 'image/webp'],
+            ],
+            'banner' => [
+                'multiple' => false,
+                'max_files' => 1,
+                'mime_types' => ['image/jpeg', 'image/png', 'image/webp'],
+            ],
+        ];
+    }
 
     // Relationships
     public function site(): BelongsTo
@@ -60,21 +93,31 @@ class Category extends Model
         return $this->belongsTo(Site::class);
     }
 
+    public function parent(): BelongsTo
+    {
+        return $this->belongsTo(Category::class, 'parent_id');
+    }
+
+    public function children(): HasMany
+    {
+        return $this->hasMany(Category::class, 'parent_id')->orderBy('sort_order');
+    }
+
     public function products(): BelongsToMany
     {
-        return $this->belongsToMany(Product::class, 'collection_products')
-            ->withPivot(['position', 'featured'])
+        return $this->belongsToMany(Product::class, 'category_product')
+            ->withPivot(['sort_order', 'is_primary'])
             ->withTimestamps()
-            ->orderBy('collection_products.position');
+            ->orderBy('category_product.sort_order');
     }
 
     // Scopes
     public function scopePublished($query)
     {
-        return $query->where('status', 'published')
+        return $query
+            ->where('status', 'published')
             ->where(function ($q) {
-                $q->whereNull('published_at')
-                    ->orWhere('published_at', '<=', now());
+                $q->whereNull('published_at')->orWhere('published_at', '<=', now());
             });
     }
 
@@ -96,20 +139,18 @@ class Category extends Model
     // Accessors
     public function getUrlAttribute(): string
     {
-        return "/collections/{$this->handle}";
+        return "/categories/{$this->handle}";
     }
 
     public function getImageUrlAttribute(): ?string
     {
-        // TODO: Implement image handling with Spatie Media Library
-        return null;
+        return $this->image('square');
     }
 
     // Methods
     public function isPublished(): bool
     {
-        return $this->status === 'published' &&
-               ($this->published_at === null || $this->published_at <= now());
+        return $this->status === 'published' && ($this->published_at === null || $this->published_at <= now());
     }
 
     public function isManual(): bool

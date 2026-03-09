@@ -22,7 +22,7 @@ class UserPreference extends Model
 
     public function __construct(array $attributes = [])
     {
-        $this->table = shopper_table('user_preferences');
+        $this->table = 'user_preferences';
         parent::__construct($attributes);
     }
 
@@ -61,7 +61,7 @@ class UserPreference extends Model
             ],
             [
                 'preference_value' => $value,
-            ]
+            ],
         );
     }
 
@@ -83,7 +83,8 @@ class UserPreference extends Model
             $query->where('preference_type', $type);
         }
 
-        return $query->get()
+        return $query
+            ->get()
             ->groupBy('preference_type')
             ->map(function ($preferences) {
                 return $preferences->mapWithKeys(function (self $preference) {

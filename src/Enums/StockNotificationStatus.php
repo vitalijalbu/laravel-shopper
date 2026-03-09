@@ -1,25 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Cartino\Enums;
+
+use Cartino\Traits\TranslatableEnum;
 
 enum StockNotificationStatus: string
 {
+    use TranslatableEnum;
+
     case PENDING = 'pending';
     case SENDING = 'sending';
     case SENT = 'sent';
     case FAILED = 'failed';
     case CANCELLED = 'cancelled';
-
-    public function label(): string
-    {
-        return match ($this) {
-            self::PENDING => __('cartino::stock_notification.status.pending'),
-            self::SENDING => __('cartino::stock_notification.status.sending'),
-            self::SENT => __('cartino::stock_notification.status.sent'),
-            self::FAILED => __('cartino::stock_notification.status.failed'),
-            self::CANCELLED => __('cartino::stock_notification.status.cancelled'),
-        };
-    }
 
     public function color(): string
     {

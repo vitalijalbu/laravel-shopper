@@ -4,22 +4,16 @@ declare(strict_types=1);
 
 namespace Cartino\Enums;
 
+use Cartino\Traits\TranslatableEnum;
+
 enum WeightUnit: string
 {
+    use TranslatableEnum;
+
     case Kilogram = 'kg';
     case Gram = 'g';
     case Pound = 'lb';
     case Ounce = 'oz';
-
-    public function label(): string
-    {
-        return match ($this) {
-            self::Kilogram => 'Kilograms',
-            self::Gram => 'Grams',
-            self::Pound => 'Pounds',
-            self::Ounce => 'Ounces',
-        };
-    }
 
     public function abbreviation(): string
     {
@@ -34,16 +28,10 @@ enum WeightUnit: string
 
 enum InventoryPolicy: string
 {
+    use TranslatableEnum;
+
     case Deny = 'deny';
     case Continue = 'continue';
-
-    public function label(): string
-    {
-        return match ($this) {
-            self::Deny => 'Stop selling when out of stock',
-            self::Continue => 'Continue selling when out of stock',
-        };
-    }
 
     public function allowsOutOfStockSales(): bool
     {
@@ -58,18 +46,11 @@ enum InventoryPolicy: string
 
 enum InventoryManagement: string
 {
+    use TranslatableEnum;
+
     case Shopify = 'shopify';
     case NotManaged = 'not_managed';
     case FulfillmentService = 'fulfillment_service';
-
-    public function label(): string
-    {
-        return match ($this) {
-            self::Shopify => 'Track quantity',
-            self::NotManaged => 'Don\'t track quantity',
-            self::FulfillmentService => 'Fulfillment service',
-        };
-    }
 
     public function tracksInventory(): bool
     {
@@ -84,18 +65,11 @@ enum InventoryManagement: string
 
 enum CollectionType: string
 {
+    use TranslatableEnum;
+
     case Manual = 'manual';
     case Smart = 'smart';
     case Custom = 'custom';
-
-    public function label(): string
-    {
-        return match ($this) {
-            self::Manual => 'Manual',
-            self::Smart => 'Automated',
-            self::Custom => 'Custom',
-        };
-    }
 
     public function description(): string
     {
@@ -119,16 +93,10 @@ enum CollectionType: string
 
 enum PublishedScope: string
 {
+    use TranslatableEnum;
+
     case Web = 'web';
     case Global = 'global';
-
-    public function label(): string
-    {
-        return match ($this) {
-            self::Web => 'Online Store',
-            self::Global => 'Online Store and other sales channels',
-        };
-    }
 
     public static function values(): array
     {

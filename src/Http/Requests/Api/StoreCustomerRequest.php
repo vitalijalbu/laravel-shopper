@@ -2,7 +2,10 @@
 
 namespace Cartino\Http\Requests\Api;
 
+use Cartino\Enums\Gender;
+use Cartino\Models\CustomerGroup;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreCustomerRequest extends FormRequest
 {
@@ -25,10 +28,10 @@ class StoreCustomerRequest extends FormRequest
             'email' => 'required|email|unique:customers,email',
             'phone' => 'nullable|string|max:20',
             'date_of_birth' => 'nullable|date|before:today',
-            'gender' => 'nullable|in:male,female,other',
+            'gender' => ['nullable', Rule::enum(Gender::class)],
             'status' => 'string|in:active,inactive',
             'accepts_marketing' => 'boolean',
-            'customer_group_id' => 'nullable|integer|exists:customer_groups,id',
+            'customer_group_id' => ['nullable', 'integer', Rule::exists(CustomerGroup::class, 'id')],
             'notes' => 'nullable|string',
             'tags' => 'nullable|array',
             'tags.*' => 'string|max:100',

@@ -5,6 +5,8 @@ namespace Cartino\Repositories;
 use Cartino\Models\TaxRate;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class TaxRateRepository extends BaseRepository
 {
@@ -20,69 +22,111 @@ class TaxRateRepository extends BaseRepository
      */
     public function findAll(array $filters = []): LengthAwarePaginator
     {
-        $query = $this->model->newQuery();
+        return QueryBuilder::for(TaxRate::class)
+            ->allowedFilters([
+                'name',
+                'code',
+                'type',
+                AllowedFilter::exact('is_enabled'),
+            ])
+            ->allowedSorts(['name', 'code', 'rate', 'created_at'])
+            ->paginate($filters['per_page'] ?? config('settings.pagination.per_page', 15))
+            ->appends($filters);
+    }
 
-        // Search filter
-        if (! empty($filters['search'])) {
-            $search = $filters['search'];
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                    ->orWhere('code', 'like', "%{$search}%")
-                    ->orWhere('description', 'like', "%{$search}%");
-            });
-        }
+    /**
+     * Find one by ID or code
+     */
+    public function findOne(int|string $codeOrId): ?TaxRate
+    {
+        return $this->model
+            ->where('id', $codeOrId)
+            ->orWhere('code', $codeOrId)
+            ->firstOrFail();
+    }
 
-        // Status filter
-        if (! empty($filters['status'])) {
-            if ($filters['status'] === 'active') {
-                $query->active();
-            } elseif ($filters['status'] === 'enabled') {
-                $query->enabled();
-            } elseif ($filters['status'] === 'disabled') {
-                $query->where('is_enabled', false);
-            }
-        }
+    /**
+     * Create one
+     */
+    public function createOne(array $data): TaxRate
+    {
+        $taxRate = $this->model->create($data);
+        $this->clearCache();
 
-        // Type filter
-        if (! empty($filters['type'])) {
-            $query->where('type', $filters['type']);
-        }
+        return $taxRate;
+    }
 
-        // Country filter
-        if (! empty($filters['country'])) {
-            $query->whereJsonContains('countries', strtoupper($filters['country']));
-        }
+    /**
+     * Update one
+     */
+    public function updateOne(int $id, array $data): TaxRate
+    {
+        $taxRate = $this->findOrFail($id);
+        $taxRate->update($data);
+        $this->clearCache();
 
-        // Sorting
-        $sortField = $filters['sort'] ?? 'name';
-        $sortDirection = $filters['direction'] ?? 'asc';
-        $query->orderBy($sortField, $sortDirection);
+        return $taxRate->fresh();
+    }
 
-        return $query->paginate($perPage);
+    /**
+     * Delete one
+     */
+    public function deleteOne(int $id): bool
+    {
+        $taxRate = $this->findOrFail($id);
+        $deleted = $taxRate->delete();
+        $this->clearCache();
+
+        return $deleted;
+    }
+
+    /**
+     * Check if can delete
+     */
+    public function canDelete(int $id): bool
+    {
+        return true; // Tax rates can always be deleted
+    }
+
+    /**
+     * Toggle tax rate status
+     */
+    public function toggleStatus(int $id): TaxRate
+    {
+        $taxRate = $this->findOrFail($id);
+        $taxRate->update(['is_enabled' => ! $taxRate->is_enabled]);
+        $this->clearCache();
+
+        return $taxRate->fresh();
     }
 
     /**
      * Get active tax rates for a location
      */
-    public function getActiveForLocation(string $countryCode, ?string $stateCode = null, ?string $postcode = null): \Illuminate\Database\Eloquent\Category
-    {
+    public function getActiveForLocation(
+        string $countryCode,
+        ?string $stateCode = null,
+        ?string $postcode = null,
+    ): \Illuminate\Database\Eloquent\Collection {
         $cacheKey = $this->getCacheKey('location', md5($countryCode.'_'.$stateCode.'_'.$postcode));
 
-        return \Illuminate\Support\Facades\Cache::remember($cacheKey, $this->cacheTtl, function () use ($countryCode, $stateCode, $postcode) {
+        return \Illuminate\Support\Facades\Cache::remember($cacheKey, $this->cacheTtl, function () use (
+            $countryCode,
+            $stateCode,
+            $postcode,
+        ) {
             $query = $this->model->active();
 
             // Filter by country
             $query->where(function ($q) use ($countryCode) {
-                $q->whereJsonContains('countries', strtoupper($countryCode))
-                    ->orWhereNull('countries');
+                $q->whereJsonContains('countries', strtoupper($countryCode))->orWhereNull('countries');
             });
 
             // Filter by state if provided
             if ($stateCode) {
                 $query->where(function ($q) use ($countryCode, $stateCode) {
                     $stateKey = strtoupper($countryCode.'_'.$stateCode);
-                    $q->whereJsonContains('states', $stateKey)
-                        ->orWhereNull('states');
+                    $q->whereJsonContains('states', $stateKey)->orWhereNull('states');
                 });
             }
 
@@ -92,7 +136,10 @@ class TaxRateRepository extends BaseRepository
                     $q->whereNull('postcodes');
 
                     // Check postcode patterns
-                    $taxRates = $this->model->active()->whereNotNull('postcodes')->get();
+                    $taxRates = $this->model
+                        ->active()
+                        ->whereNotNull('postcodes')
+                        ->get();
                     $matchingIds = [];
 
                     foreach ($taxRates as $rate) {
@@ -117,8 +164,13 @@ class TaxRateRepository extends BaseRepository
     /**
      * Calculate tax for an amount
      */
-    public function calculateTax(float $amount, string $countryCode, ?string $stateCode = null, ?string $postcode = null, array $productCategories = []): array
-    {
+    public function calculateTax(
+        float $amount,
+        string $countryCode,
+        ?string $stateCode = null,
+        ?string $postcode = null,
+        array $productCategories = [],
+    ): array {
         $taxRates = $this->getActiveForLocation($countryCode, $stateCode, $postcode);
 
         $totalTax = 0;
@@ -222,7 +274,7 @@ class TaxRateRepository extends BaseRepository
     /**
      * Get all countries with tax rates
      */
-    public function getCountries(): \Illuminate\Support\Category
+    public function getCountries(): \Illuminate\Support\Collection
     {
         $cacheKey = $this->getCacheKey('countries', 'all');
 
@@ -244,7 +296,7 @@ class TaxRateRepository extends BaseRepository
     /**
      * Get tax zones for dropdown
      */
-    public function getTaxZones(): \Illuminate\Support\Category
+    public function getTaxZones(): \Illuminate\Support\Collection
     {
         $cacheKey = $this->getCacheKey('tax_zones', 'all');
 
@@ -258,34 +310,13 @@ class TaxRateRepository extends BaseRepository
     }
 
     /**
-     * Toggle tax rate status
-     */
-    public function toggleStatus(int $id): ?TaxRate
-    {
-        $taxRate = $this->model->find($id);
-
-        if (! $taxRate) {
-            return null;
-        }
-
-        $taxRate->update([
-            'is_active' => ! $taxRate->is_active,
-        ]);
-
-        $this->clearCache();
-
-        return $taxRate->fresh();
-    }
-
-    /**
      * Update priorities for multiple tax rates
      */
     public function updatePriorities(array $taxRates): bool
     {
         try {
             foreach ($taxRates as $taxRateData) {
-                $this->model->where('id', $taxRateData['id'])
-                    ->update(['priority' => $taxRateData['priority']]);
+                $this->model->where('id', $taxRateData['id'])->update(['priority' => $taxRateData['priority']]);
             }
 
             $this->clearCache();
@@ -317,7 +348,7 @@ class TaxRateRepository extends BaseRepository
     /**
      * Get applicable tax rates based on conditions
      */
-    public function getApplicableRates(array $conditions = []): \Illuminate\Database\Eloquent\Category
+    public function getApplicableRates(array $conditions = []): \Illuminate\Database\Eloquent\Collection
     {
         $query = $this->model->newQuery()->where('is_active', true);
 
@@ -362,7 +393,10 @@ class TaxRateRepository extends BaseRepository
      */
     public function bulkAction(string $action, array $ids, array $metadata = []): array
     {
-        $validatedIds = $this->model->whereIn('id', $ids)->pluck('id')->toArray();
+        $validatedIds = $this->model
+            ->whereIn('id', $ids)
+            ->pluck('id')
+            ->toArray();
         $processedCount = 0;
         $errors = [];
 

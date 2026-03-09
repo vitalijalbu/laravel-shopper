@@ -171,7 +171,7 @@ class App extends Model
         return match ($this->pricing_model) {
             'one_time' => formatCurrency($this->price),
             'recurring' => formatCurrency($this->price).'/'.__('apps.month'),
-            default => formatCurrency($this->price)
+            default => formatCurrency($this->price),
         };
     }
 

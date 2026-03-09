@@ -44,15 +44,15 @@ class SupplierResource extends BaseResource
             'average_response_time_hours' => $this->average_response_time_hours,
             'created_at' => $this->created_at?->toISOString(),
             'updated_at' => $this->updated_at?->toISOString(),
-
             // Relationships
             'site' => $this->whenIncluded('site', fn () => [
                 'id' => $this->site?->id,
                 'name' => $this->site?->name,
             ]),
-
-            'products_count' => $this->whenIncluded('products', fn () => $this->products_count ?? $this->products()->count()),
-
+            'products_count' => $this->whenIncluded(
+                'products',
+                fn () => $this->products_count ?? $this->products()->count(),
+            ),
             'products' => $this->whenIncluded('products', fn () => $this->products->map(fn ($product) => [
                 'id' => $product->id,
                 'name' => $product->name,
@@ -60,20 +60,23 @@ class SupplierResource extends BaseResource
                 'price' => $product->price_amount,
                 'status' => $product->status,
             ])),
-
-            'purchase_orders_count' => $this->whenIncluded('purchase_orders', fn () => $this->purchase_orders_count ?? $this->purchaseOrders()->count()),
-
-            'purchase_orders' => $this->whenIncluded('purchase_orders', fn () => $this->purchaseOrders->map(fn ($order) => [
-                'id' => $order->id,
-                'order_number' => $order->order_number,
-                'status' => $order->status,
-                'total_amount' => $order->total_amount,
-                'order_date' => $order->order_date?->toISOString(),
-                'expected_delivery_date' => $order->expected_delivery_date?->toISOString(),
-                'delivery_date' => $order->delivery_date?->toISOString(),
-                'delivered_on_time' => $order->delivered_on_time,
-            ])),
-
+            'purchase_orders_count' => $this->whenIncluded(
+                'purchase_orders',
+                fn () => $this->purchase_orders_count ?? $this->purchaseOrders()->count(),
+            ),
+            'purchase_orders' => $this->whenIncluded(
+                'purchase_orders',
+                fn () => $this->purchaseOrders->map(fn ($order) => [
+                    'id' => $order->id,
+                    'order_number' => $order->order_number,
+                    'status' => $order->status,
+                    'total_amount' => $order->total_amount,
+                    'order_date' => $order->order_date?->toISOString(),
+                    'expected_delivery_date' => $order->expected_delivery_date?->toISOString(),
+                    'delivery_date' => $order->delivery_date?->toISOString(),
+                    'delivered_on_time' => $order->delivered_on_time,
+                ]),
+            ),
             // Performance metrics
             'performance_metrics' => $this->whenIncluded('performance', fn () => [
                 'total_orders' => $this->purchaseOrders()->count(),
@@ -84,7 +87,6 @@ class SupplierResource extends BaseResource
                 'average_order_value' => $this->calculateAverageOrderValue(),
                 'rating' => $this->rating,
             ]),
-
             // Display values
             'display_status' => $this->getDisplayStatus(),
             'display_priority' => $this->getDisplayPriority(),

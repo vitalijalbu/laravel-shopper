@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace Cartino\Enums;
 
 use Cartino\Helpers\EnumSerializable;
+use Cartino\Traits\TranslatableEnum;
 
 enum PurchaseOrderStatus: string
 {
     use EnumSerializable;
+    use TranslatableEnum;
 
     case DRAFT = 'draft';
     case SENT = 'sent';
@@ -16,18 +18,6 @@ enum PurchaseOrderStatus: string
     case PARTIAL = 'partial';
     case COMPLETED = 'completed';
     case CANCELLED = 'cancelled';
-
-    public function label(): string
-    {
-        return match ($this) {
-            self::DRAFT => __('cartino::purchase_order.status.draft'),
-            self::SENT => __('cartino::purchase_order.status.sent'),
-            self::CONFIRMED => __('cartino::purchase_order.status.confirmed'),
-            self::PARTIAL => __('cartino::purchase_order.status.partial'),
-            self::COMPLETED => __('cartino::purchase_order.status.completed'),
-            self::CANCELLED => __('cartino::purchase_order.status.cancelled'),
-        };
-    }
 
     public function color(): string
     {

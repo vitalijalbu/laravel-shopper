@@ -100,7 +100,6 @@ class SocialAuthApiController extends ApiController
                     'provider' => $provider,
                 ],
             ]);
-
         } catch (Exception $e) {
             Log::error("Failed to generate OAuth URL for {$provider}: ".$e->getMessage());
 
@@ -178,7 +177,6 @@ class SocialAuthApiController extends ApiController
                     ],
                 ],
             ]);
-
         } catch (Exception $e) {
             Log::error("API OAuth callback failed for {$provider}: ".$e->getMessage(), [
                 'exception' => $e,
@@ -265,7 +263,7 @@ class SocialAuthApiController extends ApiController
                         'raw' => $providerUser->getRaw(),
                         'linked_at' => now(),
                     ],
-                ]
+                ],
             );
 
             Log::info("User {$user->id} linked {$provider} account via API");
@@ -277,7 +275,6 @@ class SocialAuthApiController extends ApiController
                     'connected_providers' => $user->fresh()->connected_providers,
                 ],
             ]);
-
         } catch (Exception $e) {
             Log::error("API OAuth linking failed for {$provider}: ".$e->getMessage());
 
@@ -341,7 +338,6 @@ class SocialAuthApiController extends ApiController
                     'connected_providers' => $user->fresh()->connected_providers,
                 ],
             ]);
-
         } catch (Exception $e) {
             Log::error("API OAuth unlinking failed for {$provider}: ".$e->getMessage());
 
@@ -429,7 +425,6 @@ class SocialAuthApiController extends ApiController
                     'last_updated' => $socialAccount->updated_at,
                 ],
             ]);
-
         } catch (Exception $e) {
             Log::error("OAuth token refresh failed for {$provider}: ".$e->getMessage());
 
@@ -455,8 +450,6 @@ class SocialAuthApiController extends ApiController
     {
         $config = config("services.{$provider}");
 
-        return $config
-            && ! empty($config['client_id'])
-            && ! empty($config['client_secret']);
+        return $config && ! empty($config['client_id']) && ! empty($config['client_secret']);
     }
 }

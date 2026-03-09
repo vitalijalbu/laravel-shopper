@@ -6,6 +6,9 @@ import CpLayout from "@/layouts/cp-layout.vue";
 // Import Cartino configuration fallbacks
 import { defaultCartinoConfig } from "@/config/cartino-config.js";
 
+// Import translation plugin (Statamic-style)
+import translationsPlugin from "@/plugins/translations";
+
 // Import global styles
 import "../css/app.css";
 
@@ -32,7 +35,8 @@ createInertiaApp({
   setup({ el, App, props, plugin }) {
     const app = createApp({ render: () => h(App, props) })
       .use(plugin)
-      .use(createPinia());
+      .use(createPinia())
+      .use(translationsPlugin); // Statamic-style translations
 
     // Configure CSRF token for Inertia requests
     if (window.Laravel && window.Laravel.csrfToken) {
@@ -43,20 +47,6 @@ createInertiaApp({
     const cartinoConfig = window.CartinoConfig || defaultCartinoConfig;
     cartinoConfig.translations = cartinoConfig.translations || {};
     app.config.globalProperties.$cartinoConfig = cartinoConfig;
-
-    // Global Components Registration
-    import("@/components/icon.vue").then((module) =>
-      app.component("Icon", module.default),
-    );
-    import("@/components/page.vue").then((module) =>
-      app.component("Page", module.default),
-    );
-    import("@/components/data-table.vue").then((module) =>
-      app.component("DataTable", module.default),
-    );
-    import("@/components/modal.vue").then((module) =>
-      app.component("Modal", module.default),
-    );
 
     // Error Handler
     app.config.errorHandler = (err, vm, info) => {

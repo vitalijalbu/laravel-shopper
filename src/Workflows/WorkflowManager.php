@@ -6,12 +6,12 @@ namespace Cartino\Workflows;
 
 use Cartino\Workflows\Events\WorkflowExecuted;
 use Cartino\Workflows\Events\WorkflowFailed;
-use Illuminate\Support\Category;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Event;
 
 class WorkflowManager
 {
-    protected Category $workflows;
+    protected Collection $workflows;
 
     public function __construct()
     {
@@ -68,7 +68,7 @@ class WorkflowManager
     public function executeWorkflow(WorkflowInterface $workflow, $event): void
     {
         try {
-            $data = is_array($event) ? $event : (array) $event;
+            $data = is_array($event) ? $event : ((array) $event);
 
             $result = $workflow->execute($data);
 
@@ -85,7 +85,7 @@ class WorkflowManager
     /**
      * Get all workflows
      */
-    public function all(): Category
+    public function all(): Collection
     {
         return $this->workflows;
     }
@@ -93,7 +93,7 @@ class WorkflowManager
     /**
      * Get workflows by trigger
      */
-    public function getByTrigger(string $trigger): Category
+    public function getByTrigger(string $trigger): Collection
     {
         return $this->workflows->filter(function ($workflow) use ($trigger) {
             return $workflow->getTrigger() === $trigger;

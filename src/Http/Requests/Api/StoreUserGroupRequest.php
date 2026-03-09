@@ -2,7 +2,9 @@
 
 namespace Cartino\Http\Requests\Api;
 
+use Cartino\Models\Permission;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreUserGroupRequest extends FormRequest
 {
@@ -25,7 +27,7 @@ class StoreUserGroupRequest extends FormRequest
             'is_active' => 'boolean',
             'is_default' => 'boolean',
             'permissions' => 'nullable|array',
-            'permissions.*' => 'string|exists:permissions,name',
+            'permissions.*' => ['string', Rule::exists(Permission::class, 'name')],
             'metadata' => 'nullable|array',
         ];
     }

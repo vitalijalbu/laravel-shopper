@@ -17,11 +17,11 @@ class StoreCartRequest extends FormRequest
     {
         return [
             'session_id' => 'nullable|string|max:255',
-            'customer_id' => 'nullable|exists:customers,id',
+            'customer_id' => ['nullable', Rule::exists(\Cartino\Models\Customer::class, 'id')],
             'email' => 'nullable|email|max:255',
             'status' => ['nullable', Rule::enum(CartStatus::class)],
             'items' => 'nullable|array',
-            'items.*.product_id' => 'required|exists:products,id',
+            'items.*.product_id' => ['required', Rule::exists(\Cartino\Models\Product::class, 'id')],
             'items.*.quantity' => 'required|integer|min:1|max:999',
             'items.*.price' => 'required|numeric|min:0',
             'subtotal' => 'nullable|numeric|min:0',

@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Facade;
 /**
  * @method static \Cartino\Entries\Entry|null find(string $id)
  * @method static \Cartino\Entries\Entry|null findBySlug(string $slug, string $collection)
- * @method static \Illuminate\Support\Category whereCollection(string $collection)
+ * @method static \Illuminate\Support\Collection whereCollection(string $collection)
  * @method static \Cartino\Entries\Entry make()
  * @method static void save(\Cartino\Entries\Entry $entry)
  * @method static void delete(\Cartino\Entries\Entry $entry)

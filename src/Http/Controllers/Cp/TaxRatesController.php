@@ -1,8 +1,8 @@
 <?php
 
-namespace Cartino\Http\Controllers\CP;
+namespace Cartino\Http\Controllers\Cp;
 
-use Cartino\CP\Page;
+use Cartino\Cp\Page;
 use Cartino\Http\Controllers\Controller;
 use Cartino\Models\TaxRate;
 use Cartino\Repositories\TaxRateRepository;
@@ -38,7 +38,6 @@ class TaxRatesController extends Controller
 
         return Inertia::render('settings-tax-rates', [
             'page' => $page->compile(),
-
             'taxRates' => $taxRates,
             'countries' => $countries,
             'taxZones' => $taxZones,
@@ -98,7 +97,6 @@ class TaxRatesController extends Controller
 
         return Inertia::render('tax-rate-show', [
             'page' => $page->compile(),
-
             'taxRate' => $taxRate->load('taxZone'),
         ]);
     }
@@ -236,7 +234,7 @@ class TaxRatesController extends Controller
                 $validated['zip_code'] ?? null,
                 $validated['city'] ?? null,
                 $validated['product_class'] ?? null,
-                $validated['shipping_amount'] ?? 0
+                $validated['shipping_amount'] ?? 0,
             );
 
             return response()->json([

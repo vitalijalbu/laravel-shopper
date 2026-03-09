@@ -31,7 +31,6 @@ class CatalogResource extends JsonResource
             'data' => $this->data,
             'created_at' => $this->created_at->toIso8601String(),
             'updated_at' => $this->updated_at->toIso8601String(),
-
             // Relationships (when loaded)
             'sites' => SiteResource::collection($this->whenLoaded('sites')),
             'products_count' => $this->when($this->relationLoaded('products'), fn () => $this->products->count()),

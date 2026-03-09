@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 class TaxRateController extends ApiController
 {
     public function __construct(
-        protected TaxRateRepository $taxRateRepository
+        protected TaxRateRepository $taxRateRepository,
     ) {}
 
     /**
@@ -182,7 +182,7 @@ class TaxRateController extends ApiController
                 $validated['state'] ?? null,
                 $validated['postcode'] ?? null,
                 $validated['amount'],
-                $validated['product_category_id'] ?? null
+                $validated['product_category_id'] ?? null,
             );
 
             return response()->json([
@@ -217,7 +217,7 @@ class TaxRateController extends ApiController
                 $validated['state'] ?? null,
                 $validated['postcode'] ?? null,
                 $validated['product_category_id'] ?? null,
-                $validated['is_inclusive'] ?? false
+                $validated['is_inclusive'] ?? false,
             );
 
             return response()->json([

@@ -13,9 +13,7 @@ class WebhookService
      */
     public function dispatch(string $event, array $payload): void
     {
-        $webhooks = Webhook::active()
-            ->forEvent($event)
-            ->get();
+        $webhooks = Webhook::active()->forEvent($event)->get();
 
         Log::info('Dispatching webhooks', [
             'event' => $event,
@@ -68,19 +66,16 @@ class WebhookService
             'order.fulfilled',
             'order.paid',
             'order.refunded',
-
             // Product events
             'product.created',
             'product.updated',
             'product.deleted',
             'product.stock_low',
             'product.out_of_stock',
-
             // Customer events
             'customer.created',
             'customer.updated',
             'customer.deleted',
-
             // App events
             'app.installed',
             'app.uninstalled',

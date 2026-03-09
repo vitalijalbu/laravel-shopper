@@ -13,30 +13,31 @@ class Menu extends Model
     protected $table = 'menus';
 
     protected $fillable = [
+        'site_id',
         'handle',
         'title',
         'description',
+        'location',
         'settings',
+        'data',
         'is_active',
         'sort_order',
     ];
 
     protected $casts = [
         'settings' => 'array',
+        'data' => 'array',
         'is_active' => 'boolean',
     ];
 
     public function items(): HasMany
     {
-        return $this->hasMany(MenuItem::class)
-            ->whereNull('parent_id')
-            ->orderBy('sort_order');
+        return $this->hasMany(MenuItem::class)->whereNull('parent_id')->orderBy('sort_order');
     }
 
     public function allItems(): HasMany
     {
-        return $this->hasMany(MenuItem::class)
-            ->orderBy('sort_order');
+        return $this->hasMany(MenuItem::class)->orderBy('sort_order');
     }
 
     public function getTree(): array

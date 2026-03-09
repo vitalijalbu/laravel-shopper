@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Cartino\Http\Controllers\Api\Auth\SocialAuthApiController;
+use Cartino\Http\Controllers\API\AuthController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,6 +16,21 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+// Standard authentication routes
+Route::prefix('auth')->name('api.auth.')->group(function () {
+    // Public routes
+    Route::post('register', [AuthController::class, 'register'])->name('register');
+    Route::post('login', [AuthController::class, 'login'])->name('login');
+
+    // Protected routes
+    Route::middleware(['auth:sanctum'])->group(function () {
+        Route::get('me', [AuthController::class, 'me'])->name('me');
+        Route::post('logout', [AuthController::class, 'logout'])->name('logout');
+        Route::post('refresh', [AuthController::class, 'refresh'])->name('refresh');
+    });
+});
+
+// Social authentication routes
 Route::prefix('auth/social')->name('api.auth.social.')->group(function () {
 
     // Public routes (no authentication required)

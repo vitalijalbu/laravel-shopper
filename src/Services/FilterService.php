@@ -50,12 +50,7 @@ class FilterService
         // Sort params for consistent cache keys
         ksort($params);
 
-        return sprintf(
-            '%s:%s:%s',
-            $prefix,
-            class_basename($params['model'] ?? 'unknown'),
-            md5(serialize($params))
-        );
+        return sprintf('%s:%s:%s', $prefix, class_basename($params['model'] ?? 'unknown'), md5(serialize($params)));
     }
 
     /**
@@ -167,9 +162,7 @@ class FilterService
 
             return [
                 'total_records' => $instance->count(),
-                'active_records' => method_exists($instance, 'scopeActive')
-                    ? $instance->active()->count()
-                    : null,
+                'active_records' => method_exists($instance, 'scopeActive') ? $instance->active()->count() : null,
                 'recent_records' => $instance->where('created_at', '>=', now()->subDays(7))->count(),
             ];
         });

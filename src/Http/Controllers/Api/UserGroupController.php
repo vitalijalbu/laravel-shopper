@@ -31,8 +31,7 @@ class UserGroupController extends ApiController
 
         if ($search) {
             $query->where(function ($q) use ($search) {
-                $q->where('name', 'LIKE', "%{$search}%")
-                    ->orWhere('description', 'LIKE', "%{$search}%");
+                $q->where('name', 'LIKE', "%{$search}%")->orWhere('description', 'LIKE', "%{$search}%");
             });
         }
 
@@ -173,7 +172,7 @@ class UserGroupController extends ApiController
 
             return $this->successResponse(
                 $userGroup->load('users'),
-                count($validated['user_ids']).' utenti assegnati al gruppo'
+                count($validated['user_ids']).' utenti assegnati al gruppo',
             );
         } catch (\Exception $e) {
             return $this->errorResponse('Errore durante l\'assegnazione degli utenti');
@@ -196,7 +195,7 @@ class UserGroupController extends ApiController
 
             return $this->successResponse(
                 $userGroup->load('users'),
-                count($validated['user_ids']).' utenti rimossi dal gruppo'
+                count($validated['user_ids']).' utenti rimossi dal gruppo',
             );
         } catch (\Exception $e) {
             return $this->errorResponse('Errore durante la rimozione degli utenti');
@@ -215,7 +214,7 @@ class UserGroupController extends ApiController
 
             return $this->successResponse(
                 $userGroup->load('permissions'),
-                'Permessi del gruppo sincronizzati con successo'
+                'Permessi del gruppo sincronizzati con successo',
             );
         } catch (\Exception $e) {
             return $this->errorResponse('Errore durante la sincronizzazione dei permessi');

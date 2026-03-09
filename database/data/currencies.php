@@ -9,7 +9,7 @@ return [
         'decimal_places' => 2,
         'exchange_rate' => 1.0000,
         'is_default' => true,
-        'is_enabled' => true,
+
     ],
     [
         'code' => 'EUR',
@@ -19,7 +19,7 @@ return [
         'decimal_places' => 2,
         'exchange_rate' => 0.8500,
         'is_default' => false,
-        'is_enabled' => true,
+
     ],
     [
         'code' => 'GBP',
@@ -29,7 +29,7 @@ return [
         'decimal_places' => 2,
         'exchange_rate' => 0.7300,
         'is_default' => false,
-        'is_enabled' => true,
+
     ],
     [
         'code' => 'JPY',
@@ -39,7 +39,7 @@ return [
         'decimal_places' => 0,
         'exchange_rate' => 150.0000,
         'is_default' => false,
-        'is_enabled' => true,
+
     ],
     [
         'code' => 'CAD',
@@ -49,7 +49,7 @@ return [
         'decimal_places' => 2,
         'exchange_rate' => 1.3500,
         'is_default' => false,
-        'is_enabled' => true,
+
     ],
     [
         'code' => 'AUD',
@@ -59,6 +59,6 @@ return [
         'decimal_places' => 2,
         'exchange_rate' => 1.5000,
         'is_default' => false,
-        'is_enabled' => true,
+
     ],
 ];

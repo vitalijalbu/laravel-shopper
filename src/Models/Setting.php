@@ -67,7 +67,7 @@ class Setting extends Model
             [
                 'value' => $processedValue,
                 'type' => $type,
-            ]
+            ],
         );
     }
 

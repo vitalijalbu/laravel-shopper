@@ -13,7 +13,7 @@ use Illuminate\Http\Request;
 class ChannelController extends ApiController
 {
     public function __construct(
-        private readonly ChannelRepository $repository
+        private readonly ChannelRepository $repository,
     ) {}
 
     /**
@@ -71,7 +71,10 @@ class ChannelController extends ApiController
     {
         try {
             if (! $this->repository->canDelete($channel->id)) {
-                return $this->errorResponse('Impossibile eliminare il channel: è quello di default o ha prodotti/ordini associati', 422);
+                return $this->errorResponse(
+                    'Impossibile eliminare il channel: è quello di default o ha prodotti/ordini associati',
+                    422,
+                );
             }
 
             $this->repository->delete($channel->id);

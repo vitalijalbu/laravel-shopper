@@ -2,7 +2,10 @@
 
 namespace Cartino\Http\Requests\Menu;
 
+use Cartino\Enums\MenuItemType;
+use Cartino\Models\MenuItem;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreMenuItemRequest extends FormRequest
 {
@@ -16,8 +19,8 @@ class StoreMenuItemRequest extends FormRequest
         return [
             'title' => 'required|string|max:255',
             'url' => 'nullable|string|max:255',
-            'type' => 'required|string|in:link,collection,entry,external',
-            'parent_id' => 'nullable|exists:menu_items,id',
+            'type' => ['required', 'string', Rule::enum(MenuItemType::class)],
+            'parent_id' => ['nullable', Rule::exists(MenuItem::class, 'id')],
             'reference_type' => 'nullable|string',
             'reference_id' => 'nullable|integer',
             'data' => 'nullable|array',

@@ -9,8 +9,12 @@ use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
 class AnalyticsResolver
 {
-    public function trackEvent($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo): AnalyticsEvent
-    {
+    public function trackEvent(
+        $rootValue,
+        array $args,
+        GraphQLContext $context,
+        ResolveInfo $resolveInfo,
+    ): AnalyticsEvent {
         $input = $args['input'] ?? $args;
 
         return AnalyticsEvent::track(
@@ -18,7 +22,7 @@ class AnalyticsResolver
             $input['properties'] ?? [],
             $input['context'] ?? [],
             $input['sessionId'] ?? null,
-            $input['userId'] ?? null
+            $input['userId'] ?? null,
         );
     }
 
@@ -29,8 +33,7 @@ class AnalyticsResolver
         $eventTypes = $args['eventTypes'] ?? [];
         $groupBy = $args['groupBy'] ?? 'DAY';
 
-        $query = AnalyticsEvent::query()
-            ->whereBetween('occurred_at', [$dateFrom, $dateTo]);
+        $query = AnalyticsEvent::query()->whereBetween('occurred_at', [$dateFrom, $dateTo]);
 
         if (! empty($eventTypes)) {
             $query->whereIn('event_type', $eventTypes);

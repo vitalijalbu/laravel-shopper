@@ -2,7 +2,9 @@
 
 namespace Cartino\Http\Requests\StockNotification;
 
+use Cartino\Models\Customer;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreStockNotificationRequest extends FormRequest
 {
@@ -14,7 +16,7 @@ class StoreStockNotificationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'customer_id' => 'required|exists:customers,id',
+            'customer_id' => ['required', Rule::exists(Customer::class, 'id')],
             'product_type' => 'required|string|in:entry,collection,external',
             'product_id' => 'required|integer',
             'product_handle' => 'nullable|string|max:255',

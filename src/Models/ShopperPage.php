@@ -53,10 +53,10 @@ class ShopperPage extends Model
     // Scopes
     public function scopePublished($query)
     {
-        return $query->where('status', 'published')
+        return $query
+            ->where('status', 'published')
             ->where(function ($q) {
-                $q->whereNull('published_at')
-                    ->orWhere('published_at', '<=', now());
+                $q->whereNull('published_at')->orWhere('published_at', '<=', now());
             });
     }
 
@@ -73,8 +73,7 @@ class ShopperPage extends Model
     // Methods
     public function isPublished(): bool
     {
-        return $this->status === 'published' &&
-               ($this->published_at === null || $this->published_at <= now());
+        return $this->status === 'published' && ($this->published_at === null || $this->published_at <= now());
     }
 
     public function getTemplateHandle(): ?string

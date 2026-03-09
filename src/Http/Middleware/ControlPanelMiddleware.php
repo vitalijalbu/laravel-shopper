@@ -33,8 +33,7 @@ class ControlPanelMiddleware
 
             Auth::logout();
 
-            return redirect()->route('cp.login')
-                ->withErrors(['email' => __('cartino::auth.cp_access_denied')]);
+            return redirect()->route('cp.login')->withErrors(['email' => __('cartino::auth.cp_access_denied')]);
         }
 
         return $next($request);

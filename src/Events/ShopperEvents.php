@@ -55,7 +55,7 @@ class EntryUpdated extends Event
 
     public function hasChanged($field = null)
     {
-        if (! $original = $this->original()) {
+        if (! ($original = $this->original())) {
             return true;
         }
 

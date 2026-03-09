@@ -3,14 +3,17 @@
 namespace Cartino\Repositories;
 
 use Cartino\Contracts\RepositoryInterface;
+use Cartino\Traits\OptimizesQueries;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Category;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Cache;
 
 abstract class BaseRepository implements RepositoryInterface
 {
+    use OptimizesQueries;
+
     protected Model $model;
 
     protected Builder $query;
@@ -29,7 +32,7 @@ abstract class BaseRepository implements RepositoryInterface
 
     abstract protected function makeModel(): Model;
 
-    public function all(array $columns = ['*']): Category
+    public function all(array $columns = ['*']): Collection
     {
         $cacheKey = $this->getCacheKey('all', md5(serialize($columns)));
 
@@ -61,7 +64,7 @@ abstract class BaseRepository implements RepositoryInterface
         });
     }
 
-    public function findWhere(array $where, array $columns = ['*']): Category
+    public function findWhere(array $where, array $columns = ['*']): Collection
     {
         $cacheKey = $this->getCacheKey('findWhere', md5(serialize($where)));
 
@@ -162,17 +165,12 @@ abstract class BaseRepository implements RepositoryInterface
 
     protected function getCacheKey(string $method, mixed $identifier): string
     {
-        return sprintf(
-            '%s:%s:%s',
-            $this->cachePrefix,
-            $method,
-            $identifier
-        );
+        return sprintf('%s:%s:%s', $this->cachePrefix, $method, $identifier);
     }
 
     protected function clearCache(): void
     {
-        if (method_exists(Cache::getStore(), 'tags')) {
+        if (Cache::supportsTags()) {
             Cache::tags([$this->cachePrefix])->flush();
         }
     }
@@ -183,5 +181,80 @@ abstract class BaseRepository implements RepositoryInterface
         $this->with = [];
 
         return $this;
+    }
+
+    /**
+     * Standard CRUD operations - Override if custom logic needed
+     */
+    public function createOne(array $data): Model
+    {
+        $model = $this->model->create($data);
+        $this->clearCache();
+
+        return $model;
+    }
+
+    public function updateOne(int $id, array $data): Model
+    {
+        $model = $this->findOrFail($id);
+        $model->update($data);
+        $this->clearCache();
+
+        return $model->fresh();
+    }
+
+    public function deleteOne(int $id): bool
+    {
+        $model = $this->findOrFail($id);
+        $deleted = $model->delete();
+        $this->clearCache();
+
+        return $deleted;
+    }
+
+    public function canDelete(int $id): bool
+    {
+        $model = $this->findOrFail($id);
+        $restrictions = $this->getDeleteRestrictions($model);
+
+        return empty($restrictions);
+    }
+
+    /**
+     * Override in child repositories to define relationships that prevent deletion
+     * Example: ['products' => 'Has associated products']
+     */
+    protected function getDeleteRestrictions(Model $model): array
+    {
+        return [];
+    }
+
+    public function toggleStatus(int $id): Model
+    {
+        $model = $this->findOrFail($id);
+        $statusField = $this->getStatusField();
+        $currentStatus = $model->{$statusField};
+        $newStatus = $this->getToggledStatus($currentStatus);
+
+        $model->update([$statusField => $newStatus]);
+        $this->clearCache();
+
+        return $model->fresh();
+    }
+
+    protected function getStatusField(): string
+    {
+        return 'status';
+    }
+
+    protected function getToggledStatus(string $current): string
+    {
+        return match ($current) {
+            'active' => 'inactive',
+            'inactive' => 'active',
+            'published' => 'draft',
+            'draft' => 'published',
+            default => $current,
+        };
     }
 }

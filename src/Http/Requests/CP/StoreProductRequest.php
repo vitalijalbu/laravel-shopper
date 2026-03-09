@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Cartino\Http\Requests\CP;
 
+use Cartino\Models\Brand;
+use Cartino\Models\Collection;
+use Cartino\Models\Media;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -46,47 +49,39 @@ class StoreProductRequest extends FormRequest
             'type' => ['required', 'string', 'in:simple,variable,digital,subscription'],
             'status' => ['required', 'string', 'in:published,draft,archived'],
             'featured' => ['boolean'],
-
             // Pricing
             'price' => ['required', 'numeric', 'min:0'],
             'compare_price' => ['nullable', 'numeric', 'min:0', 'gt:price'],
             'cost_price' => ['nullable', 'numeric', 'min:0'],
-
             // Inventory
             'track_inventory' => ['boolean'],
             'stock_quantity' => ['nullable', 'integer', 'min:0'],
             'low_stock_threshold' => ['nullable', 'integer', 'min:0'],
             'allow_backorder' => ['boolean'],
-
             // Physical properties
             'weight' => ['nullable', 'numeric', 'min:0'],
             'length' => ['nullable', 'numeric', 'min:0'],
             'width' => ['nullable', 'numeric', 'min:0'],
             'height' => ['nullable', 'numeric', 'min:0'],
             'requires_shipping' => ['boolean'],
-
             // Relationships
-            'brand_id' => ['nullable', 'exists:brands,id'],
+            'brand_id' => ['nullable', Rule::exists(Brand::class, 'id')],
             'collection_ids' => ['nullable', 'array'],
-            'collection_ids.*' => ['exists:collections,id'],
-
+            'collection_ids.*' => [Rule::exists(Collection::class, 'id')],
             // SEO
             'seo_title' => ['nullable', 'string', 'max:60'],
             'seo_description' => ['nullable', 'string', 'max:160'],
-
             // Media
             'media' => ['nullable', 'array'],
-            'media.*.id' => ['nullable', 'exists:media,id'],
+            'media.*.id' => ['nullable', Rule::exists(Media::class, 'id')],
             'media.*.alt' => ['nullable', 'string', 'max:255'],
             'media.*.position' => ['nullable', 'integer', 'min:0'],
-
             // Variants (for variable products)
             'variants' => ['nullable', 'array'],
             'variants.*.sku' => ['nullable', 'string', 'max:100'],
             'variants.*.price' => ['nullable', 'numeric', 'min:0'],
             'variants.*.stock_quantity' => ['nullable', 'integer', 'min:0'],
             'variants.*.attributes' => ['nullable', 'array'],
-
             // Additional fields
             'tags' => ['nullable', 'array'],
             'tags.*' => ['string', 'max:50'],

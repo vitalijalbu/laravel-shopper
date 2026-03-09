@@ -13,7 +13,7 @@ class ProcessFidelityPointsForOrder
      * Create the event listener.
      */
     public function __construct(
-        protected FidelityService $fidelityService
+        protected FidelityService $fidelityService,
     ) {}
 
     /**
@@ -30,7 +30,9 @@ class ProcessFidelityPointsForOrder
 
         // Verifica che non siano già stati assegnati i punti per questo ordine
         if ($order->customer && $order->customer->fidelityCard) {
-            $existingTransaction = $order->customer->fidelityCard
+            $existingTransaction = $order
+                ->customer
+                ->fidelityCard
                 ->transactions()
                 ->where('order_id', $order->id)
                 ->where('type', 'earned')

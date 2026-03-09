@@ -21,10 +21,117 @@ final class CategoryRepository extends BaseRepository
     public function findAll(array $filters = []): LengthAwarePaginator
     {
         return $query = QueryBuilder::for(Category::class)
-            ->allowedFilters(['name', 'email'])
+            ->allowedFilters(['name', 'slug', 'status'])
             ->allowedSorts(['name', 'created_at', 'status'])
+            ->allowedIncludes(['parent', 'children', 'products'])
+            ->withCount('children') // Always include children count
             ->paginate($filters['per_page'] ?? config('settings.pagination.per_page'))
             ->appends($filters);
+    }
+
+    /**
+     * Find one by ID or slug
+     */
+    public function findOne(int|string $slugOrId): ?Category
+    {
+        return $this->model
+            ->where('id', $slugOrId)
+            ->orWhere('slug', $slugOrId)
+            ->withCount('children')
+            ->firstOrFail();
+    }
+
+    /**
+     * Get all root categories (no parent)
+     */
+    public function getRootCategories(): \Illuminate\Database\Eloquent\Collection
+    {
+        return $this->model
+            ->whereNull('parent_id')
+            ->with(['children' => function ($query) {
+                $query->withCount('children')->orderBy('sort_order');
+            }])
+            ->withCount('children')
+            ->orderBy('sort_order')
+            ->get();
+    }
+
+    /**
+     * Get full category tree (recursive)
+     */
+    public function getTree(): \Illuminate\Database\Eloquent\Collection
+    {
+        return $this->model
+            ->whereNull('parent_id')
+            ->with(['children' => function ($query) {
+                $query
+                    ->with(['children' => function ($q) {
+                        $q->withCount('children')->orderBy('sort_order');
+                    }])
+                    ->withCount('children')
+                    ->orderBy('sort_order');
+            }])
+            ->withCount('children')
+            ->orderBy('sort_order')
+            ->get();
+    }
+
+    /**
+     * Create one
+     */
+    public function createOne(array $data): Category
+    {
+        $category = $this->model->create($data);
+        $this->clearCache();
+
+        return $category;
+    }
+
+    /**
+     * Update one
+     */
+    public function updateOne(int $id, array $data): Category
+    {
+        $category = $this->findOrFail($id);
+        $category->update($data);
+        $this->clearCache();
+
+        return $category->fresh();
+    }
+
+    /**
+     * Delete one
+     */
+    public function deleteOne(int $id): bool
+    {
+        $category = $this->findOrFail($id);
+        $deleted = $category->delete();
+        $this->clearCache();
+
+        return $deleted;
+    }
+
+    /**
+     * Check if can delete
+     */
+    public function canDelete(int $id): bool
+    {
+        $category = $this->findOrFail($id);
+
+        return ! $category->products()->exists() && ! $category->children()->exists();
+    }
+
+    /**
+     * Toggle category status
+     */
+    public function toggleStatus(int $id): Category
+    {
+        $category = $this->findOrFail($id);
+        $newStatus = $category->is_visible ? false : true;
+        $category->update(['is_visible' => $newStatus]);
+        $this->clearCache();
+
+        return $category->fresh();
     }
 
     public function findWithProducts(int $id): ?Category
@@ -93,7 +200,10 @@ final class CategoryRepository extends BaseRepository
 
     public function bulkAction(string $action, array $ids): array
     {
-        $validatedIds = $this->model->whereIn('id', $ids)->pluck('id')->toArray();
+        $validatedIds = $this->model
+            ->whereIn('id', $ids)
+            ->pluck('id')
+            ->toArray();
         $processedCount = 0;
         $errors = [];
 

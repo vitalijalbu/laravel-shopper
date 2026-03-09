@@ -2,7 +2,7 @@
 
 namespace Cartino\Services;
 
-use Cartino\Data\AbandonedCart\AbandonedCartData;
+use Cartino\DTO\AbandonedCart\AbandonedCartData;
 use Cartino\Jobs\SendAbandonedCartEmail;
 use Cartino\Models\AbandonedCart;
 use Cartino\Repositories\AbandonedCartRepository;
@@ -11,7 +11,7 @@ use Illuminate\Support\Carbon;
 class AbandonedCartService
 {
     public function __construct(
-        private AbandonedCartRepository $repository
+        private AbandonedCartRepository $repository,
     ) {}
 
     /**
@@ -47,8 +47,7 @@ class AbandonedCartService
      */
     public function scheduleRecoveryEmail(AbandonedCart $cart, int $delayHours = 1): void
     {
-        SendAbandonedCartEmail::dispatch($cart)
-            ->delay(now()->addHours($delayHours));
+        SendAbandonedCartEmail::dispatch($cart)->delay(now()->addHours($delayHours));
     }
 
     /**
@@ -184,7 +183,7 @@ class AbandonedCartService
             [$cartId, $email, $timestamp] = explode('|', $decoded);
 
             // Token expires after 7 days
-            if (now()->timestamp - $timestamp > 604800) {
+            if ((now()->timestamp - $timestamp) > 604800) {
                 return null;
             }
 

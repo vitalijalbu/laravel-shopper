@@ -2,7 +2,10 @@
 
 namespace Cartino\Http\Requests\Api;
 
+use Cartino\Models\Permission;
+use Cartino\Models\Role;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreUserRequest extends FormRequest
 {
@@ -23,9 +26,9 @@ class StoreUserRequest extends FormRequest
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:8|confirmed',
-            'role' => 'nullable|string|exists:roles,name',
+            'role' => ['nullable', 'string', Rule::exists(Role::class, 'name')],
             'permissions' => 'nullable|array',
-            'permissions.*' => 'string|exists:permissions,name',
+            'permissions.*' => ['string', Rule::exists(Permission::class, 'name')],
             'is_active' => 'boolean',
             'timezone' => 'nullable|string',
             'locale' => 'nullable|string|size:2',

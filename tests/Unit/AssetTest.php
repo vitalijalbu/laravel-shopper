@@ -1,10 +1,10 @@
 <?php
 
-namespace Tests\Unit;
+namespace Cartino\Tests\Unit;
 
 use Cartino\Support\Asset;
+use Cartino\Tests\TestCase;
 use Illuminate\Support\Facades\File;
-use Tests\TestCase;
 
 class AssetTest extends TestCase
 {

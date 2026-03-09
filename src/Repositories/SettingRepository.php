@@ -3,7 +3,6 @@
 namespace Cartino\Repositories;
 
 use Cartino\Models\Setting;
-use Illuminate\Database\Eloquent\Category;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 
@@ -14,6 +13,72 @@ class SettingRepository extends BaseRepository
     protected function makeModel(): Model
     {
         return new Setting;
+    }
+
+    /**
+     * Get all settings paginated
+     */
+    public function findAll(array $filters = []): \Illuminate\Pagination\LengthAwarePaginator
+    {
+        return QueryBuilder::for(Setting::class)
+            ->allowedFilters(['key', 'group'])
+            ->allowedSorts(['key', 'created_at'])
+            ->paginate($filters['per_page'] ?? config('settings.pagination.per_page', 15))
+            ->appends($filters);
+    }
+
+    /**
+     * Find one by ID or key
+     */
+    public function findOne(int|string $keyOrId): ?Setting
+    {
+        return $this->model
+            ->where('id', $keyOrId)
+            ->orWhere('key', $keyOrId)
+            ->firstOrFail();
+    }
+
+    /**
+     * Create one
+     */
+    public function createOne(array $data): Setting
+    {
+        $setting = $this->model->create($data);
+        $this->clearCache();
+
+        return $setting;
+    }
+
+    /**
+     * Update one
+     */
+    public function updateOne(int $id, array $data): Setting
+    {
+        $setting = $this->findOrFail($id);
+        $setting->update($data);
+        $this->clearCache();
+
+        return $setting->fresh();
+    }
+
+    /**
+     * Delete one
+     */
+    public function deleteOne(int $id): bool
+    {
+        $setting = $this->findOrFail($id);
+        $deleted = $setting->delete();
+        $this->clearCache();
+
+        return $deleted;
+    }
+
+    /**
+     * Check if can delete
+     */
+    public function canDelete(int $id): bool
+    {
+        return true; // Settings can always be deleted
     }
 
     /**
@@ -35,10 +100,7 @@ class SettingRepository extends BaseRepository
      */
     public function set(string $key, $value): Model
     {
-        $setting = $this->model->updateOrCreate(
-            ['key' => $key],
-            ['value' => $value]
-        );
+        $setting = $this->model->updateOrCreate(['key' => $key], ['value' => $value]);
 
         $this->clearCache();
 
@@ -71,10 +133,7 @@ class SettingRepository extends BaseRepository
     public function setMultiple(array $settings): void
     {
         foreach ($settings as $key => $value) {
-            $this->model->updateOrCreate(
-                ['key' => $key],
-                ['value' => $value]
-            );
+            $this->model->updateOrCreate(['key' => $key], ['value' => $value]);
         }
 
         $this->clearCache();
@@ -211,6 +270,6 @@ class SettingRepository extends BaseRepository
      */
     protected function getCacheKey(string $method, mixed $identifier): string
     {
-        return $this->cachePrefix.'_'.$method.($identifier ? '_'.$identifier : '');
+        return $this->cachePrefix.'_'.$method.($identifier ? ('_'.$identifier) : '');
     }
 }

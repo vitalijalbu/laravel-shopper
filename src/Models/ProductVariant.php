@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Cartino\Models;
 
 use Cartino\Traits\HasCustomFields;
+use Cartino\Traits\Translatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -16,6 +17,7 @@ class ProductVariant extends Model
     use HasCustomFields;
     use HasFactory;
     use SoftDeletes;
+    use Translatable;
 
     protected $fillable = [
         'product_id',
@@ -33,6 +35,10 @@ class ProductVariant extends Model
         'status',
         'sort_order',
         'data',
+    ];
+
+    protected array $translatable = [
+        'name',
     ];
 
     protected $casts = [

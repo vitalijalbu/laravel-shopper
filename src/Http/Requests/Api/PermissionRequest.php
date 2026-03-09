@@ -2,7 +2,9 @@
 
 namespace Cartino\Http\Requests\Api;
 
+use Cartino\Models\Role;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class PermissionRequest extends FormRequest
 {
@@ -18,14 +20,14 @@ class PermissionRequest extends FormRequest
                 'permissions' => 'required|array',
                 'permissions.*' => 'string|max:255',
                 'inherit_from' => 'nullable|array',
-                'inherit_from.*' => 'integer|exists:roles,id',
+                'inherit_from.*' => ['integer|', Rule::exists(Role::class, 'id')],
             ],
             'generatePermissions' => [
                 'force_regenerate' => 'nullable|boolean',
                 'groups' => 'nullable|array',
                 'groups.*' => 'string|in:content,collections,commerce,customers,users,assets,forms,settings,roles,reports',
             ],
-            default => []
+            default => [],
         };
     }
 

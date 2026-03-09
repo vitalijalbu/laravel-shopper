@@ -15,7 +15,7 @@ trait HasSite
     {
         // Auto-assign current site when creating records
         static::creating(function (Model $model) {
-            if (empty($model->site_id) && $currentSite = static::getCurrentSite()) {
+            if (empty($model->site_id) && ($currentSite = static::getCurrentSite())) {
                 $model->site_id = $currentSite->id;
             }
         });
@@ -24,8 +24,7 @@ trait HasSite
         static::addGlobalScope('site', function (Builder $builder) {
             if ($currentSite = static::getCurrentSite()) {
                 $builder->where(function ($query) use ($currentSite) {
-                    $query->where('site_id', $currentSite->id)
-                        ->orWhereNull('site_id'); // Allow global records
+                    $query->where('site_id', $currentSite->id)->orWhereNull('site_id'); // Allow global records
                 });
             }
         });
@@ -46,9 +45,7 @@ trait HasSite
         }
 
         // Return default site
-        return Site::where('is_enabled', true)
-            ->orderBy('order')
-            ->first();
+        return Site::where('is_enabled', true)->orderBy('order')->first();
     }
 
     /**

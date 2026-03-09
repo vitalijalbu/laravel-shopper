@@ -4,7 +4,7 @@ namespace Cartino\Repositories;
 
 use Cartino\Models\Setting;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Category;
+use Illuminate\Support\Collection;
 
 class SettingsRepository extends BaseRepository
 {
@@ -18,24 +18,31 @@ class SettingsRepository extends BaseRepository
     /**
      * Get all settings grouped by group
      */
-    public function getAllGrouped(): Category
+    public function getAllGrouped(): Collection
     {
         $cacheKey = $this->getCacheKey('all_grouped', 'all');
 
         return \Illuminate\Support\Facades\Cache::remember($cacheKey, $this->cacheTtl, function () {
-            return $this->model->orderBy('group')->orderBy('key')->get()->groupBy('group');
+            return $this->model
+                ->orderBy('group')
+                ->orderBy('key')
+                ->get()
+                ->groupBy('group');
         });
     }
 
     /**
      * Get settings by group
      */
-    public function getByGroup(string $group): Category
+    public function getByGroup(string $group): Collection
     {
         $cacheKey = $this->getCacheKey('group', $group);
 
         return \Illuminate\Support\Facades\Cache::remember($cacheKey, $this->cacheTtl, function () use ($group) {
-            return $this->model->where('group', $group)->orderBy('key')->get();
+            return $this->model
+                ->where('group', $group)
+                ->orderBy('key')
+                ->get();
         });
     }
 
@@ -60,8 +67,13 @@ class SettingsRepository extends BaseRepository
     /**
      * Set setting value
      */
-    public function setValue(string $key, $value, string $type = 'string', ?string $group = null, ?string $description = null): Setting
-    {
+    public function setValue(
+        string $key,
+        $value,
+        string $type = 'string',
+        ?string $group = null,
+        ?string $description = null,
+    ): Setting {
         $this->clearCache();
 
         return $this->model->updateOrCreate(
@@ -71,7 +83,7 @@ class SettingsRepository extends BaseRepository
                 'type' => $type,
                 'group' => $group,
                 'description' => $description,
-            ]
+            ],
         );
     }
 
@@ -89,7 +101,7 @@ class SettingsRepository extends BaseRepository
                     $data['value'],
                     $data['type'] ?? 'string',
                     $data['group'] ?? null,
-                    $data['description'] ?? null
+                    $data['description'] ?? null,
                 );
             } else {
                 $this->setValue($key, $data);
@@ -110,7 +122,7 @@ class SettingsRepository extends BaseRepository
     /**
      * Get settings for a specific page (like general, checkout, etc.)
      */
-    public function getSettingsForPage(string $page): Category
+    public function getSettingsForPage(string $page): Collection
     {
         $groupMappings = [
             'general' => ['general', 'store', 'contact'],
@@ -123,7 +135,11 @@ class SettingsRepository extends BaseRepository
 
         $groups = $groupMappings[$page] ?? [$page];
 
-        return $this->model->whereIn('group', $groups)->orderBy('group')->orderBy('key')->get();
+        return $this->model
+            ->whereIn('group', $groups)
+            ->orderBy('group')
+            ->orderBy('key')
+            ->get();
     }
 
     /**
@@ -134,8 +150,8 @@ class SettingsRepository extends BaseRepository
         return match ($type) {
             'boolean' => $value ? '1' : '0',
             'array', 'json' => json_encode($value),
-            'integer' => (string) (int) $value,
-            'float' => (string) (float) $value,
+            'integer' => (string) ((int) $value),
+            'float' => (string) ((float) $value),
             default => (string) $value,
         };
     }

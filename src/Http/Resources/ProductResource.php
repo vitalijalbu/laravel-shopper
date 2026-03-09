@@ -38,6 +38,9 @@ class ProductResource extends BaseResource
                     ];
                 });
             }),
+            'options' => $this->whenIncluded('options', function () {
+                return ProductOptionResource::collection($this->whenLoaded('options'));
+            }),
             'variants' => $this->whenIncluded('variants', function () {
                 return ProductVariantResource::collection($this->whenLoaded('variants'));
             }),
@@ -61,6 +64,7 @@ class ProductResource extends BaseResource
     protected function getMeta(Request $request): array
     {
         return array_merge(parent::getMeta($request), [
+            'options_count' => $this->whenLoaded('options', fn () => $this->options->count()),
             'variants_count' => $this->whenLoaded('variants', fn () => $this->variants->count()),
             'images_count' => $this->whenLoaded('media', fn () => $this->media->count()),
             'is_active' => $this->status === 'active',

@@ -13,8 +13,12 @@ parameters:
 
     treatPhpDocTypesAsCertain: false
 
+    # Performance optimizations
+    parallel:
+        maximumNumberOfProcesses: 2
+        processTimeout: 600.0
+
     excludePaths:
-        # - modules/*/tests/*
 
     ignoreErrors:
         # - '#Unreachable statement - code above always terminates.#'

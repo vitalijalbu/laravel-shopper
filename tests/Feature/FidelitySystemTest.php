@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Tests\Feature;
+namespace Cartino\Tests\Feature;
 
 use Cartino\Models\Customer;
 use Cartino\Models\FidelityCard;
 use Cartino\Models\FidelityTransaction;
 use Cartino\Models\Order;
 use Cartino\Services\FidelityService;
+use Cartino\Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use PHPUnit\Framework\TestCase as BaseTestCase;
 
-class FidelitySystemTest extends BaseTestCase
+class FidelitySystemTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -221,7 +221,8 @@ class FidelitySystemTest extends BaseTestCase
         $this->assertEquals(0, $card->available_points);
 
         // Verifica che sia stata creata una transazione di scadenza
-        $expirationTransaction = $card->transactions()
+        $expirationTransaction = $card
+            ->transactions()
             ->where('type', 'expired')
             ->where('reference_transaction_id', $expiredTransaction->id)
             ->first();

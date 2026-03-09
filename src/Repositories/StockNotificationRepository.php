@@ -3,7 +3,6 @@
 namespace Cartino\Repositories;
 
 use Cartino\Models\StockNotification;
-use Illuminate\Database\Eloquent\Category;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -61,13 +60,16 @@ class StockNotificationRepository extends BaseRepository
         if (! empty($filters['search'])) {
             $search = $filters['search'];
             $query->where(function ($q) use ($search) {
-                $q->where('email', 'like', "%{$search}%")
+                $q
+                    ->where('email', 'like', "%{$search}%")
                     ->orWhere('phone', 'like', "%{$search}%")
                     ->orWhere('product_handle', 'like', "%{$search}%")
                     ->orWhereHas('customer', function ($customerQuery) use ($search) {
-                        $customerQuery->where('email', 'like', "%{$search}%")
-                            ->orWhere('first_name', 'like', "%{$search}%")
-                            ->orWhere('last_name', 'like', "%{$search}%");
+                        $customerQuery->where('email', 'like', "%{$search}%")->orWhere(
+                            'first_name',
+                            'like',
+                            "%{$search}%",
+                        )->orWhere('last_name', 'like', "%{$search}%");
                     });
             });
         }
@@ -85,9 +87,10 @@ class StockNotificationRepository extends BaseRepository
      */
     public function getPendingForProduct(string $productType, int $productId, ?array $variantData = null): Category
     {
-        $query = $this->model->where('status', 'pending')
-            ->where('product_type', $productType)
-            ->where('product_id', $productId);
+        $query = $this->model->where('status', 'pending')->where('product_type', $productType)->where(
+            'product_id',
+            $productId,
+        );
 
         if ($variantData) {
             $query->where('variant_data', json_encode($variantData));
@@ -156,7 +159,10 @@ class StockNotificationRepository extends BaseRepository
     {
         $cacheKey = $this->getCacheKey('customer', $customerId.'_'.$status);
 
-        return \Illuminate\Support\Facades\Cache::remember($cacheKey, $this->cacheTtl, function () use ($customerId, $status) {
+        return \Illuminate\Support\Facades\Cache::remember($cacheKey, $this->cacheTtl, function () use (
+            $customerId,
+            $status,
+        ) {
             $query = $this->model->where('customer_id', $customerId);
 
             if ($status) {
@@ -189,7 +195,8 @@ class StockNotificationRepository extends BaseRepository
      */
     public function bulkCancel(array $notificationIds): int
     {
-        $cancelled = $this->model->whereIn('id', $notificationIds)
+        $cancelled = $this->model
+            ->whereIn('id', $notificationIds)
             ->where('status', 'pending')
             ->update(['status' => 'cancelled']);
 
@@ -210,14 +217,21 @@ class StockNotificationRepository extends BaseRepository
 
             return [
                 'total_notifications' => $this->model->where('created_at', '>=', $startDate)->count(),
-                'pending_notifications' => $this->model->where('status', 'pending')
-                    ->where('created_at', '>=', $startDate)->count(),
-                'sent_notifications' => $this->model->where('status', 'notified')
-                    ->where('notified_at', '>=', $startDate)->count(),
-                'cancelled_notifications' => $this->model->where('status', 'cancelled')
-                    ->where('created_at', '>=', $startDate)->count(),
+                'pending_notifications' => $this->model
+                    ->where('status', 'pending')
+                    ->where('created_at', '>=', $startDate)
+                    ->count(),
+                'sent_notifications' => $this->model
+                    ->where('status', 'notified')
+                    ->where('notified_at', '>=', $startDate)
+                    ->count(),
+                'cancelled_notifications' => $this->model
+                    ->where('status', 'cancelled')
+                    ->where('created_at', '>=', $startDate)
+                    ->count(),
                 'top_requested_products' => $this->getTopRequestedProducts(10, $days),
-                'notifications_by_method' => $this->model->where('created_at', '>=', $startDate)
+                'notifications_by_method' => $this->model
+                    ->where('created_at', '>=', $startDate)
                     ->selectRaw('preferred_method, count(*) as count')
                     ->groupBy('preferred_method')
                     ->pluck('count', 'preferred_method'),
@@ -232,7 +246,8 @@ class StockNotificationRepository extends BaseRepository
     {
         $startDate = now()->subDays($days);
 
-        return $this->model->where('created_at', '>=', $startDate)
+        return $this->model
+            ->where('created_at', '>=', $startDate)
             ->selectRaw('product_type, product_id, product_handle, count(*) as request_count')
             ->groupBy('product_type', 'product_id', 'product_handle')
             ->orderBy('request_count', 'desc')
@@ -247,7 +262,8 @@ class StockNotificationRepository extends BaseRepository
     {
         $cutoffDate = now()->subDays($daysOld);
 
-        $deleted = $this->model->where('created_at', '<', $cutoffDate)
+        $deleted = $this->model
+            ->where('created_at', '<', $cutoffDate)
             ->whereIn('status', ['notified', 'cancelled'])
             ->delete();
 
@@ -259,9 +275,14 @@ class StockNotificationRepository extends BaseRepository
     /**
      * Get duplicate notifications
      */
-    public function getDuplicates(int $customerId, string $productType, int $productId, ?array $variantData = null): Category
-    {
-        $query = $this->model->where('customer_id', $customerId)
+    public function getDuplicates(
+        int $customerId,
+        string $productType,
+        int $productId,
+        ?array $variantData = null,
+    ): Category {
+        $query = $this->model
+            ->where('customer_id', $customerId)
             ->where('product_type', $productType)
             ->where('product_id', $productId)
             ->where('status', 'pending');
@@ -311,9 +332,7 @@ class StockNotificationRepository extends BaseRepository
      */
     public function getByUser(int $userId, ?string $status = null)
     {
-        $query = $this->model
-            ->where('user_id', $userId)
-            ->with('product');
+        $query = $this->model->where('user_id', $userId)->with('product');
 
         if ($status) {
             $query->where('status', $status);

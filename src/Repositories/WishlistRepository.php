@@ -4,6 +4,8 @@ namespace Cartino\Repositories;
 
 use Cartino\Models\Wishlist;
 use Illuminate\Support\Facades\Cache;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class WishlistRepository extends BaseRepository
 {
@@ -19,6 +21,74 @@ class WishlistRepository extends BaseRepository
     /**
      * Get paginated wishlists with filters
      */
+    public function findAll(array $filters = []): \Illuminate\Pagination\LengthAwarePaginator
+    {
+        return QueryBuilder::for(Wishlist::class)
+            ->allowedFilters([
+                'name',
+                AllowedFilter::exact('customer_id'),
+                AllowedFilter::exact('status'),
+            ])
+            ->allowedSorts(['name', 'created_at'])
+            ->allowedIncludes(['customer', 'items', 'items.product'])
+            ->paginate($filters['per_page'] ?? config('settings.pagination.per_page', 15))
+            ->appends($filters);
+    }
+
+    /**
+     * Find one by ID
+     */
+    public function findOne(int $id): ?Wishlist
+    {
+        return $this->model->findOrFail($id);
+    }
+
+    /**
+     * Create one
+     */
+    public function createOne(array $data): Wishlist
+    {
+        $wishlist = $this->model->create($data);
+        $this->clearCache();
+
+        return $wishlist;
+    }
+
+    /**
+     * Update one
+     */
+    public function updateOne(int $id, array $data): Wishlist
+    {
+        $wishlist = $this->findOrFail($id);
+        $wishlist->update($data);
+        $this->clearCache();
+
+        return $wishlist->fresh();
+    }
+
+    /**
+     * Delete one
+     */
+    public function deleteOne(int $id): bool
+    {
+        $wishlist = $this->findOrFail($id);
+        $deleted = $wishlist->delete();
+        $this->clearCache();
+
+        return $deleted;
+    }
+
+    /**
+     * Check if can delete
+     */
+    public function canDelete(int $id): bool
+    {
+        return true; // Wishlists can always be deleted
+    }
+
+    /**
+     * Get paginated (legacy method - to be deprecated)
+     */
     public function getPaginated(array $filters = [], int $perPage = 15)
     {
         $query = $this->model->query()->with(['customer']);
@@ -27,12 +97,15 @@ class WishlistRepository extends BaseRepository
         if (! empty($filters['search'])) {
             $search = $filters['search'];
             $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                    ->orWhereHas('customer', function ($customerQuery) use ($search) {
-                        $customerQuery->where('email', 'like', "%{$search}%")
-                            ->orWhere('first_name', 'like', "%{$search}%")
-                            ->orWhere('last_name', 'like', "%{$search}%");
-                    });
+                $q->where('name', 'like', "%{$search}%")->orWhereHas('customer', function ($customerQuery) use (
+                    $search,
+                ) {
+                    $customerQuery->where('email', 'like', "%{$search}%")->orWhere(
+                        'first_name',
+                        'like',
+                        "%{$search}%",
+                    )->orWhere('last_name', 'like', "%{$search}%");
+                });
             });
         }
 
@@ -71,17 +144,19 @@ class WishlistRepository extends BaseRepository
         if ($existingItem) {
             // Update quantity
             $existingItem->update([
-                'quantity' => ($existingItem->quantity + ($itemData['quantity'] ?? 1)),
+                'quantity' => $existingItem->quantity + ($itemData['quantity'] ?? 1),
                 'notes' => $itemData['notes'] ?? $existingItem->notes,
             ]);
             $item = $existingItem;
         } else {
             // Create new item
-            $item = $wishlist->items()->create([
-                'product_id' => $itemData['product_id'],
-                'quantity' => $itemData['quantity'] ?? 1,
-                'notes' => $itemData['notes'] ?? null,
-            ]);
+            $item = $wishlist
+                ->items()
+                ->create([
+                    'product_id' => $itemData['product_id'],
+                    'quantity' => $itemData['quantity'] ?? 1,
+                    'notes' => $itemData['notes'] ?? null,
+                ]);
         }
 
         $this->clearCache();
@@ -145,7 +220,8 @@ class WishlistRepository extends BaseRepository
      */
     public function findByShareToken(string $token): ?Wishlist
     {
-        return $this->model->where('share_token', $token)
+        return $this->model
+            ->where('share_token', $token)
             ->where('is_shared', true)
             ->with(['customer', 'items.product'])
             ->first();

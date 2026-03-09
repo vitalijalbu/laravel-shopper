@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Cartino\Http\Controllers\CP;
+namespace Cartino\Http\Controllers\Cp;
 
 use Cartino\Models\Asset;
 use Cartino\Models\AssetContainer;
@@ -18,9 +18,7 @@ class AssetBrowserController
 
         $container = $request->get('container', $containers->first()?->handle ?? 'images');
 
-        $query = Asset::query()
-            ->with(['containerModel', 'uploadedBy'])
-            ->inContainer($container);
+        $query = Asset::query()->with(['containerModel', 'uploadedBy'])->inContainer($container);
 
         if ($request->filled('folder')) {
             $query->inFolder($request->folder);

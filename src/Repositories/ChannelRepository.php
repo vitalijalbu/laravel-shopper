@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Cartino\Repositories;
 
 use Cartino\Models\Channel;
-use Illuminate\Database\Eloquent\Category;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Spatie\QueryBuilder\QueryBuilder;
@@ -25,10 +24,57 @@ class ChannelRepository extends BaseRepository
     public function findAll(array $filters = []): LengthAwarePaginator
     {
         return $query = QueryBuilder::for(Channel::class)
-            ->allowedFilters(['name', 'email'])
-            ->allowedSorts(['name', 'created_at', 'status'])
+            ->allowedFilters(['name', 'slug', 'is_active'])
+            ->allowedSorts(['name', 'created_at'])
+            ->allowedIncludes(['site'])
             ->paginate($filters['per_page'] ?? config('settings.pagination.per_page'))
             ->appends($filters);
+    }
+
+    /**
+     * Find one by ID or slug
+     */
+    public function findOne(int|string $slugOrId): ?Channel
+    {
+        return $this->model
+            ->where('id', $slugOrId)
+            ->orWhere('slug', $slugOrId)
+            ->firstOrFail();
+    }
+
+    /**
+     * Create one
+     */
+    public function createOne(array $data): Channel
+    {
+        $channel = $this->model->create($data);
+        $this->clearCache();
+
+        return $channel;
+    }
+
+    /**
+     * Update one
+     */
+    public function updateOne(int $id, array $data): Channel
+    {
+        $channel = $this->findOrFail($id);
+        $channel->update($data);
+        $this->clearCache();
+
+        return $channel->fresh();
+    }
+
+    /**
+     * Delete one
+     */
+    public function deleteOne(int $id): bool
+    {
+        $channel = $this->findOrFail($id);
+        $deleted = $channel->delete();
+        $this->clearCache();
+
+        return $deleted;
     }
 
     /**
@@ -39,7 +85,10 @@ class ChannelRepository extends BaseRepository
         $cacheKey = $this->getCacheKey('active', 'all');
 
         return \Illuminate\Support\Facades\Cache::remember($cacheKey, $this->cacheTtl, function () {
-            return $this->model->where('is_active', true)->orderBy('name')->get();
+            return $this->model
+                ->where('is_active', true)
+                ->orderBy('name')
+                ->get();
         });
     }
 

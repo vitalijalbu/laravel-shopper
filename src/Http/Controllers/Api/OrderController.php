@@ -13,7 +13,7 @@ use Illuminate\Http\Request;
 class OrderController extends ApiController
 {
     public function __construct(
-        protected OrderRepository $orderRepository
+        protected OrderRepository $orderRepository,
     ) {}
 
     /**
@@ -21,7 +21,15 @@ class OrderController extends ApiController
      */
     public function index(Request $request): JsonResponse
     {
-        $filters = $request->only(['search', 'status', 'payment_status', 'fulfillment_status', 'customer_id', 'date_from', 'date_to']);
+        $filters = $request->only([
+            'search',
+            'status',
+            'payment_status',
+            'fulfillment_status',
+            'customer_id',
+            'date_from',
+            'date_to',
+        ]);
         $perPage = $request->get('per_page', 25);
 
         $orders = $this->orderRepository->findAll($filters, $perPage);
@@ -150,7 +158,11 @@ class OrderController extends ApiController
     {
         try {
             $validated = $request->validated();
-            $result = $this->orderRepository->bulkAction($validated['action'], $validated['ids'], $validated['metadata'] ?? []);
+            $result = $this->orderRepository->bulkAction(
+                $validated['action'],
+                $validated['ids'],
+                $validated['metadata'] ?? [],
+            );
 
             return $this->bulkActionResponse($result['count'], "Azione '{$validated['action']}' eseguita", $result);
         } catch (\Exception $e) {

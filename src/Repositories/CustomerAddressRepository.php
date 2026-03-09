@@ -3,7 +3,6 @@
 namespace Cartino\Repositories;
 
 use Cartino\Models\CustomerAddress;
-use Illuminate\Database\Eloquent\Category;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -42,7 +41,8 @@ class CustomerAddressRepository extends BaseRepository
         if (! empty($filters['search'])) {
             $search = $filters['search'];
             $query->where(function ($q) use ($search) {
-                $q->where('first_name', 'like', "%{$search}%")
+                $q
+                    ->where('first_name', 'like', "%{$search}%")
                     ->orWhere('last_name', 'like', "%{$search}%")
                     ->orWhere('company', 'like', "%{$search}%")
                     ->orWhere('address_line_1', 'like', "%{$search}%")
@@ -71,16 +71,17 @@ class CustomerAddressRepository extends BaseRepository
     {
         $cacheKey = $this->getCacheKey('customer', $customerId.'_'.$type);
 
-        return \Illuminate\Support\Facades\Cache::remember($cacheKey, $this->cacheTtl, function () use ($customerId, $type) {
+        return \Illuminate\Support\Facades\Cache::remember($cacheKey, $this->cacheTtl, function () use (
+            $customerId,
+            $type,
+        ) {
             $query = $this->model->where('customer_id', $customerId);
 
             if ($type) {
                 $query->where('type', $type);
             }
 
-            return $query->orderBy('is_default', 'desc')
-                ->orderBy('created_at', 'desc')
-                ->get();
+            return $query->orderBy('is_default', 'desc')->orderBy('created_at', 'desc')->get();
         });
     }
 
@@ -91,8 +92,12 @@ class CustomerAddressRepository extends BaseRepository
     {
         $cacheKey = $this->getCacheKey('default', $customerId.'_'.$type);
 
-        return \Illuminate\Support\Facades\Cache::remember($cacheKey, $this->cacheTtl, function () use ($customerId, $type) {
-            return $this->model->where('customer_id', $customerId)
+        return \Illuminate\Support\Facades\Cache::remember($cacheKey, $this->cacheTtl, function () use (
+            $customerId,
+            $type,
+        ) {
+            return $this->model
+                ->where('customer_id', $customerId)
                 ->where('type', $type)
                 ->where('is_default', true)
                 ->first();
@@ -111,7 +116,8 @@ class CustomerAddressRepository extends BaseRepository
         }
 
         // Remove default from other addresses of same type
-        $this->model->where('customer_id', $address->customer_id)
+        $this->model
+            ->where('customer_id', $address->customer_id)
             ->where('type', $address->type)
             ->where('id', '!=', $addressId)
             ->update(['is_default' => false]);
@@ -132,7 +138,8 @@ class CustomerAddressRepository extends BaseRepository
         $cacheKey = $this->getCacheKey('country', $countryCode);
 
         return \Illuminate\Support\Facades\Cache::remember($cacheKey, $this->cacheTtl, function () use ($countryCode) {
-            return $this->model->where('country_code', $countryCode)
+            return $this->model
+                ->where('country_code', $countryCode)
                 ->with('customer')
                 ->orderBy('created_at', 'desc')
                 ->get();
@@ -202,7 +209,8 @@ class CustomerAddressRepository extends BaseRepository
                 'billing_addresses' => $this->model->where('type', 'billing')->count(),
                 'shipping_addresses' => $this->model->where('type', 'shipping')->count(),
                 'default_addresses' => $this->model->where('is_default', true)->count(),
-                'addresses_by_country' => $this->model->select('country_code')
+                'addresses_by_country' => $this->model
+                    ->select('country_code')
                     ->selectRaw('count(*) as count')
                     ->groupBy('country_code')
                     ->orderBy('count', 'desc')

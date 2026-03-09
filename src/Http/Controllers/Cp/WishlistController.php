@@ -1,8 +1,8 @@
 <?php
 
-namespace Cartino\Http\Controllers\CP;
+namespace Cartino\Http\Controllers\Cp;
 
-use Cartino\Data\Wishlist\WishlistData;
+use Cartino\DTO\Wishlist\WishlistData;
 use Cartino\Http\Controllers\Controller;
 use Cartino\Http\Requests\Wishlist\StoreWishlistRequest;
 use Cartino\Http\Requests\Wishlist\UpdateWishlistRequest;
@@ -16,7 +16,7 @@ use Inertia\Response;
 class WishlistController extends Controller
 {
     public function __construct(
-        private WishlistRepository $repository
+        private WishlistRepository $repository,
     ) {
         $this->authorizeResource(Wishlist::class, 'wishlist', [
             'except' => ['index', 'show'],
@@ -33,7 +33,7 @@ class WishlistController extends Controller
         $filters = $request->only(['search', 'status', 'customer_id', 'date_from', 'date_to']);
         $wishlists = $this->repository->getPaginated($filters, $request->get('per_page', 15));
 
-        return Inertia::render('CP/Wishlists/Index', [
+        return Inertia::render('CP/Wishlists/index', [
             'wishlists' => $wishlists,
             'filters' => $filters,
             'statistics' => $this->repository->getStatistics(),

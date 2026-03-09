@@ -233,10 +233,11 @@ class InstallShopperCommand extends Command
             } else {
                 throw new \Exception('Seeder returned non-zero exit code: '.$exitCode);
             }
-
         } catch (\Exception $e) {
             $this->warn('⚠️  Seeder failed: '.$e->getMessage());
-            $this->line('   You can run seeders manually: php artisan db:seed --class=Cartino\\Database\\Seeders\\CartinoSeeder');
+            $this->line(
+                '   You can run seeders manually: php artisan db:seed --class=Cartino\\Database\\Seeders\\CartinoSeeder',
+            );
         }
     }
 

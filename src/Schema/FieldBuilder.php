@@ -2,7 +2,7 @@
 
 namespace Cartino\Schema;
 
-use Illuminate\Support\Category;
+use Illuminate\Support\Collection;
 
 class FieldBuilder
 {
@@ -55,7 +55,7 @@ class FieldBuilder
     /**
      * Build fields collection from schema.
      */
-    public function buildFields(array $fieldsConfig): Category
+    public function buildFields(array $fieldsConfig): Collection
     {
         return collect($fieldsConfig)->map(function ($config, $handle) {
             return $this->buildField($handle, $config);

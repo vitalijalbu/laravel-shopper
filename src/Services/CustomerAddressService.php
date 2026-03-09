@@ -2,14 +2,14 @@
 
 namespace Cartino\Services;
 
-use Cartino\Data\CustomerAddress\CustomerAddressData;
+use Cartino\DTO\CustomerAddress\CustomerAddressData;
 use Cartino\Models\CustomerAddress;
 use Cartino\Repositories\CustomerAddressRepository;
 
 class CustomerAddressService
 {
     public function __construct(
-        private CustomerAddressRepository $repository
+        private CustomerAddressRepository $repository,
     ) {}
 
     /**

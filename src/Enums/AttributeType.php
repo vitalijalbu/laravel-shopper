@@ -1,12 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Cartino\Enums;
 
 use Cartino\Helpers\EnumSerializable;
+use Cartino\Traits\TranslatableEnum;
 
 enum AttributeType: string
 {
     use EnumSerializable;
+    use TranslatableEnum;
 
     case TEXT = 'text';
     case NUMBER = 'number';
@@ -15,17 +19,4 @@ enum AttributeType: string
     case MULTISELECT = 'multiselect';
     case COLOR = 'color';
     case IMAGE = 'image';
-
-    public function label(): string
-    {
-        return match ($this) {
-            self::TEXT => 'Text',
-            self::NUMBER => 'Number',
-            self::BOOLEAN => 'Boolean',
-            self::SELECT => 'Select',
-            self::MULTISELECT => 'Multi-select',
-            self::COLOR => 'Color',
-            self::IMAGE => 'Image',
-        };
-    }
 }

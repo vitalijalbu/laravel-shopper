@@ -5,7 +5,7 @@ namespace Cartino\Services;
 use Cartino\Exceptions\InsufficientStockException;
 use Cartino\Models\Order;
 use Cartino\Models\Product;
-use Illuminate\Support\Category;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 
 class InventoryService
@@ -32,7 +32,7 @@ class InventoryService
     {
         if ($product->track_quantity && $product->stock_quantity < $quantity) {
             throw new InsufficientStockException(
-                "Insufficient stock for product {$product->name}. Available: {$product->stock_quantity}, Required: {$quantity}"
+                "Insufficient stock for product {$product->name}. Available: {$product->stock_quantity}, Required: {$quantity}",
             );
         }
 
@@ -96,7 +96,7 @@ class InventoryService
     /**
      * Get products with low stock
      */
-    public function getLowStockProducts(): Category
+    public function getLowStockProducts(): Collection
     {
         return Product::where('track_quantity', true)
             ->whereRaw('stock_quantity <= low_stock_threshold')
@@ -107,7 +107,7 @@ class InventoryService
     /**
      * Get out of stock products
      */
-    public function getOutOfStockProducts(): Category
+    public function getOutOfStockProducts(): Collection
     {
         return Product::where('track_quantity', true)
             ->where('stock_quantity', 0)
@@ -192,9 +192,10 @@ class InventoryService
      */
     private function checkLowStockAlert(Product $product): void
     {
-        if ($product->track_quantity &&
-            $product->stock_quantity <= $product->low_stock_threshold &&
-            $product->stock_quantity > 0
+        if (
+            $product->track_quantity &&
+                $product->stock_quantity <= $product->low_stock_threshold &&
+                $product->stock_quantity > 0
         ) {
             Log::warning('Low stock alert', [
                 'product_id' => $product->id,

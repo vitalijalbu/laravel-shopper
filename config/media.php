@@ -112,31 +112,31 @@ return [
 
     'presets' => [
         // Thumbnails
-        'thumbnail' => [
+        'xs' => [
             'w' => 150,
             'h' => 150,
             'fit' => 'crop',
             'q' => 80,
         ],
-        'small' => [
+        'sm' => [
             'w' => 300,
             'h' => 300,
             'fit' => 'contain',
             'q' => 85,
         ],
-        'medium' => [
+        'md' => [
             'w' => 600,
             'h' => 600,
             'fit' => 'contain',
             'q' => 90,
         ],
-        'large' => [
+        'lg' => [
             'w' => 1200,
             'h' => 1200,
             'fit' => 'contain',
             'q' => 90,
         ],
-        'xlarge' => [
+        'xl' => [
             'w' => 2000,
             'h' => 2000,
             'fit' => 'contain',

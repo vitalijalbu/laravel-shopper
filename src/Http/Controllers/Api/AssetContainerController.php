@@ -14,9 +14,7 @@ class AssetContainerController extends Controller
 {
     public function index(): JsonResponse
     {
-        $containers = AssetContainer::with(['assets' => fn ($q) => $q->limit(5)])
-            ->withCount('assets')
-            ->get();
+        $containers = AssetContainer::with(['assets' => fn ($q) => $q->limit(5)])->withCount('assets')->get();
 
         return response()->json([
             'data' => AssetContainerResource::collection($containers),

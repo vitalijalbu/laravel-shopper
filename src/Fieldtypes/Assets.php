@@ -11,7 +11,7 @@ class Assets extends Fieldtype
         }
 
         if ($this->config('max_files', 1) === 1) {
-            return is_array($value) ? $value[0] ?? null : $value;
+            return is_array($value) ? ($value[0] ?? null) : $value;
         }
 
         return is_array($value) ? $value : [$value];

@@ -5,25 +5,17 @@ declare(strict_types=1);
 namespace Cartino\Enums;
 
 use Cartino\Helpers\EnumSerializable;
+use Cartino\Traits\TranslatableEnum;
 
 enum StockReservationStatus: string
 {
     use EnumSerializable;
+    use TranslatableEnum;
 
     case RESERVED = 'reserved';
     case FULFILLED = 'fulfilled';
     case CANCELLED = 'cancelled';
     case EXPIRED = 'expired';
-
-    public function label(): string
-    {
-        return match ($this) {
-            self::RESERVED => __('cartino::stock.reservation.reserved'),
-            self::FULFILLED => __('cartino::stock.reservation.fulfilled'),
-            self::CANCELLED => __('cartino::stock.reservation.cancelled'),
-            self::EXPIRED => __('cartino::stock.reservation.expired'),
-        };
-    }
 
     public function color(): string
     {

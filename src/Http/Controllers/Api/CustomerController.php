@@ -6,10 +6,10 @@ use Cartino\Repositories\CustomerRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class CustomerController extends ApiController
+class CustomersController extends ApiController
 {
     public function __construct(
-        protected CustomerRepository $customerRepository
+        protected CustomerRepository $customerRepository,
     ) {}
 
     /**

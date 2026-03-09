@@ -2,7 +2,9 @@
 
 namespace Cartino\Http\Requests\Api;
 
+use Cartino\Models\Role;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class AssignRoleRequest extends FormRequest
 {
@@ -21,7 +23,7 @@ class AssignRoleRequest extends FormRequest
     {
         return [
             'roles' => 'required|array',
-            'roles.*' => 'string|exists:roles,name',
+            'roles.*' => ['string', Rule::exists(Role::class, 'name')],
         ];
     }
 

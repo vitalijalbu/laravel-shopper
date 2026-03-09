@@ -15,7 +15,7 @@ class SendAbandonedCartEmail implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public function __construct(
-        public AbandonedCart $cart
+        public AbandonedCart $cart,
     ) {}
 
     public function handle(): void

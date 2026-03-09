@@ -34,5 +34,10 @@ interface PricingRuleInterface
      *
      * @return array{type: string, value: float}|null
      */
-    public function calculateAdjustment(float $currentPrice, Product $product, int $quantity, array $context): ?array;
+    public function calculateAdjustment(
+        float $currentPrice,
+        Product $product,
+        int $quantity,
+        array $context,
+    ): ?array;
 }

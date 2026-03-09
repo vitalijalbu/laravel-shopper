@@ -30,7 +30,6 @@ class CustomerResource extends JsonResource
             'created_at' => $this->created_at?->toISOString(),
             'updated_at' => $this->updated_at?->toISOString(),
             'deleted_at' => $this->deleted_at?->toISOString(),
-
             // Relationships
             'customer_group' => $this->whenLoaded('customerGroup', function () {
                 return [
@@ -40,7 +39,6 @@ class CustomerResource extends JsonResource
                     'description' => $this->customerGroup->description,
                 ];
             }),
-
             'addresses' => $this->whenLoaded('addresses', function () {
                 return $this->addresses->map(function ($address) {
                     return [
@@ -55,37 +53,41 @@ class CustomerResource extends JsonResource
                         'state' => $address->state,
                         'postal_code' => $address->postal_code,
                         'country_id' => $address->country_id,
-                        'country' => $address->country ? [
-                            'id' => $address->country->id,
-                            'name' => $address->country->name,
-                            'code' => $address->country->code,
-                        ] : null,
+                        'country' => $address->country
+                            ? [
+                                'id' => $address->country->id,
+                                'name' => $address->country->name,
+                                'code' => $address->country->code,
+                            ] : null,
                         'phone' => $address->phone,
                         'is_default' => $address->is_default,
                     ];
                 });
             }),
-
             'fidelity_card' => $this->whenLoaded('fidelityCard', function () {
-                return $this->fidelityCard ? [
-                    'id' => $this->fidelityCard->id,
-                    'card_number' => $this->fidelityCard->card_number,
-                    'points_balance' => $this->fidelityCard->points_balance,
-                    'total_earned_points' => $this->fidelityCard->total_earned_points,
-                    'total_redeemed_points' => $this->fidelityCard->total_redeemed_points,
-                    'status' => $this->fidelityCard->status,
-                    'issued_at' => $this->fidelityCard->issued_at?->toISOString(),
-                    'expires_at' => $this->fidelityCard->expires_at?->toISOString(),
-                ] : null;
+                return $this->fidelityCard
+                    ? [
+                        'id' => $this->fidelityCard->id,
+                        'card_number' => $this->fidelityCard->card_number,
+                        'points_balance' => $this->fidelityCard->points_balance,
+                        'total_earned_points' => $this->fidelityCard->total_earned_points,
+                        'total_redeemed_points' => $this->fidelityCard->total_redeemed_points,
+                        'status' => $this->fidelityCard->status,
+                        'issued_at' => $this->fidelityCard->issued_at?->toISOString(),
+                        'expires_at' => $this->fidelityCard->expires_at?->toISOString(),
+                    ] : null;
             }),
-
             // Computed values
             'orders_count' => $this->when(isset($this->orders_count), $this->orders_count),
-            'orders_sum_total_amount' => $this->when(isset($this->orders_sum_total_amount), $this->orders_sum_total_amount),
-
+            'orders_sum_total_amount' => $this->when(
+                isset($this->orders_sum_total_amount),
+                $this->orders_sum_total_amount,
+            ),
             // Admin-only fields
-            'internal_notes' => $this->when($request->user()?->can('view-customer-internal-notes'), $this->internal_notes),
-
+            'internal_notes' => $this->when(
+                $request->user()?->can('view-customer-internal-notes'),
+                $this->internal_notes,
+            ),
             // Actions
             'can' => [
                 'view' => $request->user()?->can('view', $this->resource) ?? false,

@@ -8,7 +8,6 @@ use Cartino\Models\Customer;
 use Cartino\Models\Discount;
 use Cartino\Models\DiscountApplication;
 use Cartino\Models\Order;
-use Illuminate\Database\Eloquent\Category;
 use Illuminate\Support\Str;
 
 class DiscountService
@@ -215,12 +214,10 @@ class DiscountService
     {
         return Discount::where('status', 'active')
             ->where(function ($query) {
-                $query->whereNull('starts_at')
-                    ->orWhere('starts_at', '<=', now());
+                $query->whereNull('starts_at')->orWhere('starts_at', '<=', now());
             })
             ->where(function ($query) {
-                $query->whereNull('expires_at')
-                    ->orWhere('expires_at', '>=', now());
+                $query->whereNull('expires_at')->orWhere('expires_at', '>=', now());
             })
             ->orderBy('created_at', 'desc')
             ->get();
@@ -236,13 +233,15 @@ class DiscountService
             'unique_customers' => $applications
                 ->where('applicable_type', Order::class)
                 ->join('orders', function ($join) {
-                    $join->on('discount_applications.applicable_id', '=', 'orders.id')
-                        ->where('discount_applications.applicable_type', Order::class);
+                    $join->on('discount_applications.applicable_id', '=', 'orders.id')->where(
+                        'discount_applications.applicable_type',
+                        Order::class,
+                    );
                 })
                 ->distinct('orders.customer_id')
                 ->count('orders.customer_id'),
             'usage_percentage' => $discount->usage_limit
-                ? ($discount->usage_count / $discount->usage_limit) * 100
+                ? (($discount->usage_count / $discount->usage_limit) * 100)
                 : 0,
         ];
     }
@@ -269,7 +268,7 @@ class DiscountService
 
         $order->update([
             'discount_amount' => $discountAmount,
-            'total' => $order->subtotal + $order->tax_amount + $order->shipping_cost - $discountAmount,
+            'total' => ($order->subtotal + $order->tax_amount + $order->shipping_cost) - $discountAmount,
         ]);
     }
 }

@@ -4,14 +4,18 @@ declare(strict_types=1);
 
 namespace Cartino\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class VariantPrice extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'product_variant_id',
-        'market_id',
+        'site_id',
+        'channel_id',
         'customer_group_id',
         'catalog_id',
         'currency',
@@ -85,9 +89,9 @@ class VariantPrice extends Model
         }
 
         if (isset($context['quantity'])) {
-            $query->where('min_quantity', '<=', $context['quantity'])
-                ->where(fn ($q) => $q->whereNull('max_quantity')
-                    ->orWhere('max_quantity', '>=', $context['quantity']));
+            $query
+                ->where('min_quantity', '<=', $context['quantity'])
+                ->where(fn ($q) => $q->whereNull('max_quantity')->orWhere('max_quantity', '>=', $context['quantity']));
         }
 
         return $query;

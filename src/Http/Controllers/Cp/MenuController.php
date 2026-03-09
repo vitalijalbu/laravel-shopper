@@ -1,8 +1,9 @@
 <?php
 
-namespace Cartino\Http\Controllers\CP;
+namespace Cartino\Http\Controllers\Cp;
 
 use Cartino\Http\Controllers\Controller;
+use Cartino\Http\Controllers\Cp\Concerns\HandlesFlashMessages;
 use Cartino\Http\Requests\Menu\ReorderMenuItemsRequest;
 use Cartino\Http\Requests\Menu\StoreMenuItemRequest;
 use Cartino\Http\Requests\Menu\StoreMenuRequest;
@@ -18,8 +19,10 @@ use Inertia\Response;
 
 class MenuController extends Controller
 {
+    use HandlesFlashMessages;
+
     public function __construct(
-        private MenuService $menuService
+        private MenuService $menuService,
     ) {}
 
     public function index(): Response
@@ -40,9 +43,9 @@ class MenuController extends Controller
     {
         $menu = $this->menuService->createMenu($request->validated());
 
-        return redirect()
-            ->route('cp.menus.edit', $menu->handle)
-            ->with('success', 'Menu created successfully.');
+        $this->flashSuccess(__('flash.menus.created'));
+
+        return redirect()->route('cp.menus.edit', $menu->handle);
     }
 
     public function edit(string $handle): Response
@@ -60,7 +63,9 @@ class MenuController extends Controller
         $menu = Menu::where('handle', $handle)->firstOrFail();
         $this->menuService->updateMenu($menu, $request->validated());
 
-        return back()->with('success', 'Menu updated successfully.');
+        $this->flashSuccess(__('flash.menus.updated'));
+
+        return back();
     }
 
     public function destroy(string $handle)
@@ -68,9 +73,9 @@ class MenuController extends Controller
         $menu = Menu::where('handle', $handle)->firstOrFail();
         $this->menuService->deleteMenu($menu);
 
-        return redirect()
-            ->route('cp.menus.index')
-            ->with('success', 'Menu deleted successfully.');
+        $this->flashSuccess(__('flash.menus.deleted'));
+
+        return redirect()->route('cp.menus.index');
     }
 
     public function duplicate(string $handle)
@@ -78,9 +83,9 @@ class MenuController extends Controller
         $menu = Menu::where('handle', $handle)->firstOrFail();
         $newMenu = $this->menuService->duplicateMenu($menu);
 
-        return redirect()
-            ->route('cp.menus.edit', $newMenu->handle)
-            ->with('success', 'Menu duplicated successfully.');
+        $this->flashSuccess(__('flash.menus.duplicated'));
+
+        return redirect()->route('cp.menus.edit', $newMenu->handle);
     }
 
     // Menu Items Management
@@ -92,7 +97,7 @@ class MenuController extends Controller
         return response()->json([
             'success' => true,
             'item' => $item,
-            'message' => 'Menu item created successfully.',
+            'message' => __('flash.menu_items.created'),
         ]);
     }
 
@@ -103,7 +108,7 @@ class MenuController extends Controller
         return response()->json([
             'success' => true,
             'item' => $item,
-            'message' => 'Menu item updated successfully.',
+            'message' => __('flash.menu_items.updated'),
         ]);
     }
 
@@ -113,7 +118,7 @@ class MenuController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Menu item deleted successfully.',
+            'message' => __('flash.menu_items.deleted'),
         ]);
     }
 
@@ -124,7 +129,7 @@ class MenuController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Menu items reordered successfully.',
+            'message' => __('flash.menu_items.reordered'),
         ]);
     }
 
@@ -135,16 +140,12 @@ class MenuController extends Controller
             'sort_order' => 'required|integer|min:0',
         ]);
 
-        $item = $this->menuService->moveMenuItem(
-            $item,
-            $validated['parent_id'],
-            $validated['sort_order']
-        );
+        $item = $this->menuService->moveMenuItem($item, $validated['parent_id'], $validated['sort_order']);
 
         return response()->json([
             'success' => true,
             'item' => $item,
-            'message' => 'Menu item moved successfully.',
+            'message' => __('flash.menu_items.moved'),
         ]);
     }
 }

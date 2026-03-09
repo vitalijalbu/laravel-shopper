@@ -4,7 +4,6 @@ namespace Cartino\Tests\Unit\Models;
 
 use Cartino\Models\Brand;
 use Cartino\Models\Category;
-use Cartino\Models\Category;
 use Cartino\Models\Product;
 use Cartino\Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;

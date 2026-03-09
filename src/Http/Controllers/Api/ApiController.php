@@ -17,11 +17,8 @@ abstract class ApiController extends Controller
     /**
      * Return a successful response with data
      */
-    protected function success(
-        $data = null,
-        string $message = '',
-        int $status = 200
-    ): JsonResponse {
+    protected function success($data = null, string $message = '', int $status = 200): JsonResponse
+    {
         $response = ['success' => true];
 
         if ($message) {
@@ -62,11 +59,8 @@ abstract class ApiController extends Controller
     /**
      * Return an error response
      */
-    protected function error(
-        string $message = 'An error occurred',
-        int $status = 400,
-        array $errors = []
-    ): JsonResponse {
+    protected function error(string $message = 'An error occurred', int $status = 400, array $errors = []): JsonResponse
+    {
         $response = [
             'success' => false,
             'message' => $message,

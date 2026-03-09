@@ -68,7 +68,6 @@ class PermissionBuilderController extends ApiController
                 'updated_roles' => $updatedRoles,
                 'count' => count($updatedRoles),
             ], 'Matrice permessi aggiornata con successo');
-
         } catch (\Exception $e) {
             return $this->errorResponse('Errore durante l\'aggiornamento della matrice');
         }
@@ -101,9 +100,8 @@ class PermissionBuilderController extends ApiController
 
             return $this->successResponse(
                 $this->formatRoleForBuilder($role->fresh('permissions')),
-                "Template '{$template['label']}' applicato al ruolo {$role->name}"
+                "Template '{$template['label']}' applicato al ruolo {$role->name}",
             );
-
         } catch (\Exception $e) {
             return $this->errorResponse('Errore durante l\'applicazione del template');
         }
@@ -140,7 +138,7 @@ class PermissionBuilderController extends ApiController
                         'display_name' => ucfirst($action).' '.ucfirst(str_replace('_', ' ', $resource)),
                         'description' => "Permesso per {$action} su {$resource}",
                         'group' => $this->determineGroupFromResource($resource),
-                    ]
+                    ],
                 );
 
                 if ($permission->wasRecentlyCreated) {
@@ -148,13 +146,15 @@ class PermissionBuilderController extends ApiController
                 }
             }
 
-            return $this->successResponse([
-                'resource' => $resource,
-                'created_permissions' => $createdPermissions,
-                'count' => count($createdPermissions),
-                'all_permissions' => Permission::where('name', 'like', "%{$resource}%")->get(),
-            ], count($createdPermissions)." permessi creati per la risorsa '{$resource}'");
-
+            return $this->successResponse(
+                [
+                    'resource' => $resource,
+                    'created_permissions' => $createdPermissions,
+                    'count' => count($createdPermissions),
+                    'all_permissions' => Permission::where('name', 'like', "%{$resource}%")->get(),
+                ],
+                count($createdPermissions)." permessi creati per la risorsa '{$resource}'",
+            );
         } catch (\Exception $e) {
             return $this->errorResponse('Errore durante la generazione dei permessi');
         }
@@ -170,14 +170,16 @@ class PermissionBuilderController extends ApiController
                 'version' => '1.0',
                 'exported_at' => now()->toISOString(),
                 'structure' => $this->getBuilderStructure(),
-                'roles' => Role::with('permissions')->get()->map(function ($role) {
-                    return [
-                        'name' => $role->name,
-                        'display_name' => $role->display_name,
-                        'description' => $role->description,
-                        'permissions' => $role->permissions->pluck('name')->toArray(),
-                    ];
-                }),
+                'roles' => Role::with('permissions')
+                    ->get()
+                    ->map(function ($role) {
+                        return [
+                            'name' => $role->name,
+                            'display_name' => $role->display_name,
+                            'description' => $role->description,
+                            'permissions' => $role->permissions->pluck('name')->toArray(),
+                        ];
+                    }),
                 'templates' => $this->getPermissionTemplates(),
             ];
 
@@ -219,7 +221,7 @@ class PermissionBuilderController extends ApiController
                                 'display_name' => $permissionData['label'],
                                 'description' => $permissionData['description'] ?? null,
                                 'group' => $group['handle'],
-                            ]
+                            ],
                         );
                         $imported['permissions']++;
                     }
@@ -236,7 +238,7 @@ class PermissionBuilderController extends ApiController
                                 [
                                     'display_name' => $roleData['display_name'],
                                     'description' => $roleData['description'],
-                                ]
+                                ],
                             );
                         } else {
                             $role = Role::updateOrCreate(
@@ -244,13 +246,12 @@ class PermissionBuilderController extends ApiController
                                 [
                                     'display_name' => $roleData['display_name'],
                                     'description' => $roleData['description'],
-                                ]
+                                ],
                             );
                         }
 
                         $role->syncPermissions($roleData['permissions']);
                         $imported['roles']++;
-
                     } catch (\Exception $e) {
                         $imported['errors'][] = "Errore importando ruolo {$roleData['name']}: {$e->getMessage()}";
                     }
@@ -258,7 +259,6 @@ class PermissionBuilderController extends ApiController
             }
 
             return $this->successResponse($imported, 'Configurazione importata con successo');
-
         } catch (\Exception $e) {
             return $this->errorResponse('Errore durante l\'importazione: '.$e->getMessage());
         }
@@ -281,10 +281,18 @@ class PermissionBuilderController extends ApiController
                     ['handle' => 'view content', 'label' => 'View', 'description' => 'Visualizzare contenuti'],
                     ['handle' => 'create content', 'label' => 'Create', 'description' => 'Creare contenuti'],
                     ['handle' => 'edit content', 'label' => 'Edit', 'description' => 'Modificare contenuti propri'],
-                    ['handle' => 'edit any content', 'label' => 'Edit Any', 'description' => 'Modificare qualsiasi contenuto'],
+                    [
+                        'handle' => 'edit any content',
+                        'label' => 'Edit Any',
+                        'description' => 'Modificare qualsiasi contenuto',
+                    ],
                     ['handle' => 'delete content', 'label' => 'Delete', 'description' => 'Eliminare contenuti'],
                     ['handle' => 'publish content', 'label' => 'Publish', 'description' => 'Pubblicare contenuti'],
-                    ['handle' => 'configure content', 'label' => 'Configure', 'description' => 'Configurare tipi di contenuto'],
+                    [
+                        'handle' => 'configure content',
+                        'label' => 'Configure',
+                        'description' => 'Configurare tipi di contenuto',
+                    ],
                 ],
             ],
             [
@@ -344,7 +352,11 @@ class PermissionBuilderController extends ApiController
                     ['handle' => 'view settings', 'label' => 'View Settings'],
                     ['handle' => 'edit settings', 'label' => 'Edit Settings'],
                     ['handle' => 'manage permissions', 'label' => 'Manage Permissions'],
-                    ['handle' => 'super', 'label' => 'Super User', 'description' => 'Accesso completo senza restrizioni'],
+                    [
+                        'handle' => 'super',
+                        'label' => 'Super User',
+                        'description' => 'Accesso completo senza restrizioni',
+                    ],
                 ],
             ],
         ];
@@ -415,25 +427,42 @@ class PermissionBuilderController extends ApiController
                 'label' => 'Content Manager',
                 'description' => 'Gestisce contenuti e pubblicazioni',
                 'permissions' => [
-                    'view content', 'create content', 'edit content', 'delete content', 'publish content',
-                    'view customers', 'view users',
+                    'view content',
+                    'create content',
+                    'edit content',
+                    'delete content',
+                    'publish content',
+                    'view customers',
+                    'view users',
                 ],
             ],
             'shop_manager' => [
                 'label' => 'Shop Manager',
                 'description' => 'Gestisce prodotti, ordini e inventario',
                 'permissions' => [
-                    'view products', 'create products', 'edit products', 'delete products', 'manage inventory',
-                    'view orders', 'create orders', 'edit orders', 'process orders',
-                    'view customers', 'create customers', 'edit customers',
+                    'view products',
+                    'create products',
+                    'edit products',
+                    'delete products',
+                    'manage inventory',
+                    'view orders',
+                    'create orders',
+                    'edit orders',
+                    'process orders',
+                    'view customers',
+                    'create customers',
+                    'edit customers',
                 ],
             ],
             'customer_service' => [
                 'label' => 'Customer Service',
                 'description' => 'Gestisce ordini e supporto clienti',
                 'permissions' => [
-                    'view orders', 'edit orders', 'process orders',
-                    'view customers', 'edit customers',
+                    'view orders',
+                    'edit orders',
+                    'process orders',
+                    'view customers',
+                    'edit customers',
                     'view products',
                 ],
             ],
@@ -441,7 +470,10 @@ class PermissionBuilderController extends ApiController
                 'label' => 'Read Only',
                 'description' => 'Solo visualizzazione',
                 'permissions' => [
-                    'view content', 'view products', 'view orders', 'view customers',
+                    'view content',
+                    'view products',
+                    'view orders',
+                    'view customers',
                 ],
             ],
             'super_admin' => [

@@ -7,7 +7,7 @@ return [
         'description' => 'Main e-commerce store',
         'url' => null,
         'is_default' => true,
-        'is_enabled' => true,
+
         'settings' => [
             'theme' => 'default',
             'logo' => null,

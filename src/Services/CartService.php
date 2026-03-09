@@ -2,7 +2,7 @@
 
 namespace Cartino\Services;
 
-use Cartino\Data\Cart\CartData;
+use Cartino\DTO\Cart\CartData;
 use Cartino\Enums\CartStatus;
 use Cartino\Jobs\SendCartRecoveryEmail;
 use Cartino\Models\Cart;
@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Log;
 class CartService
 {
     public function __construct(
-        private CartRepository $repository
+        private CartRepository $repository,
     ) {}
 
     /**
@@ -80,9 +80,12 @@ class CartService
      */
     public function removeItem(Cart $cart, int $productId): CartData
     {
-        $items = collect($cart->items ?? [])->filter(function ($item) use ($productId) {
-            return $item['product_id'] != $productId;
-        })->values()->toArray();
+        $items = collect($cart->items ?? [])
+            ->filter(function ($item) use ($productId) {
+                return $item['product_id'] != $productId;
+            })
+            ->values()
+            ->toArray();
 
         // Recalculate cart totals
         $subtotal = collect($items)->sum('total');
@@ -152,8 +155,7 @@ class CartService
      */
     public function scheduleRecoveryEmail(Cart $cart, int $delayHours = 1): void
     {
-        SendCartRecoveryEmail::dispatch($cart)
-            ->delay(now()->addHours($delayHours));
+        SendCartRecoveryEmail::dispatch($cart)->delay(now()->addHours($delayHours));
     }
 
     /**
@@ -272,16 +274,15 @@ class CartService
             [$cartId, $email, $timestamp] = explode('|', $decoded);
 
             // Token expires after 7 days
-            if (now()->timestamp - $timestamp > 604800) {
+            if ((now()->timestamp - $timestamp) > 604800) {
                 return null;
             }
 
             return Cart::where('id', $cartId)
                 ->where(function ($query) use ($email) {
-                    $query->where('email', $email)
-                        ->orWhereHas('customer', function ($q) use ($email) {
-                            $q->where('email', $email);
-                        });
+                    $query->where('email', $email)->orWhereHas('customer', function ($q) use ($email) {
+                        $q->where('email', $email);
+                    });
                 })
                 ->where('status', CartStatus::ABANDONED)
                 ->first();
@@ -354,7 +355,8 @@ class CartService
             if ($existingIndex !== false) {
                 // Add quantities
                 $mergedItems[$existingIndex]['quantity'] += $sessionItem['quantity'];
-                $mergedItems[$existingIndex]['total'] = $mergedItems[$existingIndex]['quantity'] * $mergedItems[$existingIndex]['price'];
+                $mergedItems[$existingIndex]['total'] =
+                    $mergedItems[$existingIndex]['quantity'] * $mergedItems[$existingIndex]['price'];
             } else {
                 // Add new item
                 $mergedItems->push($sessionItem);

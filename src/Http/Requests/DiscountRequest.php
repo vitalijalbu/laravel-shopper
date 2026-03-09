@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Cartino\Http\Requests;
 
+use Cartino\Enums\DiscountType;
+use Cartino\Models\Customer;
+use Cartino\Models\Product;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -28,7 +31,7 @@ class DiscountRequest extends FormRequest
                 'alpha_num',
                 Rule::unique('discounts', 'code')->ignore($discountId),
             ],
-            'type' => 'required|in:percentage,fixed_amount,free_shipping',
+            'type' => ['required', Rule::enum(DiscountType::class)],
             'value' => [
                 'required',
                 'numeric',
@@ -47,9 +50,9 @@ class DiscountRequest extends FormRequest
             'starts_at' => 'nullable|date|after_or_equal:today',
             'expires_at' => 'nullable|date|after:starts_at',
             'eligible_customers' => 'nullable|array',
-            'eligible_customers.*' => 'integer|exists:customers,id',
+            'eligible_customers.*' => ['integer', Rule::exists(Customer::class, 'id')],
             'eligible_products' => 'nullable|array',
-            'eligible_products.*' => 'integer|exists:products,id',
+            'eligible_products.*' => ['integer', Rule::exists(Product::class, 'id')],
         ];
     }
 

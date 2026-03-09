@@ -32,7 +32,7 @@ class UpdateCustomerRequest extends FormRequest
             'date_of_birth' => ['nullable', 'date', 'before:today'],
             'gender' => ['nullable', Rule::enum(Gender::class)],
             'status' => ['required', Rule::enum(CustomerStatus::class)],
-            'customer_group_id' => ['nullable', 'exists:customer_groups,id'],
+            'customer_group_id' => ['nullable', Rule::exists(\Cartino\Models\CustomerGroup::class, 'id')],
             'password' => ['nullable', 'min:8', 'confirmed'],
             'password_confirmation' => ['nullable', 'min:8'],
             'email_verified_at' => ['nullable', 'date'],

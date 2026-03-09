@@ -15,7 +15,7 @@ class SendStockNotificationEmail implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public function __construct(
-        public StockNotification $notification
+        public StockNotification $notification,
     ) {}
 
     public function handle(): void

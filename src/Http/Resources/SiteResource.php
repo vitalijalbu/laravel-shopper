@@ -37,7 +37,6 @@ class SiteResource extends JsonResource
             'created_at' => $this->created_at?->toISOString(),
             'updated_at' => $this->updated_at?->toISOString(),
             'attributes' => $this->attributes,
-
             // Relationships (when loaded)
             'channels' => ChannelResource::collection($this->whenLoaded('channels')),
             'catalogs' => CatalogResource::collection($this->whenLoaded('catalogs')),

@@ -48,8 +48,7 @@ class MenuItem extends Model
 
     public function children(): HasMany
     {
-        return $this->hasMany(MenuItem::class, 'parent_id')
-            ->orderBy('sort_order');
+        return $this->hasMany(MenuItem::class, 'parent_id')->orderBy('sort_order');
     }
 
     public function reference(): MorphTo

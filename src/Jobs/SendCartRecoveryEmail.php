@@ -15,7 +15,7 @@ class SendCartRecoveryEmail implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public function __construct(
-        public Cart $cart
+        public Cart $cart,
     ) {}
 
     public function handle(): void

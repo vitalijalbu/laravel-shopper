@@ -21,8 +21,12 @@ class CreateNotificationAction
 
     protected function parseTemplate(string $template, array $data): string
     {
-        return preg_replace_callback('/\{\{([\w.]+)\}\}/', function ($matches) use ($data) {
-            return data_get($data, $matches[1], '');
-        }, $template);
+        return preg_replace_callback(
+            '/\{\{([\w.]+)\}\}/',
+            function ($matches) use ($data) {
+                return data_get($data, $matches[1], '');
+            },
+            $template,
+        );
     }
 }

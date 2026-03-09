@@ -1,23 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Cartino\Enums;
+
+use Cartino\Traits\TranslatableEnum;
 
 enum TenantPlan: string
 {
+    use TranslatableEnum;
+
     case STARTER = 'starter';
     case PRO = 'pro';
     case ENTERPRISE = 'enterprise';
     case CUSTOM = 'custom';
-
-    public function label(): string
-    {
-        return match ($this) {
-            self::STARTER => 'Starter',
-            self::PRO => 'Professional',
-            self::ENTERPRISE => 'Enterprise',
-            self::CUSTOM => 'Custom',
-        };
-    }
 
     public function monthlyPrice(): float
     {
@@ -32,20 +28,12 @@ enum TenantPlan: string
 
 enum TenantStatus: string
 {
+    use TranslatableEnum;
+
     case ACTIVE = 'active';
     case SUSPENDED = 'suspended';
     case CANCELLED = 'cancelled';
     case TRIAL = 'trial';
-
-    public function label(): string
-    {
-        return match ($this) {
-            self::ACTIVE => 'Active',
-            self::SUSPENDED => 'Suspended',
-            self::CANCELLED => 'Cancelled',
-            self::TRIAL => 'Trial',
-        };
-    }
 
     public function isActive(): bool
     {
@@ -55,40 +43,23 @@ enum TenantStatus: string
 
 enum SslStatus: string
 {
+    use TranslatableEnum;
+
     case PENDING = 'pending';
     case ACTIVE = 'active';
     case FAILED = 'failed';
     case EXPIRED = 'expired';
-
-    public function label(): string
-    {
-        return match ($this) {
-            self::PENDING => 'Pending',
-            self::ACTIVE => 'Active',
-            self::FAILED => 'Failed',
-            self::EXPIRED => 'Expired',
-        };
-    }
 }
 
 enum ShardStatus: string
 {
+    use TranslatableEnum;
+
     case ACTIVE = 'active';
     case READONLY = 'readonly';
     case MAINTENANCE = 'maintenance';
     case DEGRADED = 'degraded';
     case OFFLINE = 'offline';
-
-    public function label(): string
-    {
-        return match ($this) {
-            self::ACTIVE => 'Active',
-            self::READONLY => 'Read Only',
-            self::MAINTENANCE => 'Maintenance',
-            self::DEGRADED => 'Degraded',
-            self::OFFLINE => 'Offline',
-        };
-    }
 
     public function isOperational(): bool
     {
@@ -98,40 +69,27 @@ enum ShardStatus: string
 
 enum BackupStatus: string
 {
+    use TranslatableEnum;
+
     case SUCCESS = 'success';
     case FAILED = 'failed';
     case IN_PROGRESS = 'in_progress';
-
-    public function label(): string
-    {
-        return match ($this) {
-            self::SUCCESS => 'Success',
-            self::FAILED => 'Failed',
-            self::IN_PROGRESS => 'In Progress',
-        };
-    }
 }
 
 enum MigrationStatus: string
 {
+    use TranslatableEnum;
+
     case ACTIVE = 'active';
     case MIGRATING = 'migrating';
     case ROLLBACK = 'rollback';
     case FAILED = 'failed';
-
-    public function label(): string
-    {
-        return match ($this) {
-            self::ACTIVE => 'Active',
-            self::MIGRATING => 'Migrating',
-            self::ROLLBACK => 'Rolling Back',
-            self::FAILED => 'Failed',
-        };
-    }
 }
 
 enum MetricType: string
 {
+    use TranslatableEnum;
+
     case ORDERS = 'orders';
     case PRODUCTS = 'products';
     case CUSTOMERS = 'customers';
@@ -141,59 +99,27 @@ enum MetricType: string
     case EMAILS_SENT = 'emails_sent';
     case SMS_SENT = 'sms_sent';
     case TRANSACTIONS = 'transactions';
-
-    public function label(): string
-    {
-        return match ($this) {
-            self::ORDERS => 'Orders',
-            self::PRODUCTS => 'Products',
-            self::CUSTOMERS => 'Customers',
-            self::STORAGE => 'Storage',
-            self::BANDWIDTH => 'Bandwidth',
-            self::API_CALLS => 'API Calls',
-            self::EMAILS_SENT => 'Emails Sent',
-            self::SMS_SENT => 'SMS Sent',
-            self::TRANSACTIONS => 'Transactions',
-        };
-    }
 }
 
 enum PeriodType: string
 {
+    use TranslatableEnum;
+
     case HOUR = 'hour';
     case DAY = 'day';
     case WEEK = 'week';
     case MONTH = 'month';
     case QUARTER = 'quarter';
     case YEAR = 'year';
-
-    public function label(): string
-    {
-        return match ($this) {
-            self::HOUR => 'Hour',
-            self::DAY => 'Day',
-            self::WEEK => 'Week',
-            self::MONTH => 'Month',
-            self::QUARTER => 'Quarter',
-            self::YEAR => 'Year',
-        };
-    }
 }
 
 enum HealthStatus: string
 {
+    use TranslatableEnum;
+
     case HEALTHY = 'healthy';
     case WARNING = 'warning';
     case CRITICAL = 'critical';
-
-    public function label(): string
-    {
-        return match ($this) {
-            self::HEALTHY => 'Healthy',
-            self::WARNING => 'Warning',
-            self::CRITICAL => 'Critical',
-        };
-    }
 
     public function color(): string
     {
@@ -207,18 +133,10 @@ enum HealthStatus: string
 
 enum RolloutStage: string
 {
+    use TranslatableEnum;
+
     case DEV = 'dev';
     case BETA = 'beta';
     case STABLE = 'stable';
     case DEPRECATED = 'deprecated';
-
-    public function label(): string
-    {
-        return match ($this) {
-            self::DEV => 'Development',
-            self::BETA => 'Beta',
-            self::STABLE => 'Stable',
-            self::DEPRECATED => 'Deprecated',
-        };
-    }
 }

@@ -9,7 +9,7 @@ class BulkOperationDTO
     public function __construct(
         public readonly array $ids,
         public readonly array $data = [],
-        public readonly bool $force = false
+        public readonly bool $force = false,
     ) {}
 
     public static function forUpdate(array $ids, array $data): self

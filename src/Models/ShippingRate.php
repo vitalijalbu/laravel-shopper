@@ -85,9 +85,7 @@ class ShippingRate extends Model
     {
         // Check exclusions
         if (! empty($productIds)) {
-            $hasExcludedProduct = $this->excludedProducts()
-                ->whereIn('product_id', $productIds)
-                ->exists();
+            $hasExcludedProduct = $this->excludedProducts()->whereIn('product_id', $productIds)->exists();
 
             if ($hasExcludedProduct) {
                 return null;

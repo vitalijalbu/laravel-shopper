@@ -29,7 +29,6 @@ class NotificationService
                     'customer_email' => $customer->email,
                 ]);
             }
-
         } catch (\Exception $e) {
             Log::error('Failed to send order confirmation', [
                 'order_id' => $order->id,
@@ -44,9 +43,7 @@ class NotificationService
     public function notifyAdmins(Order $order): void
     {
         try {
-            $admins = User::where('can_access_control_panel', true)
-                ->where('receive_order_notifications', true)
-                ->get();
+            $admins = User::where('can_access_control_panel', true)->where('receive_order_notifications', true)->get();
 
             Notification::send($admins, new NewOrderNotification($order));
 
@@ -54,7 +51,6 @@ class NotificationService
                 'order_id' => $order->id,
                 'admin_count' => $admins->count(),
             ]);
-
         } catch (\Exception $e) {
             Log::error('Failed to notify admins', [
                 'order_id' => $order->id,
@@ -69,9 +65,7 @@ class NotificationService
     public function notifyOrderFailure(Order $order, \Throwable $exception): void
     {
         try {
-            $admins = User::where('can_access_control_panel', true)
-                ->where('receive_error_notifications', true)
-                ->get();
+            $admins = User::where('can_access_control_panel', true)->where('receive_error_notifications', true)->get();
 
             Notification::send($admins, new OrderFailureNotification($order, $exception));
 
@@ -79,7 +73,6 @@ class NotificationService
                 'order_id' => $order->id,
                 'admin_count' => $admins->count(),
             ]);
-
         } catch (\Exception $e) {
             Log::error('Failed to send failure notifications', [
                 'order_id' => $order->id,
@@ -94,9 +87,7 @@ class NotificationService
     public function sendLowStockAlert($product): void
     {
         try {
-            $admins = User::where('can_access_control_panel', true)
-                ->where('receive_stock_notifications', true)
-                ->get();
+            $admins = User::where('can_access_control_panel', true)->where('receive_stock_notifications', true)->get();
 
             foreach ($admins as $admin) {
                 Mail::to($admin->email)->send(new \Cartino\Mail\LowStockAlert($product));
@@ -106,7 +97,6 @@ class NotificationService
                 'product_id' => $product->id,
                 'admin_count' => $admins->count(),
             ]);
-
         } catch (\Exception $e) {
             Log::error('Failed to send low stock alerts', [
                 'product_id' => $product->id,
@@ -129,7 +119,6 @@ class NotificationService
                     'customer_email' => $cart->customer->email,
                 ]);
             }
-
         } catch (\Exception $e) {
             Log::error('Failed to send abandoned cart reminder', [
                 'cart_id' => $cart->id,
@@ -149,16 +138,13 @@ class NotificationService
                 : User::whereIn('email', $recipients)->get();
 
             foreach ($subscribers as $subscriber) {
-                Mail::to($subscriber->email)->send(
-                    new \Cartino\Mail\Newsletter($subject, $content, $subscriber)
-                );
+                Mail::to($subscriber->email)->send(new \Cartino\Mail\Newsletter($subject, $content, $subscriber));
             }
 
             Log::info('Newsletter sent', [
                 'subscriber_count' => $subscribers->count(),
                 'subject' => $subject,
             ]);
-
         } catch (\Exception $e) {
             Log::error('Failed to send newsletter', [
                 'error' => $e->getMessage(),
@@ -173,16 +159,13 @@ class NotificationService
     {
         try {
             foreach ($subscribers as $subscriber) {
-                Mail::to($subscriber['email'])->send(
-                    new \Cartino\Mail\BackInStockNotification($product, $subscriber)
-                );
+                Mail::to($subscriber['email'])->send(new \Cartino\Mail\BackInStockNotification($product, $subscriber));
             }
 
             Log::info('Back in stock notifications sent', [
                 'product_id' => $product->id,
                 'subscriber_count' => count($subscribers),
             ]);
-
         } catch (\Exception $e) {
             Log::error('Failed to send back in stock notifications', [
                 'product_id' => $product->id,

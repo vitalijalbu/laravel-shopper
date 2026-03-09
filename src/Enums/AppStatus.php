@@ -5,27 +5,18 @@ declare(strict_types=1);
 namespace Cartino\Enums;
 
 use Cartino\Helpers\EnumSerializable;
+use Cartino\Traits\TranslatableEnum;
 
 enum AppStatus: string
 {
     use EnumSerializable;
+    use TranslatableEnum;
 
     case DRAFT = 'draft';
     case PENDING = 'pending';
     case APPROVED = 'approved';
     case REJECTED = 'rejected';
     case DEPRECATED = 'deprecated';
-
-    public function label(): string
-    {
-        return match ($this) {
-            self::DRAFT => __('cartino::app.status.draft'),
-            self::PENDING => __('cartino::app.status.pending'),
-            self::APPROVED => __('cartino::app.status.approved'),
-            self::REJECTED => __('cartino::app.status.rejected'),
-            self::DEPRECATED => __('cartino::app.status.deprecated'),
-        };
-    }
 
     public function color(): string
     {

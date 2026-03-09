@@ -1,8 +1,9 @@
 <?php
 
-namespace Cartino\Http\Controllers\CP\Auth;
+namespace Cartino\Http\Controllers\Cp\Auth;
 
 use Cartino\Http\Controllers\Controller;
+use Cartino\Http\Controllers\Cp\Concerns\HandlesFlashMessages;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -14,6 +15,8 @@ use Inertia\Response;
 
 class NewPasswordController extends Controller
 {
+    use HandlesFlashMessages;
+
     /**
      * Display the password reset view.
      */
@@ -40,17 +43,20 @@ class NewPasswordController extends Controller
     public function store(Request $request): RedirectResponse
     {
         // Validate the request
-        $request->validate([
-            'token' => ['required'],
-            'email' => ['required', 'email'],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        ], [
-            'email.required' => __('cartino::auth.validation.email_required'),
-            'email.email' => __('cartino::auth.validation.email_invalid'),
-            'password.required' => __('cartino::auth.validation.password_required'),
-            'password.confirmed' => __('cartino::auth.validation.password_confirmed'),
-            'password.min' => __('cartino::auth.validation.password_min'),
-        ]);
+        $request->validate(
+            [
+                'token' => ['required'],
+                'email' => ['required', 'email'],
+                'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            ],
+            [
+                'email.required' => __('cartino::auth.validation.email_required'),
+                'email.email' => __('cartino::auth.validation.email_invalid'),
+                'password.required' => __('cartino::auth.validation.password_required'),
+                'password.confirmed' => __('cartino::auth.validation.password_confirmed'),
+                'password.min' => __('cartino::auth.validation.password_min'),
+            ],
+        );
 
         // Here we will attempt to reset the user's password. If it is successful we
         // will update the password on an actual user model and persist it to the
@@ -67,15 +73,22 @@ class NewPasswordController extends Controller
                 if (method_exists($user, 'clearUserSessions')) {
                     $user->clearUserSessions();
                 }
-            }
+            },
         );
 
         // If the password was successfully reset, we will redirect the user back to
         // the application's home authenticated view. If there is an error we can
         // redirect them back to where they came from with their error message.
-        return $status === Password::PASSWORD_RESET
-            ? redirect()->route('cartino.cp.login')->with('status', __('cartino::auth.password_reset_success'))
-            : back()->withInput($request->only('email'))
-                ->withErrors(['email' => __('cartino::auth.password_reset_invalid')]);
+        if ($status === Password::PASSWORD_RESET) {
+            $this->flashSuccess(__('cartino::auth.password_reset_success'));
+
+            return redirect()->route('cp.cp.login');
+        }
+
+        $this->flashError(__('cartino::auth.password_reset_invalid'));
+
+        return back()
+            ->withInput($request->only('email'))
+            ->withErrors(['email' => __('cartino::auth.password_reset_invalid')]);
     }
 }

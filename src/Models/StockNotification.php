@@ -75,8 +75,7 @@ class StockNotification extends Model
 
     public function scopeForProduct($query, string $productType, int $productId)
     {
-        return $query->where('product_type', $productType)
-            ->where('product_id', $productId);
+        return $query->where('product_type', $productType)->where('product_id', $productId);
     }
 
     // Methods
@@ -107,7 +106,7 @@ class StockNotification extends Model
         ?int $customerId = null,
         ?string $phone = null,
         array $variantData = [],
-        int $quantity = 1
+        int $quantity = 1,
     ): self {
         return static::create([
             'email' => $email,
@@ -121,8 +120,11 @@ class StockNotification extends Model
         ]);
     }
 
-    public static function notifyForProduct(string $productType, int $productId, ?int $availableQuantity = null): int
-    {
+    public static function notifyForProduct(
+        string $productType,
+        int $productId,
+        ?int $availableQuantity = null,
+    ): int {
         $notifications = static::pending()
             ->forProduct($productType, $productId)
             ->when($availableQuantity, function ($query) use ($availableQuantity) {

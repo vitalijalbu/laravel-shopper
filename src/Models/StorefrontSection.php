@@ -45,12 +45,8 @@ class StorefrontSection extends Model
 
     public function templates()
     {
-        return $this->belongsToMany(
-            StorefrontTemplate::class,
-            'shopper_template_sections',
-            'section_id',
-            'template_id'
-        )->withPivot(['settings', 'blocks_data', 'sort_order', 'is_visible', 'section_key'])
+        return $this->belongsToMany(StorefrontTemplate::class, 'shopper_template_sections', 'section_id', 'template_id')
+            ->withPivot(['settings', 'blocks_data', 'sort_order', 'is_visible', 'section_key'])
             ->withTimestamps();
     }
 

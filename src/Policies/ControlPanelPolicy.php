@@ -63,9 +63,10 @@ class ControlPanelPolicy
      */
     public function manageUsers(Authenticatable $user): bool
     {
-        return $this->userCan($user, 'view-users') ||
-               $this->userCan($user, 'create-users') ||
-               $this->userCan($user, 'edit-users');
+        return
+            $this->userCan($user, 'view-users') ||
+            $this->userCan($user, 'create-users') ||
+            $this->userCan($user, 'edit-users');
     }
 
     /**

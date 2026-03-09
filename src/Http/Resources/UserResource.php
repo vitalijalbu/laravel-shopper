@@ -22,7 +22,6 @@ class UserResource extends JsonResource
             'email_verified_at' => $this->email_verified_at?->toISOString(),
             'created_at' => $this->created_at?->toISOString(),
             'updated_at' => $this->updated_at?->toISOString(),
-
             // // Permissions and roles (if using Spatie Permission)
             // 'permissions' => $this->when(
             //     method_exists($this->resource, 'getAllPermissions'),
@@ -35,7 +34,6 @@ class UserResource extends JsonResource
 
             // Control panel access
             'can_access_cp' => true,
-
             // Additional user meta
             'meta' => [
                 'is_admin' => $this->is_admin ?? false,

@@ -2,7 +2,7 @@
 
 namespace Cartino\Services;
 
-use Cartino\Data\StockNotification\StockNotificationData;
+use Cartino\DTO\StockNotification\StockNotificationData;
 use Cartino\Jobs\SendStockNotificationEmail;
 use Cartino\Models\StockNotification;
 use Cartino\Repositories\StockNotificationRepository;
@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Log;
 class StockNotificationService
 {
     public function __construct(
-        private StockNotificationRepository $repository
+        private StockNotificationRepository $repository,
     ) {}
 
     /**
@@ -98,7 +98,9 @@ class StockNotificationService
     {
         return $this->repository->update($notification->id, [
             'status' => 'cancelled',
-        ]) ? true : false;
+        ])
+            ? true
+            : false;
     }
 
     /**

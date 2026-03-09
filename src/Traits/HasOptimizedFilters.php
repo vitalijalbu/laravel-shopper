@@ -38,9 +38,7 @@ trait HasOptimizedFilters
      */
     protected static function getDefaultEagerLoad(): array
     {
-        return property_exists(static::class, 'defaultEagerLoad')
-            ? static::$defaultEagerLoad
-            : [];
+        return property_exists(static::class, 'defaultEagerLoad') ? static::$defaultEagerLoad : [];
     }
 
     /**
@@ -48,9 +46,7 @@ trait HasOptimizedFilters
      */
     protected static function getFilterableFields(): array
     {
-        return property_exists(static::class, 'filterable')
-            ? static::$filterable
-            : (new static)->getFillable();
+        return property_exists(static::class, 'filterable') ? static::$filterable : (new static)->getFillable();
     }
 
     /**
@@ -58,9 +54,7 @@ trait HasOptimizedFilters
      */
     protected static function getSortableFields(): array
     {
-        return property_exists(static::class, 'sortable')
-            ? static::$sortable
-            : ['id', 'created_at', 'updated_at'];
+        return property_exists(static::class, 'sortable') ? static::$sortable : ['id', 'created_at', 'updated_at'];
     }
 
     /**
@@ -227,7 +221,18 @@ trait HasOptimizedFilters
             default:
                 // Basic operators
                 $sqlOperator = self::$operators[$operator] ?? '=';
-                if (! in_array($sqlOperator, ['NULL', 'NOT_NULL', 'IN', 'NOT_IN', 'BETWEEN', 'NOT_BETWEEN', 'LIKE_START', 'LIKE_END'])) {
+                if (
+                    ! in_array($sqlOperator, [
+                        'NULL',
+                        'NOT_NULL',
+                        'IN',
+                        'NOT_IN',
+                        'BETWEEN',
+                        'NOT_BETWEEN',
+                        'LIKE_START',
+                        'LIKE_END',
+                    ])
+                ) {
                     $query->where($field, $sqlOperator, $value);
                 }
                 break;
@@ -299,9 +304,7 @@ trait HasOptimizedFilters
      */
     protected function applySearch(Builder $query, string $search): void
     {
-        $searchable = property_exists(static::class, 'searchable')
-            ? static::$searchable
-            : ['name'];
+        $searchable = property_exists(static::class, 'searchable') ? static::$searchable : ['name'];
 
         $query->where(function ($q) use ($search, $searchable) {
             foreach ($searchable as $field) {
@@ -341,8 +344,14 @@ trait HasOptimizedFilters
     protected function isSpecialParameter(string $field): bool
     {
         return in_array($field, [
-            'page', 'per_page', 'sort', 'order',
-            'include', 'fields', 'search', 'limit',
+            'page',
+            'per_page',
+            'sort',
+            'order',
+            'include',
+            'fields',
+            'search',
+            'limit',
         ]);
     }
 
@@ -370,15 +379,16 @@ trait HasOptimizedFilters
     /**
      * Scope for paginated results with filters
      */
-    public function scopePaginateFilter(Builder $query, array $params = [], ?int $perPage = null): \Illuminate\Contracts\Pagination\LengthAwarePaginator
-    {
+    public function scopePaginateFilter(
+        Builder $query,
+        array $params = [],
+        ?int $perPage = null,
+    ): \Illuminate\Contracts\Pagination\LengthAwarePaginator {
         $perPage = $perPage ?? $params['per_page'] ?? config('cartino.filters.pagination.default', 15);
         $maxPerPage = config('cartino.filters.pagination.max', 100);
 
         $perPage = min($perPage, $maxPerPage);
 
-        return $query->filter($params)
-            ->paginate($perPage)
-            ->withQueryString();
+        return $query->filter($params)->paginate($perPage)->withQueryString();
     }
 }

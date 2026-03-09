@@ -37,15 +37,18 @@ class CreateAdminUserCommand extends Command
         $password = $this->option('password') ?: $this->secret('What is the admin password?');
 
         // Validate input
-        $validator = Validator::make([
-            'name' => $name,
-            'email' => $email,
-            'password' => $password,
-        ], [
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:6',
-        ]);
+        $validator = Validator::make(
+            [
+                'name' => $name,
+                'email' => $email,
+                'password' => $password,
+            ],
+            [
+                'name' => 'required|string|max:255',
+                'email' => 'required|string|email|max:255|unique:users',
+                'password' => 'required|string|min:6',
+            ],
+        );
 
         if ($validator->fails()) {
             $this->error('Validation failed:');
@@ -100,13 +103,16 @@ class CreateAdminUserCommand extends Command
             // Get user's roles for display
             $roles = method_exists($user, 'getRoleNames') ? $user->getRoleNames()->implode(', ') : 'None';
 
-            $this->table(['Field', 'Value'], [
-                ['Name', $user->name],
-                ['Email', $user->email],
-                ['ID', $user->id],
-                ['Roles', $roles ?: 'CP Access Granted'],
-                ['Created', $user->created_at->format('Y-m-d H:i:s')],
-            ]);
+            $this->table(
+                ['Field', 'Value'],
+                [
+                    ['Name', $user->name],
+                    ['Email', $user->email],
+                    ['ID', $user->id],
+                    ['Roles', $roles ?: 'CP Access Granted'],
+                    ['Created', $user->created_at->format('Y-m-d H:i:s')],
+                ],
+            );
 
             $this->newLine();
             $this->info('🎉 You can now login to the Control Panel with these credentials.');
@@ -116,7 +122,6 @@ class CreateAdminUserCommand extends Command
             }
 
             return Command::SUCCESS;
-
         } catch (\Exception $e) {
             $this->error('Error creating admin user: '.$e->getMessage());
 
